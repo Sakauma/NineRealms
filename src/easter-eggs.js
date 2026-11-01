@@ -41,7 +41,8 @@
       description: "一张纸，三次折叠，一封没有字的信。愿每一个停顿，都有风替你捎去远方。"
     }
   };
-  var initialized = false;
+  var initialized = false, persistenceSuspended = false;
+  var exportSecrets = function () { return { version: 1, found: [] }; };
 
   function init(callbacks) {
     if (initialized) return;
@@ -55,6 +56,7 @@
     initialized = true;
 
     var found = [], selected = null, warnedStorage = false;
+    exportSecrets = function () { return { version: 1, found: found.slice() }; };
     var brandClicks = 0, lastBrandClick = 0;
     var suppressPointerClick = false;
     var keyHistory = [], lastCodeKey = 0;
@@ -93,6 +95,7 @@
 
     function saveCollection() {
       try {
+        if(persistenceSuspended)return;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, found: found.slice() }));
       } catch (error) { storageWarning(); }
     }
@@ -525,5 +528,5 @@
     resetMiniGames();
   }
 
-  root.NineRealmsEasterEggs = { init: init };
+  root.NineRealmsEasterEggs = { init: init, suspendPersistence: function(value){persistenceSuspended=Boolean(value);}, exportData: function () { return exportSecrets(); } };
 })(window);

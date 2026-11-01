@@ -3,6 +3,25 @@
   "use strict";
 
   var Engine = window.SudokuEngine;
+  var Backup = window.NineRealmsBackup;
+  var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
+  var storageTransition = false;
+  // Product release numbering is independent of SAVE_VERSION and storage schema keys.
+  var APP_VERSION = "1.0.0";
+  try { if (Backup) Backup.recover(localStorage); }
+  catch (recoveryError) {
+    if (recoveryError.recoveryRequired) {
+      var recoveryDialog = document.getElementById("backup-dialog");
+      document.getElementById("backup-status").textContent = recoveryError.message+" 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。";
+      ["backup-close", "backup-export", "backup-file", "backup-confirm", "backup-replace"].forEach(function(id){document.getElementById(id).disabled=true;});
+      var recoveryButton=document.getElementById("backup-recovery");recoveryButton.hidden=false;
+      recoveryButton.onclick=function(){downloadPlayerFile(recoveryError.previousBackup,"Nine-Realms-recovery-log.json");};
+      recoveryDialog.addEventListener("cancel",function(event){event.preventDefault();});
+      if(recoveryDialog.showModal)recoveryDialog.showModal();else recoveryDialog.setAttribute("open","");
+      return;
+    }
+  }
+  try { if (Favorites) favoriteStore = Favorites.createStore(localStorage); } catch (favoriteReadError) { /* Preserve corrupt or inaccessible data until explicit recovery. */ }
   var Generator = window.NineRealmsGenerator;
   var generatorClient = Generator ? Generator.createClient() : null;
   var generationEpoch = 0, generatingPuzzle = false;
@@ -279,11 +298,11 @@
 
   function resumeClock() {
     if (game && game.started && runningSince === null && !game.paused && !game.completed &&
-        !generatingPuzzle && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
+        !generatingPuzzle && !storageTransition && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
   }
 
   function save(action) {
-    if (!game) return;
+    if (!game || storageTransition) return false;
     try {
       var snapshot = Object.assign({}, game, { elapsedMs: Math.floor(currentElapsed()), noteMode: noteMode });
       var envelope = { version: SAVE_VERSION, preferences: preferences, game: snapshot };
@@ -293,11 +312,14 @@
         historyOrigin = null;
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+      storageFailed = false;
+      return true;
     } catch (error) {
       if (!storageFailed) {
         storageFailed = true;
         toast("浏览器未允许本地保存，本局仍可正常游玩。");
       }
+      return false;
     }
   }
 
@@ -433,6 +455,7 @@
     });
     if ($("multigrid-tools")) $("multigrid-tools").hidden = !multi;
     if ($("grid-view")) $("grid-view").value = activeBoardId;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("multi-grid-summary")) $("multi-grid-summary").textContent = boardLayout.boards.length + " 个子盘 · " + boardLayout.cellCount + " 格 · " +
       boardLayout.cells.filter(function (cell) { return cell.boards.length > 1; }).length + " 格共享";
   }
@@ -466,6 +489,7 @@
     document.body.dataset.theme = preferences.theme;
     document.body.dataset.intensity = preferences.intensity;
     if ($("scene-intensity")) $("scene-intensity").value = preferences.intensity;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     document.body.dataset.colorScheme = LIGHT_THEMES.indexOf(preferences.theme) >= 0 ? "light" : "dark";
     if ($("theme-current-name")) $("theme-current-name").textContent = THEME_NAMES[preferences.theme];
     document.body.dataset.fx = motionEnabled() ? "on" : "off";
@@ -541,6 +565,7 @@
         select.dataset.mode = game.mode;
       }
       select.value = game.difficulty;
+      if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     }
     if ($("mode-name")) $("mode-name").textContent = info.label;
     if ($("current-mode-label")) $("current-mode-label").textContent = info.label;
@@ -573,6 +598,7 @@
   }
 
   function render() {
+    if (personalUi) personalUi.refreshCurrent();
     if (!game) return;
     if (boardLayoutKey !== game.mode + ':' + game.board.length) buildBoard();
     if (isMulti() && cells[game.selected] && cells[game.selected].hidden) {
@@ -648,6 +674,7 @@
       button.disabled = blocked;
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("timer")) $("timer").textContent = formatTime(currentElapsed());
     if ($("mistakes")) $("mistakes").textContent = String(game.mistakes).padStart(2, "0");
     if ($("progress-count")) $("progress-count").textContent = solved + " / " + editableTotal;
@@ -720,7 +747,7 @@
   }
 
   function canInteract() {
-    return game && game.started && !generatingPuzzle && !game.paused && !game.completed && !dialogIsOpen();
+    return game && game.started && !generatingPuzzle && !storageTransition && !game.paused && !game.completed && !dialogIsOpen();
   }
 
   function selectCell(index, moveFocus) {
@@ -1358,7 +1385,7 @@
   }
 
   function startGame() {
-    if (!game || generatingPuzzle || game.started || game.completed || dialogIsOpen() || document.hidden) return;
+    if (!game || storageTransition || generatingPuzzle || game.started || game.completed || dialogIsOpen() || document.hidden) return;
     Atmosphere.unlock();
     game.started = true;
     game.paused = false;
@@ -1373,7 +1400,7 @@
   }
 
   function setPaused(paused) {
-    if (!game || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
+    if (!game || storageTransition || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
     suspendClock();
     game.paused = paused;
     clearPulse();
@@ -1386,6 +1413,7 @@
   }
 
   function showDialog(element) {
+    if(storageTransition)return;
     if (generatingPuzzle) {
       cancelPuzzleGeneration(); renderModeControls();
       setStatus("已取消后台生成，原有棋局和进度已保留。");
@@ -1532,6 +1560,7 @@
   }
 
   async function newGame(difficulty, initial, requestedMode) {
+    if(storageTransition)return;
     if (generatingPuzzle) {
       cancelPuzzleGeneration(); renderModeControls(); resumeClock();
       setStatus("已取消生成，原有棋局和进度已保留。"); return;
@@ -1553,6 +1582,7 @@
         return;
       }
     }
+    if(storageTransition)return;
     try {
       var sourceId = Deck.choose(mode, difficulty, game && game.sourceId);
       var puzzle, fallback = false;
@@ -1686,6 +1716,7 @@
     suspendClock();
     game.completed = true;
     game.paused = false;
+    try { if (favoriteStore) favoriteStore.markCompleted(game, game.sessionId); } catch (error) { toast("收藏完成状态暂未保存，当前棋局仍会保存在历史中。"); }
     if (game.dailyDate) {
       dailyRecords = Daily.recordCompletion(dailyRecords, game.dailyDate, {
         elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
@@ -2048,6 +2079,15 @@
     moveOnLayout(direction[0], direction[1]);
   });
 
+  window.addEventListener("storage", function(event) {
+    if(!Backup || event.key!==Backup.journalKey)return;
+    if(event.newValue!==null){
+      cancelPuzzleGeneration();suspendClock();storageTransition=true;if(History)History.suspendPersistence(true);
+      document.body.inert=true;if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.suspendPersistence)window.NineRealmsEasterEggs.suspendPersistence(true);
+      setStatus("另一窗口正在恢复数据，当前窗口已暂停保存。完成后将重新载入。");
+    }else if(storageTransition){window.location.reload();}
+  });
+
   document.addEventListener("visibilitychange", function () {
     document.body.dataset.pageHidden = String(document.hidden);
     if (document.hidden) {
@@ -2086,14 +2126,96 @@
     clearTransientMarks(); render(); save();
   });
 
+  function downloadPlayerFile(value, filename) {
+    var text = typeof value === "string" ? value : JSON.stringify(value);
+    var url = URL.createObjectURL(new Blob([text], { type: "application/json;charset=utf-8" }));
+    var link = document.createElement("a"); link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},30000);
+  }
+
+  function favoriteSession(record, unfinished) {
+    if (!History || !Favorites) return null;
+    if (game && (!unfinished || !game.completed) && Favorites.samePuzzle(game,record.puzzle)) {
+      return {version:SAVE_VERSION,preferences:preferences,game:Object.assign({},game,{elapsedMs:Math.floor(currentElapsed()),noteMode:noteMode})};
+    }
+    var rows=History.getRecords();
+    for(var i=0;i<rows.length;i++){
+      if(unfinished&&rows[i].completed)continue;
+      var snapshot=History.getSnapshot(rows[i].sessionId);
+      if(snapshot&&Favorites.samePuzzle(snapshot.game,record.puzzle))return snapshot;
+    }
+    return null;
+  }
+
+  async function playFavorite(record, restart) {
+    if(storageTransition)return;
+    closeDialog($("personal-dialog"));
+    if(!restart){var snapshot=favoriteSession(record,true);if(!snapshot){toast("该题没有保留的未完成会话，请重新挑战。");return;}await openHistorical(snapshot,false);return;}
+    if(hasProgress()&&!await confirmAction("重新挑战收藏题？","当前棋局会保存在历史中。收藏题面保持不变，将开启独立的新会话。","重新挑战"))return;
+    if(storageTransition)return;
+    suspendClock();save();
+    var puzzle=Object.assign({id:record.id},record.puzzle);
+    installPuzzle(puzzle,puzzle.difficulty,puzzle.mode);
+    try{favoriteStore.linkSession(game,game.sessionId);}catch(e){toast("新局已准备好，但收藏会话关联暂未保存。");}
+    save();if(History)History.flush();setStatus("收藏题目已准备好，点击开始后计时。");
+  }
+
+  async function preparePlayerBackup() {
+    suspendClock();
+    save();if(History)History.flush();
+    // Export the live snapshot even when quota prevents persistence. Never export stale progress.
+    var entries={};
+    entries[STORAGE_KEY]={version:SAVE_VERSION,preferences:preferences,game:Object.assign({},game,{elapsedMs:Math.floor(currentElapsed()),noteMode:noteMode})};
+    if(History)entries[History.KEY]=History.exportData();
+    entries[DAILY_KEY]=dailyRecords;entries[VOYAGE_KEY]=voyageProgress;
+    entries[RECENT_GENERATED_KEY]=recentGenerated.slice();
+    if(Deck&&Deck.exportData)entries["nine-realms.puzzle-deck.v1"]=Deck.exportData();
+    if(favoriteStore)entries[Favorites.key]=favoriteStore.exportData();
+    if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.exportData)entries["nine-realms.secrets.v1"]=window.NineRealmsEasterEggs.exportData();
+    var liveStorage={getItem:function(key){return Object.prototype.hasOwnProperty.call(entries,key)?JSON.stringify(entries[key]):localStorage.getItem(key);}};
+    return await Backup.createAsync(liveStorage,{appVersion:APP_VERSION});
+  }
+
+  function commitPlayerBackup(validated) {
+    cancelPuzzleGeneration();suspendClock();
+    if(!save()||(History&&!History.flush()))throw new Error("当前进度暂时无法安全保存，已停止替换。请先释放本机存储空间。");
+    storageTransition=true;if(History)History.suspendPersistence(true);
+    try{
+      Backup.replace(localStorage,validated);
+      document.body.dataset.storageTransition="true";
+      window.location.reload();
+    }catch(error){
+      if(!error.recoveryRequired){storageTransition=false;if(History)History.suspendPersistence(false);}
+      throw error;
+    }
+  }
+
   if (History) History.init({
     Engine: Engine,
     VariantView: window.SudokuVariantView,
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { render(); resumeClock(); save(); },
+    onFavorite: function(snapshot){if(!favoriteStore||!snapshot)throw new Error("收藏暂不可用");favoriteStore.add(snapshot.game,{sessionId:snapshot.game.sessionId,completed:snapshot.game.completed});toast("已收藏这道题，打开“我的题目”即可查看。");if(personalUi)personalUi.refreshCurrent();},
     onResume: function (snapshot) { return openHistorical(snapshot, false); },
     onReplayNew: function (snapshot) { return openHistorical(snapshot, true); },
     toast: toast
+  });
+
+  if (window.NineRealmsPersonal && Backup && Favorites) personalUi=window.NineRealmsPersonal({
+    store:favoriteStore,modes:Engine.getModes(),current:function(){return game;},
+    blocked:function(){return storageTransition||dialogIsOpen();},locked:function(){return storageTransition;},
+    open:showDialog,close:closeDialog,save:save,afterClose:function(){resumeClock();save();},
+    resumeAvailable:function(record){return Boolean(favoriteSession(record,true));},play:playFavorite,
+    history:function(record){var snapshot=favoriteSession(record,false);closeDialog($("personal-dialog"));if(History)History.open(snapshot&&snapshot.game.sessionId);},
+    maxBackupBytes:Backup.limits.maxBytes,
+    exportBackup:async function(){var backup=await preparePlayerBackup();downloadPlayerFile(backup,"Nine-Realms-backup-"+new Date().toISOString().slice(0,10)+".json");},
+    prepareBackup:async function(text){
+      var validated=await Backup.validateAsync(text),p=Backup.preview(validated);
+      return {validated:validated,summary:"备份时间："+new Date(p.createdAt).toLocaleString()+" · 版本 "+p.appVersion+
+        "\n"+(p.currentGame?"当前棋局："+modeInfo(p.currentGame.mode).label+" · "+p.currentGame.filled+" / "+p.currentGame.total+" 格":"没有当前棋局")+
+        "\n历史 "+p.historyCount+" 局 / "+p.historySteps+" 步 · 收藏 "+p.favoritesCount+" 题"+
+        "\n彩蛋 "+p.secretsCount+" 项 · 每日 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
+    },commitBackup:commitPlayerBackup,downloadRecovery:function(value){downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
   });
 
   buildCatalog();

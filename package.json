@@ -1,6 +1,6 @@
 {
   "name": "nine-realms-sudoku",
-  "version": "3.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "九境 Nine Realms — 离线数独桌面游戏",
   "license": "MIT",
@@ -17,7 +17,8 @@
     "package:release": "python3 scripts/package-release.py",
     "backup:source": "python3 scripts/backup-source.py",
     "test:generator": "node tests/generator.test.cjs && node tests/generator-catalog.test.cjs",
-    "test": "node tests/quiet-ui.test.cjs && node tests/exchange.test.cjs && npm run test:generator"
+    "test": "node tests/desktop-navigation.test.cjs && node tests/backup.test.cjs && node tests/backup-capacity.test.cjs && node tests/favorites.test.cjs && node tests/quiet-ui.test.cjs && node tests/exchange.test.cjs && npm run test:generator",
+    "test:dom": "node tests/glass-select.test.cjs && node tests/personal-dom.test.cjs"
   },
   "engines": {
     "node": ">=22.12.0"

@@ -37,7 +37,7 @@
 <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
 <div class="space-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
 <div class="app-shell">
-<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
+<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle personal-open" id="personal-open" type="button" aria-haspopup="dialog" aria-controls="personal-dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>我的题目</span></button><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
 <details id="appearance-settings" class="appearance-settings">
 <summary>外观设置<svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg></summary>
 <div class="appearance-panel"><div class="settings-heading"><p class="settings-label">场景主题</p><span id="theme-current-name">星云</span></div>
@@ -140,10 +140,29 @@
 </div>
 
 </main>
-<footer><div class="footer-copy"><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+<footer><div class="footer-copy"><span class="app-version">1.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
 </div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 <div id="toast" class="toast" role="status" hidden></div>
+<dialog id="personal-dialog" class="game-dialog personal-dialog" aria-labelledby="personal-title">
+<button id="personal-close" class="dialog-close icon-btn" type="button" aria-label="关闭我的题目"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">YOUR OWN COLLECTION</div><h2 id="personal-title">我的题目</h2>
+<p>留住喜欢的题目。收藏保存完整题面，游玩进度仍在历史中。</p>
+<button id="favorite-current" class="primary-btn" type="button">收藏当前题目</button>
+<div class="personal-filters"><label>玩法<select id="personal-mode"><option value="">全部玩法</option></select></label><label>状态<select id="personal-filter"><option value="all">全部题目</option><option value="later">稍后再玩</option><option value="unfinished">未完成</option><option value="completed">已完成</option></select></label></div>
+<p id="personal-count"></p><p id="personal-status" role="status" aria-live="polite"></p><div id="personal-list" class="personal-list"></div>
+</dialog>
+<dialog id="backup-dialog" class="game-dialog backup-dialog" aria-labelledby="backup-title">
+<button id="backup-close" class="dialog-close icon-btn" type="button" aria-label="关闭数据备份"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">KEEP YOUR JOURNEY</div><h2 id="backup-title">数据备份</h2>
+<p>保存棋局、笔记、历史回放、设置、收藏和探索成绩。备份可能包含答案，请勿当作挑战码分享。</p>
+<button id="backup-export" class="primary-btn" type="button">导出完整备份<svg class="icon"><use href="#i-share"/></svg></button>
+<label class="backup-file-label" for="backup-file">选择备份文件<input id="backup-file" type="file" accept=".json,application/json"></label>
+<p id="backup-preview" class="backup-preview"></p><p id="backup-status" role="status" aria-live="polite"></p>
+<label class="backup-confirm"><input id="backup-confirm" type="checkbox">我了解这会替换本机进度、收藏与设置，不会合并；建议先导出当前备份，并关闭其他九境窗口或标签页。</label>
+<button id="backup-replace" class="primary-btn" type="button" disabled>确认替换并重新载入</button>
+<button id="backup-recovery" class="secondary-btn" type="button" hidden>下载故障恢复日志</button>
+</dialog>
 <dialog id="mode-dialog" class="game-dialog mode-dialog" aria-labelledby="mode-title">
 <button id="mode-close" class="dialog-close icon-btn" type="button" aria-label="关闭玩法目录"><svg class="icon"><use href="#i-close"/></svg></button>
 <div class="eyebrow">EXPLORE THE RULES</div><h2 id="mode-title">玩法图鉴</h2><p class="mode-intro">从经典九宫到线条、求和与边缘线索，选择一种新的思路。</p>
@@ -232,5 +251,5 @@
 <section class="secret-task" data-secret-task="crane" aria-label="折一只纸鹤" hidden><div class="secret-fold-workbench"><div id="secret-fold-paper" data-fold="0" aria-hidden="true"><i></i><i></i><i></i></div><button id="secret-fold" type="button" class="secondary-btn">对折信纸</button></div><p id="secret-crane-status" class="secret-task-status" role="status">一张纸，等待第一道折痕。</p></section>
 <div class="secret-bottom"><details id="secret-console" class="secret-console"><summary>一枚旧手柄 <span aria-hidden="true">＋</span></summary><div class="secret-controller"><div class="secret-dpad" role="group" aria-label="旧手柄方向键"><button type="button" data-secret-key="ArrowUp" aria-label="上">↑</button><button type="button" data-secret-key="ArrowLeft" aria-label="左">←</button><span aria-hidden="true">✚</span><button type="button" data-secret-key="ArrowRight" aria-label="右">→</button><button type="button" data-secret-key="ArrowDown" aria-label="下">↓</button></div><div class="secret-ab" role="group" aria-label="旧手柄按键"><button type="button" data-secret-key="b">B</button><button type="button" data-secret-key="a">A</button></div></div><p id="secret-code-status" role="status" aria-live="polite">有些肌肉记忆，来自很久以前。</p></details><button id="secret-calm-trigger" class="secret-calm-trigger" type="button"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>静待一朵花</span></button></div>
 </dialog>
-<script src="./variant-bank.js"></script><script src="./multigrid-bank.js"></script><script src="./engine.js"></script><script src="./challenge.js"></script><script src="./daily.js"></script><script src="./hints.js"></script><script src="./voyage.js"></script><script src="./variant-view.js"></script><script src="./scene-webgl.js"></script><script src="./atmosphere.js"></script><script src="./easter-eggs.js"></script><script src="./history.js"></script><script src="./puzzle-deck.js"></script><script src="./generator.js"></script><script src="./app.js"></script>
+<script src="./variant-bank.js"></script><script src="./multigrid-bank.js"></script><script src="./engine.js"></script><script src="./challenge.js"></script><script src="./daily.js"></script><script src="./hints.js"></script><script src="./voyage.js"></script><script src="./variant-view.js"></script><script src="./scene-webgl.js"></script><script src="./atmosphere.js"></script><script src="./easter-eggs.js"></script><script src="./history.js"></script><script src="./puzzle-deck.js"></script><script src="./generator.js"></script><script src="./favorites.js"></script><script src="./backup.js"></script><script src="./personal.js"></script><script src="./glass-select.js"></script><script src="./app.js"></script>
 </body></html>

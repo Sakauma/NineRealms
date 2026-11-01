@@ -807,6 +807,57 @@ select option{background:var(--panel);color:var(--text)}
  #rules-open{background:var(--button-bg)}
 }
 
+/* 14. Personal collection and local backup, using the existing glass surfaces. */
+.personal-dialog{width:min(760px,calc(100vw - 32px));max-width:760px}
+.personal-filters{display:flex;gap:16px;margin:20px 0 12px;flex-wrap:wrap}
+.personal-filters label{display:flex;align-items:center;gap:8px;font-size:13px}
+.personal-filters select{max-width:220px}
+.personal-list{display:grid;gap:12px;margin-top:16px}
+.personal-card{border:1px solid var(--glass-edge);border-radius:18px;padding:16px;background:var(--glass-surface);text-align:left}
+.personal-card h3{font-size:14px;line-height:1.6;overflow-wrap:anywhere;margin:0}
+.personal-card p,.personal-empty,#personal-count,#personal-status,#backup-status{font-size:12px;line-height:1.7;color:var(--muted)}
+.personal-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.personal-card-actions button{min-height:40px;padding:8px 12px;font-size:12px;border-radius:12px}
+#favorite-current{margin-top:12px}.backup-dialog>p{line-height:1.8}
+.backup-file-label{display:block;text-align:left;margin:22px 0 12px;font-size:13px}
+.backup-file-label input{display:block;width:100%;margin-top:8px;color:var(--text);font:inherit}
+.backup-file-label input::file-selector-button{padding:10px 14px;margin-right:10px;border:1px solid var(--glass-edge);border-radius:12px;background:var(--panel);color:var(--text);font:inherit}
+.backup-preview{white-space:pre-line;text-align:left;font-size:13px}
+.backup-confirm{display:flex;align-items:flex-start;gap:10px;text-align:left;font-size:12px;line-height:1.8;margin:18px 0}
+.backup-confirm input{margin-top:5px;flex:none;accent-color:var(--accent)}
+#backup-recovery{margin-top:12px}.app-version{font-size:11px;opacity:.65}
+@media(max-width:600px){.personal-open{padding:8px;gap:5px}.personal-dialog{padding:26px 18px}.personal-filters{gap:10px}.personal-filters label{flex:1;min-width:130px;flex-direction:column;align-items:stretch}.personal-card{padding:12px}}
+
+@media(max-width:600px){
+ .topbar{flex-wrap:wrap;padding:10px 0}
+ .topbar-right{flex:1 1 100%;justify-content:space-between;gap:6px;min-width:0}
+ .topbar-right>.fx-toggle,.topbar-right>.appearance-settings{flex-shrink:0;white-space:nowrap}
+ .personal-open>.icon{display:none}
+ .personal-open{min-height:44px;font-size:13px}
+}
+@media(max-width:400px){#history-open{width:44px;min-width:44px}}
+
+/* 15. Shared glass dropdowns: custom listboxes in every browser, native state retained. */
+select.glass-select-native{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;opacity:0!important;pointer-events:none!important;padding:0!important;border:0!important;margin:-1px!important}
+.glass-select{display:inline-flex;position:relative;min-width:0;max-width:100%;vertical-align:middle}
+.glass-select .glass-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--glass-button);color:var(--text);font:inherit;font-size:14px;line-height:1.4;white-space:nowrap;text-align:left;cursor:pointer;box-shadow:var(--glass-button-shadow)}
+.glass-select-trigger::after{content:'';flex:0 0 6px;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.7}
+.glass-select-trigger[aria-expanded=true]::after{transform:translateY(2px) rotate(225deg)}
+.glass-select .glass-select-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.glass-select .glass-select-trigger:disabled{opacity:.5;cursor:not-allowed}
+.glass-select-list{position:fixed;inset:auto;z-index:10000;box-sizing:border-box;margin:0;padding:7px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:18px;background:var(--dialog);color:var(--text);box-shadow:0 16px 42px -16px var(--shadow),inset 0 1px 0 var(--glass-highlight);font-family:inherit;text-align:left;scrollbar-width:thin;scrollbar-color:var(--grid-strong) transparent}
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))){.glass-select-list{background:color-mix(in srgb,var(--dialog) 86%,transparent);backdrop-filter:blur(22px) saturate(130%);-webkit-backdrop-filter:blur(22px) saturate(130%)}}
+.glass-select-list::-webkit-scrollbar{width:6px}.glass-select-list::-webkit-scrollbar-thumb{background:var(--grid-strong);border-radius:999px}
+.glass-select-option{position:relative;min-height:44px;box-sizing:border-box;display:flex;align-items:center;padding:10px 34px 10px 12px;border:1px solid transparent;border-radius:11px;font-size:14px;line-height:1.45;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+.glass-select-option+.glass-select-option{margin-top:3px}
+.glass-select-option[aria-selected=true]{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);font-weight:600}
+.glass-select-option[aria-selected=true]::after{content:'✓';position:absolute;right:12px;font-weight:700}
+.glass-select-option.is-active{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:color-mix(in srgb,var(--accent) 55%,transparent)}
+.glass-select-option[aria-disabled=true]{opacity:.4;cursor:not-allowed}
+.scene-strength>.glass-select,.personal-filters label>.glass-select,.history-sidebar>.glass-select{width:100%}
+.multigrid-tools label>.glass-select{margin-left:8px}
+@media(forced-colors:active){.glass-select .glass-select-trigger,.glass-select-list{background:Canvas;color:CanvasText;border-color:ButtonText;box-shadow:none}.glass-select-option.is-active{outline:2px solid Highlight;outline-offset:-2px}.glass-select-option[aria-selected=true]{color:Highlight;background:Canvas}.glass-select-trigger:disabled,.glass-select-option[aria-disabled=true]{color:GrayText}}
+
 </style><style>
 /* Local game archive: distinct list, read-only replay, and resumable snapshots. */
 .history-dialog{width:min(1020px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:24px;text-align:left;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
@@ -1010,7 +1061,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
 <div class="space-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
 <div class="app-shell">
-<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
+<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle personal-open" id="personal-open" type="button" aria-haspopup="dialog" aria-controls="personal-dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>我的题目</span></button><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
 <details id="appearance-settings" class="appearance-settings">
 <summary>外观设置<svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg></summary>
 <div class="appearance-panel"><div class="settings-heading"><p class="settings-label">场景主题</p><span id="theme-current-name">星云</span></div>
@@ -1113,10 +1164,29 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 </div>
 
 </main>
-<footer><div class="footer-copy"><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+<footer><div class="footer-copy"><span class="app-version">1.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
 </div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 <div id="toast" class="toast" role="status" hidden></div>
+<dialog id="personal-dialog" class="game-dialog personal-dialog" aria-labelledby="personal-title">
+<button id="personal-close" class="dialog-close icon-btn" type="button" aria-label="关闭我的题目"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">YOUR OWN COLLECTION</div><h2 id="personal-title">我的题目</h2>
+<p>留住喜欢的题目。收藏保存完整题面，游玩进度仍在历史中。</p>
+<button id="favorite-current" class="primary-btn" type="button">收藏当前题目</button>
+<div class="personal-filters"><label>玩法<select id="personal-mode"><option value="">全部玩法</option></select></label><label>状态<select id="personal-filter"><option value="all">全部题目</option><option value="later">稍后再玩</option><option value="unfinished">未完成</option><option value="completed">已完成</option></select></label></div>
+<p id="personal-count"></p><p id="personal-status" role="status" aria-live="polite"></p><div id="personal-list" class="personal-list"></div>
+</dialog>
+<dialog id="backup-dialog" class="game-dialog backup-dialog" aria-labelledby="backup-title">
+<button id="backup-close" class="dialog-close icon-btn" type="button" aria-label="关闭数据备份"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">KEEP YOUR JOURNEY</div><h2 id="backup-title">数据备份</h2>
+<p>保存棋局、笔记、历史回放、设置、收藏和探索成绩。备份可能包含答案，请勿当作挑战码分享。</p>
+<button id="backup-export" class="primary-btn" type="button">导出完整备份<svg class="icon"><use href="#i-share"/></svg></button>
+<label class="backup-file-label" for="backup-file">选择备份文件<input id="backup-file" type="file" accept=".json,application/json"></label>
+<p id="backup-preview" class="backup-preview"></p><p id="backup-status" role="status" aria-live="polite"></p>
+<label class="backup-confirm"><input id="backup-confirm" type="checkbox">我了解这会替换本机进度、收藏与设置，不会合并；建议先导出当前备份，并关闭其他九境窗口或标签页。</label>
+<button id="backup-replace" class="primary-btn" type="button" disabled>确认替换并重新载入</button>
+<button id="backup-recovery" class="secondary-btn" type="button" hidden>下载故障恢复日志</button>
+</dialog>
 <dialog id="mode-dialog" class="game-dialog mode-dialog" aria-labelledby="mode-title">
 <button id="mode-close" class="dialog-close icon-btn" type="button" aria-label="关闭玩法目录"><svg class="icon"><use href="#i-close"/></svg></button>
 <div class="eyebrow">EXPLORE THE RULES</div><h2 id="mode-title">玩法图鉴</h2><p class="mode-intro">从经典九宫到线条、求和与边缘线索，选择一种新的思路。</p>
@@ -14945,7 +15015,8 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
       description: "一张纸，三次折叠，一封没有字的信。愿每一个停顿，都有风替你捎去远方。"
     }
   };
-  var initialized = false;
+  var initialized = false, persistenceSuspended = false;
+  var exportSecrets = function () { return { version: 1, found: [] }; };
 
   function init(callbacks) {
     if (initialized) return;
@@ -14959,6 +15030,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     initialized = true;
 
     var found = [], selected = null, warnedStorage = false;
+    exportSecrets = function () { return { version: 1, found: found.slice() }; };
     var brandClicks = 0, lastBrandClick = 0;
     var suppressPointerClick = false;
     var keyHistory = [], lastCodeKey = 0;
@@ -14997,6 +15069,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 
     function saveCollection() {
       try {
+        if(persistenceSuspended)return;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, found: found.slice() }));
       } catch (error) { storageWarning(); }
     }
@@ -15429,7 +15502,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     resetMiniGames();
   }
 
-  root.NineRealmsEasterEggs = { init: init };
+  root.NineRealmsEasterEggs = { init: init, suspendPersistence: function(value){persistenceSuspended=Boolean(value);}, exportData: function () { return exportSecrets(); } };
 })(window);
 
 </script><script>
@@ -15437,7 +15510,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 (function(root,factory){"use strict";if(typeof module==="object"&&module.exports)module.exports=factory(root);else root.NineRealmsHistory=factory(root);})(typeof globalThis!=="undefined"?globalThis:this,function(root){
 "use strict";
 var KEY="nine-realms.history.v1",LIMITS={records:40,steps:3000,bytes:3*1024*1024};
-var singleton=null,hooks={},ui=null,flushTimer=null;
+var singleton=null,hooks={},ui=null,flushTimer=null,persistenceSuspended=false;
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function integer(x,f,max){return Number.isInteger(x)&&x>=0&&x<=max?x:f;}
 function stamp(x,f){if(typeof x==="string")x=Date.parse(x);return Number.isFinite(x)&&x>0&&x<1e15?x:f;}
@@ -15556,14 +15629,15 @@ function createStore(options){
    if(!storage||typeof storage.setItem!=="function"){warn("浏览器未允许保存历史，本次仍可查看回放；关闭窗口后这些新记录可能丢失。");return false;}
    try{var text=enforce();if(text.length*2>limits.bytes)throw new Error("History snapshot exceeds storage budget");storage.setItem(KEY,text);dirty=false;persistenceFailed=false;return true;}catch(e){warn("历史记录暂时无法保存到本机，本次仍可回放；当前棋局继续单独保存。");return false;}
  }
- return {capture:capture,flush:flush,getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
+ return {capture:capture,flush:flush,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
 }
 function getStore(){
  if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
  return singleton;
 }
-function capture(snapshot,meta){var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
-function flush(){clearTimeout(flushTimer);flushTimer=null;return getStore().flush();}
+function capture(snapshot,meta){if(persistenceSuspended)return false;var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
+function flush(){clearTimeout(flushTimer);flushTimer=null;return persistenceSuspended?true:getStore().flush();}
+function suspendPersistence(value){clearTimeout(flushTimer);flushTimer=null;persistenceSuspended=Boolean(value);}
 
 function init(options){
  if(ui)return api;hooks=options||{};
@@ -15597,7 +15671,7 @@ function init(options){
  var playback=el("div","history-playback"),previous=btn("history-prev","← 上一步","secondary-btn"),play=btn("history-play","播放","secondary-btn"),next=btn("history-next","下一步 →","secondary-btn");
  playback.append(previous,play,next);
  var replayNote=el("p","history-replay-note");replayNote.id="history-replay-note";
- var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");actions.append(resume,restart);
+ var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");var favorite=btn("history-favorite","收藏题目","secondary-btn");favorite.disabled=typeof hooks.onFavorite!=="function";actions.append(resume,restart,favorite);
  detail.append(detailHead,recordMeta,viewport,diagramHint,actionLine,slider,playback,replayNote,actions);main.append(sidebar,detail);
  var retention=el("p","history-retention");retention.id="history-retention";
  dialog.append(closeButton,heading,intro,main,retention);doc.body.appendChild(dialog);
@@ -15701,7 +15775,7 @@ function init(options){
  closeButton.addEventListener("click",close);dialog.addEventListener("close",function(){stop();flush();if(hooks.afterClose)hooks.afterClose();});dialog.addEventListener("cancel",stop);
  doc.addEventListener("visibilitychange",function(){if(doc.hidden){stop();flush();}});root.addEventListener("pagehide",flush);root.addEventListener("beforeunload",flush);
  filter.addEventListener("change",function(){stop();refreshList(true);});
- function open(){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();refreshList(true);if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
+ function open(targetId){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();if(typeof targetId==="string"&&getStore().getSnapshot(targetId)){selectedId=targetId;filter.value="all";}refreshList(true);if(root.NineRealmsSelect)root.NineRealmsSelect.syncAll();if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
  var opener=doc.getElementById("history-open");if(opener)opener.addEventListener("click",open);
  async function restore(callback){
    if(!selectedId||typeof callback!=="function")return;stop();flush();var snapshot=getStore().getSnapshot(selectedId);if(!snapshot)return;
@@ -15709,10 +15783,11 @@ function init(options){
    try{await callback(snapshot);}catch(e){if(hooks.toast)hooks.toast("这局暂时无法载入，当前棋局已保留。");}
    finally{resume.disabled=restart.disabled=false;if(dialog.open)refreshList(false);}
  }
+ favorite.addEventListener("click",function(){if(!selectedId||typeof hooks.onFavorite!=="function")return;try{hooks.onFavorite(getStore().getSnapshot(selectedId));}catch(e){if(hooks.toast)hooks.toast("收藏暂未保存，原有数据已保留。");}});
  resume.addEventListener("click",function(){restore(hooks.onResume);});restart.addEventListener("click",function(){restore(hooks.onReplayNew);});
  ui={dialog:dialog,open:open,close:close,refreshList:refreshList};return api;
 }
-var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},open:function(){if(ui)ui.open();},close:function(){if(ui)ui.close();}};
+var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},suspendPersistence:suspendPersistence,open:function(id){if(ui)ui.open(id);},close:function(){if(ui)ui.close();}};
 return api;
 });
 
@@ -15765,7 +15840,7 @@ return api;
     try { storage.setItem(KEY, JSON.stringify({ version: 1, seen: seen })); } catch (error) { /* Keep rotation in memory when storage is unavailable. */ }
     return true;
   }
-  return { choose: choose, remember: remember };
+  return { choose: choose, remember: remember, exportData: function () { return JSON.parse(JSON.stringify({ version: 1, seen: seen })); } };
 });
 
 </script><script>
@@ -15870,11 +15945,514 @@ return api;
 });
 
 </script><script>
+/* Nine Realms — exact frozen puzzles, independent of seeds and play sessions. */
+(function (root, factory) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
+  else root.NineRealmsFavorites = factory(root.SudokuEngine);
+})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine) {
+  "use strict";
+  var KEY = "nine-realms.favorites.v1", VERSION = 1;
+  var LIMITS = { records: 200, bytes: 1024 * 1024, sessions: 64 };
+  function fail(code) { var error = new Error(code); error.code = code; throw error; }
+  function copy(value) { return JSON.parse(JSON.stringify(value)); }
+  function object(value) { return value && typeof value === "object" && !Array.isArray(value); }
+  function keys(value, allowed) {
+    if (!object(value) || Object.keys(value).some(function (key) { return allowed.indexOf(key) < 0; })) fail("INVALID_FAVORITES_FIELDS");
+  }
+  function timestamp(value) { return Number.isSafeInteger(value) && value > 0 && value < 1e15; }
+  function sessionId(value) { return typeof value === "string" && /^[a-zA-Z0-9_-]{1,96}$/.test(value); }
+  function stable(value) {
+    if (Array.isArray(value)) return "[" + value.map(stable).join(",") + "]";
+    if (object(value)) return "{" + Object.keys(value).sort().map(function (key) { return JSON.stringify(key) + ":" + stable(value[key]); }).join(",") + "}";
+    return JSON.stringify(value);
+  }
+  function puzzleKey(puzzle) {
+    if (!object(puzzle) || !Array.isArray(puzzle.givens)) fail("INVALID_FAVORITE_PUZZLE");
+    // Full content is compared, not a hash: collisions cannot merge unrelated puzzles.
+    return stable([puzzle.mode, puzzle.givens, Engine.normalizeClues(puzzle.mode, puzzle.clues)]);
+  }
+  function freezePuzzle(input) {
+    if (!object(input) || !Engine.getModes().some(function (mode) { return mode.id === input.mode; }) ||
+        !Engine.getDifficulties(input.mode).some(function (difficulty) { return difficulty.id === input.difficulty; })) fail("INVALID_FAVORITE_MODE");
+    var clues = Engine.normalizeClues(input.mode, input.clues), context = { mode: input.mode, clues: clues };
+    var count = Engine.getLayout(context).cellCount;
+    function board(value, min) { return Array.isArray(value) && value.length === count && value.every(function (n) { return Number.isInteger(n) && n >= min && n <= 9; }); }
+    if (!board(input.givens, 0) || !board(input.solution, 1) || !Engine.validateComplete(input.solution, context) ||
+        !input.givens.every(function (v, i) { return !v || v === input.solution[i]; })) fail("INVALID_FAVORITE_PUZZLE");
+    var proof = Engine.analyzeSolutions(input.givens, context, { limit: 2, maxNodes: 200000, timeLimitMs: 200 });
+    if (proof.exhausted) fail("FAVORITE_VALIDATION_BUDGET");
+    if (proof.count !== 1 || !proof.solution || proof.solution.some(function (v, i) { return v !== input.solution[i]; })) fail("FAVORITE_NOT_UNIQUE");
+    return { version: VERSION, mode: input.mode, difficulty: input.difficulty, givens: input.givens.slice(), solution: input.solution.slice(), clues: copy(clues) };
+  }
+  function validateEnvelope(value) {
+    keys(value, ["version", "records"]);
+    if (value.version !== VERSION) fail("UNSUPPORTED_FAVORITES_VERSION");
+    if (!Array.isArray(value.records) || value.records.length > LIMITS.records) fail("FAVORITES_LIMIT");
+    if (JSON.stringify(value).length * 2 > LIMITS.bytes) fail("FAVORITES_SIZE_LIMIT");
+    var ids = new Set(), content = new Set(), started = Date.now();
+    var records = value.records.map(function (record) {
+      if (Date.now() - started > 8000) fail("FAVORITES_VALIDATION_TIMEOUT");
+      keys(record, ["id", "puzzle", "createdAt", "updatedAt", "later", "completed", "sessionIds"]);
+      if (typeof record.id !== "string" || !/^fav-[a-zA-Z0-9_-]{1,90}$/.test(record.id) || ids.has(record.id) ||
+          !timestamp(record.createdAt) || !timestamp(record.updatedAt) || record.updatedAt < record.createdAt ||
+          typeof record.later !== "boolean" || typeof record.completed !== "boolean" ||
+          !Array.isArray(record.sessionIds) || record.sessionIds.length > LIMITS.sessions ||
+          !record.sessionIds.every(sessionId) || new Set(record.sessionIds).size !== record.sessionIds.length) fail("INVALID_FAVORITE_RECORD");
+      keys(record.puzzle, ["version", "mode", "difficulty", "givens", "solution", "clues"]);
+      if (record.puzzle.version !== VERSION) fail("UNSUPPORTED_FAVORITE_PUZZLE_VERSION");
+      var puzzle = freezePuzzle(record.puzzle);
+      if (Date.now() - started > 8000) fail("FAVORITES_VALIDATION_TIMEOUT");
+      if (stable(record.puzzle.clues) !== stable(puzzle.clues)) fail("INVALID_FAVORITE_CLUES");
+      var key = puzzleKey(puzzle); if (content.has(key)) fail("DUPLICATE_FAVORITE_PUZZLE");
+      ids.add(record.id); content.add(key);
+      return { id: record.id, puzzle: puzzle, createdAt: record.createdAt, updatedAt: record.updatedAt,
+        later: record.later, completed: record.completed, sessionIds: record.sessionIds.slice() };
+    });
+    return { version: VERSION, records: records };
+  }
+  async function validateEnvelopeAsync(value) {
+    keys(value, ["version", "records"]);
+    if (value.version !== VERSION) fail("UNSUPPORTED_FAVORITES_VERSION");
+    if (!Array.isArray(value.records) || value.records.length > LIMITS.records) fail("FAVORITES_LIMIT");
+    if (JSON.stringify(value).length * 2 > LIMITS.bytes) fail("FAVORITES_SIZE_LIMIT");
+    var started = Date.now(), records = [], ids = new Set(), content = new Set();
+    for (var i = 0; i < value.records.length; i++) {
+      await new Promise(function (resolve) { setTimeout(resolve, 0); });
+      if (Date.now() - started > 8000) fail("FAVORITES_VALIDATION_TIMEOUT");
+      var record = validateEnvelope({ version: VERSION, records: [value.records[i]] }).records[0];
+      if (Date.now() - started > 8000) fail("FAVORITES_VALIDATION_TIMEOUT");
+      var key = puzzleKey(record.puzzle);
+      if (ids.has(record.id)) fail("INVALID_FAVORITE_RECORD");
+      if (content.has(key)) fail("DUPLICATE_FAVORITE_PUZZLE");
+      ids.add(record.id); content.add(key); records.push(record);
+    }
+    return { version: VERSION, records: records };
+  }
+  function samePuzzle(a, b) {
+    try { return puzzleKey(a) === puzzleKey(b); } catch (error) { return false; }
+  }
+  function createStore(storage, options) {
+    options = options || {};
+    var now = typeof options.now === "function" ? options.now : Date.now;
+    if (!storage || typeof storage.getItem !== "function" || typeof storage.setItem !== "function") fail("FAVORITES_STORAGE_UNAVAILABLE");
+    var records = [], loadedRaw = null, sequence = 0;
+    function reload() {
+      var raw = storage.getItem(KEY), envelope;
+      if (raw !== null && typeof raw !== "string") fail("INVALID_FAVORITES_STORAGE");
+      if (raw !== null) {
+        if (raw.length * 2 > LIMITS.bytes) fail("FAVORITES_SIZE_LIMIT");
+        try { envelope = JSON.parse(raw); } catch (error) { fail("INVALID_FAVORITES_JSON"); }
+        envelope = validateEnvelope(envelope);
+      } else envelope = { version: VERSION, records: [] };
+      records = envelope.records; loadedRaw = raw; return list();
+    }
+    function commit(next) {
+      if (next.length > LIMITS.records) fail("FAVORITES_LIMIT");
+      var text = JSON.stringify({ version: VERSION, records: next });
+      if (text.length * 2 > LIMITS.bytes) fail("FAVORITES_SIZE_LIMIT");
+      if (storage.getItem(KEY) !== loadedRaw) fail("FAVORITES_CHANGED_IN_OTHER_WINDOW");
+      // Web Storage setItem is atomic on failure; do not advance memory until it succeeds.
+      storage.setItem(KEY, text); records = next; loadedRaw = text;
+    }
+    function get(id) { var record = records.find(function (r) { return r.id === id; }); return record ? copy(record) : null; }
+    function find(puzzle) {
+      var key = puzzleKey(puzzle), record = records.find(function (r) { return puzzleKey(r.puzzle) === key; });
+      return record ? copy(record) : null;
+    }
+    function list(filter) {
+      filter = filter || {};
+      return records.filter(function (r) {
+        return (!filter.mode || filter.mode === "all" || r.puzzle.mode === filter.mode) &&
+          (!filter.status || filter.status === "all" || filter.status === "later" && r.later ||
+          filter.status === "completed" && r.completed || filter.status === "unfinished" && !r.completed);
+      }).sort(function (a, b) { return b.updatedAt - a.updatedAt; }).map(copy);
+    }
+    function time(previous) { var value = Math.floor(now()); if (!timestamp(value)) fail("INVALID_FAVORITE_TIMESTAMP"); return Math.max(value, previous || 1); }
+    function attach(record, id) {
+      if (id === undefined || id === null) return;
+      if (!sessionId(id)) fail("INVALID_FAVORITE_SESSION");
+      record.sessionIds = record.sessionIds.filter(function (v) { return v !== id; }).concat(id).slice(-LIMITS.sessions);
+    }
+    function add(puzzle, flags) {
+      flags = flags || {};
+      if (flags.later !== undefined && typeof flags.later !== "boolean" || flags.completed !== undefined && typeof flags.completed !== "boolean") fail("INVALID_FAVORITE_FLAGS");
+      var frozen = freezePuzzle(puzzle), existing = find(frozen), stamp = time(existing && existing.updatedAt), next = records.map(copy), record;
+      if (existing) record = next.find(function (r) { return r.id === existing.id; });
+      else {
+        var id;
+        do { id = "fav-" + stamp.toString(36) + "-" + (++sequence).toString(36) + "-" + Math.random().toString(36).slice(2, 10); } while (next.some(function (r) { return r.id === id; }));
+        record = { id: id, puzzle: frozen, createdAt: stamp, updatedAt: stamp, later: false, completed: false, sessionIds: [] }; next.push(record);
+      }
+      if (flags.later !== undefined) record.later = flags.later;
+      if (flags.completed === true) record.completed = true;
+      attach(record, flags.sessionId); record.updatedAt = stamp; commit(next); return copy(record);
+    }
+    function update(id, action) {
+      var next = records.map(copy), record = next.find(function (r) { return r.id === id; });
+      if (!record) return null;
+      action(record); record.updatedAt = time(record.updatedAt); commit(next); return copy(record);
+    }
+    function remove(id) { if (!get(id)) return false; commit(records.filter(function (r) { return r.id !== id; })); return true; }
+    function setLater(id, later) { if (typeof later !== "boolean") fail("INVALID_FAVORITE_FLAGS"); return update(id, function (r) { r.later = later; }); }
+    function linkSession(puzzle, id) { var r = find(puzzle); return r ? update(r.id, function (next) { attach(next, id); }) : null; }
+    function markCompleted(puzzle, id) { var r = find(puzzle); return r ? update(r.id, function (next) { next.completed = true; attach(next, id); }) : null; }
+    reload();
+    return { add: add, remove: remove, setLater: setLater, markCompleted: markCompleted, linkSession: linkSession,
+      find: find, get: get, list: list, reload: reload, exportData: function () { return { version: VERSION, records: records.map(copy) }; } };
+  }
+  return { key: KEY, version: VERSION, limits: copy(LIMITS), createStore: createStore,
+    freezePuzzle: freezePuzzle, puzzleKey: puzzleKey, samePuzzle: samePuzzle, validateEnvelope: validateEnvelope, validateEnvelopeAsync: validateEnvelopeAsync };
+});
+
+</script><script>
+/* Versioned offline player-data backups. Product versions never gate save-schema migration. */
+(function(root,factory){
+ if(typeof module==='object'&&module.exports) module.exports=factory(require('./engine.js'),require('./daily.js'),require('./voyage.js'),function(){return require('./favorites.js');});
+ else root.NineRealmsBackup=factory(root.SudokuEngine,root.SudokuDaily,root.SudokuVoyage,function(){return root.NineRealmsFavorites;});
+})(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites){
+ 'use strict';
+ var KEYS=['nine-realms.sudoku.v1','nine-realms.history.v1','nine-realms.secrets.v1','nine-realms.daily.v1','nine-realms.voyage.v1','nine-realms.puzzle-deck.v1','nine-realms.generated-recent.v1','nine-realms.favorites.v1'];
+ var JOURNAL='nine-realms.backup-rollback.v1',MAX=4*1024*1024,trusted=new WeakSet();
+ function fail(message,code){var e=new Error(message);e.code=code||'INVALID_BACKUP';throw e;}
+ function assert(value,message){if(!value)fail(message);}
+ function object(x){return x&&typeof x==='object'&&!Array.isArray(x);}
+ function keys(x,allowed){assert(object(x),'对象格式无效');assert(Object.keys(x).every(function(k){return allowed.indexOf(k)>=0;}),'包含未知字段');}
+ function integer(x,max){return Number.isInteger(x)&&x>=0&&x<=max;}
+ function number(x,max){return Number.isFinite(x)&&x>=0&&x<=max;}
+ function id(x){return typeof x==='string'&&/^[a-zA-Z0-9_-]{1,96}$/.test(x);}
+ function clone(x){return JSON.parse(JSON.stringify(x));}
+ function stable(x){if(Array.isArray(x))return '['+x.map(stable).join(',')+']';if(object(x))return '{'+Object.keys(x).sort().map(function(k){return JSON.stringify(k)+':'+stable(x[k]);}).join(',')+'}';return JSON.stringify(x);}
+ function safe(x,depth){assert(depth<=32,'数据嵌套过深');if(typeof x==='number')assert(Number.isFinite(x),'数字无效');if(x&&typeof x==='object'){Object.keys(x).forEach(function(k){assert(['__proto__','prototype','constructor'].indexOf(k)<0,'危险字段');safe(x[k],depth+1);});}}
+ function board(a,n,max,min){return Array.isArray(a)&&a.length===n&&a.every(function(v){return integer(v,max)&&v>=(min||0);});}
+ function frame(x,givens){assert(object(x)&&board(x.board,givens.length,9)&&board(x.notes,givens.length,511),'棋盘或笔记无效');assert(givens.every(function(v,i){return (!v||x.board[i]===v)&&(!x.board[i]||!x.notes[i]);}),'给定数或笔记不一致');if(x.selected!==undefined)assert(integer(x.selected,givens.length-1),'选中格无效');if(x.noteMode!==undefined)assert(typeof x.noteMode==='boolean','笔记状态无效');}
+ function stats(x){assert(object(x)&&number(x.elapsedMs,1e12)&&integer(x.mistakes,1e9)&&integer(x.hints,1e9),'计时或成绩无效');}
+ function makeValidator(queue,deadline){
+  var cache=new Set();deadline=deadline||Date.now()+8000;
+  function puzzle(g,version){
+   var mode=version===1?'classic':g.mode,difficulty=g.difficulty==='expert'?'master':g.difficulty;
+   assert(Engine.getModes().some(function(m){return m.id===mode;}),'未知玩法');assert(Engine.getDifficulties(mode).some(function(d){return d.id===difficulty;}),'未知难度');
+   var clues=Engine.normalizeClues(mode,g.clues),context={mode:mode,clues:clues},n=Engine.getLayout(context).cellCount;
+   if(g.clues!==undefined)assert(stable(clues)===stable(g.clues),'规则线索格式无效');
+   assert(board(g.givens,n,9)&&board(g.solution,n,9,1),'题目尺寸或数字无效');
+   assert(Engine.validateComplete(g.solution,context)&&g.givens.every(function(v,i){return !v||v===g.solution[i];}),'题目答案不符合规则');
+   var key=stable([mode,g.givens,clues,g.solution]);if(!cache.has(key)){
+    assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');
+    var prove=function(){assert(Date.now()<deadline,'验证预算已用完');var proof=Engine.analyzeSolutions(g.givens,context,{limit:2,maxNodes:250000,timeLimitMs:100});
+    assert(proof.count===1&&!proof.exhausted&&stable(proof.solution)===stable(g.solution),'题目未能在预算内证明唯一解');};
+    if(queue)queue.push(prove);else prove();cache.add(key);
+   }
+   return {mode:mode,difficulty:difficulty,context:context,n:n};
+  }
+  function snapshot(s,history){
+   keys(s,['version','preferences','game']);assert(integer(s.version,8)&&s.version>=1,'不支持此存档格式版本');assert(object(s.game),'缺少棋局');
+   if(s.preferences!==undefined){
+    var p=s.preferences;keys(p,['theme','fx','errorCheck','fog','sound','focus','zen','zenMotion','intensity']);
+    Object.keys(p).forEach(function(k){if(k==='theme')assert(['nebula','aurora','ember','ivory','ocean','sakura','firefly','sunset'].indexOf(p[k])>=0,'主题无效');else if(k==='intensity')assert(['cinematic','balanced','soft'].indexOf(p[k])>=0,'画质无效');else assert(typeof p[k]==='boolean','设置无效');});
+   }
+   var g=s.game;keys(g,['generation','sessionId','createdAt','puzzleId','sourceId','difficulty','mode','clues','givens','solution','board','notes','history','selected','mistakes','hints','elapsedMs','started','paused','completed','branch','voyageId','dailyDate','fog','fogSeen','energy','noteMode']);
+   var info=puzzle(g,s.version);frame(g,g.givens);stats(g);
+   if(history||g.sessionId!==undefined)assert(id(g.sessionId),'棋局标识无效');
+   ['started','paused','completed','fog','noteMode'].forEach(function(k){if(g[k]!==undefined)assert(typeof g[k]==='boolean','棋局状态无效');});
+   if(g.createdAt!==undefined)assert(number(g.createdAt,1e15),'创建时间无效');
+   ['sourceId','puzzleId'].forEach(function(k){if(g[k]!==undefined&&g[k]!==null)assert(typeof g[k]==='string'&&g[k].length<=512,'来源标识无效');});
+   if(g.completed)assert(g.board.every(function(v,i){return v===g.solution[i];})&&!g.branch,'完成状态与棋盘不符');
+   if(g.history!==undefined){assert(Array.isArray(g.history)&&g.history.length<=80,'撤销记录过多');g.history.forEach(function(h){keys(h,['board','notes','selected','noteMode']);frame(h,g.givens);});}
+   if(g.branch){keys(g.branch,['board','notes','selected','noteMode','history','mistakes']);frame(g.branch,g.givens);assert(integer(g.branch.mistakes,1e9)&&Array.isArray(g.branch.history)&&g.branch.history.length<=80,'假设记录无效');g.branch.history.forEach(function(h){keys(h,['board','notes','selected','noteMode']);frame(h,g.givens);});}
+   if(g.fogSeen!==undefined)assert(Array.isArray(g.fogSeen)&&g.fogSeen.length===info.n&&g.fogSeen.every(function(v){return typeof v==='boolean';}),'迷雾记录无效');
+   if(g.energy!==undefined){var e=g.energy;keys(e,['points','combo','best','claimed','units']);assert(integer(e.points,50000)&&integer(e.combo,info.n)&&integer(e.best,info.n)&&e.best>=e.combo,'星能记录无效');assert(Array.isArray(e.claimed)&&e.claimed.length===info.n&&e.claimed.every(function(v){return typeof v==='boolean';}),'星能格无效');assert(Array.isArray(e.units)&&new Set(e.units).size===e.units.length&&e.units.every(function(u){return integer(u,Engine.getUnits(info.context).length-1);}),'星能区域无效');}
+   if(g.generation){keys(g.generation,['version','seed','kind','difficultyBasis','fingerprint','givenCount','target','unique','checks','nodes','rejectedByBudget']);assert(g.generation.version===1&&g.generation.kind==='carved'&&g.generation.difficultyBasis==='clue-density'&&typeof g.generation.seed==='string'&&g.generation.seed.length<=256&&/^[a-f0-9]{32}$/.test(g.generation.fingerprint)&&g.generation.givenCount===g.givens.filter(Boolean).length,'生成来源无效');}
+   if(g.dailyDate)assert(Daily.matchesPuzzle(g.dailyDate,g.givens,info.mode,info.difficulty,g.clues),'每日题目不匹配');
+   if(g.voyageId)assert(Voyage.matchesPuzzle(g.voyageId,g.givens,info.mode,info.difficulty,g.clues),'旅程题目不匹配');
+   return s;
+  }
+  function history(h){
+   assert(JSON.stringify(h).length*2<=3*1024*1024,'历史超出应用容量，导入会丢失记录');
+   keys(h,['version','currentId','removedRecords','records']);assert(h.version===1&&integer(h.removedRecords,1e9)&&Array.isArray(h.records)&&h.records.length<=40,'历史格式无效');var ids=new Set();
+   h.records.forEach(function(r){
+    keys(r,['sessionId','createdAt','updatedAt','origin','snapshot','base','steps','droppedSteps','replayRecovered']);snapshot(r.snapshot,true);var g=r.snapshot.game;
+    assert(id(r.sessionId)&&r.sessionId===g.sessionId&&!ids.has(r.sessionId),'重复历史标识');ids.add(r.sessionId);
+    assert(number(r.createdAt,1e15)&&number(r.updatedAt,1e15)&&r.updatedAt>=r.createdAt&&['new','legacy'].indexOf(r.origin)>=0&&integer(r.droppedSteps,1e9),'历史元数据无效');
+    if(r.replayRecovered!==undefined)assert(typeof r.replayRecovered==='boolean','回放修复标记无效');
+    var f=clone(r.base);keys(f,['board','notes','selected','noteMode','branch','elapsedMs','mistakes','hints','completed']);frame(f,g.givens);stats(f);
+    ['noteMode','branch','completed'].forEach(function(k){assert(typeof f[k]==='boolean','回放状态无效');});
+    if(f.completed)assert(!f.branch&&f.board.every(function(v,i){return v===g.solution[i];}),'回放完成状态无效');
+    assert(Array.isArray(r.steps)&&r.steps.length<=3000,'回放步骤过多');
+    r.steps.forEach(function(step){
+     keys(step,['action','changes','selected','noteMode','branch','elapsedMs','mistakes','hints','completed']);assert(typeof step.action==='string'&&step.action.length<=60&&Array.isArray(step.changes)&&step.changes.length<=g.givens.length,'回放步骤无效');stats(step);assert(integer(step.selected,g.givens.length-1),'回放选中格无效');
+     ['noteMode','branch','completed'].forEach(function(k){assert(typeof step[k]==='boolean','回放标记无效');});var touched=new Set();
+     step.changes.forEach(function(c){assert(Array.isArray(c)&&c.length===3&&integer(c[0],g.givens.length-1)&&integer(c[1],9)&&integer(c[2],511)&&!touched.has(c[0]),'回放变更无效');touched.add(c[0]);f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});
+     ['selected','noteMode','branch','elapsedMs','mistakes','hints','completed'].forEach(function(k){f[k]=step[k];});frame(f,g.givens);if(f.completed)assert(!f.branch&&f.board.every(function(v,i){return v===g.solution[i];}),'回放完成状态无效');
+    });
+    assert(stable(f.board)===stable(g.board)&&stable(f.notes)===stable(g.notes)&&f.branch===Boolean(g.branch)&&f.completed===Boolean(g.completed)&&f.mistakes===g.mistakes&&f.hints===g.hints,'回放终点与存档不符');
+   });
+   assert(h.currentId===null||ids.has(h.currentId),'当前历史标识无效');
+  }
+  return {snapshot:snapshot,history:history};
+ }
+ function validateCore(input,queue,deadline){
+  var text=typeof input==='string'?input:JSON.stringify(input);assert(typeof text==='string'&&text.length<=MAX,'备份文件过大');var b;try{b=JSON.parse(text);}catch(e){fail('不是有效的 JSON 备份');}safe(b,0);
+  keys(b,['format','schemaVersion','appVersion','createdAt','entries']);assert(b.format==='nine-realms-backup'&&b.schemaVersion===1,'不支持此备份格式版本');assert(typeof b.appVersion==='string'&&/^\d+\.\d+\.\d+$/.test(b.appVersion)&&typeof b.createdAt==='string'&&Number.isFinite(Date.parse(b.createdAt)),'备份元数据无效');
+  keys(b.entries,KEYS);assert(KEYS.every(function(k){return Object.prototype.hasOwnProperty.call(b.entries,k);}), '备份不完整');var v=makeValidator(queue,deadline);
+  KEYS.forEach(function(k){var x=b.entries[k];if(x===null)return;
+   if(k===KEYS[0])v.snapshot(x,false);
+   else if(k===KEYS[1])v.history(x);
+   else if(k===KEYS[2]){keys(x,['version','found']);assert(x.version===1&&Array.isArray(x.found)&&new Set(x.found).size===x.found.length&&x.found.every(function(id){return ['gate','visitor','lotus','constellation','gravity','rain','crane'].indexOf(id)>=0;}),'彩蛋记录无效');}
+   else if(k===KEYS[3])assert(stable(Daily.normalizeRecords(x))===stable(x),'每日成绩无效');
+   else if(k===KEYS[4])assert(stable(Voyage.normalizeProgress(x))===stable(x),'旅程成绩无效');
+   else if(k===KEYS[5]){keys(x,['version','seen']);assert(x.version===1&&object(x.seen),'轮换格式无效');var pools={};Engine.getPuzzleCatalog().forEach(function(p){var key=p.mode+'/'+p.difficulty;(pools[key]||(pools[key]=new Set())).add(p.id);});Object.keys(x.seen).forEach(function(key){var ids=x.seen[key];assert(pools[key]&&Array.isArray(ids)&&ids.length<=pools[key].size&&new Set(ids).size===ids.length&&ids.every(function(id){return pools[key].has(id);}), '轮换来源无效');});}
+   else if(k===KEYS[6])assert(Array.isArray(x)&&x.length<=256&&new Set(x).size===x.length&&x.every(function(s){return typeof s==='string'&&/^[a-f0-9]{32}$/.test(s);}), '生成去重记录无效');
+   else {var F=favorites();assert(F&&typeof F.validateEnvelope==='function','收藏验证器未加载');if(queue)queue.push(function(){assert(typeof F.validateEnvelopeAsync==='function','异步收藏验证器未加载');return F.validateEnvelopeAsync(x,{deadline:deadline});});else F.validateEnvelope(x);}
+  });return b;
+ }
+ function mark(b){function freeze(x){if(x&&typeof x==='object'){Object.keys(x).forEach(function(k){freeze(x[k]);});Object.freeze(x);}}freeze(b);trusted.add(b);return b;}
+ function validate(input){if(input&&typeof input==='object'&&trusted.has(input))return input;return mark(validateCore(input));}
+ async function validateAsync(input){
+  if(input&&typeof input==='object'&&trusted.has(input))return input;
+  var queue=[],deadline=Date.now()+8000,b=validateCore(input,queue,deadline);
+  for(var i=0;i<queue.length;i++){await new Promise(function(resolve){setTimeout(resolve,0);});assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');await queue[i]();}
+  assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');return mark(b);
+ }
+ function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.0.0',createdAt:new Date().toISOString(),entries:entries};}
+ function create(storage,options){return validate(draft(storage,options));}
+ function createAsync(storage,options){return validateAsync(draft(storage,options));}
+ function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Object.keys(e[KEYS[3]]||{}).length,voyageCount:Object.keys(e[KEYS[4]]||{}).length};}
+ function rawJournal(text){assert(typeof text==='string'&&text.length<=MAX*2,'恢复日志过大');var j=JSON.parse(text);keys(j,['format','version','previous']);assert(j.format==='nine-realms-rollback'&&j.version===1,'恢复日志格式无效');keys(j.previous,KEYS);assert(KEYS.every(function(k){return Object.prototype.hasOwnProperty.call(j.previous,k)&&(j.previous[k]===null||typeof j.previous[k]==='string');}),'恢复日志不完整');return j;}
+ function restoreRaw(storage,previous){KEYS.forEach(function(k){storage.removeItem(k);});KEYS.forEach(function(k){if(previous[k]!==null)storage.setItem(k,previous[k]);});assert(stable(read(storage))===stable(previous),'原数据恢复校验失败');storage.removeItem(JOURNAL);}
+ function recoveryError(error,text){var e=new Error('存储恢复尚未完成。请勿继续游戏；保留恢复文件后重试。');e.code='RECOVERY_REQUIRED';e.recoveryRequired=true;e.previousBackup=text;e.cause=error;return e;}
+ function recover(storage){var text=storage.getItem(JOURNAL);if(text===null)return {recovered:false};try{var j=rawJournal(text);restoreRaw(storage,j.previous);return {recovered:true};}catch(e){throw recoveryError(e,text);}}
+ function replace(storage,input){var b=validate(input);recover(storage);var previous=read(storage),journal=JSON.stringify({format:'nine-realms-rollback',version:1,previous:previous});
+  try{storage.setItem(JOURNAL,journal);assert(storage.getItem(JOURNAL)===journal,'恢复日志写入验证失败');}catch(error){var e=new Error('空间或权限不足，无法安全保存回滚记录；原有进度未替换。');e.code='BACKUP_STAGING_FAILED';e.cause=error;throw e;}
+  if(stable(read(storage))!==stable(previous)){storage.removeItem(JOURNAL);fail('其他页面修改了进度，请关闭其他游戏页面后重试','CONCURRENT_CHANGE');}
+  try{
+   KEYS.forEach(function(k){storage.removeItem(k);});KEYS.forEach(function(k){if(b.entries[k]!==null)storage.setItem(k,JSON.stringify(b.entries[k]));});
+   KEYS.forEach(function(k){assert(storage.getItem(k)===(b.entries[k]===null?null:JSON.stringify(b.entries[k])),'写入校验失败');});storage.removeItem(JOURNAL);return {replaced:true};
+  }catch(error){try{restoreRaw(storage,previous);}catch(rollbackError){throw recoveryError(rollbackError,journal);}var e=new Error('导入未完成，原有进度已恢复。');e.code='IMPORT_ROLLED_BACK';e.cause=error;throw e;}
+ }
+ return {keys:KEYS.slice(),journalKey:JOURNAL,limits:{maxBytes:8*1024*1024,maxChars:MAX},create:create,createAsync:createAsync,validate:validate,validateAsync:validateAsync,preview:preview,replace:replace,recover:recover};
+});
+
+</script><script>
+/* My puzzles and backup dialogs. Game/session operations are supplied by the controller. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory;else root.NineRealmsPersonal=factory;})(typeof globalThis!=='undefined'?globalThis:this,function(options){
+ 'use strict';
+ var doc=options.document||document,$=function(id){return doc.getElementById(id);};
+ var store=options.store,pending=null,epoch=0,busy=false;
+ function message(id,text){$(id).textContent=text;}
+ function button(text,action){var b=doc.createElement('button');b.type='button';b.className='secondary-btn';b.textContent=text;b.addEventListener('click',action);return b;}
+ function report(error){
+  var code=error&&error.code||error&&error.message;
+  var names={FAVORITES_LIMIT:'收藏已达到200题上限，请先取消一些收藏。',FAVORITES_SIZE_LIMIT:'收藏容量已满，请先取消一些收藏。',FAVORITES_CHANGED_IN_OTHER_WINDOW:'收藏已在其他窗口修改，请重新打开游戏后再试。',FAVORITE_NOT_UNIQUE:'当前题面未能完成唯一性验证，未写入收藏。'};
+  message('personal-status',names[code]||'操作未完成，原有收藏已保留。请检查本机存储权限或空间后重试。');
+ }
+ function refreshCurrent(){var current=options.current(),found=store&&current?store.find(current):null;var b=$('favorite-current');b.disabled=!store||!current||Boolean(found);b.textContent=found?'当前题目已收藏':'收藏当前题目';}
+ function render(){
+  var active=doc.activeElement,prior=active&&active.closest&&active.closest('.personal-card');
+  var restoreId=prior&&prior.dataset.recordId,restoreAction=active&&active.dataset&&active.dataset.action;
+  refreshCurrent();var list=$('personal-list');list.replaceChildren();
+  if(!store){message('personal-status','收藏数据暂时无法读取，原数据未被覆盖。可以使用数据备份恢复。');return;}
+  var records=store.list({mode:$('personal-mode').value||undefined,status:$('personal-filter').value});
+  message('personal-count',records.length+' 道题目');
+  if(!records.length){var empty=doc.createElement('p');empty.className='personal-empty';empty.textContent='这里还没有题目。收藏当前棋局，或试试其他筛选。';list.appendChild(empty);}
+  records.forEach(function(record){
+   var card=doc.createElement('article');card.className='personal-card';card.dataset.recordId=record.id;
+   var heading=doc.createElement('h3'),mode=options.modes.find(function(m){return m.id===record.puzzle.mode;});heading.textContent=(mode?mode.label:record.puzzle.mode)+' · '+record.id;card.appendChild(heading);
+   var detail=doc.createElement('p');detail.textContent=record.puzzle.givens.filter(Boolean).length+' 个给定数 · '+(record.completed?'已完成':'未完成')+(record.later?' · 稍后再玩':'');card.appendChild(detail);
+   var actions=doc.createElement('div');actions.className='personal-card-actions';
+   var available=options.resumeAvailable(record);
+   var resume=button('继续',async function(){try{await options.play(record,false);}catch(e){report(e);}});resume.disabled=!available;resume.title=available?'继续最近的未完成棋局':'没有保留的未完成会话，可重新挑战';actions.appendChild(resume);
+   actions.appendChild(button('重新挑战',async function(){try{await options.play(record,true);}catch(e){report(e);}}));
+   var later=button(record.later?'取消稍后':'稍后再玩',function(){try{store.setLater(record.id,!record.later);render();}catch(e){report(e);}});later.setAttribute('aria-pressed',String(record.later));actions.appendChild(later);
+   actions.appendChild(button('历史',function(){options.history(record);}));
+   actions.appendChild(button('取消收藏',function(){try{store.remove(record.id);render();message('personal-status','已取消收藏，棋局历史和当前进度不受影响。');}catch(e){report(e);}}));
+   Array.from(actions.children).forEach(function(b,index){b.dataset.action=String(index);});
+   card.appendChild(actions);list.appendChild(card);
+  });
+  if(restoreId){var same=Array.from(list.querySelectorAll('.personal-card')).find(function(c){return c.dataset.recordId===restoreId;});var target=same&&same.querySelector('[data-action="'+restoreAction+'"]');(target||list.querySelector('button:not(:disabled)')||$('personal-filter')).focus();}
+ }
+ options.modes.forEach(function(m){var op=doc.createElement('option');op.value=m.id;op.textContent=m.label;$('personal-mode').appendChild(op);});
+ $('personal-open').addEventListener('click',function(){if(options.blocked())return;options.open($('personal-dialog'));options.save();message('personal-status','');render();});
+ $('personal-close').addEventListener('click',function(){options.close($('personal-dialog'));});
+ $('personal-dialog').addEventListener('close',options.afterClose);
+ ['personal-mode','personal-filter'].forEach(function(id){$(id).addEventListener('change',render);});
+ $('favorite-current').addEventListener('click',function(){try{var current=options.current();store.add(current,{sessionId:current.sessionId,completed:current.completed,later:false});render();var target=$('personal-list').querySelector('button:not(:disabled)');(target||$('personal-filter')).focus();message('personal-status','已收藏实际题面和完整线索，不依赖随机种子重建。');}catch(e){report(e);}});
+ function resetImport(){epoch++;pending=null;$('backup-replace').disabled=true;$('backup-confirm').checked=false;$('backup-preview').textContent='';}
+ $('backup-open').addEventListener('click',function(){if(options.blocked())return;options.open($('backup-dialog'));resetImport();message('backup-status','');});
+ $('backup-close').addEventListener('click',function(){if(!busy&&!options.locked())options.close($('backup-dialog'));});
+ $('backup-dialog').addEventListener('cancel',function(event){if(busy||options.locked())event.preventDefault();});
+ $('backup-dialog').addEventListener('close',function(){resetImport();options.afterClose();});
+ $('backup-export').addEventListener('click',async function(){try{await options.exportBackup();message('backup-status','备份文件已准备下载，请保存到安全位置。');}catch(e){message('backup-status',e.message);}});
+ $('backup-file').addEventListener('change',async function(){
+  resetImport();var request=epoch,file=this.files&&this.files[0];if(!file)return;
+  if(file.size>options.maxBackupBytes){message('backup-status','文件过大，请选择九境导出的备份文件。');return;}
+  busy=true;$('backup-file').disabled=true;$('backup-confirm').disabled=true;message('backup-status','正在检查备份内容，不会修改当前数据……');
+  try{var result=await options.prepareBackup(await file.text());if(request!==epoch)return;pending=result.validated;message('backup-preview',result.summary);message('backup-status','校验通过。确认下方说明后，才能替换本机进度。');}
+  catch(e){message('backup-status',e.message||'备份校验失败，当前数据未改变。');}
+  finally{busy=false;$('backup-file').disabled=false;$('backup-confirm').disabled=false;$('backup-replace').disabled=!pending||!$('backup-confirm').checked;$('backup-file').value='';}
+ });
+ $('backup-confirm').addEventListener('change',function(){$('backup-replace').disabled=!pending||!this.checked||busy;});
+ $('backup-replace').addEventListener('click',async function(){
+  if(!pending||!$('backup-confirm').checked||busy)return;busy=true;$('backup-replace').disabled=true;message('backup-status','正在替换数据，完成后自动重新载入……');
+  try{await options.commitBackup(pending);}
+  catch(e){message('backup-status',e.message||'导入未完成。');if(e.recoveryRequired){message('backup-status',e.message+' 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。');['backup-file','backup-export','backup-confirm'].forEach(function(id){$(id).disabled=true;});$('backup-recovery').hidden=false;$('backup-recovery').onclick=function(){options.downloadRecovery(e.previousBackup);};}}
+  finally{busy=false;if(!options.locked())$('backup-replace').disabled=!pending||!$('backup-confirm').checked;}
+ });
+ return {refreshCurrent:refreshCurrent,render:render};
+});
+
+</script><script>
+/* Shared, offline select presentation. Native selects remain the state/event source. */
+(function (global) {
+ 'use strict';
+ var records=[], active=null, sequence=0, scheduled=false;
+ var selector='select:not([multiple])';
+ function labelFor(select){
+  if(select.getAttribute('aria-label'))return select.getAttribute('aria-label');
+  return Array.from(select.labels||[]).map(function(label){var copy=label.cloneNode(true);copy.querySelectorAll('select,.glass-select').forEach(function(n){n.remove();});return copy.textContent.trim();}).join(' ')||'选择';
+ }
+ function close(record,focus){
+  if(!record)return;
+  if(record.popoverOpen){try{record.panel.hidePopover();}catch(_){}record.popoverOpen=false;}
+  record.panel.hidden=true;record.button.setAttribute('aria-expanded','false');record.button.removeAttribute('aria-activedescendant');
+  if(active===record)active=null;
+  if(focus&&!record.button.disabled)record.button.focus();
+ }
+ function available(record){return Array.from(record.select.options).map(function(o,i){return !o.disabled&&!o.hidden&&!(o.parentElement.tagName==='OPTGROUP'&&o.parentElement.disabled)?i:-1;}).filter(function(i){return i>=0;});}
+ function highlight(record,index){
+  record.index=index;
+  Array.from(record.panel.children).forEach(function(node){node.classList.toggle('is-active',Number(node.dataset.index)===index);});
+  var option=record.panel.querySelector('[data-index="'+index+'"]');
+  if(option){record.button.setAttribute('aria-activedescendant',option.id);if(option.scrollIntoView)option.scrollIntoView({block:'nearest'});}
+ }
+ function place(record){
+  var r=record.button.getBoundingClientRect(), vw=global.innerWidth||document.documentElement.clientWidth,vh=global.innerHeight||document.documentElement.clientHeight;
+  var bounds={left:12,right:vw-12,top:12,bottom:vh-12},dialog=record.select.closest('dialog');
+  if(!record.popoverOpen&&dialog){var d=dialog.getBoundingClientRect();bounds={left:Math.max(12,d.left+8),right:Math.min(vw-12,d.right-8),top:Math.max(12,d.top+8),bottom:Math.min(vh-12,d.bottom-8)};}
+  var below=bounds.bottom-r.bottom-6,above=r.top-bounds.top-6,up=below<160&&above>below,space=Math.max(48,Math.min(320,up?above:below));
+  var width=Math.max(48,Math.min(Math.max(r.width,200),bounds.right-bounds.left));
+  record.panel.style.width=width+'px';record.panel.style.maxHeight=space+'px';
+  record.panel.style.left='0px';record.panel.style.top='0px';record.panel.style.bottom='auto';
+  // Fixed positioning may use a filter-containing ancestor in non-popover engines.
+  var origin=record.panel.getBoundingClientRect(),left=Math.max(bounds.left,Math.min(r.left,bounds.right-width));
+  var top=up?r.top-6-Math.min(record.panel.getBoundingClientRect().height,space):r.bottom+6;
+  record.panel.style.left=(left-origin.left)+'px';record.panel.style.top=(top-origin.top)+'px';
+ }
+ function sync(record){
+  var select=record.select,button=record.button,selected=select.options[select.selectedIndex];
+  var text=selected?selected.textContent:'请选择',name=record.label+'：'+text;
+  if(button.textContent!==text)button.textContent=text;
+  if(button.disabled!==select.disabled)button.disabled=select.disabled;
+  if(button.getAttribute('aria-label')!==name)button.setAttribute('aria-label',name);
+  if(record.wrap.hidden!==select.hidden)record.wrap.hidden=select.hidden;
+  var dialog=select.closest('dialog'),details=select.closest('details');
+  if(select.disabled||select.hidden||select.closest('[hidden]')||(dialog&&!dialog.open)||(details&&!details.open))close(record,false);
+  if(active===record){renderOptions(record);place(record);highlight(record,available(record).includes(record.index)?record.index:select.selectedIndex);}
+ }
+ function renderOptions(record){
+  var signature=JSON.stringify([record.select.selectedIndex,Array.from(record.select.options).map(function(o){return [o.textContent,o.value,o.disabled,o.hidden,o.parentElement.tagName==='OPTGROUP'&&o.parentElement.disabled];})]);
+  if(record.signature===signature)return;record.signature=signature;
+  record.panel.replaceChildren();
+  Array.from(record.select.options).forEach(function(option,index){
+   if(option.hidden)return;
+   var item=document.createElement('div');item.id=record.id+'-option-'+index;item.className='glass-select-option';item.dataset.index=String(index);item.setAttribute('role','option');
+   item.setAttribute('aria-selected',String(index===record.select.selectedIndex));item.textContent=option.textContent;
+   var disabled=option.disabled||(option.parentElement.tagName==='OPTGROUP'&&option.parentElement.disabled);item.setAttribute('aria-disabled',String(Boolean(disabled)));
+   item.addEventListener('pointerdown',function(e){e.preventDefault();});
+   item.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(!disabled)choose(record,index);});
+   item.addEventListener('pointermove',function(){if(!disabled)highlight(record,index);});
+   record.panel.appendChild(item);
+  });
+ }
+ function open(record){
+  sync(record);if(record.select.disabled||!available(record).length)return;
+  if(active&&active!==record)close(active,false);
+  active=record;renderOptions(record);record.panel.hidden=false;
+  if(record.panel.showPopover){try{record.panel.showPopover();record.popoverOpen=true;}catch(_){record.panel.removeAttribute('popover');}}
+  place(record);record.button.setAttribute('aria-expanded','true');highlight(record,available(record).includes(record.select.selectedIndex)?record.select.selectedIndex:available(record)[0]);
+ }
+ function choose(record,index){
+  var changed=record.select.selectedIndex!==index;record.select.selectedIndex=index;close(record,true);sync(record);
+  if(changed){record.select.dispatchEvent(new Event('input',{bubbles:true}));record.select.dispatchEvent(new Event('change',{bubbles:true}));syncAll();}
+ }
+ function keydown(record,e){
+  if(e.key==='Escape'&&active!==record)return;
+  e.stopPropagation();
+  if(e.key==='Tab'){close(record,false);return;}
+  if(e.key==='Escape'){if(active===record){e.preventDefault();close(record,true);}return;}
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  var keys=['ArrowDown','ArrowUp','Home','End','Enter',' '];
+  if(keys.includes(e.key)){
+   e.preventDefault();var wasOpen=active===record;
+   if(!wasOpen){open(record);if(e.key==='Enter'||e.key===' ')return;}
+   if(e.key==='Enter'||e.key===' '){choose(record,record.index);return;}
+   var items=available(record),pos=items.indexOf(record.index);
+   if(e.key==='Home')pos=0;else if(e.key==='End')pos=items.length-1;else pos=Math.max(0,Math.min(items.length-1,pos+(e.key==='ArrowDown'?1:-1)));
+   highlight(record,items[pos]);return;
+  }
+  if(e.key.length===1){
+   e.preventDefault();if(active!==record)open(record);
+   var now=Date.now();record.search=(now-record.searchAt<700?record.search:'')+e.key.toLocaleLowerCase();record.searchAt=now;
+   var items=available(record),start=items.indexOf(record.index)+1,match;
+   for(var n=0;n<items.length;n++){var i=items[(start+n)%items.length];if(record.select.options[i].textContent.trim().toLocaleLowerCase().startsWith(record.search)){match=i;break;}}
+   if(match!==undefined)highlight(record,match);
+  }
+ }
+ function enhance(select){
+  if(select.dataset.glassEnhanced||select.size>1)return;
+  var label=labelFor(select),wrap=document.createElement('span'),button=document.createElement('button'),panel=document.createElement('div'),id='glass-select-'+(++sequence);
+  wrap.className='glass-select';wrap.dataset.selectId=select.id;button.type='button';button.className='glass-select-trigger';button.id=id+'-trigger';button.setAttribute('role','combobox');button.setAttribute('aria-haspopup','listbox');button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls',id+'-list');button.setAttribute('aria-autocomplete','none');
+  panel.id=id+'-list';panel.className='glass-select-list';panel.setAttribute('role','listbox');panel.setAttribute('aria-label',label);panel.hidden=true;
+  if(panel.showPopover)panel.setAttribute('popover','manual');
+  var record={select:select,wrap:wrap,button:button,panel:panel,id:id,label:label,index:-1,search:'',searchAt:0};
+  select.before(wrap);wrap.appendChild(button);
+  // Keep the popup inside its dialog/appearance owner, but outside scroll containers.
+  var owner=select.closest('dialog')||select.closest('details')||document.body;owner.appendChild(panel);
+  select.classList.add('glass-select-native');select.setAttribute('aria-hidden','true');select.tabIndex=-1;select.dataset.glassEnhanced='true';
+  select.focus=function(options){button.focus(options);};
+  (select.labels?Array.from(select.labels):[]).forEach(function(l){l.addEventListener('click',function(e){if(e.target===l){e.preventDefault();button.focus();}});});
+  button.addEventListener('click',function(e){e.preventDefault();active===record?close(record,false):open(record);});button.addEventListener('keydown',function(e){keydown(record,e);});
+  select.addEventListener('change',function(){sync(record);});
+  new MutationObserver(function(){sync(record);}).observe(select,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['disabled','hidden','selected','label','value']});
+  records.push(record);sync(record);
+ }
+ function enhanceAll(){document.querySelectorAll(selector).forEach(enhance);}
+ function syncAll(){enhanceAll();records.forEach(function(record){if(record.select.isConnected)sync(record);else close(record,false);});}
+ document.addEventListener('pointerdown',function(e){if(active&&!active.wrap.contains(e.target)&&!active.panel.contains(e.target))close(active,false);},true);
+ document.addEventListener('focusin',function(e){if(active&&!active.wrap.contains(e.target)&&!active.panel.contains(e.target))close(active,false);});
+ document.addEventListener('scroll',function(e){if(active&&!active.panel.contains(e.target))close(active,false);},true);
+ document.addEventListener('toggle',function(e){if(active&&e.target.tagName==='DETAILS'&&!e.target.open&&e.target.contains(active.select))close(active,false);},true);
+ document.addEventListener('close',function(e){if(active&&e.target.contains(active.select))close(active,false);},true);
+ global.addEventListener('resize',function(){if(active)close(active,false);});
+ global.NineRealmsSelect={syncAll:syncAll,enhanceAll:enhanceAll,close:function(){close(active,false);}};
+ new MutationObserver(function(mutations){if(!mutations.some(function(m){return Array.from(m.addedNodes).some(function(n){return n.nodeType===1&&(n.matches(selector)||n.querySelector(selector));});}))return;if(!scheduled){scheduled=true;queueMicrotask(function(){scheduled=false;enhanceAll();});}}).observe(document.documentElement,{childList:true,subtree:true});
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',syncAll);else syncAll();
+})(window);
+
+</script><script>
 /* Nine Realms — local, dependency-free game controller. */
 (function () {
   "use strict";
 
   var Engine = window.SudokuEngine;
+  var Backup = window.NineRealmsBackup;
+  var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
+  var storageTransition = false;
+  // Product release numbering is independent of SAVE_VERSION and storage schema keys.
+  var APP_VERSION = "1.0.0";
+  try { if (Backup) Backup.recover(localStorage); }
+  catch (recoveryError) {
+    if (recoveryError.recoveryRequired) {
+      var recoveryDialog = document.getElementById("backup-dialog");
+      document.getElementById("backup-status").textContent = recoveryError.message+" 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。";
+      ["backup-close", "backup-export", "backup-file", "backup-confirm", "backup-replace"].forEach(function(id){document.getElementById(id).disabled=true;});
+      var recoveryButton=document.getElementById("backup-recovery");recoveryButton.hidden=false;
+      recoveryButton.onclick=function(){downloadPlayerFile(recoveryError.previousBackup,"Nine-Realms-recovery-log.json");};
+      recoveryDialog.addEventListener("cancel",function(event){event.preventDefault();});
+      if(recoveryDialog.showModal)recoveryDialog.showModal();else recoveryDialog.setAttribute("open","");
+      return;
+    }
+  }
+  try { if (Favorites) favoriteStore = Favorites.createStore(localStorage); } catch (favoriteReadError) { /* Preserve corrupt or inaccessible data until explicit recovery. */ }
   var Generator = window.NineRealmsGenerator;
   var generatorClient = Generator ? Generator.createClient() : null;
   var generationEpoch = 0, generatingPuzzle = false;
@@ -16151,11 +16729,11 @@ return api;
 
   function resumeClock() {
     if (game && game.started && runningSince === null && !game.paused && !game.completed &&
-        !generatingPuzzle && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
+        !generatingPuzzle && !storageTransition && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
   }
 
   function save(action) {
-    if (!game) return;
+    if (!game || storageTransition) return false;
     try {
       var snapshot = Object.assign({}, game, { elapsedMs: Math.floor(currentElapsed()), noteMode: noteMode });
       var envelope = { version: SAVE_VERSION, preferences: preferences, game: snapshot };
@@ -16165,11 +16743,14 @@ return api;
         historyOrigin = null;
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+      storageFailed = false;
+      return true;
     } catch (error) {
       if (!storageFailed) {
         storageFailed = true;
         toast("浏览器未允许本地保存，本局仍可正常游玩。");
       }
+      return false;
     }
   }
 
@@ -16305,6 +16886,7 @@ return api;
     });
     if ($("multigrid-tools")) $("multigrid-tools").hidden = !multi;
     if ($("grid-view")) $("grid-view").value = activeBoardId;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("multi-grid-summary")) $("multi-grid-summary").textContent = boardLayout.boards.length + " 个子盘 · " + boardLayout.cellCount + " 格 · " +
       boardLayout.cells.filter(function (cell) { return cell.boards.length > 1; }).length + " 格共享";
   }
@@ -16338,6 +16920,7 @@ return api;
     document.body.dataset.theme = preferences.theme;
     document.body.dataset.intensity = preferences.intensity;
     if ($("scene-intensity")) $("scene-intensity").value = preferences.intensity;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     document.body.dataset.colorScheme = LIGHT_THEMES.indexOf(preferences.theme) >= 0 ? "light" : "dark";
     if ($("theme-current-name")) $("theme-current-name").textContent = THEME_NAMES[preferences.theme];
     document.body.dataset.fx = motionEnabled() ? "on" : "off";
@@ -16413,6 +16996,7 @@ return api;
         select.dataset.mode = game.mode;
       }
       select.value = game.difficulty;
+      if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     }
     if ($("mode-name")) $("mode-name").textContent = info.label;
     if ($("current-mode-label")) $("current-mode-label").textContent = info.label;
@@ -16445,6 +17029,7 @@ return api;
   }
 
   function render() {
+    if (personalUi) personalUi.refreshCurrent();
     if (!game) return;
     if (boardLayoutKey !== game.mode + ':' + game.board.length) buildBoard();
     if (isMulti() && cells[game.selected] && cells[game.selected].hidden) {
@@ -16520,6 +17105,7 @@ return api;
       button.disabled = blocked;
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("timer")) $("timer").textContent = formatTime(currentElapsed());
     if ($("mistakes")) $("mistakes").textContent = String(game.mistakes).padStart(2, "0");
     if ($("progress-count")) $("progress-count").textContent = solved + " / " + editableTotal;
@@ -16592,7 +17178,7 @@ return api;
   }
 
   function canInteract() {
-    return game && game.started && !generatingPuzzle && !game.paused && !game.completed && !dialogIsOpen();
+    return game && game.started && !generatingPuzzle && !storageTransition && !game.paused && !game.completed && !dialogIsOpen();
   }
 
   function selectCell(index, moveFocus) {
@@ -17230,7 +17816,7 @@ return api;
   }
 
   function startGame() {
-    if (!game || generatingPuzzle || game.started || game.completed || dialogIsOpen() || document.hidden) return;
+    if (!game || storageTransition || generatingPuzzle || game.started || game.completed || dialogIsOpen() || document.hidden) return;
     Atmosphere.unlock();
     game.started = true;
     game.paused = false;
@@ -17245,7 +17831,7 @@ return api;
   }
 
   function setPaused(paused) {
-    if (!game || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
+    if (!game || storageTransition || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
     suspendClock();
     game.paused = paused;
     clearPulse();
@@ -17258,6 +17844,7 @@ return api;
   }
 
   function showDialog(element) {
+    if(storageTransition)return;
     if (generatingPuzzle) {
       cancelPuzzleGeneration(); renderModeControls();
       setStatus("已取消后台生成，原有棋局和进度已保留。");
@@ -17404,6 +17991,7 @@ return api;
   }
 
   async function newGame(difficulty, initial, requestedMode) {
+    if(storageTransition)return;
     if (generatingPuzzle) {
       cancelPuzzleGeneration(); renderModeControls(); resumeClock();
       setStatus("已取消生成，原有棋局和进度已保留。"); return;
@@ -17425,6 +18013,7 @@ return api;
         return;
       }
     }
+    if(storageTransition)return;
     try {
       var sourceId = Deck.choose(mode, difficulty, game && game.sourceId);
       var puzzle, fallback = false;
@@ -17558,6 +18147,7 @@ return api;
     suspendClock();
     game.completed = true;
     game.paused = false;
+    try { if (favoriteStore) favoriteStore.markCompleted(game, game.sessionId); } catch (error) { toast("收藏完成状态暂未保存，当前棋局仍会保存在历史中。"); }
     if (game.dailyDate) {
       dailyRecords = Daily.recordCompletion(dailyRecords, game.dailyDate, {
         elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
@@ -17920,6 +18510,15 @@ return api;
     moveOnLayout(direction[0], direction[1]);
   });
 
+  window.addEventListener("storage", function(event) {
+    if(!Backup || event.key!==Backup.journalKey)return;
+    if(event.newValue!==null){
+      cancelPuzzleGeneration();suspendClock();storageTransition=true;if(History)History.suspendPersistence(true);
+      document.body.inert=true;if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.suspendPersistence)window.NineRealmsEasterEggs.suspendPersistence(true);
+      setStatus("另一窗口正在恢复数据，当前窗口已暂停保存。完成后将重新载入。");
+    }else if(storageTransition){window.location.reload();}
+  });
+
   document.addEventListener("visibilitychange", function () {
     document.body.dataset.pageHidden = String(document.hidden);
     if (document.hidden) {
@@ -17958,14 +18557,96 @@ return api;
     clearTransientMarks(); render(); save();
   });
 
+  function downloadPlayerFile(value, filename) {
+    var text = typeof value === "string" ? value : JSON.stringify(value);
+    var url = URL.createObjectURL(new Blob([text], { type: "application/json;charset=utf-8" }));
+    var link = document.createElement("a"); link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},30000);
+  }
+
+  function favoriteSession(record, unfinished) {
+    if (!History || !Favorites) return null;
+    if (game && (!unfinished || !game.completed) && Favorites.samePuzzle(game,record.puzzle)) {
+      return {version:SAVE_VERSION,preferences:preferences,game:Object.assign({},game,{elapsedMs:Math.floor(currentElapsed()),noteMode:noteMode})};
+    }
+    var rows=History.getRecords();
+    for(var i=0;i<rows.length;i++){
+      if(unfinished&&rows[i].completed)continue;
+      var snapshot=History.getSnapshot(rows[i].sessionId);
+      if(snapshot&&Favorites.samePuzzle(snapshot.game,record.puzzle))return snapshot;
+    }
+    return null;
+  }
+
+  async function playFavorite(record, restart) {
+    if(storageTransition)return;
+    closeDialog($("personal-dialog"));
+    if(!restart){var snapshot=favoriteSession(record,true);if(!snapshot){toast("该题没有保留的未完成会话，请重新挑战。");return;}await openHistorical(snapshot,false);return;}
+    if(hasProgress()&&!await confirmAction("重新挑战收藏题？","当前棋局会保存在历史中。收藏题面保持不变，将开启独立的新会话。","重新挑战"))return;
+    if(storageTransition)return;
+    suspendClock();save();
+    var puzzle=Object.assign({id:record.id},record.puzzle);
+    installPuzzle(puzzle,puzzle.difficulty,puzzle.mode);
+    try{favoriteStore.linkSession(game,game.sessionId);}catch(e){toast("新局已准备好，但收藏会话关联暂未保存。");}
+    save();if(History)History.flush();setStatus("收藏题目已准备好，点击开始后计时。");
+  }
+
+  async function preparePlayerBackup() {
+    suspendClock();
+    save();if(History)History.flush();
+    // Export the live snapshot even when quota prevents persistence. Never export stale progress.
+    var entries={};
+    entries[STORAGE_KEY]={version:SAVE_VERSION,preferences:preferences,game:Object.assign({},game,{elapsedMs:Math.floor(currentElapsed()),noteMode:noteMode})};
+    if(History)entries[History.KEY]=History.exportData();
+    entries[DAILY_KEY]=dailyRecords;entries[VOYAGE_KEY]=voyageProgress;
+    entries[RECENT_GENERATED_KEY]=recentGenerated.slice();
+    if(Deck&&Deck.exportData)entries["nine-realms.puzzle-deck.v1"]=Deck.exportData();
+    if(favoriteStore)entries[Favorites.key]=favoriteStore.exportData();
+    if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.exportData)entries["nine-realms.secrets.v1"]=window.NineRealmsEasterEggs.exportData();
+    var liveStorage={getItem:function(key){return Object.prototype.hasOwnProperty.call(entries,key)?JSON.stringify(entries[key]):localStorage.getItem(key);}};
+    return await Backup.createAsync(liveStorage,{appVersion:APP_VERSION});
+  }
+
+  function commitPlayerBackup(validated) {
+    cancelPuzzleGeneration();suspendClock();
+    if(!save()||(History&&!History.flush()))throw new Error("当前进度暂时无法安全保存，已停止替换。请先释放本机存储空间。");
+    storageTransition=true;if(History)History.suspendPersistence(true);
+    try{
+      Backup.replace(localStorage,validated);
+      document.body.dataset.storageTransition="true";
+      window.location.reload();
+    }catch(error){
+      if(!error.recoveryRequired){storageTransition=false;if(History)History.suspendPersistence(false);}
+      throw error;
+    }
+  }
+
   if (History) History.init({
     Engine: Engine,
     VariantView: window.SudokuVariantView,
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { render(); resumeClock(); save(); },
+    onFavorite: function(snapshot){if(!favoriteStore||!snapshot)throw new Error("收藏暂不可用");favoriteStore.add(snapshot.game,{sessionId:snapshot.game.sessionId,completed:snapshot.game.completed});toast("已收藏这道题，打开“我的题目”即可查看。");if(personalUi)personalUi.refreshCurrent();},
     onResume: function (snapshot) { return openHistorical(snapshot, false); },
     onReplayNew: function (snapshot) { return openHistorical(snapshot, true); },
     toast: toast
+  });
+
+  if (window.NineRealmsPersonal && Backup && Favorites) personalUi=window.NineRealmsPersonal({
+    store:favoriteStore,modes:Engine.getModes(),current:function(){return game;},
+    blocked:function(){return storageTransition||dialogIsOpen();},locked:function(){return storageTransition;},
+    open:showDialog,close:closeDialog,save:save,afterClose:function(){resumeClock();save();},
+    resumeAvailable:function(record){return Boolean(favoriteSession(record,true));},play:playFavorite,
+    history:function(record){var snapshot=favoriteSession(record,false);closeDialog($("personal-dialog"));if(History)History.open(snapshot&&snapshot.game.sessionId);},
+    maxBackupBytes:Backup.limits.maxBytes,
+    exportBackup:async function(){var backup=await preparePlayerBackup();downloadPlayerFile(backup,"Nine-Realms-backup-"+new Date().toISOString().slice(0,10)+".json");},
+    prepareBackup:async function(text){
+      var validated=await Backup.validateAsync(text),p=Backup.preview(validated);
+      return {validated:validated,summary:"备份时间："+new Date(p.createdAt).toLocaleString()+" · 版本 "+p.appVersion+
+        "\n"+(p.currentGame?"当前棋局："+modeInfo(p.currentGame.mode).label+" · "+p.currentGame.filled+" / "+p.currentGame.total+" 格":"没有当前棋局")+
+        "\n历史 "+p.historyCount+" 局 / "+p.historySteps+" 步 · 收藏 "+p.favoritesCount+" 题"+
+        "\n彩蛋 "+p.secretsCount+" 项 · 每日 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
+    },commitBackup:commitPlayerBackup,downloadRecovery:function(value){downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
   });
 
   buildCatalog();

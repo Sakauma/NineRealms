@@ -14,7 +14,7 @@ STYLES = ("styles.css", "history.css", "easter-extras.css")
 SCRIPTS = (
     "variant-bank.js", "multigrid-bank.js", "engine.js", "challenge.js",
     "daily.js", "hints.js", "voyage.js", "variant-view.js", "scene-webgl.js",
-    "atmosphere.js", "easter-eggs.js", "history.js", "puzzle-deck.js", "generator.js", "app.js",
+    "atmosphere.js", "easter-eggs.js", "history.js", "puzzle-deck.js", "generator.js", "favorites.js", "backup.js", "personal.js", "glass-select.js", "app.js",
 )
 
 

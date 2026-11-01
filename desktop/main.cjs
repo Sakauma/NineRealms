@@ -1,6 +1,12 @@
 'use strict';
 const { app, BrowserWindow, Menu, session } = require('electron');
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const gameURL = pathToFileURL(path.join(__dirname, 'index.html')).href;
+function isGameDocument(target) {
+  try { const url = new URL(target); url.hash = ''; url.search = ''; return url.href === gameURL; }
+  catch (_) { return false; }
+}
 
 app.setName('Nine Realms');
 let gameWindow = null;
@@ -26,7 +32,10 @@ function openGame() {
     }
   });
   gameWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
-  gameWindow.webContents.on('will-navigate', event => event.preventDefault());
+  // Backup restore reloads only this exact bundled document; other navigation stays blocked.
+  gameWindow.webContents.on('will-navigate', (event, url) => {
+    if (!isGameDocument(url || event.url)) event.preventDefault();
+  });
   gameWindow.webContents.on('will-attach-webview', event => event.preventDefault());
   gameWindow.once('ready-to-show', () => gameWindow.show());
   gameWindow.on('closed', () => { gameWindow = null; });

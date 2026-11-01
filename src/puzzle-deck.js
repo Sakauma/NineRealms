@@ -46,5 +46,5 @@
     try { storage.setItem(KEY, JSON.stringify({ version: 1, seen: seen })); } catch (error) { /* Keep rotation in memory when storage is unavailable. */ }
     return true;
   }
-  return { choose: choose, remember: remember };
+  return { choose: choose, remember: remember, exportData: function () { return JSON.parse(JSON.stringify({ version: 1, seen: seen })); } };
 });

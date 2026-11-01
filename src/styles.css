@@ -800,3 +800,54 @@ select option{background:var(--panel);color:var(--text)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
  #rules-open{background:var(--button-bg)}
 }
+
+/* 14. Personal collection and local backup, using the existing glass surfaces. */
+.personal-dialog{width:min(760px,calc(100vw - 32px));max-width:760px}
+.personal-filters{display:flex;gap:16px;margin:20px 0 12px;flex-wrap:wrap}
+.personal-filters label{display:flex;align-items:center;gap:8px;font-size:13px}
+.personal-filters select{max-width:220px}
+.personal-list{display:grid;gap:12px;margin-top:16px}
+.personal-card{border:1px solid var(--glass-edge);border-radius:18px;padding:16px;background:var(--glass-surface);text-align:left}
+.personal-card h3{font-size:14px;line-height:1.6;overflow-wrap:anywhere;margin:0}
+.personal-card p,.personal-empty,#personal-count,#personal-status,#backup-status{font-size:12px;line-height:1.7;color:var(--muted)}
+.personal-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.personal-card-actions button{min-height:40px;padding:8px 12px;font-size:12px;border-radius:12px}
+#favorite-current{margin-top:12px}.backup-dialog>p{line-height:1.8}
+.backup-file-label{display:block;text-align:left;margin:22px 0 12px;font-size:13px}
+.backup-file-label input{display:block;width:100%;margin-top:8px;color:var(--text);font:inherit}
+.backup-file-label input::file-selector-button{padding:10px 14px;margin-right:10px;border:1px solid var(--glass-edge);border-radius:12px;background:var(--panel);color:var(--text);font:inherit}
+.backup-preview{white-space:pre-line;text-align:left;font-size:13px}
+.backup-confirm{display:flex;align-items:flex-start;gap:10px;text-align:left;font-size:12px;line-height:1.8;margin:18px 0}
+.backup-confirm input{margin-top:5px;flex:none;accent-color:var(--accent)}
+#backup-recovery{margin-top:12px}.app-version{font-size:11px;opacity:.65}
+@media(max-width:600px){.personal-open{padding:8px;gap:5px}.personal-dialog{padding:26px 18px}.personal-filters{gap:10px}.personal-filters label{flex:1;min-width:130px;flex-direction:column;align-items:stretch}.personal-card{padding:12px}}
+
+@media(max-width:600px){
+ .topbar{flex-wrap:wrap;padding:10px 0}
+ .topbar-right{flex:1 1 100%;justify-content:space-between;gap:6px;min-width:0}
+ .topbar-right>.fx-toggle,.topbar-right>.appearance-settings{flex-shrink:0;white-space:nowrap}
+ .personal-open>.icon{display:none}
+ .personal-open{min-height:44px;font-size:13px}
+}
+@media(max-width:400px){#history-open{width:44px;min-width:44px}}
+
+/* 15. Shared glass dropdowns: custom listboxes in every browser, native state retained. */
+select.glass-select-native{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;opacity:0!important;pointer-events:none!important;padding:0!important;border:0!important;margin:-1px!important}
+.glass-select{display:inline-flex;position:relative;min-width:0;max-width:100%;vertical-align:middle}
+.glass-select .glass-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--glass-button);color:var(--text);font:inherit;font-size:14px;line-height:1.4;white-space:nowrap;text-align:left;cursor:pointer;box-shadow:var(--glass-button-shadow)}
+.glass-select-trigger::after{content:'';flex:0 0 6px;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);opacity:.7}
+.glass-select-trigger[aria-expanded=true]::after{transform:translateY(2px) rotate(225deg)}
+.glass-select .glass-select-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.glass-select .glass-select-trigger:disabled{opacity:.5;cursor:not-allowed}
+.glass-select-list{position:fixed;inset:auto;z-index:10000;box-sizing:border-box;margin:0;padding:7px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:18px;background:var(--dialog);color:var(--text);box-shadow:0 16px 42px -16px var(--shadow),inset 0 1px 0 var(--glass-highlight);font-family:inherit;text-align:left;scrollbar-width:thin;scrollbar-color:var(--grid-strong) transparent}
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))){.glass-select-list{background:color-mix(in srgb,var(--dialog) 86%,transparent);backdrop-filter:blur(22px) saturate(130%);-webkit-backdrop-filter:blur(22px) saturate(130%)}}
+.glass-select-list::-webkit-scrollbar{width:6px}.glass-select-list::-webkit-scrollbar-thumb{background:var(--grid-strong);border-radius:999px}
+.glass-select-option{position:relative;min-height:44px;box-sizing:border-box;display:flex;align-items:center;padding:10px 34px 10px 12px;border:1px solid transparent;border-radius:11px;font-size:14px;line-height:1.45;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+.glass-select-option+.glass-select-option{margin-top:3px}
+.glass-select-option[aria-selected=true]{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);font-weight:600}
+.glass-select-option[aria-selected=true]::after{content:'✓';position:absolute;right:12px;font-weight:700}
+.glass-select-option.is-active{background:color-mix(in srgb,var(--accent) 16%,transparent);border-color:color-mix(in srgb,var(--accent) 55%,transparent)}
+.glass-select-option[aria-disabled=true]{opacity:.4;cursor:not-allowed}
+.scene-strength>.glass-select,.personal-filters label>.glass-select,.history-sidebar>.glass-select{width:100%}
+.multigrid-tools label>.glass-select{margin-left:8px}
+@media(forced-colors:active){.glass-select .glass-select-trigger,.glass-select-list{background:Canvas;color:CanvasText;border-color:ButtonText;box-shadow:none}.glass-select-option.is-active{outline:2px solid Highlight;outline-offset:-2px}.glass-select-option[aria-selected=true]{color:Highlight;background:Canvas}.glass-select-trigger:disabled,.glass-select-option[aria-disabled=true]{color:GrayText}}

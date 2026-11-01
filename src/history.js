@@ -2,7 +2,7 @@
 (function(root,factory){"use strict";if(typeof module==="object"&&module.exports)module.exports=factory(root);else root.NineRealmsHistory=factory(root);})(typeof globalThis!=="undefined"?globalThis:this,function(root){
 "use strict";
 var KEY="nine-realms.history.v1",LIMITS={records:40,steps:3000,bytes:3*1024*1024};
-var singleton=null,hooks={},ui=null,flushTimer=null;
+var singleton=null,hooks={},ui=null,flushTimer=null,persistenceSuspended=false;
 function copy(x){return JSON.parse(JSON.stringify(x));}
 function integer(x,f,max){return Number.isInteger(x)&&x>=0&&x<=max?x:f;}
 function stamp(x,f){if(typeof x==="string")x=Date.parse(x);return Number.isFinite(x)&&x>0&&x<1e15?x:f;}
@@ -121,14 +121,15 @@ function createStore(options){
    if(!storage||typeof storage.setItem!=="function"){warn("浏览器未允许保存历史，本次仍可查看回放；关闭窗口后这些新记录可能丢失。");return false;}
    try{var text=enforce();if(text.length*2>limits.bytes)throw new Error("History snapshot exceeds storage budget");storage.setItem(KEY,text);dirty=false;persistenceFailed=false;return true;}catch(e){warn("历史记录暂时无法保存到本机，本次仍可回放；当前棋局继续单独保存。");return false;}
  }
- return {capture:capture,flush:flush,getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
+ return {capture:capture,flush:flush,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
 }
 function getStore(){
  if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
  return singleton;
 }
-function capture(snapshot,meta){var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
-function flush(){clearTimeout(flushTimer);flushTimer=null;return getStore().flush();}
+function capture(snapshot,meta){if(persistenceSuspended)return false;var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
+function flush(){clearTimeout(flushTimer);flushTimer=null;return persistenceSuspended?true:getStore().flush();}
+function suspendPersistence(value){clearTimeout(flushTimer);flushTimer=null;persistenceSuspended=Boolean(value);}
 
 function init(options){
  if(ui)return api;hooks=options||{};
@@ -162,7 +163,7 @@ function init(options){
  var playback=el("div","history-playback"),previous=btn("history-prev","← 上一步","secondary-btn"),play=btn("history-play","播放","secondary-btn"),next=btn("history-next","下一步 →","secondary-btn");
  playback.append(previous,play,next);
  var replayNote=el("p","history-replay-note");replayNote.id="history-replay-note";
- var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");actions.append(resume,restart);
+ var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");var favorite=btn("history-favorite","收藏题目","secondary-btn");favorite.disabled=typeof hooks.onFavorite!=="function";actions.append(resume,restart,favorite);
  detail.append(detailHead,recordMeta,viewport,diagramHint,actionLine,slider,playback,replayNote,actions);main.append(sidebar,detail);
  var retention=el("p","history-retention");retention.id="history-retention";
  dialog.append(closeButton,heading,intro,main,retention);doc.body.appendChild(dialog);
@@ -266,7 +267,7 @@ function init(options){
  closeButton.addEventListener("click",close);dialog.addEventListener("close",function(){stop();flush();if(hooks.afterClose)hooks.afterClose();});dialog.addEventListener("cancel",stop);
  doc.addEventListener("visibilitychange",function(){if(doc.hidden){stop();flush();}});root.addEventListener("pagehide",flush);root.addEventListener("beforeunload",flush);
  filter.addEventListener("change",function(){stop();refreshList(true);});
- function open(){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();refreshList(true);if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
+ function open(targetId){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();if(typeof targetId==="string"&&getStore().getSnapshot(targetId)){selectedId=targetId;filter.value="all";}refreshList(true);if(root.NineRealmsSelect)root.NineRealmsSelect.syncAll();if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
  var opener=doc.getElementById("history-open");if(opener)opener.addEventListener("click",open);
  async function restore(callback){
    if(!selectedId||typeof callback!=="function")return;stop();flush();var snapshot=getStore().getSnapshot(selectedId);if(!snapshot)return;
@@ -274,9 +275,10 @@ function init(options){
    try{await callback(snapshot);}catch(e){if(hooks.toast)hooks.toast("这局暂时无法载入，当前棋局已保留。");}
    finally{resume.disabled=restart.disabled=false;if(dialog.open)refreshList(false);}
  }
+ favorite.addEventListener("click",function(){if(!selectedId||typeof hooks.onFavorite!=="function")return;try{hooks.onFavorite(getStore().getSnapshot(selectedId));}catch(e){if(hooks.toast)hooks.toast("收藏暂未保存，原有数据已保留。");}});
  resume.addEventListener("click",function(){restore(hooks.onResume);});restart.addEventListener("click",function(){restore(hooks.onReplayNew);});
  ui={dialog:dialog,open:open,close:close,refreshList:refreshList};return api;
 }
-var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},open:function(){if(ui)ui.open();},close:function(){if(ui)ui.close();}};
+var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},suspendPersistence:suspendPersistence,open:function(id){if(ui)ui.open(id);},close:function(){if(ui)ui.close();}};
 return api;
 });
