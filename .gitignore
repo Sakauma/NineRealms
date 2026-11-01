@@ -10,3 +10,6 @@ __pycache__/
 /recovery-*.json
 *.md
 !/readme.md
+
+/evidence/
+/data/sudoku-exchange/validated-bank.json

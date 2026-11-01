@@ -19,10 +19,10 @@ def main():
         if not (ROOT / name).is_file():
             raise RuntimeError("Source backup is incomplete: missing " + name)
     files = []
-    for folder in ("src", "desktop", "scripts"):
+    for folder in ("src", "desktop", "scripts", "tests", "data"):
         for path in (ROOT / folder).rglob("*"):
             if (path.is_file() and not path.is_symlink() and
-                "__pycache__" not in path.parts and path.suffix not in (".pyc", ".log")):
+                "__pycache__" not in path.parts and path.name != "validated-bank.json" and path.suffix not in (".pyc", ".log")):
                 if not path.resolve().is_relative_to(ROOT.resolve()):
                     raise RuntimeError("Source file resolves outside project: " + str(path))
                 files.append(path)

@@ -3,6 +3,15 @@
   "use strict";
 
   var Engine = window.SudokuEngine;
+  var Generator = window.NineRealmsGenerator;
+  var generatorClient = Generator ? Generator.createClient() : null;
+  var generationEpoch = 0, generatingPuzzle = false;
+  var RECENT_GENERATED_KEY = "nine-realms.generated-recent.v1", recentGenerated = [];
+  try {
+    var storedGenerated = JSON.parse(localStorage.getItem(RECENT_GENERATED_KEY) || "[]");
+    if (Array.isArray(storedGenerated)) recentGenerated = storedGenerated.filter(function (v) { return typeof v === "string" && /^[a-f0-9]{32}$/.test(v); }).slice(-256);
+  } catch (error) { /* Recent-repeat avoidance is optional; validity never depends on storage. */ }
+
   var STORAGE_KEY = "nine-realms.sudoku.v1";
   var SAVE_VERSION = 8;
   var History = window.NineRealmsHistory;
@@ -66,6 +75,38 @@
 
   function modeInfo(mode) {
     return Engine.getModes().find(function (entry) { return entry.id === mode; });
+  }
+
+  function generationInfo(value, puzzle) {
+    if (!Generator || !value || value.version !== 1 || value.kind !== "carved" ||
+        typeof value.seed !== "string" || value.seed.length > 256 ||
+        value.fingerprint !== Generator.fingerprint(puzzle)) return null;
+    return { version: 1, seed: value.seed, kind: "carved", difficultyBasis: "clue-density",
+      fingerprint: value.fingerprint, givenCount: puzzle.givens.filter(Boolean).length };
+  }
+
+  function setGenerationBusy(busy) {
+    generatingPuzzle = busy;
+    ["difficulty", "mode-picker-open"].forEach(function (id) { if ($(id)) $(id).disabled = busy; });
+    var button = $("new-game");
+    if (button) {
+      button.setAttribute("aria-busy", String(busy));
+      var label = button.querySelector("span"); if (label) label.textContent = busy ? "取消生成" : "新游戏";
+    }
+    if (game) render();
+  }
+
+  function cancelPuzzleGeneration() {
+    generationEpoch++;
+    if (generatorClient) generatorClient.cancel();
+    setGenerationBusy(false);
+  }
+
+  function rememberGenerated(puzzle) {
+    if (!Generator || !puzzle.generation) return;
+    var key = Generator.fingerprint(puzzle);
+    recentGenerated = recentGenerated.filter(function (v) { return v !== key; }).concat(key).slice(-256);
+    try { localStorage.setItem(RECENT_GENERATED_KEY, JSON.stringify(recentGenerated)); } catch (error) { /* Keep a bounded in-memory ledger. */ }
   }
 
   function sourceIdFor(puzzle, mode, difficulty) {
@@ -166,7 +207,9 @@
         source.board.some(function (value, i) { return value !== source.givens[i]; }) ||
         source.notes.some(function (mask) { return mask !== 0; });
       var started = completed || saved.version < 3 || source.started === true || recordedProgress || Boolean(branch);
+      cancelPuzzleGeneration();
       game = {
+        generation: generationInfo(source.generation, { mode: mode, clues: clues, givens: source.givens }),
         sessionId: validSessionId(source.sessionId) ? source.sessionId : newSessionId(),
         createdAt: Number.isFinite(source.createdAt) && source.createdAt > 0 ? source.createdAt : Date.now(),
         puzzleId: String(source.puzzleId || "saved"),
@@ -236,7 +279,7 @@
 
   function resumeClock() {
     if (game && game.started && runningSince === null && !game.paused && !game.completed &&
-        !dialogIsOpen() && !document.hidden) runningSince = performance.now();
+        !generatingPuzzle && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
   }
 
   function save(action) {
@@ -281,7 +324,11 @@
   }
 
   function setStatus(message) {
-    if ($("status-message")) $("status-message").textContent = message;
+    var status = $("status-message");
+    if (!status) return;
+    // Quiet ready-state copy visually; live announcements and actionable feedback remain.
+    status.parentElement.classList.toggle("status-quiet", /已准备好|^已准备/.test(message));
+    status.textContent = message;
   }
 
   function sameUnit(a, b) {
@@ -500,8 +547,10 @@
     if ($("catalog-count")) $("catalog-count").textContent = MODES.length + " 种玩法";
     if ($("puzzle-bank-status")) {
       var available = PUZZLE_CATALOG.filter(function (p) { return p.mode === game.mode && p.difficulty === game.difficulty; }).length;
-      $("puzzle-bank-status").textContent = difficulty.label + "题库 · " + available + " 题";
-      $("puzzle-bank-status").title = "新游戏优先轮换本档不同原题；一轮抽完后再开始下一轮。";
+      $("puzzle-bank-status").textContent = game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + "密度档" :
+        difficulty.label + "原题库 · " + available + " 题" + (game.difficulty === "master" ? "" : " · 新游戏可离线生成");
+      $("puzzle-bank-status").title = game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
+        "原题库轮换保留。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
     }
     document.body.dataset.outsideClues = String(Boolean(game.clues && game.clues.outside && game.clues.outside.length));
     if (isMulti()) {
@@ -536,7 +585,7 @@
     var selectedValue = game.board[game.selected];
     var errors = automaticErrors() || checkedReveal ? conflicts() : new Set();
     var waitingToStart = !game.started;
-    var blocked = waitingToStart || game.paused || game.completed;
+    var blocked = generatingPuzzle || waitingToStart || game.paused || game.completed;
     var filled = 0;
     var editableTotal = 0;
     var solved = 0;
@@ -671,7 +720,7 @@
   }
 
   function canInteract() {
-    return game && game.started && !game.paused && !game.completed && !dialogIsOpen();
+    return game && game.started && !generatingPuzzle && !game.paused && !game.completed && !dialogIsOpen();
   }
 
   function selectCell(index, moveFocus) {
@@ -1309,7 +1358,7 @@
   }
 
   function startGame() {
-    if (!game || game.started || game.completed || dialogIsOpen() || document.hidden) return;
+    if (!game || generatingPuzzle || game.started || game.completed || dialogIsOpen() || document.hidden) return;
     Atmosphere.unlock();
     game.started = true;
     game.paused = false;
@@ -1324,7 +1373,7 @@
   }
 
   function setPaused(paused) {
-    if (!game || !game.started || game.completed || dialogIsOpen()) return;
+    if (!game || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
     suspendClock();
     game.paused = paused;
     clearPulse();
@@ -1337,6 +1386,10 @@
   }
 
   function showDialog(element) {
+    if (generatingPuzzle) {
+      cancelPuzzleGeneration(); renderModeControls();
+      setStatus("已取消后台生成，原有棋局和进度已保留。");
+    }
     suspendClock();
     resetTilt();
     if (!element) return;
@@ -1389,7 +1442,7 @@
       if (!modeInfo(source.mode) || !difficultyInfo(source.mode, source.difficulty)) throw new Error("Unavailable historical mode");
       if (restart) {
         installPuzzle({ id: source.puzzleId, givens: source.givens, solution: source.solution, clues: source.clues,
-          dailyDate: source.dailyDate, voyageId: source.voyageId }, source.difficulty, source.mode);
+          dailyDate: source.dailyDate, voyageId: source.voyageId, sourceId: source.sourceId, generation: source.generation }, source.difficulty, source.mode);
       } else {
         if (!restore(snapshot, true)) throw new Error("Invalid historical game");
         clearTransientMarks();
@@ -1432,10 +1485,12 @@
         !Engine.validateComplete(puzzle.solution, nextContext) || !respectsGivens(puzzle.solution, puzzle.givens)) {
       throw new Error("Invalid puzzle");
     }
+    cancelPuzzleGeneration();
     suspendClock();
     if (game) save();
     historyOrigin = 'new';
     game = {
+      generation: generationInfo(puzzle.generation, { mode: mode, clues: clues, givens: puzzle.givens }),
       sessionId: newSessionId(),
       createdAt: Date.now(),
       puzzleId: String(puzzle.id || Date.now()),
@@ -1477,6 +1532,10 @@
   }
 
   async function newGame(difficulty, initial, requestedMode) {
+    if (generatingPuzzle) {
+      cancelPuzzleGeneration(); renderModeControls(); resumeClock();
+      setStatus("已取消生成，原有棋局和进度已保留。"); return;
+    }
     var mode = requestedMode || (game ? game.mode : "classic");
     if (MODES.indexOf(mode) < 0) mode = "classic";
     if (difficulty === "expert") difficulty = "master";
@@ -1496,13 +1555,32 @@
     }
     try {
       var sourceId = Deck.choose(mode, difficulty, game && game.sourceId);
-      var puzzle = Engine.getPuzzle(difficulty, undefined, mode, { sourceId: sourceId });
+      var puzzle, fallback = false;
+      if (!initial && difficulty !== "master" && generatorClient) {
+        var epoch = ++generationEpoch;
+        suspendClock(); save(); setGenerationBusy(true);
+        setStatus("正在离线生成并验证新题，可点击“取消生成”保留原局……");
+        try {
+          puzzle = await generatorClient.run({ mode: mode, difficulty: difficulty, sourceId: sourceId,
+            seed: Generator.seed(), avoidFingerprints: recentGenerated.slice() });
+        } catch (error) {
+          if (epoch !== generationEpoch || error.name === "AbortError") return;
+          fallback = true;
+        }
+        if (epoch !== generationEpoch) return;
+        setGenerationBusy(false);
+      }
+      if (!puzzle) puzzle = Engine.getPuzzle(difficulty, undefined, mode, { sourceId: sourceId });
       installPuzzle(puzzle, difficulty, mode);
       Deck.remember(mode, difficulty, puzzle.sourceId, true);
-      setStatus(preferences.zen ? modeInfo(mode).label + "已准备好，等你开始。" : downgraded ? "已准备" + modeInfo(mode).label + " · 进阶。极境仅用于经典玩法，点击开始后计时。" :
+      rememberGenerated(puzzle);
+      setStatus(puzzle.generation ? modeInfo(mode).label + "新题已准备好 · " + difficultyInfo(mode, difficulty).label + "密度档（非技巧评级），点击开始后计时。" :
+        fallback ? "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。" :
+        preferences.zen ? modeInfo(mode).label + "已准备好，等你开始。" : downgraded ? "已准备" + modeInfo(mode).label + " · 进阶。极境仅用于经典玩法，点击开始后计时。" :
         modeInfo(mode).label + " · " + difficultyInfo(mode, difficulty).label + "已准备好，点击开始游戏后计时。");
       save();
     } catch (error) {
+      cancelPuzzleGeneration();
       renderModeControls();
       setStatus("棋盘暂时未能生成，请重新打开游戏后再试。");
       toast("未能生成新棋盘，原有进度已保留。");

@@ -15,7 +15,9 @@
     "package:setup": "python3 scripts/package-installer.py",
     "verify:installer": "python3 scripts/verify-installer.py",
     "package:release": "python3 scripts/package-release.py",
-    "backup:source": "python3 scripts/backup-source.py"
+    "backup:source": "python3 scripts/backup-source.py",
+    "test:generator": "node tests/generator.test.cjs && node tests/generator-catalog.test.cjs",
+    "test": "node tests/quiet-ui.test.cjs && node tests/exchange.test.cjs && npm run test:generator"
   },
   "engines": {
     "node": ">=22.12.0"

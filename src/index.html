@@ -61,7 +61,7 @@
 <div class="mode-control"><span class="control-label">玩法</span><button id="mode-picker-open" class="mode-picker-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><strong id="current-mode-label">经典九宫</strong><span id="catalog-count">玩法目录</span><svg class="icon mode-picker-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
 <div class="game-actions"><div class="difficulty-wrap"><label for="difficulty">难度</label><select id="difficulty"><option value="easy">入门</option><option value="medium">标准</option><option value="hard">进阶</option><option value="master">极境</option></select></div>
 <button id="new-game" class="primary-btn new-game-btn" type="button"><span>新游戏</span><svg class="icon"><use href="#i-arrow"/></svg></button></div>
-<div class="mode-explainer"><button type="button" id="rules-open" class="rules-open">规则与标记 <span aria-hidden="true">↗</span></button><span id="mode-name" class="sr-only">经典九宫</span><p id="mode-rule" aria-live="polite">每行、每列和每个 3×3 宫内，数字 1～9 各出现一次。</p></div>
+<div class="mode-explainer"><button type="button" id="rules-open" class="rules-open" aria-haspopup="dialog" aria-controls="rules-dialog"><span class="rules-label">规则与标记</span><svg class="icon rules-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button><span id="mode-name" class="sr-only">经典九宫</span><p id="mode-rule" aria-live="polite">每行、每列和每个 3×3 宫内，数字 1～9 各出现一次。</p></div>
 <p id="puzzle-bank-status" class="puzzle-bank-status"></p>
 <p id="difficulty-description" class="sr-only">适合热身，从直观的排除和唯一候选开始。</p>
 <span id="board-context" class="sr-only">经典九宫 · 入门</span>
@@ -118,7 +118,7 @@
 <p id="hint-text" aria-live="polite"></p>
 <div class="hint-actions"><button id="hint-next" class="secondary-btn" type="button">看看推理</button><button id="hint-apply" class="primary-btn" type="button" hidden>填入这一格</button></div>
 </section>
-<div class="status-box"><p id="status-message" role="status" aria-live="polite">从一个空格开始，让答案慢慢浮现。</p></div>
+<div class="status-box status-quiet"><p id="status-message" role="status" aria-live="polite">从一个空格开始，让答案慢慢浮现。</p></div>
 </div>
 </aside>
 </div>
@@ -232,5 +232,5 @@
 <section class="secret-task" data-secret-task="crane" aria-label="折一只纸鹤" hidden><div class="secret-fold-workbench"><div id="secret-fold-paper" data-fold="0" aria-hidden="true"><i></i><i></i><i></i></div><button id="secret-fold" type="button" class="secondary-btn">对折信纸</button></div><p id="secret-crane-status" class="secret-task-status" role="status">一张纸，等待第一道折痕。</p></section>
 <div class="secret-bottom"><details id="secret-console" class="secret-console"><summary>一枚旧手柄 <span aria-hidden="true">＋</span></summary><div class="secret-controller"><div class="secret-dpad" role="group" aria-label="旧手柄方向键"><button type="button" data-secret-key="ArrowUp" aria-label="上">↑</button><button type="button" data-secret-key="ArrowLeft" aria-label="左">←</button><span aria-hidden="true">✚</span><button type="button" data-secret-key="ArrowRight" aria-label="右">→</button><button type="button" data-secret-key="ArrowDown" aria-label="下">↓</button></div><div class="secret-ab" role="group" aria-label="旧手柄按键"><button type="button" data-secret-key="b">B</button><button type="button" data-secret-key="a">A</button></div></div><p id="secret-code-status" role="status" aria-live="polite">有些肌肉记忆，来自很久以前。</p></details><button id="secret-calm-trigger" class="secret-calm-trigger" type="button"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>静待一朵花</span></button></div>
 </dialog>
-<script src="./variant-bank.js"></script><script src="./multigrid-bank.js"></script><script src="./engine.js"></script><script src="./challenge.js"></script><script src="./daily.js"></script><script src="./hints.js"></script><script src="./voyage.js"></script><script src="./variant-view.js"></script><script src="./scene-webgl.js"></script><script src="./atmosphere.js"></script><script src="./easter-eggs.js"></script><script src="./history.js"></script><script src="./puzzle-deck.js"></script><script src="./app.js"></script>
+<script src="./variant-bank.js"></script><script src="./multigrid-bank.js"></script><script src="./engine.js"></script><script src="./challenge.js"></script><script src="./daily.js"></script><script src="./hints.js"></script><script src="./voyage.js"></script><script src="./variant-view.js"></script><script src="./scene-webgl.js"></script><script src="./atmosphere.js"></script><script src="./easter-eggs.js"></script><script src="./history.js"></script><script src="./puzzle-deck.js"></script><script src="./generator.js"></script><script src="./app.js"></script>
 </body></html>

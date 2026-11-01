@@ -1,0 +1,54 @@
+{
+  "source": "https://github.com/grantm/sudoku-exchange-puzzle-bank",
+  "commit": "d8c8ebaee0c08c412cfba96af1923dfa61c83317",
+  "license": "Unlicense / public domain",
+  "perTier": 3000,
+  "files": {
+    "easy": {
+      "bytes": 10000000,
+      "records": 100000,
+      "sha256": "789aab6f52cc4588e0c3aa4269ad3282cfda7e1cc79ea693d16507decde3fc50"
+    },
+    "medium": {
+      "bytes": 35264300,
+      "records": 352643,
+      "sha256": "c2a5f8fac99dcf215b25d46ece47f346375e51730b182de70a6f8f2107b2b38d"
+    },
+    "hard": {
+      "bytes": 32159200,
+      "records": 321592,
+      "sha256": "abcff1512411e601abd5e861c60add5be5d877739b6faa249ee86960f5ad85e9"
+    },
+    "diabolical": {
+      "bytes": 11968100,
+      "records": 119681,
+      "sha256": "08553d0c1145ea4d7c13008040f47ea8205d21fe1eaf8f4ab17a1a6981928b35"
+    }
+  },
+  "tiers": {
+    "easy": {
+      "scanned": 3000,
+      "accepted": 3000,
+      "duplicate": 0,
+      "invalid": 0,
+      "budgetExceeded": 0
+    },
+    "medium": {
+      "scanned": 3000,
+      "accepted": 3000,
+      "duplicate": 0,
+      "invalid": 0,
+      "budgetExceeded": 0
+    },
+    "hard": {
+      "scanned": 3000,
+      "accepted": 3000,
+      "duplicate": 0,
+      "invalid": 0,
+      "budgetExceeded": 0
+    }
+  },
+  "deduplication": "exact plus digit-renaming / 8 square symmetries, against existing classic and all imported puzzles; not full band/stack isomorphism",
+  "imported": 9000,
+  "upstreamTotal": 893916
+}
