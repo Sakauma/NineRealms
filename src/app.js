@@ -7,7 +7,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.0.0";
+  var APP_VERSION = "1.0.1";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -42,7 +42,10 @@
   var Atmosphere = window.NineRealmsAtmosphere;
   var VOYAGE_KEY = "nine-realms.voyage.v1";
   var voyageProgress = {};
+  var voyageStorageBlocked = false;
   var selectedVoyage = "dawn";
+  var selectedVoyageTrack = "legacy";
+  var ratingCache = new Map();
   var loadingVoyage = false;
   var pulseTimeout = null;
   var DAILY_KEY = "nine-realms.daily.v1";
@@ -641,6 +644,7 @@
       button.classList.toggle("conflict", !fogged && errors.has(i));
       button.classList.toggle("hint-cell", i === hintCell || Boolean(pendingHint && pendingHint.step.index === i));
       button.classList.toggle("hint-focus", Boolean(pendingHint && pendingHint.step.focusCells.indexOf(i) >= 0));
+      button.classList.toggle("hint-elimination", Boolean(pendingHint && pendingHint.step.kind === "elimination" && pendingHint.step.eliminations.some(function (change) { return change.index === i; })));
       button.classList.toggle("branch-cell", Boolean(game.branch) &&
         (value !== game.branch.board[i] || game.notes[i] !== game.branch.notes[i]));
       button.setAttribute("aria-selected", String(i === game.selected));
@@ -1057,32 +1061,59 @@
   }
 
   function readVoyage() {
-    try { voyageProgress = Voyage.normalizeProgress(JSON.parse(localStorage.getItem(VOYAGE_KEY) || "{}")); }
-    catch (error) { voyageProgress = {}; }
+    try {
+      var raw = localStorage.getItem(VOYAGE_KEY);
+      voyageProgress = Voyage.migrateProgress(raw === null ? {} : JSON.parse(raw), game && game.voyageId, { existing: raw !== null || Boolean(game) });
+      saveVoyage();
+    }
+    catch (error) { voyageProgress = {}; voyageStorageBlocked = true; }
   }
 
   function saveVoyage() {
+    if (voyageStorageBlocked) return;
     try { localStorage.setItem(VOYAGE_KEY, JSON.stringify(voyageProgress)); }
     catch (error) { toast("星图成绩暂时无法保存到本机，本局仍可继续游玩。"); }
   }
 
   function renderVoyage() {
-    var status = Voyage.getStatus(voyageProgress);
-    var chapters = Voyage.chapters();
-    var next = chapterInfo(status.nextId) || chapters[8];
-    $("voyage-card-title").textContent = status.completed === 9 ? "九星已点亮 · 重访远征" : "下一站 · " + next.title;
-    $("voyage-card-progress").textContent = status.completed + " / 9 关 · " + status.stars + " / 27 星";
-    $("voyage-total-stars").textContent = String(status.stars);
+    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
+    var status = Voyage.getStatus(voyageProgress, selectedVoyageTrack);
+    var overall = Voyage.getStatus(voyageProgress, "all");
+    var chapters = Voyage.chapters(selectedVoyageTrack);
+    var next = chapterInfo(status.nextId) || chapters[chapters.length - 1];
+    var tracks = Voyage.tracks();
+    var track = tracks.find(function (item) { return item.id === selectedVoyageTrack; });
+    var tabs = $("voyage-tracks");
+    if (!tabs.children.length) tracks.forEach(function (item) {
+      var button = document.createElement("button"); button.type = "button"; button.dataset.track = item.id; button.textContent = item.title; tabs.appendChild(button);
+    });
+    tabs.querySelectorAll("button").forEach(function (button) {
+      var item = tracks.find(function (track) { return track.id === button.dataset.track; });
+      var state = Voyage.getStatus(voyageProgress, item.id);
+      button.textContent = voyageStorageBlocked ? item.title : item.title + " " + state.completed + "/" + state.total;
+      button.setAttribute("aria-pressed", String(item.id === selectedVoyageTrack));
+    });
+    $("voyage-track-summary").textContent = track.description || track.subtitle || "沿着熟悉的九颗星，重温最初的旅程。";
+    $("voyage-star-max").textContent = "/ " + overall.total * 3;
+    var recommended = chapterInfo(journey.nextId);
+    $("voyage-objective").textContent = journey.finished ? "归航星图已复原。所有已点亮星点都可自由回访。" : "修复归航星图：校准星位 → 分头连线与汇能 → 群星合奏。";
+    $("voyage-milestones").textContent = "星位 " + Voyage.getStatus(voyageProgress, "legacy").completed + "/9 → 航路 " + Voyage.getStatus(voyageProgress, "lines").completed + "/3 ＋ 能量 " + ["sums-sparks-v1", "sums-arrows-v1"].filter(function (id) { return Boolean(voyageProgress[id]); }).length + "/2 → 合流 " + (voyageProgress["sums-constellation-v1"] ? "1" : "0") + "/1";
+    $("voyage-next-stop").textContent = recommended ? "继续主线 · " + recommended.title : "星图已完整 · 自由回访";
+    $("voyage-next-stop").disabled = !recommended || voyageStorageBlocked;
+    $("voyage-card-title").textContent = journey.finished ? "归航星图已复原 · 自由回访" : "修复归航星图 · 下一站 · " + (recommended ? recommended.title : next.title);
+    $("voyage-card-progress").textContent = overall.completed + " / " + overall.total + " 关 · " + overall.stars + " / " + overall.total * 3 + " 星";
+    $("voyage-total-stars").textContent = String(overall.stars);
     var selected = chapterInfo(selectedVoyage);
-    if (!selected || selected.index >= status.unlocked) {
+    if (!selected || selected.trackId !== selectedVoyageTrack) {
       selectedVoyage = next.id;
       selected = next;
     }
     var map = $("voyage-map");
+    var focusedChapter = map.contains(document.activeElement) ? document.activeElement.dataset.voyage : null;
     map.replaceChildren();
     chapters.forEach(function (chapter) {
       var record = voyageProgress[chapter.id];
-      var locked = chapter.index >= status.unlocked;
+      var locked = voyageStorageBlocked || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId);
       var button = document.createElement("button");
       button.type = "button";
       button.className = "voyage-node" + (locked ? " locked" : "") +
@@ -1091,7 +1122,7 @@
       button.disabled = locked;
       button.setAttribute("aria-pressed", String(chapter.id === selectedVoyage));
       button.setAttribute("aria-label", "第 " + (chapter.index + 1) + " 关，" + chapter.title +
-        (locked ? "，完成前一关后解锁" : record ? "，已获得 " + record.stars + " 星，可重玩" : "，可挑战"));
+        (locked ? "，完成主线前置目标后解锁" : record ? "，已获得 " + record.stars + " 星，可重玩" : "，可挑战"));
       var number = document.createElement("span");
       number.className = "node-number";
       number.textContent = String(chapter.index + 1).padStart(2, "0");
@@ -1105,25 +1136,44 @@
     $("voyage-selected-title").textContent = String(selected.index + 1).padStart(2, "0") + " · " + selected.title;
     $("voyage-selected-rule").textContent = modeInfo(selected.mode).label + " · " +
       difficultyInfo(selected.mode, selected.difficulty).label + "。 " + selected.subtitle;
-    $("voyage-description").textContent = "通关即得 1 星并解锁下一关；不用提示、零失误各加 1 星。没有倒计时，重玩保留最佳星级。";
+    $("voyage-lesson").textContent = (selected.lesson ? selected.lesson + "\n本关目标：" + selected.goal + "\n" + selected.ratingNote : "观察行、列、宫与本关附加规则，用自己的节奏探索。");
+    $("voyage-description").textContent = "通关推进主线，不以星级设门槛。启程完成后分头循线、求和；两支汇齐才开启群星合奏。旧版通行与最佳成绩保留。";
+    var allowed = Voyage.canEnter(voyageProgress, selected.id, game && game.voyageId);
+    $("voyage-connection").textContent = (selected.bridge || "") + "\n任务：" + (selected.mission || selected.goal || selected.subtitle) + "\n" + (selected.nextLink || "");
+    $("voyage-gate").textContent = allowed ? (voyageProgress.__journey && voyageProgress.__journey.granted.indexOf(selected.id) >= 0 ? "旧版通行已保留；成绩仍需实际通关获得。" : "此站已开放；完成后主线会指向下一处缺口。") : selected.id === "sums-constellation-v1" ? "合流条件：循线三关与求和前两关全部通关（无需满星）。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "先完成启程九关，建立共同的星位基础。" : "先完成本章前一站，再将学到的关系带到这里。";
     var current = game && game.voyageId === selected.id && !game.completed;
     $("voyage-start").textContent = current ? "返回这一关" : voyageProgress[selected.id] ? "重访这一星" : "准备出发";
-    $("voyage-start").disabled = loadingVoyage;
+    $("voyage-start").disabled = loadingVoyage || !allowed || voyageStorageBlocked;
+    if (voyageStorageBlocked) {
+      $("voyage-gate").textContent = "远征存档格式较新或暂不可读取，原数据已保留；请用对应版本打开，或从有效备份恢复。";
+      $("voyage-card-title").textContent = "远征记录暂不可读取";
+      $("voyage-card-progress").textContent = "原始记录已保留，未清空";
+      $("voyage-objective").textContent = "远征记录暂不可读取，暂不显示完成统计。";
+      $("voyage-milestones").textContent = "原始记录已保留；请使用对应版本读取。";
+      $("voyage-total-stars").textContent = "—"; $("voyage-star-max").textContent = "";
+      $("voyage-next-stop").textContent = "远征暂不可用";
+    }
+    if (focusedChapter && $("voyage-dialog").open) {
+      var focusTarget = Array.from(map.querySelectorAll("button")).find(function (button) { return button.dataset.voyage === focusedChapter && !button.disabled; });
+      if (focusTarget) focusTarget.focus();
+    }
   }
 
-  function openVoyage() {
+  function openVoyage(targetId) {
     if (dialogIsOpen()) return;
-    var status = Voyage.getStatus(voyageProgress);
-    selectedVoyage = game && game.voyageId && !game.completed ? game.voyageId : status.nextId || "home";
+    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
+    selectedVoyage = typeof targetId === "string" && chapterInfo(targetId) ? targetId :
+      game && game.voyageId && !game.completed ? game.voyageId : journey.nextId || "sums-constellation-v1";
+    selectedVoyageTrack = chapterInfo(selectedVoyage).trackId;
     renderVoyage();
     showDialog($("voyage-dialog"));
     save();
   }
 
   async function startVoyage() {
-    if (loadingVoyage || !$("voyage-dialog").open) return;
+    if (voyageStorageBlocked || loadingVoyage || !$("voyage-dialog").open) return;
     var chapter = chapterInfo(selectedVoyage);
-    if (!chapter || chapter.index >= Voyage.getStatus(voyageProgress).unlocked) return;
+    if (!chapter || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId)) return;
     loadingVoyage = true;
     $("voyage-start").disabled = true;
     try {
@@ -1137,6 +1187,7 @@
         var accepted = await confirmNewGame(chapter.difficulty, chapter.mode, false);
         if (!accepted) { setStatus("已保留当前棋局，星图随时等你出发。"); return; }
       }
+      if (storageTransition) return;
       installPuzzle(Voyage.getPuzzle(chapter.id), chapter.difficulty, chapter.mode);
       setStatus("星图远征 · " + chapter.title + "已准备好。点击开始游戏，点亮第一颗星。");
       save();
@@ -1153,7 +1204,9 @@
     $("completion-voyage").hidden = !game.voyageId;
     $("play-again").textContent = game.voyageId ? "返回星图 · 探索下一站" : "探索下一境";
     if (!game.voyageId) return;
+    if (voyageStorageBlocked) { $("completion-voyage").textContent = "本局已完成；远征存档暂不可写，原始记录未被覆盖。"; return; }
     var earned = 1 + (game.hints === 0 ? 1 : 0) + (game.mistakes === 0 ? 1 : 0);
+    var beforeAccess = Voyage.chapters().filter(function (chapter) { return Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); }).map(function (chapter) { return chapter.id; });
     voyageProgress = Voyage.award(voyageProgress, game.voyageId, {
       elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
     });
@@ -1161,7 +1214,11 @@
     renderVoyage();
     $("completion-voyage").textContent = "★".repeat(earned) + "☆".repeat(3 - earned) +
       " · " + chapterInfo(game.voyageId).title + "已点亮！最佳星级 " +
-      (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星";
+      (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星。 " + (chapterInfo(game.voyageId).outcome || "");
+    var opened = Voyage.chapters().filter(function (chapter) { return beforeAccess.indexOf(chapter.id) < 0 && Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); });
+    if (opened.length) $("completion-voyage").textContent += " 新航路已开放：" + opened.map(function (chapter) { return chapter.title; }).join("、") + "。";
+    var nextId = Voyage.nextAfter(voyageProgress, game.voyageId);
+    $("play-again").textContent = nextId ? "前往下一站 · " + chapterInfo(nextId).title : "归航完成 · 重访星图";
   }
 
   function readDaily() {
@@ -1255,8 +1312,25 @@
     }
   }
 
+  function renderLogicRating() {
+    var target = $("logic-rating"), context = gameContext(), givens = game.givens.slice();
+    var key = JSON.stringify(["classic-logic-v1", context, givens]);
+    target.textContent = "正在分析原始题面…";
+    setTimeout(function () {
+      if (!game || key !== JSON.stringify(["classic-logic-v1", gameContext(), game.givens])) return;
+      var result = ratingCache.get(key);
+      if (!result) {
+        result = window.SudokuHints.rateClassic(givens, context);
+        if (ratingCache.size >= 64) ratingCache.delete(ratingCache.keys().next().value);
+        ratingCache.set(key, result);
+      }
+      target.textContent = result.label + (result.solved ? " · 完整逻辑解出，" + result.steps + " 步。" : "。") +
+        (result.reason ? " " + result.reason : "") + " 不代表所有人使用同一路径，也不等同于所选难度档。";
+    }, 0);
+  }
+
   function hintSignature() {
-    return game.puzzleId + ":" + game.board.join("") + ":" + game.mode + ":" + JSON.stringify(game.clues);
+    return game.puzzleId + ":" + game.board.join("") + ":" + game.mode + ":" + JSON.stringify(game.clues) + ":" + game.notes.join(",");
   }
 
   function renderHint() {
@@ -1265,20 +1339,26 @@
     if (panel.hidden) return;
     var hint = pendingHint.step;
     var stage = pendingHint.stage;
-    $("hint-stage").textContent = ["01 / 03 · 观察", "02 / 03 · 推理", "03 / 03 · 答案"][stage];
+    var elimination = hint.kind === "elimination";
+    $("hint-stage").textContent = ["01 / 03 · 观察", "02 / 03 · 推理", elimination ? "03 / 03 · 排除" : "03 / 03 · 答案"][stage];
     $("hint-title").textContent = hint.title;
     $("hint-text").textContent = [hint.observe, hint.explanation, hint.answer][stage];
     $("hint-next").hidden = stage === 2;
-    $("hint-next").textContent = stage === 0 ? "看看推理" : "查看答案";
+    $("hint-next").textContent = stage === 0 ? "看看推理" : elimination ? "查看候选变化" : "查看答案";
     $("hint-apply").hidden = stage !== 2;
+    $("hint-apply").textContent = elimination ? "同步推理候选（可撤销）" : "填入这一格";
   }
 
   function requestHint() {
     if (!canInteract() || game.branch) return;
     if (!pendingHint || pendingHint.signature !== hintSignature()) {
-      var hint = window.SudokuHints.getStep(game.board.slice(), game.givens.slice(), game.solution.slice(), gameContext());
+      var hint = window.SudokuHints.getStep(game.board.slice(), game.givens.slice(), game.solution.slice(), gameContext(), game.notes.slice());
       if (!hint || !Number.isInteger(hint.index) || hint.index < 0 || hint.index >= game.board.length ||
-          game.givens[hint.index] || hint.value !== game.solution[hint.index]) {
+          game.givens[hint.index] || (hint.kind === "elimination" ?
+          !Array.isArray(hint.candidateMasks) || hint.candidateMasks.length !== game.board.length ||
+          !hint.candidateMasks.every(function (mask, index) { return Number.isInteger(mask) && mask >= 0 && mask <= 511 &&
+            (game.board[index] ? mask === 0 : Boolean(mask & (1 << (game.solution[index] - 1)))); }) :
+          hint.value !== game.solution[hint.index])) {
         toast("当前没有可用提示。");
         return;
       }
@@ -1307,6 +1387,12 @@
     var hint = pendingHint.step;
     pendingHint = null;
     game.selected = hint.index;
+    if (hint.kind === "elimination") {
+      remember();
+      game.notes = hint.candidateMasks.slice(); noteMode = true;
+      setStatus("已同步这一步经过证明的全盘候选（会替换手写笔记），未填入数字；可撤销或在历史中回看。");
+      render(); save("技巧排除 · " + hint.title); return;
+    }
     enterNumber(hint.value, true);
     hintCell = hint.index;
     clearTimeout(hintTimeout);
@@ -1479,6 +1565,9 @@
         render();
         renderDaily();
         renderVoyage();
+      }
+      if (!voyageStorageBlocked && game.voyageId && Voyage.matchesPuzzle(game.voyageId, game.givens, game.mode, game.difficulty, game.clues)) {
+        voyageProgress = Voyage.retainCurrent(voyageProgress, game.voyageId); saveVoyage(); renderVoyage();
       }
       setStatus(restart ? "原题已准备好，这是一次新的挑战；点击开始后计时。" :
         game.completed ? "这局已经完成。可以查看历史回放，或重新挑战原题。" :
@@ -1878,6 +1967,16 @@
   bind("voyage-start", "click", startVoyage);
   bind("voyage-close", "click", function () { closeDialog($("voyage-dialog")); });
   bind("voyage-dialog", "close", function () { resumeClock(); save(); });
+  bind("voyage-next-stop", "click", function () {
+    var nextId = Voyage.journey(voyageProgress, game && game.voyageId).nextId;
+    if (!nextId) return;
+    selectedVoyage = nextId; selectedVoyageTrack = chapterInfo(nextId).trackId; renderVoyage(); $("voyage-start").focus();
+  });
+  bind("voyage-tracks", "click", function (event) {
+    var button = event.target.closest("[data-track]");
+    if (!button) return;
+    selectedVoyageTrack = button.dataset.track; renderVoyage();
+  });
   bind("voyage-map", "click", function (event) {
     var button = event.target.closest("[data-voyage]");
     if (!button || button.disabled) return;
@@ -1965,6 +2064,7 @@
     if (!game || dialogIsOpen()) return;
     $("rules-title").textContent = modeInfo(game.mode).label;
     $("rules-description").textContent = modeInfo(game.mode).description;
+    renderLogicRating();
     showDialog($("rules-dialog")); save();
   });
   bind("rules-close", "click", function () { closeDialog($("rules-dialog")); });
@@ -1997,7 +2097,7 @@
   bind("completion-dialog", "close", resumeClock);
   bind("play-again", "click", function () {
     closeDialog($("completion-dialog"));
-    if (game.voyageId) openVoyage();
+    if (game.voyageId) openVoyage(Voyage.nextAfter(voyageProgress, game.voyageId));
     else newGame(game.difficulty, false);
   });
   bind("theme-switcher", "click", function (event) {
@@ -2161,6 +2261,7 @@
   }
 
   async function preparePlayerBackup() {
+    if (voyageStorageBlocked) throw new Error("远征存档格式较新或暂不可读取，为避免导出遗漏，完整备份已暂停；原数据未改变，请使用对应版本导出。");
     suspendClock();
     save();if(History)History.flush();
     // Export the live snapshot even when quota prevents persistence. Never export stale progress.

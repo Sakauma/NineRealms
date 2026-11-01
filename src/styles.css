@@ -851,3 +851,23 @@ select.glass-select-native{position:absolute!important;width:1px!important;heigh
 .scene-strength>.glass-select,.personal-filters label>.glass-select,.history-sidebar>.glass-select{width:100%}
 .multigrid-tools label>.glass-select{margin-left:8px}
 @media(forced-colors:active){.glass-select .glass-select-trigger,.glass-select-list{background:Canvas;color:CanvasText;border-color:ButtonText;box-shadow:none}.glass-select-option.is-active{outline:2px solid Highlight;outline-offset:-2px}.glass-select-option[aria-selected=true]{color:Highlight;background:Canvas}.glass-select-trigger:disabled,.glass-select-option[aria-disabled=true]{color:GrayText}}
+
+/* 16. Independent themed journeys and bounded classic-technique explanations. */
+.voyage-tracks{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 10px}
+.voyage-tracks button{min-height:44px;padding:10px 16px;border-radius:14px;font:inherit;font-size:13px}
+.voyage-tracks button[aria-pressed=true]{color:var(--accent);border-color:var(--accent);background:var(--related)}
+.voyage-track-summary,.voyage-lesson{font-size:13px;line-height:1.8;color:var(--muted);text-align:left}
+.voyage-lesson,.logic-rating{border:1px solid var(--glass-edge);border-radius:16px;background:var(--glass-surface);padding:14px 16px}
+.logic-rating{text-align:left;margin:18px 0}.logic-rating h3{font-size:14px;margin:0 0 8px}.logic-rating p{font-size:13px;line-height:1.8;margin:6px 0}.logic-rating .logic-rating-note{font-size:12px;color:var(--muted)}
+@media(max-width:420px){.voyage-tracks{gap:6px}.voyage-tracks button{flex:1;padding:9px 8px;font-size:12px}.voyage-lesson,.logic-rating{padding:12px}}
+
+.voyage-lesson{white-space:pre-line}
+
+.cell.hint-elimination{outline:2px dashed var(--accent);outline-offset:-4px}
+.cell.hint-elimination:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* 17. One journey, two linked routes, one convergence. */
+.voyage-objective{font-size:15px;line-height:1.8;text-align:left;color:var(--text)}
+.voyage-milestones,.voyage-connection{padding:12px 14px;border:1px solid var(--glass-edge);border-radius:16px;background:var(--glass-surface);font-size:13px;line-height:1.8;text-align:left;white-space:pre-line}
+.voyage-gate{font-size:12px;line-height:1.8;color:var(--accent);text-align:left}.voyage-teaching{text-align:left}.voyage-teaching summary{min-height:44px;padding:12px 0;font-size:13px;cursor:pointer;color:var(--muted)}
+#voyage-next-stop{min-height:44px;padding:10px 14px;border-radius:14px;font-size:13px}

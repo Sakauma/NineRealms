@@ -858,6 +858,26 @@ select.glass-select-native{position:absolute!important;width:1px!important;heigh
 .multigrid-tools label>.glass-select{margin-left:8px}
 @media(forced-colors:active){.glass-select .glass-select-trigger,.glass-select-list{background:Canvas;color:CanvasText;border-color:ButtonText;box-shadow:none}.glass-select-option.is-active{outline:2px solid Highlight;outline-offset:-2px}.glass-select-option[aria-selected=true]{color:Highlight;background:Canvas}.glass-select-trigger:disabled,.glass-select-option[aria-disabled=true]{color:GrayText}}
 
+/* 16. Independent themed journeys and bounded classic-technique explanations. */
+.voyage-tracks{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 10px}
+.voyage-tracks button{min-height:44px;padding:10px 16px;border-radius:14px;font:inherit;font-size:13px}
+.voyage-tracks button[aria-pressed=true]{color:var(--accent);border-color:var(--accent);background:var(--related)}
+.voyage-track-summary,.voyage-lesson{font-size:13px;line-height:1.8;color:var(--muted);text-align:left}
+.voyage-lesson,.logic-rating{border:1px solid var(--glass-edge);border-radius:16px;background:var(--glass-surface);padding:14px 16px}
+.logic-rating{text-align:left;margin:18px 0}.logic-rating h3{font-size:14px;margin:0 0 8px}.logic-rating p{font-size:13px;line-height:1.8;margin:6px 0}.logic-rating .logic-rating-note{font-size:12px;color:var(--muted)}
+@media(max-width:420px){.voyage-tracks{gap:6px}.voyage-tracks button{flex:1;padding:9px 8px;font-size:12px}.voyage-lesson,.logic-rating{padding:12px}}
+
+.voyage-lesson{white-space:pre-line}
+
+.cell.hint-elimination{outline:2px dashed var(--accent);outline-offset:-4px}
+.cell.hint-elimination:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* 17. One journey, two linked routes, one convergence. */
+.voyage-objective{font-size:15px;line-height:1.8;text-align:left;color:var(--text)}
+.voyage-milestones,.voyage-connection{padding:12px 14px;border:1px solid var(--glass-edge);border-radius:16px;background:var(--glass-surface);font-size:13px;line-height:1.8;text-align:left;white-space:pre-line}
+.voyage-gate{font-size:12px;line-height:1.8;color:var(--accent);text-align:left}.voyage-teaching{text-align:left}.voyage-teaching summary{min-height:44px;padding:12px 0;font-size:13px;cursor:pointer;color:var(--muted)}
+#voyage-next-stop{min-height:44px;padding:10px 14px;border-radius:14px;font-size:13px}
+
 </style><style>
 /* Local game archive: distinct list, read-only replay, and resumable snapshots. */
 .history-dialog{width:min(1020px,calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:24px;text-align:left;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
@@ -1164,7 +1184,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 </div>
 
 </main>
-<footer><div class="footer-copy"><span class="app-version">1.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+<footer><div class="footer-copy"><span class="app-version">1.0.1</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
 </div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 <div id="toast" class="toast" role="status" hidden></div>
@@ -1197,7 +1217,7 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 </dialog>
 <dialog id="rules-dialog" class="game-dialog rules-dialog" aria-labelledby="rules-title">
 <button id="rules-close" class="dialog-close icon-btn" type="button" aria-label="关闭规则说明"><svg class="icon"><use href="#i-close"/></svg></button>
-<div class="eyebrow">HOW TO PLAY</div><h2 id="rules-title">经典九宫</h2><p id="rules-description"></p><p id="variant-legend" class="variant-legend"></p>
+<div class="eyebrow">HOW TO PLAY</div><h2 id="rules-title">经典九宫</h2><p id="rules-description"></p><p id="variant-legend" class="variant-legend"></p><section class="logic-rating" aria-labelledby="logic-rating-title"><h3 id="logic-rating-title">本题技巧评级</h3><p id="logic-rating" aria-live="polite"></p><p class="logic-rating-note">基于原始题面，不受你当前填写进度影响；仅分析已支持的经典技巧，和给定数密度档是不同维度。</p></section>
 <p class="rules-footnote">选择空格后可用候选速记整理可能的数字，也可以展开提示逐步查看思路。</p>
 </dialog>
 <dialog id="completion-dialog" class="game-dialog"><button id="close-completion" class="dialog-close icon-btn" aria-label="关闭完成弹窗"><svg class="icon"><use href="#i-close"/></svg></button><div class="completion-emblem"><svg class="icon"><use href="#i-spark"/></svg></div><div class="eyebrow">A PERFECT LITTLE UNIVERSE</div><h2>这一境，已圆满。</h2><p>每一个数字，都找到了自己的位置。</p><p id="completion-daily" class="completion-daily" hidden></p><p id="completion-voyage" class="completion-voyage" hidden></p><div class="completion-stats"><div><span>专注时长</span><strong id="completion-time">00:00</strong></div><div><span>失误次数</span><strong id="completion-mistakes">0</strong></div></div><button id="play-again" class="primary-btn">探索下一境<svg class="icon"><use href="#i-arrow"/></svg></button></dialog>
@@ -1236,11 +1256,11 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
 </dialog>
 <dialog id="voyage-dialog" class="game-dialog voyage-dialog" aria-labelledby="voyage-title">
 <button id="voyage-close" class="dialog-close icon-btn" type="button" aria-label="关闭星图远征"><svg class="icon"><use href="#i-close"/></svg></button>
-<div class="voyage-titleline"><div><div class="eyebrow">YOUR CONSTELLATION AWAITS</div><h2 id="voyage-title">星图远征</h2></div><div class="voyage-star-total"><svg class="icon"><use href="#i-spark"/></svg><strong id="voyage-total-stars">0</strong><span>/ 27</span></div></div>
-<p id="voyage-description">完成一境点亮一星；无提示、零失误各加一星。使用提示也能继续前进。</p>
-<div class="voyage-map-wrap"><div class="voyage-map-orbit" aria-hidden="true"></div><div id="voyage-map" class="voyage-map" role="group" aria-label="九境关卡"></div></div>
+<div class="voyage-titleline"><div><div class="eyebrow">YOUR CONSTELLATION AWAITS</div><h2 id="voyage-title">星图远征</h2></div><div class="voyage-star-total"><svg class="icon"><use href="#i-spark"/></svg><strong id="voyage-total-stars">0</strong><span id="voyage-star-max">/ 27</span></div></div>
+<p id="voyage-objective" class="voyage-objective"></p><p id="voyage-milestones" class="voyage-milestones" aria-live="polite"></p><button id="voyage-next-stop" type="button" class="secondary-btn">继续主线</button><div id="voyage-tracks" class="voyage-tracks" role="group" aria-label="选择远征主线"></div><p id="voyage-track-summary" class="voyage-track-summary"></p><p id="voyage-description">完成一境点亮一星；无提示、零失误各加一星。使用提示也能继续前进。</p>
+<div class="voyage-map-wrap"><div class="voyage-map-orbit" aria-hidden="true"></div><div id="voyage-map" class="voyage-map" role="group" aria-label="主线关卡"></div></div>
 <div class="voyage-selection"><div><span class="eyebrow">NEXT DESTINATION</span><h3 id="voyage-selected-title">启明星</h3><p id="voyage-selected-rule">经典九宫 · 入门</p></div><button id="voyage-start" class="primary-btn" type="button">准备这一境<svg class="icon"><use href="#i-arrow"/></svg></button></div>
-<p class="voyage-footnote">按顺序解锁 · 星级取最佳成绩 · 每一境都由你点击开始</p>
+<p id="voyage-connection" class="voyage-connection"></p><p id="voyage-gate" class="voyage-gate" aria-live="polite"></p><details class="voyage-teaching"><summary>查看本关规则与练习方法</summary><p id="voyage-lesson" class="voyage-lesson"></p></details><p class="voyage-footnote">启程 → 循线与求和 → 合流终章。通关得 1 星，无提示、零失误各加 1 星；重玩保留最佳成绩，每一境由你点击开始。</p>
 </dialog>
 <dialog id="secrets-dialog" class="game-dialog secrets-dialog" aria-labelledby="secrets-heading">
 <button id="secrets-close" class="dialog-close icon-btn" type="button" aria-label="关闭旅途拾遗"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
@@ -13219,7 +13239,101 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     return "行、列和宫";
   }
 
-  function getStep(board, givens, solution, mode) {
+  var TECHNIQUES = { 'naked-single': '单格唯一候选', 'hidden-single': '区域唯一位置', 'locked-candidate': '锁定候选', 'naked-pair': '显性数对', 'hidden-pair': '隐性数对' };
+  var LEVELS = { 'naked-single': 1, 'hidden-single': 1, 'locked-candidate': 2, 'naked-pair': 3, 'hidden-pair': 3 };
+  function digits(mask) { var out=[];for(var n=1;n<=9;n++)if(mask&(1<<(n-1)))out.push(n);return out; }
+  function cellName(i) { return '第 '+(Math.floor(i/9)+1)+' 行第 '+(i%9+1)+' 列'; }
+  function classicMasks(board) { return board.map(function(v,i){return v?0:Engine.candidates(board,i,'classic').reduce(function(m,n){return m|(1<<(n-1));},0);}); }
+  function plainClassic(context) {
+    if(typeof context==='string')return context==='classic';
+    if(!context||context.mode!=='classic')return false;
+    var clues=context.clues;
+    return !clues||typeof clues==='object'&&!Array.isArray(clues)&&Object.keys(clues).every(function(k){return k==='version'?clues[k]===1:['regions','cages','lines','edges','parity','outside','clones','quadruples'].indexOf(k)>=0&&Array.isArray(clues[k])&&clues[k].length===0;});
+  }
+  function nextClassic(board,masks) {
+    var units=Engine.getUnits('classic');
+    function placement(kind,index,value,focus,explanation) {
+      return {kind:kind,technique:kind,index:index,value:value,focusCells:focus,title:TECHNIQUES[kind],observe:'检查高亮格及区域内的候选关系。',explanation:explanation,answer:cellName(index)+'应填入 '+value+'。点击“填入这一格”后才会修改棋盘。'};
+    }
+    function removal(kind,focus,changes,explanation) {
+      if(!changes.length)return null;
+      var after=masks.slice();changes.forEach(function(c){c.values.forEach(function(n){after[c.index]&=~(1<<(n-1));});});
+      return {kind:'elimination',technique:kind,index:changes[0].index,value:0,focusCells:Array.from(new Set(focus.concat(changes.map(function(c){return c.index;})))),title:TECHNIQUES[kind],observe:'观察高亮区域中候选数字的位置关系；这一步只排除候选，不填数字。',explanation:explanation+' 可排除：'+changes.map(function(c){return cellName(c.index)+'的 '+c.values.join('、');}).join('；')+'。',answer:'应用后会以棋盘和已证明的推理替换全盘手写笔记，生成逻辑候选并完成本次排除；不会直接填入答案，可撤销以恢复原笔记。',eliminations:changes,candidateMasks:after};
+    }
+    for(var i=0;i<81;i++)if(!board[i]&&digits(masks[i]).length===1)return placement('naked-single',i,digits(masks[i])[0],[i].concat(Engine.getPeers(i,'classic')),cellName(i)+'依据行、列、宫和已证明的候选排除，只剩数字 '+digits(masks[i])[0]+'。');
+    for(var u=0;u<units.length;u++)for(var n=1;n<=9;n++){
+      var places=units[u].cells.filter(function(i){return !board[i]&&(masks[i]&(1<<(n-1)));});
+      if(places.length===1)return placement('hidden-single',places[0],n,units[u].cells,units[u].label+'必须包含数字 '+n+'，而它只在'+cellName(places[0])+'的逻辑候选中出现。');
+    }
+    for(var a=0;a<units.length;a++)for(var digit=1;digit<=9;digit++){
+      var positions=units[a].cells.filter(function(i){return masks[i]&(1<<(digit-1));});
+      if(positions.length<2)continue;
+      for(var b=0;b<units.length;b++){
+        if(a===b||!positions.every(function(i){return units[b].cells.indexOf(i)>=0;}))continue;
+        var changes=units[b].cells.filter(function(i){return units[a].cells.indexOf(i)<0&&(masks[i]&(1<<(digit-1)));}).map(function(i){return {index:i,values:[digit]};});
+        var action=removal('locked-candidate',units[a].cells.concat(units[b].cells),changes,units[a].label+'中数字 '+digit+' 的所有候选位置（'+positions.map(cellName).join('、')+'）都在'+units[b].label+'，因此'+units[b].label+'在该交集之外不能再放 '+digit+'。');
+        if(action)return action;
+      }
+    }
+    for(var p=0;p<units.length;p++){
+      var cells=units[p].cells;
+      for(var x=0;x<cells.length;x++){
+        var first=cells[x],pair=digits(masks[first]);if(pair.length!==2)continue;
+        var twins=cells.filter(function(i){return masks[i]===masks[first];});if(twins.length!==2||first!==twins[0])continue;
+        var removals=cells.filter(function(i){return twins.indexOf(i)<0&&(masks[i]&masks[first]);}).map(function(i){return {index:i,values:digits(masks[i]&masks[first])};});
+        var pairAction=removal('naked-pair',cells,removals,units[p].label+'的'+twins.map(cellName).join('和')+'都只剩 '+pair.join('、')+'，两格必定占用这两个数字（次序尚未确定），其他格不能再用它们。');if(pairAction)return pairAction;
+      }
+      for(var d=1;d<=8;d++)for(var e=d+1;e<=9;e++){
+        var left=cells.filter(function(i){return masks[i]&(1<<(d-1));}),right=cells.filter(function(i){return masks[i]&(1<<(e-1));});
+        if(left.length!==2||right.length!==2||left[0]!==right[0]||left[1]!==right[1])continue;
+        var keep=(1<<(d-1))|(1<<(e-1));
+        var hidden=left.filter(function(i){return masks[i]&~keep;}).map(function(i){return {index:i,values:digits(masks[i]&~keep)};});
+        var hiddenAction=removal('hidden-pair',cells,hidden,units[p].label+'的数字 '+d+' 和 '+e+' 都只能出现在'+left.map(cellName).join('和')+'，因此这两格必须留给它们，可删除两格中的其他候选。');if(hiddenAction)return hiddenAction;
+      }
+    }
+    return null;
+  }
+  function classicHint(board,notes) {
+    var masks=classicMasks(board),actions=[],matched=-1;
+    // Replay a proof from the board; arbitrary player notes never become premises.
+    for(var k=0;k<730;k++){
+      var action=nextClassic(board,masks);if(!action)break;
+      actions.push(action);if(action.kind!=='elimination')break;
+      masks=action.candidateMasks;
+      if(Array.isArray(notes)&&notes.length===81&&notes.every(function(n,i){return n===masks[i];}))matched=actions.length-1;
+    }
+    return actions[matched+1]||null;
+  }
+  function rateClassic(givens,context,options) {
+    context=context||'classic';options=options||{};
+    var started=Date.now(),timeLimit=Number.isFinite(options.timeLimitMs)?Math.max(1,Math.min(1000,options.timeLimitMs)):200;
+    var result={scope:'classic',solved:false,status:'invalid',label:'无法评级',highestTechnique:null,steps:0,placements:0,eliminations:0,techniques:{},methodVersion:1,reason:'题面矛盾或无有效候选'};
+    if(!plainClassic(context)){result.status='unsupported';result.reason='仅支持无附加线索的经典九宫';return result;}
+    if(!isBoard(givens,false,81)){result.reason='题面格式无效';return result;}
+    var board=givens.slice(),units=Engine.getUnits('classic');
+    if(units.some(function(u){var filled=u.cells.map(function(i){return board[i];}).filter(Boolean);return new Set(filled).size!==filled.length;}))return result;
+    var masks=classicMasks(board),limit=Number.isInteger(options.maxSteps)?Math.max(0,Math.min(1000,options.maxSteps)):1000,highest=0;
+    var timedOut=false;
+    for(var step=0;step<limit;step++){
+      if(Date.now()-started>=timeLimit){timedOut=true;break;}
+      if(board.every(Boolean)){result.solved=Engine.validateComplete(board,'classic');break;}
+      if(masks.some(function(m,i){return !board[i]&&!m;}))return result;
+      var action=nextClassic(board,masks);if(!action)break;
+      result.steps++;result.techniques[action.technique]=(result.techniques[action.technique]||0)+1;
+      if(LEVELS[action.technique]>highest){highest=LEVELS[action.technique];result.highestTechnique=action.technique;}
+      if(action.kind==='elimination'){masks=action.candidateMasks;result.eliminations+=action.eliminations.reduce(function(n,c){return n+c.values.length;},0);}
+      else {board[action.index]=action.value;masks[action.index]=0;result.placements++;Engine.getPeers(action.index,'classic').forEach(function(i){masks[i]&=~(1<<(action.value-1));});}
+    }
+    result.solved=board.every(Boolean)&&Engine.validateComplete(board,'classic');
+    result.status=result.solved?'rated':result.steps>=limit||timedOut?'budget':'beyond-supported';
+    result.label=result.solved?(result.steps===0?'完整题面 · 无需推理':highest<=1?'基础逻辑 · 唯一候选':highest===2?'进阶逻辑 · 锁定候选':'组合逻辑 · 数对'):'超出当前技巧 · 未评级';
+    result.reason=result.solved?'已用支持的逻辑技巧完成全盘':result.status==='budget'?'超过评级计算预算':'当前技巧无法继续，未使用猜测或答案';
+    result.remaining=board.filter(function(v){return !v;}).length;
+    result.explanation='仅按经典九宫的确定性逻辑路径评级：单格唯一、区域唯一、锁定候选及显性/隐性数对；不是给定数密度，也不代表所有人类解法的最低难度。';
+    return result;
+  }
+
+  function getStep(board, givens, solution, mode, notes) {
     var context = mode || "classic";
     mode = typeof context === "string" ? context : context.mode;
     var count;
@@ -13253,6 +13367,11 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
           "先检查高亮格，看看这个已填数字是否需要重新考虑。",
           "系统对照本题唯一解，发现" + coordinate(wrong) + "的已填数字不一致。这是答案核对；你可以先擦除并自行推理，也可以继续查看正确数字。");
       }
+    }
+
+    if (plainClassic(context)) {
+      var logical = classicHint(board, notes);
+      if (logical) return logical;
     }
 
     var available = new Array(count), emptyCells = [];
@@ -13304,14 +13423,14 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     }, emptyCells[0]);
     return step("solution", best, solution[best], [best], "需要更深入的推理",
       "可以从高亮格的候选关系继续探索；当前没有找到基础逻辑步骤。",
-      "当前没有找到单格唯一候选或区域唯一位置。这里可能需要更深入的候选排除或分支推理；下一步会直接展示本题答案，作为求解辅助。");
+      (plainClassic(context) ? "当前已尝试唯一候选、锁定候选和数对，仍需要其他技巧。" : "当前没有找到单格唯一候选或区域唯一位置。") + "这里可能需要更深入的候选排除或分支推理；下一步会直接展示本题答案，作为求解辅助。");
   }
 
-  return { getStep: getStep };
+  return { getStep: getStep, rateClassic: rateClassic };
 });
 
 </script><script>
-/* Nine Realms — a deterministic nine-stop voyage, with local progress handled by the caller. */
+/* Nine Realms — stable legacy voyage plus independently unlocked themed expeditions. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
   else root.SudokuVoyage = factory(root.SudokuEngine);
@@ -13329,22 +13448,98 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     { id: "jump", title: "跃迁", subtitle: "让每一步跳跃都有答案", mode: "knight", difficulty: "medium" },
     { id: "home", title: "归星", subtitle: "用逻辑点亮最后一颗星", mode: "classic", difficulty: "hard" }
   ].map(function (chapter, index) {
-    return Object.assign({ index: index }, chapter);
+    return Object.assign({ index: index, trackId: "legacy" }, chapter);
   });
+
+  var TRACKS = [
+    { id: "legacy", title: "九星远征", subtitle: "原来的九站旅程，进度原样保留", description: "从经典规则走向对角线、窗口与马步；重访旧关不丢最佳成绩。" },
+    { id: "lines", title: "循线之旅", subtitle: "递增 · 镜像 · 连续", description: "三站认识线条的不同语言：先看方向，再看对称，最后看连续集合。" },
+    { id: "sums", title: "星火求和", subtitle: "组合 · 拆分 · 交叉验证", description: "从小笼的总和出发，学习箭头拆分，再把多个笼与行列宫联系起来。" }
+  ];
+  var THEMED = [
+    { id: "lines-rise-v1", trackId: "lines", title: "微光升温", subtitle: "先看方向，再填数字", mode: "thermo", difficulty: "easy", sourceId: "V-thermo-easy-1",
+      lesson: "温度计从圆球到尖端严格递增。长度为 n 的线，圆球最多是 10−n；沿线每前进一步，数字至少增大 1。",
+      goal: "先找到一条温度计，比较相邻格的上下界，再与行、列和宫的已填数交叉检查。" },
+    { id: "lines-mirror-v1", trackId: "lines", title: "星河镜面", subtitle: "读出两端的回应", mode: "palindrome", difficulty: "medium", sourceId: "V-palindrome-medium-1",
+      lesson: "回文线两端向内对应的位置必须相等；它不是递增线。先找到已知数字的镜像位置。",
+      goal: "沿一条回文线成对检查两端；同值仍要遵守各自行、列和宫的限制。" },
+    { id: "lines-spectrum-v1", trackId: "lines", title: "流光成谱", subtitle: "从单格走向数字集合", mode: "renban", difficulty: "hard", sourceId: "V-renban-hard-1",
+      lesson: "连续线上的数字互不重复，并组成一段连续整数；排列顺序不限，不要求沿线递增。",
+      goal: "根据线长和已知数字缩小整段连续区间，再把候选与行列宫相互核对。" },
+    { id: "sums-sparks-v1", trackId: "sums", title: "星火相聚", subtitle: "认识不重复的总和", mode: "killer", difficulty: "easy", sourceId: "V-killer-easy-1",
+      lesson: "每个虚线笼的数字不重复，合计等于角标。两格和为 3 只能是 1 与 2；其他组合还要接受行列宫约束。",
+      goal: "先找最短的笼，列出不重复的数字组合；已知一格时，用总和减去它。" },
+    { id: "sums-arrows-v1", trackId: "sums", title: "光束汇流", subtitle: "拆开圆圈里的数字", mode: "arrow", difficulty: "medium", sourceId: "V-arrow-medium-1",
+      lesson: "圆圈中的数字等于箭身各格之和。箭身可否重复由行列宫等规则决定，不能照搬杀手笼的不重复条件。",
+      goal: "先从已知圆圈或已知箭身作减法，再检查每种拆分是否符合所在行列宫。" },
+    { id: "sums-constellation-v1", trackId: "sums", title: "群星合奏", subtitle: "让总和与九宫相互印证", mode: "killer", difficulty: "hard", sourceId: "V-killer-hard-1",
+      lesson: "每行、列、宫的 1–9 总和都是 45。若干完整笼都位于同一行、列或宫内且互不重叠时，可从 45 扣去它们的总和，求出该区域其余格的合计。",
+      goal: "结合笼的候选组合与行列宫限制逐步推进；不要把跨区域的完整笼总和直接相减。" }
+  ];
+  THEMED.forEach(function (chapter) {
+    chapter.index = THEMED.filter(function (other) { return other.trackId === chapter.trackId; }).indexOf(chapter);
+    chapter.ratingNote = "章节按概念逐步展开；入门／标准／进阶是原题给定密度档，不是人类技巧评级。";
+    CHAPTERS.push(chapter);
+  });
+
+  // One story, three acts. Metadata never changes a puzzle or saved record.
+  var STORY = [
+    ["星图失去第一处坐标。", "用行、列、宫找回第一颗定位星。", "沿修复的坐标寻找两条交叉航道。"],
+    ["两条航道在远方交叉。", "让两条对角线也各自容纳 1–9。", "交叉点指向四扇被遮住的窗口。"],
+    ["窗口里藏着下一段航线。", "同时核对九宫与四个额外窗口。", "穿过窗口，追上跳跃的信标。"],
+    ["信标不沿直线移动。", "检查马步相隔格，避免数字相撞。", "把学到的交叉检查带回经典九宫。"],
+    ["旧坐标发来新的回声。", "在给定更少的经典盘里连接行列宫。", "回声汇聚到更复杂的双轨交点。"],
+    ["双轨间的空白需要彼此印证。", "用对角线与宫的共同约束推进。", "顺着交点打开最后一间光室。"],
+    ["光室中的窗口同时亮起。", "把额外窗口的限制传回行列宫。", "借这束光完成最后一次跃迁。"],
+    ["返航信标只剩一次跳跃。", "在更稀疏的盘面中保持马步约束。", "回到九宫中心，校准原始星图。"],
+    ["九颗定位星终于归位，航线仍然断裂。", "解开经典九宫，完成星图的坐标骨架。", "九星定位完成；可选择循线或求和两路，最终在群星合奏汇合。"],
+    ["温度计般的航线从微光中升起。", "沿圆球到尖端的递增关系修复航线。", "方向确定后，寻找两端互相回应的镜面信号。"],
+    ["一束信号在航线两端出现。", "用回文线对应位置相等的规则校对信号。", "把单点对应扩大为一整段连续频谱。"],
+    ["离散光点需要组成连续的频谱。", "找出连续线上的数字集合，完成航线修复。", "航线已通；完成求和前两站后，一同进入群星合奏。"],
+    ["沿途星火被收进标有总量的容器。", "用笼内不重复的数字组合补齐能量。", "沿箭头把分散的能量汇入同一圆圈。"],
+    ["能量沿箭身汇向接收圆圈。", "核对圆圈等于箭身之和，不额外假设笼规则。", "求和能量已备齐；循线三站完成后，一同进入群星合奏。"],
+    ["坐标、航线与能量在归途汇合。", "用笼总和与行列宫交叉检查，点亮最后的星点。", "所有十五处星点点亮后，返航星图完整修复。" ]
+  ];
+  var EXAMPLES = [
+    "例如一行只缺 7，就用列与宫再核对 7。", "例如主对角线已有 5，其余对角线格不能再放 5。",
+    "例如额外窗口已有 3，同一窗口其余格排除 3。", "例如一个格填 4，它的马步相隔格不能填 4。",
+    "例如某宫的 2 只剩一处候选，就检查对应行列。", "例如对角线唯一缺数也必须满足所在宫。",
+    "例如窗口排除的 6，也会缩小交叉行的候选。", "例如两个候选格与已填 8 呈马步时，都需排除 8。",
+    "例如同一行的缺数要分别接受列与宫检验。", "例如三格温度计的圆球最多为 7。",
+    "例如五格回文线第一格为 4，则第五格也是 4。", "例如三格连续线可为 4、2、3，顺序不限。",
+    "例如两格笼和为 3，只能用 1 与 2。", "例如两格箭身的圆圈为 6、一格已填 2，则另一格为 4。",
+    "例如完全位于同一行、互不重叠的若干笼合计为 40，则该行其余格合计为 5。"
+  ];
+  CHAPTERS.forEach(function (chapter, index) {
+    chapter.storyIndex = index;
+    chapter.transition = STORY[index][0];
+    chapter.mission = STORY[index][1] + EXAMPLES[index];
+    chapter.bridge = STORY[index][0];
+    chapter.outcome = index < 9 ? "修复第 " + (index + 1) + " 颗定位星，保留这一站的最佳星级。" : index < 12 ? "接通第 " + (index - 8) + " 段航路，让线条规则与星图骨架吻合。" : index < 14 ? "汇聚第 " + (index - 11) + " 束能量，为两路汇合做准备。" : "完成两路的最终校准；十五处星点齐亮时，返航星图修复完成。";
+    chapter.nextLink = STORY[index][2];
+    chapter.nextStep = STORY[index][2];
+  });
+  TRACKS[0].description = "第一幕：修复九颗定位星。行列宫是共同骨架，对角线、窗口与马步练习交叉约束；完成后同时开放线条与求和两路。";
+  TRACKS[1].description = "第二幕：连接返航航线。在行列宫骨架上加入递增、对应相等与连续集合；完成三站后，与求和前两站共同解锁最终汇合。";
+  TRACKS[2].description = "第二幕与终章：汇聚返航能量。把笼与箭头的局部总和同九宫骨架相互核对，前两站汇聚能量；与循线三站共同解锁最终关，修复全部十五处星点。";
+
+  function tracks() { return TRACKS.map(function (track) { return Object.assign({}, track); }); }
 
   function chapterFor(id) {
     return CHAPTERS.find(function (chapter) { return chapter.id === id; }) || null;
   }
 
-  function chapters() {
-    return CHAPTERS.map(function (chapter) { return Object.assign({}, chapter); });
+  function chapters(trackId) {
+    return CHAPTERS.filter(function (chapter) { return !trackId || chapter.trackId === trackId; }).map(function (chapter) { return Object.assign({}, chapter); });
   }
 
   function getPuzzle(id) {
     var chapter = chapterFor(id);
     if (!chapter) throw new RangeError("未知的星图关卡。");
-    return Object.assign({}, Engine.getPuzzle(chapter.difficulty, "nine-realms-voyage-v1:" + id, chapter.mode, { legacyPool: true }),
-      { voyageId: id });
+    var legacy = chapter.trackId === "legacy";
+    return Object.assign({}, Engine.getPuzzle(chapter.difficulty,
+      (legacy ? "nine-realms-voyage-v1:" : "nine-realms-themed-voyage-v1:") + id,
+      chapter.mode, legacy ? { legacyPool: true } : { sourceId: chapter.sourceId }), { voyageId: id });
   }
 
   // Legacy schedules contain no per-puzzle clues; extra constraints cannot claim their records.
@@ -13359,10 +13554,21 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
   }
 
   function matchesPuzzle(id, givens, mode, difficulty, clues) {
-    if (!legacyClues(clues) || !chapterFor(id) || !Array.isArray(givens) || givens.length !== 81) return false;
+    var chapter = chapterFor(id);
+    if (!chapter || !Array.isArray(givens) || givens.length !== 81) return false;
+    if (chapter.trackId === "legacy" && !legacyClues(clues)) return false;
     var puzzle = getPuzzle(id);
+    if (chapter.trackId !== "legacy" && canonical(clues) !== canonical(puzzle.clues)) return false;
     return puzzle.mode === mode && puzzle.difficulty === difficulty &&
       puzzle.givens.every(function (value, index) { return value === givens[index]; });
+  }
+
+  function canonical(value) {
+    if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]";
+    if (value && typeof value === "object") return "{" + Object.keys(value).sort().map(function (key) {
+      return JSON.stringify(key) + ":" + canonical(value[key]);
+    }).join(",") + "}";
+    return JSON.stringify(value);
   }
 
   function validStats(stats) {
@@ -13388,30 +13594,152 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
   function normalizeProgress(raw) {
     var result = {};
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return result;
-    // A valid journey is a contiguous prefix. Orphaned later records cannot unlock
-    // levels immediately or become free completions when an earlier gap is filled.
-    for (var index = 0; index < CHAPTERS.length; index++) {
-      var id = CHAPTERS[index].id;
-      if (!Object.prototype.hasOwnProperty.call(raw, id)) break;
-      var record = raw[id];
-      if (!validStats(record) || !Number.isInteger(record.stars) ||
-          record.stars < 1 || record.stars > 3 || record.stars !== starsFor(record)) break;
-      result[id] = copyRecord(record);
+    // Each expedition has its own contiguous prefix. A gap in one never erases
+    // valid progress in another, and later orphan records never unlock stages.
+    TRACKS.forEach(function (track) {
+      var route = chapters(track.id);
+      for (var index = 0; index < route.length; index++) {
+        var id = route[index].id;
+        if (!Object.prototype.hasOwnProperty.call(raw, id)) break;
+        var record = raw[id];
+        if (!validStats(record) || !Number.isInteger(record.stars) ||
+            record.stars < 1 || record.stars > 3 || record.stars !== starsFor(record)) break;
+        result[id] = copyRecord(record);
+      }
+    });
+    if (raw.__journey && typeof raw.__journey === "object" && !Array.isArray(raw.__journey) &&
+        raw.__journey.version === 1 && Array.isArray(raw.__journey.granted)) {
+      result.__journey = { version: 1, granted: CHAPTERS.filter(function (chapter) {
+        return raw.__journey.granted.indexOf(chapter.id) >= 0;
+      }).map(function (chapter) { return chapter.id; }) };
     }
+    // A migrated active/previously accessible stage may be ahead of a missing
+    // local prefix. Keep only its explicitly granted, independently valid result.
+    if (result.__journey) result.__journey.granted.forEach(function (id) {
+      var record = raw[id];
+      if (Object.prototype.hasOwnProperty.call(raw, id) && validStats(record) &&
+          Number.isInteger(record.stars) && record.stars === starsFor(record)) result[id] = copyRecord(record);
+    });
     return result;
   }
 
-  function getStatus(progress) {
+  function getStatus(progress, trackId) {
+    trackId = trackId || "legacy";
+    var route = trackId === "all" ? chapters() : chapters(trackId);
     var clean = normalizeProgress(progress);
-    var ids = Object.keys(clean);
-    var completed = ids.length;
+    var ids = route.filter(function (chapter) { return Boolean(clean[chapter.id]); }).map(function (chapter) { return chapter.id; });
+    var completed = ids.length, prefix = 0;
+    while (prefix < route.length && clean[route[prefix].id]) prefix++;
     return {
       stars: ids.reduce(function (sum, id) { return sum + clean[id].stars; }, 0),
-      total: CHAPTERS.length,
+      total: route.length,
       completed: completed,
-      unlocked: Math.min(CHAPTERS.length, completed + 1),
-      nextId: completed < CHAPTERS.length ? CHAPTERS[completed].id : null
+      unlocked: trackId === "all" ? TRACKS.reduce(function (sum, track) { return sum + getStatus(clean, track.id).unlocked; }, 0) : Math.min(route.length, prefix + 1),
+      nextId: (route.find(function (chapter) { return !clean[chapter.id]; }) || {}).id || null
     };
+  }
+
+  // One-time migration records the exact old access rights, not future unlocks.
+  // Missing storage is different from an existing empty pre-story progress object.
+  function migrateProgress(raw, currentVoyageId, options) {
+    if (raw && typeof raw === "object" && Object.prototype.hasOwnProperty.call(raw, "__journey")) {
+      var marker = raw.__journey, normalizedMarker = normalizeProgress(raw).__journey;
+      if (!marker || typeof marker !== "object" || Array.isArray(marker) || marker.version !== 1 ||
+          !normalizedMarker || canonical(marker) !== canonical(normalizedMarker)) {
+        var error = new Error("远征进度标记来自不支持的版本或格式已损坏；原数据已保留，请勿覆盖。");
+        error.code = "VOYAGE_PROGRESS_UNSUPPORTED";
+        throw error;
+      }
+    }
+    var clean = normalizeProgress(raw);
+    if (clean.__journey) return clean;
+    var granted = [];
+    if (options && options.existing) {
+      TRACKS.forEach(function (track) {
+        var unlocked = getStatus(clean, track.id).unlocked;
+        chapters(track.id).forEach(function (chapter) { if (chapter.index < unlocked) granted.push(chapter.id); });
+      });
+      if (chapterFor(currentVoyageId)) granted.push(currentVoyageId);
+    }
+    clean.__journey = { version: 1, granted: CHAPTERS.filter(function (chapter) {
+      return granted.indexOf(chapter.id) >= 0;
+    }).map(function (chapter) { return chapter.id; }) };
+    return clean;
+  }
+
+  // Caller must first verify the restored actual puzzle with matchesPuzzle.
+  function retainCurrent(progress, id) {
+    if (!chapterFor(id)) throw new RangeError("未知的星图关卡。");
+    var clean = normalizeProgress(progress), grants = clean.__journey ? clean.__journey.granted.slice() : [];
+    grants.push(id);
+    clean.__journey = { version: 1, granted: CHAPTERS.filter(function (chapter) {
+      return grants.indexOf(chapter.id) >= 0;
+    }).map(function (chapter) { return chapter.id; }) };
+    return clean;
+  }
+
+  function dependencies(chapter) {
+    if (chapter.id === "sums-constellation-v1") return chapters("lines").concat(chapters("sums").slice(0, 2)).map(function (stage) { return stage.id; });
+    if (chapter.index > 0) return chapters(chapter.trackId).slice(0, chapter.index).map(function (stage) { return stage.id; });
+    return chapter.trackId === "legacy" ? [] : chapters("legacy").map(function (stage) { return stage.id; });
+  }
+
+  function canEnter(progress, id, currentVoyageId) {
+    var chapter = chapterFor(id);
+    if (!chapter) return false;
+    var clean = normalizeProgress(progress), current = chapterFor(currentVoyageId);
+    if (clean[id] || current && current.id === id) return true;
+    // Exact old rights include an active saved stage even if its earlier records
+    // are missing. No ungranted future stages gain permission from a count alone.
+    if (clean.__journey && clean.__journey.granted.indexOf(id) >= 0) return true;
+    if (!clean.__journey && chapter.index >= getStatus(clean, chapter.trackId).unlocked) return false;
+    return dependencies(chapter).every(function (dependency) { return Boolean(clean[dependency]); });
+  }
+
+  function journey(progress, currentVoyageId) {
+    var clean = normalizeProgress(progress), current = chapterFor(currentVoyageId), overall = getStatus(clean, "all");
+    var grants = clean.__journey ? clean.__journey.granted : [];
+    var inheritedPassage = grants.some(function (id) {
+      var chapter = chapterFor(id); return !dependencies(chapter).every(function (dependency) { return Boolean(clean[dependency]); });
+    });
+    var stages = CHAPTERS.map(function (chapter) {
+      var done = Boolean(clean[chapter.id]), enter = canEnter(clean, chapter.id, currentVoyageId);
+      var isCurrent = Boolean(current && current.id === chapter.id && !done), required = dependencies(chapter);
+      var inherited = !done && grants.indexOf(chapter.id) >= 0 && !required.every(function (id) { return Boolean(clean[id]); });
+      var reason = done ? "已点亮，可随时回访；不会重置最佳成绩。" : isCurrent ? "继续已保存的当前远征棋局。" :
+        enter ? inherited ? "沿用旧版已解锁资格，可继续这一关。" : "这一星点已开放，可以继续修复。" :
+        chapter.index >= getStatus(clean, chapter.trackId).unlocked ? "先点亮本幕前一处星点。" :
+        chapter.id === "sums-constellation-v1" ? "循线三站与求和前两站都完成后，开放最终汇合。" : "完成九星远征后，线条与求和两路同时开放。";
+      return Object.assign({}, chapter, { status: done ? "completed" : isCurrent ? "current" : enter ? "open" : "locked",
+        canEnter: enter, reason: reason, requires: required, inherited: inherited });
+    });
+    var next = null;
+    if (current && !clean[current.id]) next = stages.find(function (stage) { return stage.id === current.id; });
+    // Keep an old player's active later route, but never invent new access grants.
+    if (!next && inheritedPassage) {
+      for (var t = TRACKS.length - 1; t >= 1 && !next; t--) {
+        if (getStatus(clean, TRACKS[t].id).completed > 0)
+          next = stages.find(function (stage) { return stage.trackId === TRACKS[t].id && stage.canEnter && !clean[stage.id]; }) || null;
+      }
+    }
+    if (!next) next = stages.find(function (stage) { return stage.canEnter && !clean[stage.id]; }) || null;
+    var returning = Boolean(next && next.trackId === "legacy" && TRACKS.slice(1).some(function (track) { return getStatus(clean, track.id).completed > 0; }));
+    return { title: "修复返航星图", objective: "先校准九颗定位星，再沿循线与求和两路准备；两路完成后汇合，点亮全部十五处星点。",
+      total: overall.total, completed: overall.completed, stars: overall.stars, finished: overall.completed === overall.total,
+      nextId: next ? next.id : null, nextTrackId: next ? next.trackId : null, stages: stages,
+      inheritedPassage: inheritedPassage, granted: grants.slice(), returning: returning,
+      continuityMessage: overall.completed === overall.total ? "十五处星点全部点亮，返航星图已修复。你仍可重访任意关卡。" :
+        returning ? "后段成绩全部保留。可回访尚未点亮的早期星点，补全十五处星图；已通关部分无需重玩。" :
+        inheritedPassage ? "已保留旧版实际解锁的关卡及当前棋局；不要求重玩已通关部分。后续新解锁仍遵循两路汇合条件。" :
+        "完成九星远征后，循线与求和两路同时开放；循线三站和求和前两站完成后汇合。" };
+  }
+
+  function nextAfter(progress, id) {
+    var state = journey(progress), chapter = chapterFor(id);
+    if (state.finished) return null;
+    if (!chapter) return state.nextId;
+    var next = state.stages.find(function (stage) { return stage.storyIndex > chapter.storyIndex && stage.canEnter && stage.status !== "completed"; });
+    return next ? next.id : state.nextId;
   }
 
   function award(progress, id, stats) {
@@ -13419,7 +13747,8 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     if (!chapter) throw new RangeError("未知的星图关卡。");
     if (!validStats(stats)) throw new TypeError("星图通关记录无效。");
     var clean = normalizeProgress(progress);
-    if (chapter.index >= getStatus(clean).unlocked) return clean;
+    if (chapter.index >= getStatus(clean, chapter.trackId).unlocked &&
+        !(clean.__journey && clean.__journey.granted.indexOf(id) >= 0)) return clean;
     var next = copyRecord(stats);
     var previous = clean[id];
     if (!previous || next.stars > previous.stars ||
@@ -13427,8 +13756,9 @@ body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
     return clean;
   }
 
-  return { chapters: chapters, getPuzzle: getPuzzle, matchesPuzzle: matchesPuzzle,
-    normalizeProgress: normalizeProgress, award: award, getStatus: getStatus };
+  return { tracks: tracks, chapters: chapters, getPuzzle: getPuzzle, matchesPuzzle: matchesPuzzle,
+    normalizeProgress: normalizeProgress, award: award, getStatus: getStatus,
+    journey: journey, canEnter: canEnter, nextAfter: nextAfter, migrateProgress: migrateProgress, retainCurrent: retainCurrent };
 });
 
 </script><script>
@@ -16213,10 +16543,10 @@ return api;
   assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');return mark(b);
  }
  function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
- function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.0.0',createdAt:new Date().toISOString(),entries:entries};}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.0.1',createdAt:new Date().toISOString(),entries:entries};}
  function create(storage,options){return validate(draft(storage,options));}
  function createAsync(storage,options){return validateAsync(draft(storage,options));}
- function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Object.keys(e[KEYS[3]]||{}).length,voyageCount:Object.keys(e[KEYS[4]]||{}).length};}
+ function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Object.keys(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
  function rawJournal(text){assert(typeof text==='string'&&text.length<=MAX*2,'恢复日志过大');var j=JSON.parse(text);keys(j,['format','version','previous']);assert(j.format==='nine-realms-rollback'&&j.version===1,'恢复日志格式无效');keys(j.previous,KEYS);assert(KEYS.every(function(k){return Object.prototype.hasOwnProperty.call(j.previous,k)&&(j.previous[k]===null||typeof j.previous[k]==='string');}),'恢复日志不完整');return j;}
  function restoreRaw(storage,previous){KEYS.forEach(function(k){storage.removeItem(k);});KEYS.forEach(function(k){if(previous[k]!==null)storage.setItem(k,previous[k]);});assert(stable(read(storage))===stable(previous),'原数据恢复校验失败');storage.removeItem(JOURNAL);}
  function recoveryError(error,text){var e=new Error('存储恢复尚未完成。请勿继续游戏；保留恢复文件后重试。');e.code='RECOVERY_REQUIRED';e.recoveryRequired=true;e.previousBackup=text;e.cause=error;return e;}
@@ -16438,7 +16768,7 @@ return api;
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.0.0";
+  var APP_VERSION = "1.0.1";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -16473,7 +16803,10 @@ return api;
   var Atmosphere = window.NineRealmsAtmosphere;
   var VOYAGE_KEY = "nine-realms.voyage.v1";
   var voyageProgress = {};
+  var voyageStorageBlocked = false;
   var selectedVoyage = "dawn";
+  var selectedVoyageTrack = "legacy";
+  var ratingCache = new Map();
   var loadingVoyage = false;
   var pulseTimeout = null;
   var DAILY_KEY = "nine-realms.daily.v1";
@@ -17072,6 +17405,7 @@ return api;
       button.classList.toggle("conflict", !fogged && errors.has(i));
       button.classList.toggle("hint-cell", i === hintCell || Boolean(pendingHint && pendingHint.step.index === i));
       button.classList.toggle("hint-focus", Boolean(pendingHint && pendingHint.step.focusCells.indexOf(i) >= 0));
+      button.classList.toggle("hint-elimination", Boolean(pendingHint && pendingHint.step.kind === "elimination" && pendingHint.step.eliminations.some(function (change) { return change.index === i; })));
       button.classList.toggle("branch-cell", Boolean(game.branch) &&
         (value !== game.branch.board[i] || game.notes[i] !== game.branch.notes[i]));
       button.setAttribute("aria-selected", String(i === game.selected));
@@ -17488,32 +17822,59 @@ return api;
   }
 
   function readVoyage() {
-    try { voyageProgress = Voyage.normalizeProgress(JSON.parse(localStorage.getItem(VOYAGE_KEY) || "{}")); }
-    catch (error) { voyageProgress = {}; }
+    try {
+      var raw = localStorage.getItem(VOYAGE_KEY);
+      voyageProgress = Voyage.migrateProgress(raw === null ? {} : JSON.parse(raw), game && game.voyageId, { existing: raw !== null || Boolean(game) });
+      saveVoyage();
+    }
+    catch (error) { voyageProgress = {}; voyageStorageBlocked = true; }
   }
 
   function saveVoyage() {
+    if (voyageStorageBlocked) return;
     try { localStorage.setItem(VOYAGE_KEY, JSON.stringify(voyageProgress)); }
     catch (error) { toast("星图成绩暂时无法保存到本机，本局仍可继续游玩。"); }
   }
 
   function renderVoyage() {
-    var status = Voyage.getStatus(voyageProgress);
-    var chapters = Voyage.chapters();
-    var next = chapterInfo(status.nextId) || chapters[8];
-    $("voyage-card-title").textContent = status.completed === 9 ? "九星已点亮 · 重访远征" : "下一站 · " + next.title;
-    $("voyage-card-progress").textContent = status.completed + " / 9 关 · " + status.stars + " / 27 星";
-    $("voyage-total-stars").textContent = String(status.stars);
+    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
+    var status = Voyage.getStatus(voyageProgress, selectedVoyageTrack);
+    var overall = Voyage.getStatus(voyageProgress, "all");
+    var chapters = Voyage.chapters(selectedVoyageTrack);
+    var next = chapterInfo(status.nextId) || chapters[chapters.length - 1];
+    var tracks = Voyage.tracks();
+    var track = tracks.find(function (item) { return item.id === selectedVoyageTrack; });
+    var tabs = $("voyage-tracks");
+    if (!tabs.children.length) tracks.forEach(function (item) {
+      var button = document.createElement("button"); button.type = "button"; button.dataset.track = item.id; button.textContent = item.title; tabs.appendChild(button);
+    });
+    tabs.querySelectorAll("button").forEach(function (button) {
+      var item = tracks.find(function (track) { return track.id === button.dataset.track; });
+      var state = Voyage.getStatus(voyageProgress, item.id);
+      button.textContent = voyageStorageBlocked ? item.title : item.title + " " + state.completed + "/" + state.total;
+      button.setAttribute("aria-pressed", String(item.id === selectedVoyageTrack));
+    });
+    $("voyage-track-summary").textContent = track.description || track.subtitle || "沿着熟悉的九颗星，重温最初的旅程。";
+    $("voyage-star-max").textContent = "/ " + overall.total * 3;
+    var recommended = chapterInfo(journey.nextId);
+    $("voyage-objective").textContent = journey.finished ? "归航星图已复原。所有已点亮星点都可自由回访。" : "修复归航星图：校准星位 → 分头连线与汇能 → 群星合奏。";
+    $("voyage-milestones").textContent = "星位 " + Voyage.getStatus(voyageProgress, "legacy").completed + "/9 → 航路 " + Voyage.getStatus(voyageProgress, "lines").completed + "/3 ＋ 能量 " + ["sums-sparks-v1", "sums-arrows-v1"].filter(function (id) { return Boolean(voyageProgress[id]); }).length + "/2 → 合流 " + (voyageProgress["sums-constellation-v1"] ? "1" : "0") + "/1";
+    $("voyage-next-stop").textContent = recommended ? "继续主线 · " + recommended.title : "星图已完整 · 自由回访";
+    $("voyage-next-stop").disabled = !recommended || voyageStorageBlocked;
+    $("voyage-card-title").textContent = journey.finished ? "归航星图已复原 · 自由回访" : "修复归航星图 · 下一站 · " + (recommended ? recommended.title : next.title);
+    $("voyage-card-progress").textContent = overall.completed + " / " + overall.total + " 关 · " + overall.stars + " / " + overall.total * 3 + " 星";
+    $("voyage-total-stars").textContent = String(overall.stars);
     var selected = chapterInfo(selectedVoyage);
-    if (!selected || selected.index >= status.unlocked) {
+    if (!selected || selected.trackId !== selectedVoyageTrack) {
       selectedVoyage = next.id;
       selected = next;
     }
     var map = $("voyage-map");
+    var focusedChapter = map.contains(document.activeElement) ? document.activeElement.dataset.voyage : null;
     map.replaceChildren();
     chapters.forEach(function (chapter) {
       var record = voyageProgress[chapter.id];
-      var locked = chapter.index >= status.unlocked;
+      var locked = voyageStorageBlocked || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId);
       var button = document.createElement("button");
       button.type = "button";
       button.className = "voyage-node" + (locked ? " locked" : "") +
@@ -17522,7 +17883,7 @@ return api;
       button.disabled = locked;
       button.setAttribute("aria-pressed", String(chapter.id === selectedVoyage));
       button.setAttribute("aria-label", "第 " + (chapter.index + 1) + " 关，" + chapter.title +
-        (locked ? "，完成前一关后解锁" : record ? "，已获得 " + record.stars + " 星，可重玩" : "，可挑战"));
+        (locked ? "，完成主线前置目标后解锁" : record ? "，已获得 " + record.stars + " 星，可重玩" : "，可挑战"));
       var number = document.createElement("span");
       number.className = "node-number";
       number.textContent = String(chapter.index + 1).padStart(2, "0");
@@ -17536,25 +17897,44 @@ return api;
     $("voyage-selected-title").textContent = String(selected.index + 1).padStart(2, "0") + " · " + selected.title;
     $("voyage-selected-rule").textContent = modeInfo(selected.mode).label + " · " +
       difficultyInfo(selected.mode, selected.difficulty).label + "。 " + selected.subtitle;
-    $("voyage-description").textContent = "通关即得 1 星并解锁下一关；不用提示、零失误各加 1 星。没有倒计时，重玩保留最佳星级。";
+    $("voyage-lesson").textContent = (selected.lesson ? selected.lesson + "\n本关目标：" + selected.goal + "\n" + selected.ratingNote : "观察行、列、宫与本关附加规则，用自己的节奏探索。");
+    $("voyage-description").textContent = "通关推进主线，不以星级设门槛。启程完成后分头循线、求和；两支汇齐才开启群星合奏。旧版通行与最佳成绩保留。";
+    var allowed = Voyage.canEnter(voyageProgress, selected.id, game && game.voyageId);
+    $("voyage-connection").textContent = (selected.bridge || "") + "\n任务：" + (selected.mission || selected.goal || selected.subtitle) + "\n" + (selected.nextLink || "");
+    $("voyage-gate").textContent = allowed ? (voyageProgress.__journey && voyageProgress.__journey.granted.indexOf(selected.id) >= 0 ? "旧版通行已保留；成绩仍需实际通关获得。" : "此站已开放；完成后主线会指向下一处缺口。") : selected.id === "sums-constellation-v1" ? "合流条件：循线三关与求和前两关全部通关（无需满星）。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "先完成启程九关，建立共同的星位基础。" : "先完成本章前一站，再将学到的关系带到这里。";
     var current = game && game.voyageId === selected.id && !game.completed;
     $("voyage-start").textContent = current ? "返回这一关" : voyageProgress[selected.id] ? "重访这一星" : "准备出发";
-    $("voyage-start").disabled = loadingVoyage;
+    $("voyage-start").disabled = loadingVoyage || !allowed || voyageStorageBlocked;
+    if (voyageStorageBlocked) {
+      $("voyage-gate").textContent = "远征存档格式较新或暂不可读取，原数据已保留；请用对应版本打开，或从有效备份恢复。";
+      $("voyage-card-title").textContent = "远征记录暂不可读取";
+      $("voyage-card-progress").textContent = "原始记录已保留，未清空";
+      $("voyage-objective").textContent = "远征记录暂不可读取，暂不显示完成统计。";
+      $("voyage-milestones").textContent = "原始记录已保留；请使用对应版本读取。";
+      $("voyage-total-stars").textContent = "—"; $("voyage-star-max").textContent = "";
+      $("voyage-next-stop").textContent = "远征暂不可用";
+    }
+    if (focusedChapter && $("voyage-dialog").open) {
+      var focusTarget = Array.from(map.querySelectorAll("button")).find(function (button) { return button.dataset.voyage === focusedChapter && !button.disabled; });
+      if (focusTarget) focusTarget.focus();
+    }
   }
 
-  function openVoyage() {
+  function openVoyage(targetId) {
     if (dialogIsOpen()) return;
-    var status = Voyage.getStatus(voyageProgress);
-    selectedVoyage = game && game.voyageId && !game.completed ? game.voyageId : status.nextId || "home";
+    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
+    selectedVoyage = typeof targetId === "string" && chapterInfo(targetId) ? targetId :
+      game && game.voyageId && !game.completed ? game.voyageId : journey.nextId || "sums-constellation-v1";
+    selectedVoyageTrack = chapterInfo(selectedVoyage).trackId;
     renderVoyage();
     showDialog($("voyage-dialog"));
     save();
   }
 
   async function startVoyage() {
-    if (loadingVoyage || !$("voyage-dialog").open) return;
+    if (voyageStorageBlocked || loadingVoyage || !$("voyage-dialog").open) return;
     var chapter = chapterInfo(selectedVoyage);
-    if (!chapter || chapter.index >= Voyage.getStatus(voyageProgress).unlocked) return;
+    if (!chapter || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId)) return;
     loadingVoyage = true;
     $("voyage-start").disabled = true;
     try {
@@ -17568,6 +17948,7 @@ return api;
         var accepted = await confirmNewGame(chapter.difficulty, chapter.mode, false);
         if (!accepted) { setStatus("已保留当前棋局，星图随时等你出发。"); return; }
       }
+      if (storageTransition) return;
       installPuzzle(Voyage.getPuzzle(chapter.id), chapter.difficulty, chapter.mode);
       setStatus("星图远征 · " + chapter.title + "已准备好。点击开始游戏，点亮第一颗星。");
       save();
@@ -17584,7 +17965,9 @@ return api;
     $("completion-voyage").hidden = !game.voyageId;
     $("play-again").textContent = game.voyageId ? "返回星图 · 探索下一站" : "探索下一境";
     if (!game.voyageId) return;
+    if (voyageStorageBlocked) { $("completion-voyage").textContent = "本局已完成；远征存档暂不可写，原始记录未被覆盖。"; return; }
     var earned = 1 + (game.hints === 0 ? 1 : 0) + (game.mistakes === 0 ? 1 : 0);
+    var beforeAccess = Voyage.chapters().filter(function (chapter) { return Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); }).map(function (chapter) { return chapter.id; });
     voyageProgress = Voyage.award(voyageProgress, game.voyageId, {
       elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
     });
@@ -17592,7 +17975,11 @@ return api;
     renderVoyage();
     $("completion-voyage").textContent = "★".repeat(earned) + "☆".repeat(3 - earned) +
       " · " + chapterInfo(game.voyageId).title + "已点亮！最佳星级 " +
-      (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星";
+      (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星。 " + (chapterInfo(game.voyageId).outcome || "");
+    var opened = Voyage.chapters().filter(function (chapter) { return beforeAccess.indexOf(chapter.id) < 0 && Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); });
+    if (opened.length) $("completion-voyage").textContent += " 新航路已开放：" + opened.map(function (chapter) { return chapter.title; }).join("、") + "。";
+    var nextId = Voyage.nextAfter(voyageProgress, game.voyageId);
+    $("play-again").textContent = nextId ? "前往下一站 · " + chapterInfo(nextId).title : "归航完成 · 重访星图";
   }
 
   function readDaily() {
@@ -17686,8 +18073,25 @@ return api;
     }
   }
 
+  function renderLogicRating() {
+    var target = $("logic-rating"), context = gameContext(), givens = game.givens.slice();
+    var key = JSON.stringify(["classic-logic-v1", context, givens]);
+    target.textContent = "正在分析原始题面…";
+    setTimeout(function () {
+      if (!game || key !== JSON.stringify(["classic-logic-v1", gameContext(), game.givens])) return;
+      var result = ratingCache.get(key);
+      if (!result) {
+        result = window.SudokuHints.rateClassic(givens, context);
+        if (ratingCache.size >= 64) ratingCache.delete(ratingCache.keys().next().value);
+        ratingCache.set(key, result);
+      }
+      target.textContent = result.label + (result.solved ? " · 完整逻辑解出，" + result.steps + " 步。" : "。") +
+        (result.reason ? " " + result.reason : "") + " 不代表所有人使用同一路径，也不等同于所选难度档。";
+    }, 0);
+  }
+
   function hintSignature() {
-    return game.puzzleId + ":" + game.board.join("") + ":" + game.mode + ":" + JSON.stringify(game.clues);
+    return game.puzzleId + ":" + game.board.join("") + ":" + game.mode + ":" + JSON.stringify(game.clues) + ":" + game.notes.join(",");
   }
 
   function renderHint() {
@@ -17696,20 +18100,26 @@ return api;
     if (panel.hidden) return;
     var hint = pendingHint.step;
     var stage = pendingHint.stage;
-    $("hint-stage").textContent = ["01 / 03 · 观察", "02 / 03 · 推理", "03 / 03 · 答案"][stage];
+    var elimination = hint.kind === "elimination";
+    $("hint-stage").textContent = ["01 / 03 · 观察", "02 / 03 · 推理", elimination ? "03 / 03 · 排除" : "03 / 03 · 答案"][stage];
     $("hint-title").textContent = hint.title;
     $("hint-text").textContent = [hint.observe, hint.explanation, hint.answer][stage];
     $("hint-next").hidden = stage === 2;
-    $("hint-next").textContent = stage === 0 ? "看看推理" : "查看答案";
+    $("hint-next").textContent = stage === 0 ? "看看推理" : elimination ? "查看候选变化" : "查看答案";
     $("hint-apply").hidden = stage !== 2;
+    $("hint-apply").textContent = elimination ? "同步推理候选（可撤销）" : "填入这一格";
   }
 
   function requestHint() {
     if (!canInteract() || game.branch) return;
     if (!pendingHint || pendingHint.signature !== hintSignature()) {
-      var hint = window.SudokuHints.getStep(game.board.slice(), game.givens.slice(), game.solution.slice(), gameContext());
+      var hint = window.SudokuHints.getStep(game.board.slice(), game.givens.slice(), game.solution.slice(), gameContext(), game.notes.slice());
       if (!hint || !Number.isInteger(hint.index) || hint.index < 0 || hint.index >= game.board.length ||
-          game.givens[hint.index] || hint.value !== game.solution[hint.index]) {
+          game.givens[hint.index] || (hint.kind === "elimination" ?
+          !Array.isArray(hint.candidateMasks) || hint.candidateMasks.length !== game.board.length ||
+          !hint.candidateMasks.every(function (mask, index) { return Number.isInteger(mask) && mask >= 0 && mask <= 511 &&
+            (game.board[index] ? mask === 0 : Boolean(mask & (1 << (game.solution[index] - 1)))); }) :
+          hint.value !== game.solution[hint.index])) {
         toast("当前没有可用提示。");
         return;
       }
@@ -17738,6 +18148,12 @@ return api;
     var hint = pendingHint.step;
     pendingHint = null;
     game.selected = hint.index;
+    if (hint.kind === "elimination") {
+      remember();
+      game.notes = hint.candidateMasks.slice(); noteMode = true;
+      setStatus("已同步这一步经过证明的全盘候选（会替换手写笔记），未填入数字；可撤销或在历史中回看。");
+      render(); save("技巧排除 · " + hint.title); return;
+    }
     enterNumber(hint.value, true);
     hintCell = hint.index;
     clearTimeout(hintTimeout);
@@ -17910,6 +18326,9 @@ return api;
         render();
         renderDaily();
         renderVoyage();
+      }
+      if (!voyageStorageBlocked && game.voyageId && Voyage.matchesPuzzle(game.voyageId, game.givens, game.mode, game.difficulty, game.clues)) {
+        voyageProgress = Voyage.retainCurrent(voyageProgress, game.voyageId); saveVoyage(); renderVoyage();
       }
       setStatus(restart ? "原题已准备好，这是一次新的挑战；点击开始后计时。" :
         game.completed ? "这局已经完成。可以查看历史回放，或重新挑战原题。" :
@@ -18309,6 +18728,16 @@ return api;
   bind("voyage-start", "click", startVoyage);
   bind("voyage-close", "click", function () { closeDialog($("voyage-dialog")); });
   bind("voyage-dialog", "close", function () { resumeClock(); save(); });
+  bind("voyage-next-stop", "click", function () {
+    var nextId = Voyage.journey(voyageProgress, game && game.voyageId).nextId;
+    if (!nextId) return;
+    selectedVoyage = nextId; selectedVoyageTrack = chapterInfo(nextId).trackId; renderVoyage(); $("voyage-start").focus();
+  });
+  bind("voyage-tracks", "click", function (event) {
+    var button = event.target.closest("[data-track]");
+    if (!button) return;
+    selectedVoyageTrack = button.dataset.track; renderVoyage();
+  });
   bind("voyage-map", "click", function (event) {
     var button = event.target.closest("[data-voyage]");
     if (!button || button.disabled) return;
@@ -18396,6 +18825,7 @@ return api;
     if (!game || dialogIsOpen()) return;
     $("rules-title").textContent = modeInfo(game.mode).label;
     $("rules-description").textContent = modeInfo(game.mode).description;
+    renderLogicRating();
     showDialog($("rules-dialog")); save();
   });
   bind("rules-close", "click", function () { closeDialog($("rules-dialog")); });
@@ -18428,7 +18858,7 @@ return api;
   bind("completion-dialog", "close", resumeClock);
   bind("play-again", "click", function () {
     closeDialog($("completion-dialog"));
-    if (game.voyageId) openVoyage();
+    if (game.voyageId) openVoyage(Voyage.nextAfter(voyageProgress, game.voyageId));
     else newGame(game.difficulty, false);
   });
   bind("theme-switcher", "click", function (event) {
@@ -18592,6 +19022,7 @@ return api;
   }
 
   async function preparePlayerBackup() {
+    if (voyageStorageBlocked) throw new Error("远征存档格式较新或暂不可读取，为避免导出遗漏，完整备份已暂停；原数据未改变，请使用对应版本导出。");
     suspendClock();
     save();if(History)History.flush();
     // Export the live snapshot even when quota prevents persistence. Never export stale progress.

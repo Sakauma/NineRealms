@@ -140,7 +140,7 @@
 </div>
 
 </main>
-<footer><div class="footer-copy"><span class="app-version">1.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+<footer><div class="footer-copy"><span class="app-version">1.0.1</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
 </div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 <div id="toast" class="toast" role="status" hidden></div>
@@ -173,7 +173,7 @@
 </dialog>
 <dialog id="rules-dialog" class="game-dialog rules-dialog" aria-labelledby="rules-title">
 <button id="rules-close" class="dialog-close icon-btn" type="button" aria-label="关闭规则说明"><svg class="icon"><use href="#i-close"/></svg></button>
-<div class="eyebrow">HOW TO PLAY</div><h2 id="rules-title">经典九宫</h2><p id="rules-description"></p><p id="variant-legend" class="variant-legend"></p>
+<div class="eyebrow">HOW TO PLAY</div><h2 id="rules-title">经典九宫</h2><p id="rules-description"></p><p id="variant-legend" class="variant-legend"></p><section class="logic-rating" aria-labelledby="logic-rating-title"><h3 id="logic-rating-title">本题技巧评级</h3><p id="logic-rating" aria-live="polite"></p><p class="logic-rating-note">基于原始题面，不受你当前填写进度影响；仅分析已支持的经典技巧，和给定数密度档是不同维度。</p></section>
 <p class="rules-footnote">选择空格后可用候选速记整理可能的数字，也可以展开提示逐步查看思路。</p>
 </dialog>
 <dialog id="completion-dialog" class="game-dialog"><button id="close-completion" class="dialog-close icon-btn" aria-label="关闭完成弹窗"><svg class="icon"><use href="#i-close"/></svg></button><div class="completion-emblem"><svg class="icon"><use href="#i-spark"/></svg></div><div class="eyebrow">A PERFECT LITTLE UNIVERSE</div><h2>这一境，已圆满。</h2><p>每一个数字，都找到了自己的位置。</p><p id="completion-daily" class="completion-daily" hidden></p><p id="completion-voyage" class="completion-voyage" hidden></p><div class="completion-stats"><div><span>专注时长</span><strong id="completion-time">00:00</strong></div><div><span>失误次数</span><strong id="completion-mistakes">0</strong></div></div><button id="play-again" class="primary-btn">探索下一境<svg class="icon"><use href="#i-arrow"/></svg></button></dialog>
@@ -212,11 +212,11 @@
 </dialog>
 <dialog id="voyage-dialog" class="game-dialog voyage-dialog" aria-labelledby="voyage-title">
 <button id="voyage-close" class="dialog-close icon-btn" type="button" aria-label="关闭星图远征"><svg class="icon"><use href="#i-close"/></svg></button>
-<div class="voyage-titleline"><div><div class="eyebrow">YOUR CONSTELLATION AWAITS</div><h2 id="voyage-title">星图远征</h2></div><div class="voyage-star-total"><svg class="icon"><use href="#i-spark"/></svg><strong id="voyage-total-stars">0</strong><span>/ 27</span></div></div>
-<p id="voyage-description">完成一境点亮一星；无提示、零失误各加一星。使用提示也能继续前进。</p>
-<div class="voyage-map-wrap"><div class="voyage-map-orbit" aria-hidden="true"></div><div id="voyage-map" class="voyage-map" role="group" aria-label="九境关卡"></div></div>
+<div class="voyage-titleline"><div><div class="eyebrow">YOUR CONSTELLATION AWAITS</div><h2 id="voyage-title">星图远征</h2></div><div class="voyage-star-total"><svg class="icon"><use href="#i-spark"/></svg><strong id="voyage-total-stars">0</strong><span id="voyage-star-max">/ 27</span></div></div>
+<p id="voyage-objective" class="voyage-objective"></p><p id="voyage-milestones" class="voyage-milestones" aria-live="polite"></p><button id="voyage-next-stop" type="button" class="secondary-btn">继续主线</button><div id="voyage-tracks" class="voyage-tracks" role="group" aria-label="选择远征主线"></div><p id="voyage-track-summary" class="voyage-track-summary"></p><p id="voyage-description">完成一境点亮一星；无提示、零失误各加一星。使用提示也能继续前进。</p>
+<div class="voyage-map-wrap"><div class="voyage-map-orbit" aria-hidden="true"></div><div id="voyage-map" class="voyage-map" role="group" aria-label="主线关卡"></div></div>
 <div class="voyage-selection"><div><span class="eyebrow">NEXT DESTINATION</span><h3 id="voyage-selected-title">启明星</h3><p id="voyage-selected-rule">经典九宫 · 入门</p></div><button id="voyage-start" class="primary-btn" type="button">准备这一境<svg class="icon"><use href="#i-arrow"/></svg></button></div>
-<p class="voyage-footnote">按顺序解锁 · 星级取最佳成绩 · 每一境都由你点击开始</p>
+<p id="voyage-connection" class="voyage-connection"></p><p id="voyage-gate" class="voyage-gate" aria-live="polite"></p><details class="voyage-teaching"><summary>查看本关规则与练习方法</summary><p id="voyage-lesson" class="voyage-lesson"></p></details><p class="voyage-footnote">启程 → 循线与求和 → 合流终章。通关得 1 星，无提示、零失误各加 1 星；重玩保留最佳成绩，每一境由你点击开始。</p>
 </dialog>
 <dialog id="secrets-dialog" class="game-dialog secrets-dialog" aria-labelledby="secrets-heading">
 <button id="secrets-close" class="dialog-close icon-btn" type="button" aria-label="关闭旅途拾遗"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>

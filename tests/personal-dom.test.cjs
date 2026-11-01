@@ -46,7 +46,7 @@ const saved=()=>JSON.parse(w.localStorage.getItem('nine-realms.sudoku.v1'));
  $('backup-open').click();$('backup-export').click();
  for(let i=0;i<100&&!downloads.length;i++)await sleep(10);
  assert.equal(downloads.length,1,$('backup-status').textContent);const text=await downloads[0].blob.text();const good=Backup.validate(text);
- assert.equal(good.appVersion,'1.0.0');assert.equal(good.entries['nine-realms.sudoku.v1'].version,8);assert.equal(good.entries['nine-realms.favorites.v1'].records.length,1);assert(good.entries['nine-realms.sudoku.v1'].game.notes.some(Boolean));
+ assert.equal(good.appVersion,require('../package.json').version);assert.equal(good.entries['nine-realms.sudoku.v1'].version,8);assert.equal(good.entries['nine-realms.favorites.v1'].records.length,1);assert(good.entries['nine-realms.sudoku.v1'].game.notes.some(Boolean));
  assert(good.entries['nine-realms.history.v1'].records.length);
  assert.notDeepEqual(good.entries['nine-realms.sudoku.v1'].game.notes,storedNotes,'Export must include unsaved in-memory notes');
  w.Storage.prototype.setItem=originalSet;
