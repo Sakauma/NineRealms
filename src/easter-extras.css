@@ -1,0 +1,91 @@
+/* Four pocket discoveries. Animation starts only in the visible collection. */
+.secrets-dialog .secret-cards{display:grid;grid-template-columns:repeat(7,112px);gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:1px 1px 10px;margin:0 0 14px;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+.secrets-dialog .secret-cards button{min-height:91px;scroll-snap-align:start;justify-content:center;gap:5px;border-radius:12px;padding:10px 5px}
+.secrets-dialog .secret-cards button[data-found=true]{border-style:solid}
+.secrets-dialog .secret-cards button[aria-pressed=true]{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 20%,transparent)}
+.secrets-dialog .secret-cards strong{font-size:12px}.secrets-dialog .secret-cards small{font-size:10px}
+.secrets-dialog .secret-card-symbol{font-size:22px}
+.secret-extra-art{position:absolute;inset:0;display:none;transform-style:preserve-3d;pointer-events:none}
+.secret-scene[data-secret=constellation] .secret-constellation,.secret-scene[data-secret=gravity] .secret-gravity,.secret-scene[data-secret=rain] .secret-rain,.secret-scene[data-secret=crane] .secret-crane{display:block}
+.secret-scene[data-secret=constellation]{background:radial-gradient(ellipse at 55% 80%,#3f427347,transparent 65%),linear-gradient(160deg,#10243c,#201835)}
+.secret-constellation svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 5px #80c6ff88)}
+.secret-star-path{stroke-dasharray:650;stroke-dashoffset:0}
+.secret-star-halo{position:absolute;left:50%;top:46%;width:250px;height:96px;transform:translate(-50%,-50%) rotate(-18deg);border-radius:50%;background:#8a82e319;filter:blur(30px)}
+.secret-scene[data-secret=gravity]{background:radial-gradient(ellipse at 50% 43%,#52243c,#131125 60%,#0a1020)}
+.secret-gravity-lens{position:absolute;left:50%;top:44%;width:282px;height:165px;transform:translate(-50%,-50%);perspective:450px;transform-style:preserve-3d}
+.secret-event-horizon{position:absolute;left:50%;top:50%;width:95px;height:95px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 55% 52%,#03040a 60%,#160b19 71%,#f6d5d0 74%,#f9c1a669 78%,transparent 83%);box-shadow:0 0 16px #ffb78d66}
+.secret-accretion{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%) rotateX(66deg) rotateZ(-18deg);background:repeating-conic-gradient(from 22deg,#ffbe7fbb 0deg,#af5d700a 20deg,#e9b3ddcc 35deg,#fccea412 56deg);mask-image:radial-gradient(ellipse,transparent 45%,#000 48%,#000 68%,transparent 72%)}
+.secret-accretion.outer{width:282px;height:190px;filter:drop-shadow(0 0 9px #fb8f7066)}
+.secret-accretion.inner{width:236px;height:158px;transform:translate(-50%,-50%) rotateX(65deg) rotateZ(36deg);opacity:.85}
+.secret-gravity-arc{position:absolute;left:50%;top:50%;width:107px;height:107px;transform:translate(-50%,-50%);border:2px solid transparent;border-top-color:#ffe1b6;border-left-color:#e7baff77;border-radius:50%;filter:drop-shadow(0 0 6px #ffb3d9)}
+.secret-scene[data-secret=rain]{background:radial-gradient(ellipse at center,#0b362e,#061b21 68%,#07101c)}
+.secret-rain-streams{position:absolute;inset:0;overflow:hidden;mask-image:linear-gradient(transparent,#000 12%,#000 75%,transparent)}
+.secret-rain-streams>span{position:absolute;left:calc(var(--column) * 6.2% - 2%);top:-32px;width:13px;word-break:break-all;font:12px/1.4 "Courier New",monospace;color:#75f0bd;opacity:.27;text-shadow:0 0 5px #72d8bc66;transform:translateY(calc(var(--column) * -5px))}
+.secret-rain-message{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:18px;background:radial-gradient(ellipse at center,#061d1be8,transparent 65%);text-align:center}
+.secret-rain-message small{font:9px "Courier New",monospace;letter-spacing:4px;color:#94d1bc}
+.secret-rain-message strong{margin:10px 0 8px;font:34px "Courier New",monospace;letter-spacing:5px;color:#d9fff0;text-shadow:0 0 22px #61efbd88}
+.secret-rain-message strong span{color:#6eb59c}
+.secret-rain-message em{font-size:11px;font-style:normal;letter-spacing:1px;color:#a7dacb}
+.secret-scene[data-secret=crane]{background:radial-gradient(ellipse at 69% 20%,#c6818955,transparent 48%),linear-gradient(165deg,#25354c,#504456 62%,#72616b)}
+.secret-crane-sun{position:absolute;left:66%;top:17%;width:62px;height:62px;background:linear-gradient(135deg,#fce3cd,#d8afb6);border-radius:50%;box-shadow:0 0 42px #ffdec022;opacity:.65}
+.secret-crane-flight{position:absolute;left:50%;top:44%;width:260px;height:174px;transform:translate(-50%,-50%);filter:drop-shadow(0 14px 8px #1b112926)}
+.secret-crane-flight svg{width:100%;height:100%;overflow:visible}
+.secret-crane-wing{transform-box:fill-box;transform-origin:90% 90%}
+.secret-crane-cloud{position:absolute;bottom:30px;left:-10%;width:120%;height:28px;border-radius:50%;background:#e9dfe210;box-shadow:70px -17px 0 #e9dfe20a;filter:blur(9px)}
+.secret-task{margin:0 0 16px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--panel-soft)}
+.secret-task[hidden]{display:none!important}
+.secret-task-status{margin:10px 0 0!important;min-height:20px;font-size:11px!important;line-height:1.7;color:var(--muted);text-align:center}
+.secret-star-game{position:relative;height:132px;max-width:390px;margin:0 auto}
+.secret-star-game>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.secret-star-game path{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--star-progress,0));opacity:.65}
+.secret-star-game button{position:absolute;z-index:1;left:var(--x);top:var(--y);transform:translate(-50%,-50%);display:grid;place-items:center;width:34px;height:34px;min-height:34px;padding:0;border-radius:50%;font-size:12px;color:var(--muted);border:1px solid var(--line);background:var(--panel)}
+.secret-star-game button:active:not(:disabled){transform:translate(-50%,calc(-50% + 1px))}
+.secret-star-game button[data-lit=true]{background:var(--accent);color:var(--bg);border-color:var(--accent);box-shadow:0 0 16px color-mix(in srgb,var(--accent) 35%,transparent)}
+.secret-orbit-controls{display:flex;justify-content:center;gap:28px}
+.secret-orbit-controls>button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 10px;background:transparent;min-width:72px;border:1px solid transparent}
+.secret-orbit-controls>button:hover{border-color:var(--line)}
+.secret-orbit-controls strong{font:12px "Courier New",monospace;min-height:14px;color:var(--accent)}
+.secret-orbit-controls small{font-size:10px;color:var(--muted)}
+.secret-orbit-dial{position:relative;width:57px;height:57px;border:1px solid var(--line);border-radius:50%;background:radial-gradient(circle,var(--related),transparent 70%)}
+.secret-orbit-dial:before,.secret-orbit-dial:after{content:"";position:absolute;inset:6px;border-radius:50%;border-top:1px solid var(--muted);border-bottom:1px solid var(--muted);opacity:.5}
+.secret-orbit-dial:after{transform:rotate(90deg)}
+.secret-orbit-dial>i{position:absolute;inset:4px;transform:rotate(var(--orbit-angle));border-radius:50%}
+.secret-orbit-dial>i:before{content:"";position:absolute;top:3px;left:50%;height:19px;width:2px;background:var(--accent);transform:translateX(-50%);border-radius:2px}
+.secret-orbit-dial>b{position:absolute;left:-8px;top:21px;background:var(--panel-soft);padding:0 2px;font:8px "Courier New",monospace;color:var(--muted)}
+.secret-orbit-controls>button[data-aligned=true] .secret-orbit-dial{border-color:var(--accent);box-shadow:0 0 16px color-mix(in srgb,var(--accent) 18%,transparent)}
+#secret-rain-form>label{display:block;font-size:12px;color:var(--muted);margin:0 0 8px}
+.secret-rain-entry{display:flex;gap:10px;align-items:stretch}
+#secret-rain-code{min-width:0;flex:1;width:100%;height:44px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font:19px "Courier New",monospace;letter-spacing:6px;padding:8px 12px}
+#secret-rain-code[aria-invalid=true]{border-color:var(--error,#e7979c)}
+.secret-rain-entry>button{white-space:nowrap;font-size:12px;padding:8px 15px}
+.secret-fold-workbench{display:flex;align-items:center;justify-content:center;gap:35px;min-height:86px}
+#secret-fold-paper{position:relative;width:74px;height:74px;filter:drop-shadow(0 6px 8px #0002)}
+#secret-fold-paper>i{position:absolute;inset:0;background:linear-gradient(145deg,#f7e8de,#ccb8d5);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+#secret-fold-paper>i:nth-child(2){background:#e1c9df;clip-path:polygon(50% 0,50% 100%,0 50%);opacity:.45}
+#secret-fold-paper>i:nth-child(3){background:#fcf0df;clip-path:polygon(50% 0,100% 50%,50% 50%);opacity:.5}
+#secret-fold-paper[data-fold="1"]>i:first-child{clip-path:polygon(50% 0,100% 50%,50% 100%)}
+#secret-fold-paper[data-fold="1"]>i:nth-child(2){clip-path:polygon(50% 0,75% 50%,50% 100%)}
+#secret-fold-paper[data-fold="1"]>i:nth-child(3){clip-path:polygon(50% 0,100% 50%,50% 50%)}
+#secret-fold-paper[data-fold="2"]>i:first-child{clip-path:polygon(15% 10%,85% 10%,50% 100%)}
+#secret-fold-paper[data-fold="2"]>i:nth-child(2){clip-path:polygon(15% 10%,50% 65%,50% 100%)}
+#secret-fold-paper[data-fold="2"]>i:nth-child(3){clip-path:polygon(85% 10%,50% 65%,50% 100%)}
+#secret-fold-paper[data-fold="3"]>i:first-child{clip-path:polygon(5% 5%,52% 54%,85% 32%,75% 62%,50% 82%)}
+#secret-fold-paper[data-fold="3"]>i:nth-child(2){clip-path:polygon(52% 54%,38% 2%,75% 62%,50% 82%)}
+#secret-fold-paper[data-fold="3"]>i:nth-child(3){clip-path:polygon(70% 60%,86% 20%,100% 33%,88% 31%,80% 65%)}
+#secret-fold{min-width:124px;font-size:12px}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=constellation] .secret-star-path{animation:secret-bridge 2.4s ease both}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=constellation] .secret-nine-stars>g{animation:secret-star-breath var(--secret-float-time) ease-in-out calc(var(--i) * -.35s) infinite alternate}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=gravity] .secret-accretion.outer{animation:secret-accretion var(--secret-orbit-time) linear infinite}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=gravity] .secret-accretion.inner{animation:secret-accretion var(--secret-orbit-time) linear infinite reverse}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=rain] .secret-rain-streams>span{animation:secret-digital-fall var(--fall) linear var(--delay) infinite}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=crane] .secret-crane-flight{animation:secret-crane-float var(--secret-float-time) ease-in-out infinite}
+.secrets-dialog[open] .secret-scene[data-motion=on].is-replaying[data-secret=crane] .secret-crane-wing{animation:secret-crane-wing var(--secret-float-time) ease-in-out infinite alternate}
+body[data-zen=on] .secret-rain-streams>span{--fall:16s!important}
+@keyframes secret-bridge{from{stroke-dashoffset:650;opacity:.25}to{stroke-dashoffset:0;opacity:1}}
+@keyframes secret-star-breath{from{opacity:.45}to{opacity:1}}
+@keyframes secret-accretion{from{transform:translate(-50%,-50%) rotateX(66deg) rotateZ(-18deg)}to{transform:translate(-50%,-50%) rotateX(66deg) rotateZ(342deg)}}
+@keyframes secret-digital-fall{from{translate:0 -180px}to{translate:0 240px}}
+@keyframes secret-crane-float{0%,100%{transform:translate(-50%,-50%) rotate(-3deg)}50%{transform:translate(-48%,-56%) rotate(3deg)}}
+@keyframes secret-crane-wing{from{transform:rotate(-3deg) scaleY(.98)}to{transform:rotate(6deg) scaleY(.86)}}
+@media(prefers-reduced-motion:reduce){.secret-extra-art *{animation:none!important;transition:none!important}}
+@media(max-width:400px){.secrets-dialog .secret-cards{grid-template-columns:repeat(7,101px)}.secret-task{padding:12px}.secret-orbit-controls{gap:9px}.secret-orbit-controls>button{padding:6px 3px;min-width:63px}.secret-rain-entry{flex-direction:column}.secret-rain-entry>button{min-height:40px}.secret-fold-workbench{gap:18px}.secret-fold-workbench>button{min-width:112px}.secret-rain-message strong{font-size:27px;letter-spacing:3px}.secret-rain-message em{font-size:10px}.secret-crane-flight{width:230px}.secret-gravity-lens{scale:.87}.secret-task-status{font-size:10px!important}}

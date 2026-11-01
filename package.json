@@ -1,0 +1,27 @@
+{
+  "name": "nine-realms-sudoku",
+  "version": "3.1.0",
+  "private": true,
+  "description": "九境 Nine Realms — 离线数独桌面游戏",
+  "license": "MIT",
+  "config": {
+    "electronVersion": "45.1.0"
+  },
+  "scripts": {
+    "build": "python3 scripts/build.py",
+    "verify": "python3 scripts/verify-web-recovery.py",
+    "verify:web": "python3 scripts/verify-web-recovery.py",
+    "package:win": "node scripts/package-desktop.cjs",
+    "package:setup": "python3 scripts/package-installer.py",
+    "verify:installer": "python3 scripts/verify-installer.py",
+    "package:release": "python3 scripts/package-release.py",
+    "backup:source": "python3 scripts/backup-source.py"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sakauma/NineRealms.git"
+  }
+}

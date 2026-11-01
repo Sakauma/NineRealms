@@ -1,0 +1,282 @@
+/* Nine Realms — independent local history with real action diffs. */
+(function(root,factory){"use strict";if(typeof module==="object"&&module.exports)module.exports=factory(root);else root.NineRealmsHistory=factory(root);})(typeof globalThis!=="undefined"?globalThis:this,function(root){
+"use strict";
+var KEY="nine-realms.history.v1",LIMITS={records:40,steps:3000,bytes:3*1024*1024};
+var singleton=null,hooks={},ui=null,flushTimer=null;
+function copy(x){return JSON.parse(JSON.stringify(x));}
+function integer(x,f,max){return Number.isInteger(x)&&x>=0&&x<=max?x:f;}
+function stamp(x,f){if(typeof x==="string")x=Date.parse(x);return Number.isFinite(x)&&x>0&&x<1e15?x:f;}
+function createSessionId(){var r="";try{var b=new Uint32Array(2);root.crypto.getRandomValues(b);r=b[0].toString(36)+b[1].toString(36);}catch(e){r=Math.random().toString(36).slice(2,14);}return "nr-"+Date.now().toString(36)+"-"+r;}
+function numbers(a,n,max,min){return Array.isArray(a)&&a.length===n&&a.every(function(v){return Number.isInteger(v)&&v>=(min||0)&&v<=max;});}
+function cleanSnapshot(x,Engine){
+ if(!x||typeof x!=="object"||!x.game||typeof x.game!=="object")return null;
+ var g=x.game,n=Array.isArray(g.givens)?g.givens.length:0;
+ if([81,153,369].indexOf(n)<0||typeof g.sessionId!=="string"||!/^[a-zA-Z0-9_-]{1,96}$/.test(g.sessionId)||
+ !numbers(g.givens,n,9)||!numbers(g.board,n,9)||!numbers(g.solution,n,9,1)||!numbers(g.notes,n,511)||
+ !g.givens.every(function(v,i){return !v||(v===g.board[i]&&v===g.solution[i]);})||
+ !g.notes.every(function(v,i){return !g.board[i]||v===0;})||
+ typeof g.mode!=="string"||typeof g.difficulty!=="string"||!Number.isFinite(g.elapsedMs)||g.elapsedMs<0||g.elapsedMs>1e12||
+ !Number.isInteger(g.mistakes)||g.mistakes<0||!Number.isInteger(g.hints)||g.hints<0)return null;
+ if(Engine){try{
+   if(!Engine.getModes().some(function(m){return m.id===g.mode;})||!Engine.getDifficulties(g.mode).some(function(d){return d.id===g.difficulty;}))return null;
+   if(Engine.getLayout&&Engine.getLayout(g.mode).cellCount!==n)return null;
+   Engine.normalizeClues(g.mode,g.clues);
+ }catch(e){return null;}}
+ try{var out=copy(x);out.game.selected=integer(g.selected,0,n-1);out.game.noteMode=Boolean(g.noteMode);out.game.completed=Boolean(g.completed);return out;}catch(e){return null;}
+}
+function stateOf(s){var g=s.game;return {board:g.board.slice(),notes:g.notes.slice(),selected:g.selected||0,noteMode:Boolean(g.noteMode),branch:Boolean(g.branch),elapsedMs:Math.floor(g.elapsedMs),mistakes:g.mistakes,hints:g.hints,completed:Boolean(g.completed)};}
+function validFrame(f,g){return f&&numbers(f.board,g.length,9)&&numbers(f.notes,g.length,511)&&g.every(function(v,i){return !v||v===f.board[i];})&&f.notes.every(function(v,i){return !f.board[i]||!v;})&&Number.isFinite(f.elapsedMs)&&f.elapsedMs>=0&&f.elapsedMs<=1e12&&Number.isInteger(f.mistakes)&&f.mistakes>=0&&Number.isInteger(f.hints)&&f.hints>=0;}
+function sameState(a,b){return a.branch===b.branch&&a.completed===b.completed&&a.mistakes===b.mistakes&&a.hints===b.hints&&a.board.every(function(v,i){return v===b.board[i]&&a.notes[i]===b.notes[i];});}
+function applyStep(f,s){s.changes.forEach(function(c){f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});["selected","noteMode","branch","elapsedMs","mistakes","hints","completed"].forEach(function(k){f[k]=s[k];});return f;}
+function makeStep(a,b,label){
+ var changes=[];b.board.forEach(function(v,i){if(v!==a.board[i]||b.notes[i]!==a.notes[i])changes.push([i,v,b.notes[i]]);});
+ if(!changes.length&&a.branch===b.branch&&a.hints===b.hints&&a.mistakes===b.mistakes&&a.completed===b.completed)return null;
+ var title=typeof label==="string"?label.trim().slice(0,60):"";
+ if(!title){
+   if(a.branch!==b.branch)title=b.branch?"建立假设分支":"结束假设分支";
+   else if(b.completed&&!a.completed)title="完成棋局";
+   else if(b.hints>a.hints&&!changes.length)title="查看提示";
+   else if(changes.length===1&&a.board[changes[0][0]]!==b.board[changes[0][0]])title=changes[0][1]?"填入数字":"擦除数字";
+   else title=changes.every(function(c){return a.board[c[0]]===c[1];})?"修改候选笔记":"修改棋盘";
+ }
+ return {action:title,changes:changes,selected:b.selected,noteMode:b.noteMode,branch:b.branch,elapsedMs:b.elapsedMs,mistakes:b.mistakes,hints:b.hints,completed:b.completed};
+}
+function validStep(s,n,g){
+ if(!s||typeof s.action!=="string"||s.action.length>60||!Array.isArray(s.changes)||s.changes.length>n||
+ !Number.isFinite(s.elapsedMs)||s.elapsedMs<0||s.elapsedMs>1e12||!Number.isInteger(s.selected)||s.selected<0||s.selected>=n||
+ !Number.isInteger(s.mistakes)||s.mistakes<0||!Number.isInteger(s.hints)||s.hints<0||
+ typeof s.branch!=="boolean"||typeof s.completed!=="boolean"||typeof s.noteMode!=="boolean")return false;
+ var seen=new Set();return s.changes.every(function(c){
+   if(!Array.isArray(c)||c.length!==3||!Number.isInteger(c[0])||c[0]<0||c[0]>=n||seen.has(c[0])||
+   !Number.isInteger(c[1])||c[1]<0||c[1]>9||!Number.isInteger(c[2])||c[2]<0||c[2]>511||(c[1]&&c[2])||(g[c[0]]&&c[1]!==g[c[0]]))return false;
+   seen.add(c[0]);return true;
+ });
+}
+function createStore(options){
+ options=options||{};var Engine=options.Engine||null,storage=options.storage||null,now=typeof options.now==="function"?options.now:Date.now;
+ var limits={records:integer(options.maxRecords,LIMITS.records,40)||LIMITS.records,steps:integer(options.maxSteps,LIMITS.steps,3000)||LIMITS.steps,bytes:integer(options.maxBytes,LIMITS.bytes,LIMITS.bytes)||LIMITS.bytes};
+ var records=[],currentId=null,dirty=false,warned=false,persistenceFailed=false,removed=0;
+ function warn(s){persistenceFailed=true;if(!warned&&typeof options.onWarning==="function")options.onWarning(s);warned=true;}
+ function raw(id){return records.find(function(r){return r.sessionId===id;});}
+ function last(r){var f=copy(r.base);r.steps.forEach(function(s){applyStep(f,s);});return f;}
+ function trim(r,n){r.steps.slice(0,n).forEach(function(s){applyStep(r.base,s);});r.steps.splice(0,n);r.droppedSteps+=n;}
+ function eviction(){return records.filter(function(r){return r.sessionId!==currentId;}).sort(function(a,b){return Number(b.snapshot.game.completed)-Number(a.snapshot.game.completed)||a.updatedAt-b.updatedAt;});}
+ function envelope(){return {version:1,currentId:currentId,removedRecords:removed,records:records};}
+ function enforce(){
+   records.forEach(function(r){if(r.steps.length>limits.steps)trim(r,r.steps.length-limits.steps);});
+   while(records.length>limits.records){var r=eviction()[0];if(!r)break;records.splice(records.indexOf(r),1);removed++;}
+   var text=JSON.stringify(envelope());if(text.length*2<=limits.bytes)return text;
+   eviction().concat(records.filter(function(r){return r.sessionId===currentId;})).forEach(function(r){
+     while(text.length*2>limits.bytes&&r.steps.length){trim(r,Math.min(250,r.steps.length));text=JSON.stringify(envelope());}
+   });
+   while(text.length*2>limits.bytes&&records.length>1){var old=eviction()[0];if(!old)break;records.splice(records.indexOf(old),1);removed++;text=JSON.stringify(envelope());}
+   return text;
+ }
+ function load(){
+   if(!storage||typeof storage.getItem!=="function")return;
+   try{
+     var text=storage.getItem(KEY);if(!text)return;if(text.length>6*1024*1024)throw new Error("oversized");
+     var data=JSON.parse(text);if(!data||data.version!==1||!Array.isArray(data.records))throw new Error("invalid history");
+     removed=integer(data.removedRecords,0,1e9);
+     data.records.slice(-80).forEach(function(s){
+       var snap=cleanSnapshot(s&&s.snapshot,Engine);if(!snap||s.sessionId!==snap.game.sessionId||raw(s.sessionId))return;
+       var r={sessionId:s.sessionId,createdAt:stamp(s.createdAt,now()),updatedAt:stamp(s.updatedAt,now()),origin:s.origin==="new"?"new":"legacy",snapshot:snap,base:s.base,steps:[],droppedSteps:integer(s.droppedSteps,0,1e9)};
+       var valid=validFrame(r.base,snap.game.givens)&&Array.isArray(s.steps)&&s.steps.length<=3000;
+       if(valid)valid=s.steps.every(function(step){return validStep(step,snap.game.board.length,snap.game.givens);});
+       if(valid){
+         r.base=copy(r.base);r.base.selected=integer(r.base.selected,0,snap.game.board.length-1);r.base.noteMode=Boolean(r.base.noteMode);r.base.branch=Boolean(r.base.branch);r.base.completed=Boolean(r.base.completed);r.steps=copy(s.steps);
+         valid=sameState(last(r),stateOf(snap));
+       }
+       if(!valid){r.base=stateOf(snap);r.steps=[];r.origin="legacy";r.droppedSteps=0;r.replayRecovered=true;}
+       else if(s.replayRecovered)r.replayRecovered=true;
+       records.push(r);
+     });
+     currentId=records.some(function(r){return r.sessionId===data.currentId;})?data.currentId:null;enforce();
+   }catch(e){records=[];currentId=null;warn("历史记录暂时无法读取，当前棋局不受影响。新的操作会从现在开始记录。");}
+ }
+ load();
+ function capture(value,meta){
+   meta=meta||{};var snapshot=cleanSnapshot(value,Engine);if(!snapshot)return false;
+   var g=snapshot.game,r=raw(g.sessionId);
+   if(r&&currentId===g.sessionId&&JSON.stringify(r.snapshot)===JSON.stringify(snapshot))return false;
+   if(!r){currentId=g.sessionId;r={sessionId:g.sessionId,createdAt:stamp(g.createdAt,now()),updatedAt:now(),origin:meta.origin==="new"?"new":"legacy",snapshot:snapshot,base:stateOf(snapshot),steps:[],droppedSteps:0};records.push(r);}
+   else{
+     var prior=r.snapshot.game;
+     if(g.mode!==prior.mode||g.difficulty!==prior.difficulty||JSON.stringify(g.givens)!==JSON.stringify(prior.givens)||JSON.stringify(g.clues||{})!==JSON.stringify(prior.clues||{})){
+       warn("这一局的历史标识出现冲突，原有历史已保留。当前棋局仍可继续。");return false;
+     }
+     currentId=g.sessionId;var step=makeStep(stateOf(r.snapshot),stateOf(snapshot),meta.action);if(step)r.steps.push(step);
+     r.snapshot=snapshot;r.updatedAt=now();
+   }
+   dirty=true;enforce();return true;
+ }
+ function summaries(){return records.slice().sort(function(a,b){return b.updatedAt-a.updatedAt;}).map(function(r){var g=r.snapshot.game;return {sessionId:r.sessionId,createdAt:r.createdAt,updatedAt:r.updatedAt,mode:g.mode,difficulty:g.difficulty,puzzleId:g.puzzleId,completed:Boolean(g.completed),started:Boolean(g.started),elapsedMs:g.elapsedMs,mistakes:g.mistakes,hints:g.hints,filled:g.board.filter(Boolean).length,total:g.board.length,steps:r.steps.length,droppedSteps:r.droppedSteps,current:r.sessionId===currentId,origin:r.origin};});}
+ function frameAt(id,index){
+   var r=raw(id);if(!r)return null;index=Math.max(0,Math.min(r.steps.length,Math.floor(Number(index)||0)));
+   var f=copy(r.base);for(var i=0;i<index;i++)applyStep(f,r.steps[i]);
+   f.index=index;f.totalSteps=r.steps.length;f.action=index?r.steps[index-1].action:"回放起点";f.changed=index?r.steps[index-1].changes.map(function(c){return c[0];}):[];return f;
+ }
+ function flush(){
+   if(!dirty)return !persistenceFailed;
+   if(!storage||typeof storage.setItem!=="function"){warn("浏览器未允许保存历史，本次仍可查看回放；关闭窗口后这些新记录可能丢失。");return false;}
+   try{var text=enforce();if(text.length*2>limits.bytes)throw new Error("History snapshot exceeds storage budget");storage.setItem(KEY,text);dirty=false;persistenceFailed=false;return true;}catch(e){warn("历史记录暂时无法保存到本机，本次仍可回放；当前棋局继续单独保存。");return false;}
+ }
+ return {capture:capture,flush:flush,getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
+}
+function getStore(){
+ if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
+ return singleton;
+}
+function capture(snapshot,meta){var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
+function flush(){clearTimeout(flushTimer);flushTimer=null;return getStore().flush();}
+
+function init(options){
+ if(ui)return api;hooks=options||{};
+ if(!root.document||!hooks.Engine||typeof hooks.openDialog!=="function")return api;
+ getStore();var doc=root.document;
+ function el(tag,cls,text){var x=doc.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
+ function btn(id,label,cls){var x=el("button",cls,label);x.type="button";if(id)x.id=id;return x;}
+ var dialog=el("dialog","game-dialog history-dialog");dialog.id="history-dialog";dialog.setAttribute("aria-labelledby","history-title");
+ var closeButton=btn("history-close","×","history-close icon-btn");closeButton.setAttribute("aria-label","关闭棋局历史");
+ var heading=el("div","history-heading"),headingCopy=el("div"),title=el("h2","","棋局历史");
+ title.id="history-title";headingCopy.append(el("div","eyebrow","YOUR PATH THROUGH THE REALMS"),title);
+ var countLabel=el("span","history-count");countLabel.id="history-count";heading.append(headingCopy,countLabel);
+ var intro=el("p","history-intro","继续一局未完的思考，或回看每一步是怎样走来的。"),main=el("div","history-main");
+ var sidebar=el("section","history-sidebar");sidebar.setAttribute("aria-label","历史棋局列表");
+ var filter=el("select","history-filter");filter.id="history-filter";filter.setAttribute("aria-label","筛选历史棋局");
+ [["all","全部棋局"],["unfinished","未完成"],["completed","已完成"]].forEach(function(item){var option=el("option","",item[1]);option.value=item[0];filter.appendChild(option);});
+ var list=el("div","history-list");list.id="history-list";var empty=el("p","history-empty","还没有符合筛选条件的棋局。");sidebar.append(filter,list,empty);
+ var detail=el("section","history-detail");detail.setAttribute("aria-label","棋局回放");
+ var detailHead=el("div","history-detail-heading"),recordTitle=el("h3"),recordState=el("span","history-record-state");
+ recordTitle.id="history-selected-title";recordState.id="history-selected-state";detailHead.append(recordTitle,recordState);
+ var recordMeta=el("p","history-meta");recordMeta.id="history-selected-meta";
+ var viewport=el("div","history-board-viewport");viewport.id="history-board-viewport";
+ var stage=el("div","history-board-stage");stage.id="history-board-stage";
+ var board=el("div","history-replay-board");board.id="history-replay-board";board.setAttribute("role","grid");
+ var overlay=doc.createElementNS("http://www.w3.org/2000/svg","svg");overlay.id="history-replay-overlay";overlay.classList.add("history-replay-overlay");overlay.setAttribute("aria-hidden","true");
+ stage.append(board,overlay);viewport.appendChild(stage);
+ var diagramHint=el("p","history-diagram-hint");diagramHint.id="history-diagram-hint";
+ var actionLine=el("div","history-action-line"),actionLabel=el("strong"),stepTime=el("span","history-step-time");
+ actionLabel.id="history-action-label";actionLabel.setAttribute("aria-live","polite");stepTime.id="history-step-time";actionLine.append(actionLabel,stepTime);
+ var slider=el("input","history-replay-slider");slider.id="history-replay-slider";slider.type="range";slider.min="0";slider.max="0";slider.value="0";slider.step="1";slider.setAttribute("aria-label","选择回放步骤");
+ var playback=el("div","history-playback"),previous=btn("history-prev","← 上一步","secondary-btn"),play=btn("history-play","播放","secondary-btn"),next=btn("history-next","下一步 →","secondary-btn");
+ playback.append(previous,play,next);
+ var replayNote=el("p","history-replay-note");replayNote.id="history-replay-note";
+ var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");actions.append(resume,restart);
+ detail.append(detailHead,recordMeta,viewport,diagramHint,actionLine,slider,playback,replayNote,actions);main.append(sidebar,detail);
+ var retention=el("p","history-retention");retention.id="history-retention";
+ dialog.append(closeButton,heading,intro,main,retention);doc.body.appendChild(dialog);
+ var selectedId=null,selectedRecord=null,frameIndex=0,interval=null,frameCells=[],previewContext=null,previewLayout=null;
+ function modeName(id){var m=hooks.Engine.getModes().find(function(x){return x.id===id;});return m?m.label:id;}
+ function difficultyName(mode,id){var d=hooks.Engine.getDifficulties(mode).find(function(x){return x.id===id;});return d?d.label:id;}
+ function dateLabel(x){try{return new Date(x).toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});}catch(e){return "";}}
+ function timeLabel(x){var s=Math.floor(Math.max(0,x)/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
+ function stop(){if(interval!==null)clearInterval(interval);interval=null;play.textContent="播放";play.setAttribute("aria-pressed","false");}
+ function refreshList(selectDefault){
+   var summaries=getStore().getRecords(),status=getStore().status();countLabel.textContent=summaries.length+" 局";list.replaceChildren();
+   var filtered=summaries.filter(function(r){return filter.value==="all"||(filter.value==="completed"?r.completed:!r.completed);});empty.hidden=filtered.length!==0;
+   filtered.forEach(function(r){
+     var row=btn("","","history-row");row.dataset.sessionId=r.sessionId;row.setAttribute("aria-pressed",String(r.sessionId===selectedId));
+     var top=el("span","history-row-top"),label=el("strong","",modeName(r.mode)),badge=el("small","history-row-badge",r.current?"当前":r.completed?"已完成":r.started?"未完成":"待开始");
+     top.append(label,badge);row.append(top,el("span","history-row-sub",difficultyName(r.mode,r.difficulty)+" · "+dateLabel(r.updatedAt)),el("span","history-row-bottom",r.filled+"/"+r.total+" 格 · "+timeLabel(r.elapsedMs)));
+     row.addEventListener("click",function(){select(r.sessionId);});list.appendChild(row);
+   });
+   retention.textContent=status.persistenceFailed?"本次历史暂未保存到本机，关闭窗口后新记录可能丢失。当前棋局仍由游戏单独保存。":
+     "历史只保存在本机。最多保留 40 局，优先保留未完成棋局；容量不足时会清理较早记录。回放每局最多保留 3000 步。"+(status.removedRecords?" 已按保留策略清理 "+status.removedRecords+" 局较早记录。":"");
+   if(selectDefault&&(!selectedId||!filtered.some(function(r){return r.sessionId===selectedId;}))){if(filtered.length)select(filtered[0].sessionId);else{selectedId=null;selectedRecord=null;detail.hidden=true;}}
+ }
+ function fallbackLayout(n){return {rows:9,columns:9,cellCount:n,boards:[{id:"main",label:"棋盘",row:0,col:0}],cells:Array.from({length:n},function(_,i){return {row:Math.floor(i/9),col:i%9,boards:[]};})};}
+ function drawPreview(){
+   if(!selectedRecord)return;var g=selectedRecord.snapshot.game;previewContext={mode:g.mode,clues:g.clues};
+   previewLayout=hooks.Engine.getLayout?hooks.Engine.getLayout(previewContext):fallbackLayout(g.board.length);
+   var multi=previewLayout.cellCount>81,regions=g.clues&&g.clues.regions;
+   stage.dataset.multi=String(multi);viewport.classList.remove("has-outside");stage.style.setProperty("--history-columns",previewLayout.columns);
+   stage.style.aspectRatio=previewLayout.columns+" / "+previewLayout.rows;board.replaceChildren();frameCells=[];
+   board.style.gridTemplateColumns="repeat("+previewLayout.columns+",minmax(0,1fr))";board.style.gridTemplateRows="repeat("+previewLayout.rows+",minmax(0,1fr))";
+   board.setAttribute("aria-rowcount",String(previewLayout.rows));board.setAttribute("aria-colcount",String(previewLayout.columns));
+   previewLayout.cells.forEach(function(loc,i){
+     var cell=el("div","history-cell"),value=el("span","history-value"),notes=el("span","history-notes");
+     cell.dataset.index=String(i);cell.style.gridRow=String(loc.row+1);cell.style.gridColumn=String(loc.col+1);cell.setAttribute("role","gridcell");cell.setAttribute("aria-rowindex",String(loc.row+1));cell.setAttribute("aria-colindex",String(loc.col+1));cell.setAttribute("aria-readonly","true");
+     if(g.givens[i])cell.classList.add("given");if(loc.boards&&loc.boards.length>1)cell.classList.add("shared");
+     var top=loc.row%3===0,left=loc.col%3===0,right=loc.col%3===2,bottom=loc.row%3===2;
+     if(g.mode==="jigsaw"&&Array.isArray(regions)){top=loc.row===0||regions[i-9]!==regions[i];bottom=loc.row===8||regions[i+9]!==regions[i];left=loc.col===0||regions[i-1]!==regions[i];right=loc.col===8||regions[i+1]!==regions[i];}
+     if(top)cell.classList.add("edge-top");if(left)cell.classList.add("edge-left");if(right)cell.classList.add("edge-right");if(bottom)cell.classList.add("edge-bottom");
+     if(hooks.Engine.getCellDecorations)hooks.Engine.getCellDecorations(i,previewContext).forEach(function(cls){cell.classList.add(cls);});
+     for(var d=1;d<=9;d++)notes.appendChild(el("span"));cell.append(value,notes);board.appendChild(cell);frameCells.push(cell);
+   });
+   // A fresh SVG also resets the renderer's per-element cache when switching
+   // from a multi-board view back to the same single-board clues.
+   var fresh=doc.createElementNS("http://www.w3.org/2000/svg","svg");
+   fresh.id="history-replay-overlay";fresh.classList.add("history-replay-overlay");fresh.setAttribute("aria-hidden","true");
+   overlay.replaceWith(fresh);overlay=fresh;
+   if(!multi&&hooks.VariantView&&hooks.VariantView.render){var rendered=hooks.VariantView.render(overlay,previewContext);viewport.classList.toggle("has-outside",Boolean(rendered&&rendered.hasOutside));}
+   var modeInfo=hooks.Engine.getModes().find(function(m){return m.id===g.mode;});
+   diagramHint.textContent=multi?"浅色宫是共享区域；可滚动查看整组棋盘。":modeInfo&&modeInfo.description||"";diagramHint.hidden=!multi&&g.mode==="classic";
+ }
+
+ function renderFrame(){
+   if(!selectedRecord)return;var f=getStore().frameAt(selectedId,frameIndex);if(!f)return;frameIndex=f.index;var changed=new Set(f.changed),g=selectedRecord.snapshot.game;
+   frameCells.forEach(function(cell,i){
+     var value=f.board[i],mask=f.notes[i];cell.querySelector(".history-value").textContent=value?String(value):"";
+     Array.prototype.forEach.call(cell.querySelectorAll(".history-notes span"),function(span,d){span.textContent=!value&&(mask&(1<<d))?String(d+1):"";});
+     cell.classList.toggle("replay-changed",changed.has(i));
+     var coordinate=hooks.Engine.getCellLabel?hooks.Engine.getCellLabel(i,previewContext):"第 "+(Math.floor(i/9)+1)+" 行，第 "+(i%9+1)+" 列";
+     cell.setAttribute("aria-label",coordinate+"，"+(value?"数字 "+value:"空格")+(g.givens[i]?"，题目给定":""));
+   });
+   board.setAttribute("aria-label",modeName(g.mode)+"回放，第 "+frameIndex+" 步，共 "+f.totalSteps+" 步");
+   slider.max=String(f.totalSteps);slider.value=String(frameIndex);slider.disabled=f.totalSteps===0;slider.setAttribute("aria-valuetext","第 "+frameIndex+" 步，共 "+f.totalSteps+" 步，"+f.action);
+   previous.disabled=frameIndex<=0;next.disabled=frameIndex>=f.totalSteps;play.disabled=f.totalSteps===0;
+   actionLabel.textContent=frameIndex+" / "+f.totalSteps+" · "+f.action+(f.branch?" · 假设中":"");stepTime.textContent="本步用时 "+timeLabel(f.elapsedMs);
+   var note=selectedRecord.origin==="legacy"?"从本次更新后的操作开始回放；更早的步骤没有记录。":"按当时的真实操作回放，不改变当前棋局或成绩。";
+   if(selectedRecord.droppedSteps)note="较早的 "+selectedRecord.droppedSteps+" 步已清理；以下从保留起点回放最近 "+f.totalSteps+" 步。";
+   if(selectedRecord.replayRecovered)note="这局较早的回放数据无法读取，已保留可继续的棋局，并从该状态重新记录。";
+   replayNote.textContent=note;
+   // Follow only inside the preview scroller. Never move the dialog itself
+   // or steal focus from the playback controls.
+   var focusIndex=changed.has(f.selected)?f.selected:(f.changed.length?f.changed[0]:f.selected);
+   var focusCell=frameCells[focusIndex];
+   if(focusCell&&dialog.open){
+     var cellBounds=focusCell.getBoundingClientRect(),viewBounds=viewport.getBoundingClientRect();
+     var margin=8;
+     if(viewBounds.width>0&&viewBounds.height>0){
+       if(cellBounds.left<viewBounds.left+margin)viewport.scrollLeft-=viewBounds.left+margin-cellBounds.left;
+       else if(cellBounds.right>viewBounds.right-margin)viewport.scrollLeft+=cellBounds.right-viewBounds.right+margin;
+       if(cellBounds.top<viewBounds.top+margin)viewport.scrollTop-=viewBounds.top+margin-cellBounds.top;
+       else if(cellBounds.bottom>viewBounds.bottom-margin)viewport.scrollTop+=cellBounds.bottom-viewBounds.bottom+margin;
+     }
+   }
+ }
+ function select(id){
+   stop();selectedRecord=getStore().get(id);selectedId=selectedRecord?id:null;detail.hidden=!selectedRecord;if(!selectedRecord)return;
+   var g=selectedRecord.snapshot.game,summary=getStore().getRecords().find(function(r){return r.sessionId===id;});
+   recordTitle.textContent=modeName(g.mode)+" · "+difficultyName(g.mode,g.difficulty);recordState.textContent=g.completed?"已完成":g.started?"未完成":"待开始";
+   recordMeta.textContent=dateLabel(selectedRecord.createdAt)+" 开始 · 用时 "+timeLabel(g.elapsedMs)+" · 提示 "+g.hints+" · 失误 "+g.mistakes;
+   resume.hidden=Boolean(g.completed);resume.textContent=summary&&summary.current?"回到当前棋局":"继续这一局";
+   frameIndex=selectedRecord.steps.length;drawPreview();renderFrame();refreshList(false);
+ }
+ function moveTo(index){stop();frameIndex=index;renderFrame();}
+ previous.addEventListener("click",function(){moveTo(frameIndex-1);});next.addEventListener("click",function(){moveTo(frameIndex+1);});slider.addEventListener("input",function(){moveTo(Number(slider.value));});
+ play.setAttribute("aria-pressed","false");
+ play.addEventListener("click",function(){
+   if(interval!==null){stop();return;}if(!selectedRecord||!selectedRecord.steps.length)return;if(frameIndex>=selectedRecord.steps.length)frameIndex=0;
+   renderFrame();play.textContent="暂停回放";play.setAttribute("aria-pressed","true");
+   interval=setInterval(function(){if(!dialog.open||doc.hidden){stop();return;}frameIndex++;renderFrame();if(frameIndex>=selectedRecord.steps.length)stop();},650);
+ });
+ function close(){stop();flush();if(!dialog.open)return;if(typeof dialog.close==="function")dialog.close();else{dialog.removeAttribute("open");dialog.dispatchEvent(new Event("close"));}}
+ closeButton.addEventListener("click",close);dialog.addEventListener("close",function(){stop();flush();if(hooks.afterClose)hooks.afterClose();});dialog.addEventListener("cancel",stop);
+ doc.addEventListener("visibilitychange",function(){if(doc.hidden){stop();flush();}});root.addEventListener("pagehide",flush);root.addEventListener("beforeunload",flush);
+ filter.addEventListener("change",function(){stop();refreshList(true);});
+ function open(){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();refreshList(true);if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
+ var opener=doc.getElementById("history-open");if(opener)opener.addEventListener("click",open);
+ async function restore(callback){
+   if(!selectedId||typeof callback!=="function")return;stop();flush();var snapshot=getStore().getSnapshot(selectedId);if(!snapshot)return;
+   resume.disabled=restart.disabled=true;
+   try{await callback(snapshot);}catch(e){if(hooks.toast)hooks.toast("这局暂时无法载入，当前棋局已保留。");}
+   finally{resume.disabled=restart.disabled=false;if(dialog.open)refreshList(false);}
+ }
+ resume.addEventListener("click",function(){restore(hooks.onResume);});restart.addEventListener("click",function(){restore(hooks.onReplayNew);});
+ ui={dialog:dialog,open:open,close:close,refreshList:refreshList};return api;
+}
+var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},open:function(){if(ui)ui.open();},close:function(){if(ui)ui.close();}};
+return api;
+});

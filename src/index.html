@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="dark light">
+<meta name="description" content="九境 · Nine Realms，拥有分类变体玩法、八套立体动态场景、每日挑战与禅模式的离线数独游戏。">
+<title>九境 · Nine Realms</title><link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./history.css">
+<link rel="stylesheet" href="./easter-extras.css">
+</head>
+<body data-theme="nebula" data-fx="on" data-game-state="ready" data-focus="off" data-zen="off" data-zen-motion="on" data-motion="full">
+<svg class="icon-defs" aria-hidden="true"><defs>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4L12 3Z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8V4Z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24"><path d="m15 5 4 4M4 20l5-1L20 8a2.8 2.8 0 0 0-4-4L5 15l-1 5Z"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M8 5 3 10l5 5M3 10h11a6 6 0 0 1 0 12" transform="translate(0 -2)"/></symbol>
+<symbol id="i-erase" viewBox="0 0 24 24"><path d="m13 3 8 8-9 10H6l-4-4L13 3Zm-6 9 8 8M12 21h10"/></symbol>
+<symbol id="i-hint" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4M8 14a6 6 0 1 1 8 0c-1 .8-1 2-1 2H9s0-1.2-1-2Z"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6M21 12a9 9 0 1 1-9-9"/></symbol>
+<symbol id="i-orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(-35 12 12)"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></symbol>
+<symbol id="i-diagonal" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h4v4H7zM13 7h4v4h-4zM7 13h4v4H7zM13 13h4v4h-4z"/></symbol>
+<symbol id="i-knight" viewBox="0 0 24 24"><path d="M5 21h14M7 18h10l-1-4c4-4 3-9-2-10l-3-2v3L5 11l3 3 4-3c-2 3-4 4-5 7Z"/><path d="M13 7h.01"/></symbol>
+<symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M6 7v10M18 7c0 7-12 2-12 10"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 16V3m-4 4 4-4 4 4M5 12v8h14v-8"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3v13m-4-4 4 4 4-4M5 16v5h14v-5"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H4v13h4"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+<symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4V9Zm12-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+<symbol id="i-focus" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/><circle cx="12" cy="12" r="4"/></symbol>
+<symbol id="i-zen" viewBox="0 0 24 24"><path d="M19 4C9 3 3 8 5 15c1 4 7 5 10 2 4-4 3-8 4-13Z"/><path d="M4 21c1-5 5-9 10-12"/></symbol>
+<symbol id="i-voyage" viewBox="0 0 24 24"><circle cx="6" cy="17" r="2"/><circle cx="18" cy="6" r="2"/><path d="m8 16 4-3-1-5 5-1M3 5h4m-2-2v4m13 9h4m-2-2v4"/></symbol>
+</defs></svg>
+<canvas id="sky-canvas" aria-hidden="true"></canvas>
+<div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
+<div class="space-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="app-shell">
+<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
+<details id="appearance-settings" class="appearance-settings">
+<summary>外观设置<svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg></summary>
+<div class="appearance-panel"><div class="settings-heading"><p class="settings-label">场景主题</p><span id="theme-current-name">星云</span></div>
+<div class="theme-switcher" id="theme-switcher" role="group" aria-label="选择场景主题">
+<button type="button" data-theme="nebula" aria-pressed="true" title="星云 · 漫游星河"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>星云</strong><small>漫游星河</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="aurora" aria-pressed="false" title="极光 · 清辉流转"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>极光</strong><small>清辉流转</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="ember" aria-pressed="false" title="熔金 · 暖光余烬"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>熔金</strong><small>暖光余烬</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="ivory" aria-pressed="false" title="月白 · 月色留白"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>月白</strong><small>月色留白</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="ocean" aria-pressed="false" title="深海 · 光落潮间"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>深海</strong><small>光落潮间</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="sakura" aria-pressed="false" title="樱落 · 风过花枝"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>樱落</strong><small>风过花枝</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="firefly" aria-pressed="false" title="萤森 · 微光入林"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>萤森</strong><small>微光入林</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+<button type="button" data-theme="sunset" aria-pressed="false" title="流霞 · 云映远山"><span class="theme-preview" aria-hidden="true"></span><span class="theme-copy"><strong>流霞</strong><small>云映远山</small></span><svg class="icon theme-selected" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></button>
+</div>
+<div class="scene-strength"><label for="scene-intensity">视觉强度</label><select id="scene-intensity"><option value="cinematic">影院 · 丰富光影</option><option value="balanced">标准 · 均衡层次</option><option value="soft">轻柔 · 安静背景</option></select></div>
+<p class="theme-help">动态效果控制背景与 3D 视差，关闭后保留静态背景。</p>
+<p class="theme-zen-help">禅模式保留柔和的场景，在棋盘上方切换“流动 / 静止”。</p>
+<div class="appearance-toggles"><button class="fx-toggle" id="sound-toggle" aria-pressed="false" title="开启或关闭合成音效" aria-label="开启或关闭合成音效"><svg class="icon"><use href="#i-sound"/></svg><span>音效</span><span class="toggle-light"></span></button><button class="fx-toggle" id="fx-toggle" aria-pressed="true" title="开启或关闭动态背景与 3D 视差"><svg class="icon"><use href="#i-orbit"/></svg><span>动态效果</span><span class="toggle-light"></span></button><button class="fx-toggle" id="focus-toggle" aria-pressed="false" title="切换沉浸模式" aria-label="切换沉浸模式"><svg class="icon"><use href="#i-focus"/></svg><span>沉浸</span><span class="toggle-light"></span></button></div>
+</div></details></div></header>
+<main>
+<section id="puzzle-settings" class="game-toolbar" aria-label="选择玩法和难度">
+<div class="mode-control"><span class="control-label">玩法</span><button id="mode-picker-open" class="mode-picker-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><strong id="current-mode-label">经典九宫</strong><span id="catalog-count">玩法目录</span><svg class="icon mode-picker-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+<div class="game-actions"><div class="difficulty-wrap"><label for="difficulty">难度</label><select id="difficulty"><option value="easy">入门</option><option value="medium">标准</option><option value="hard">进阶</option><option value="master">极境</option></select></div>
+<button id="new-game" class="primary-btn new-game-btn" type="button"><span>新游戏</span><svg class="icon"><use href="#i-arrow"/></svg></button></div>
+<div class="mode-explainer"><button type="button" id="rules-open" class="rules-open">规则与标记 <span aria-hidden="true">↗</span></button><span id="mode-name" class="sr-only">经典九宫</span><p id="mode-rule" aria-live="polite">每行、每列和每个 3×3 宫内，数字 1～9 各出现一次。</p></div>
+<p id="puzzle-bank-status" class="puzzle-bank-status"></p>
+<p id="difficulty-description" class="sr-only">适合热身，从直观的排除和唯一候选开始。</p>
+<span id="board-context" class="sr-only">经典九宫 · 入门</span>
+</section>
+<section class="session-strip" aria-label="本局状态">
+<div class="normal-status">
+<div class="stats">
+<div class="stat time-stat"><span class="stat-label">用时</span><strong id="timer">00:00</strong><button id="pause-btn" class="icon-btn" type="button" title="暂停游戏" aria-label="暂停游戏"><svg class="icon"><use href="#i-pause"/></svg><span class="sr-only" data-label>暂停</span></button></div>
+<div class="stat mistake-stat"><span class="stat-label">失误</span><strong id="mistakes">0</strong><span class="unlimited">不限次</span></div>
+</div>
+<div id="energy-hud" class="energy-hud" data-muted="false" aria-label="星能与连填">
+<div class="energy-stat"><span>星能</span><strong id="energy-points">0</strong></div><div class="energy-stat"><span>连填</span><strong id="energy-combo">0</strong></div><div class="energy-stat best-stat"><span>最佳</span><strong id="energy-best">0</strong></div><p id="energy-message" class="sr-only">连填点亮星能</p>
+</div>
+<div class="board-bottomline"><span class="sr-only">完成进度</span><div class="progress-track" role="presentation"><span id="progress-fill"></span></div><strong id="progress-count">0 / 81</strong></div>
+</div>
+<section id="zen-panel" class="zen-panel" aria-labelledby="zen-title" hidden>
+<div class="zen-heading"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><h2 id="zen-title">禅模式</h2><span>一格一息</span></div>
+<div class="zen-actions"><button id="zen-motion-toggle" class="zen-action" type="button" aria-pressed="true" title="关闭静庭流动效果"><svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg><span>流动</span></button><button id="zen-pause" class="zen-action" type="button"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg><span>暂停歇息</span></button></div>
+<p id="zen-rule" class="sr-only">经典九宫 · 每行、每列和每个 3×3 宫内，数字 1～9 各出现一次。</p>
+</section>
+<div class="session-badges"><span id="daily-game-badge" class="game-badge" hidden></span><span id="voyage-game-badge" class="game-badge" hidden></span></div>
+<div id="pulse-banner" class="pulse-banner" role="status" hidden></div>
+<section id="branch-banner" class="branch-banner" aria-label="假设分支" hidden>
+<div class="branch-heading"><svg class="icon"><use href="#i-branch"/></svg><strong>假设进行中</strong><span id="branch-summary" role="status" aria-live="polite"></span></div>
+<p>试填仅检查规则冲突，耗时照常累计。</p>
+<div class="branch-actions"><button id="branch-rollback" class="secondary-btn" type="button">回到检查点</button><button id="branch-commit" class="branch-commit-btn" type="button">采纳试填<svg class="icon"><use href="#i-check"/></svg></button></div>
+</section>
+<section id="fog-banner" class="fog-banner" aria-label="迷雾探索" hidden>
+<div><strong>循光而行</strong><span id="fog-progress">已点亮 0 / 81</span></div>
+<p>点击雾格，照亮周围九格。可自由探路，不限次数。</p>
+<button id="fog-clear" class="fog-clear" type="button">散去全部迷雾<svg class="icon"><use href="#i-spark"/></svg></button>
+</section>
+</section>
+<div id="multigrid-tools" class="multigrid-tools" hidden><div><strong id="multi-grid-summary"></strong><span>染色的共享宫只填写一次</span></div><label for="grid-view">查看棋盘<select id="grid-view"><option value="all">总览 · 全部棋盘</option></select></label><p id="multi-selected-label" aria-live="polite"></p></div>
+<div class="game-layout">
+<section class="board-section" aria-label="数独游戏区"><div id="board-stage" class="board-stage">
+<div class="board-shadow" aria-hidden="true"></div>
+<div id="board-card" class="board-card">
+<div class="board-edge" aria-hidden="true"></div>
+<div id="board-grid-shell" class="board-grid-shell"><div id="board" class="board" role="grid" aria-label="九乘九数独棋盘"></div><svg id="variant-overlay" class="variant-overlay" viewBox="0 0 900 900" aria-hidden="true"></svg></div>
+<div id="pause-overlay" class="pause-overlay" role="region" aria-labelledby="pause-title" hidden><h2 id="pause-title">准备好，开启这一境。</h2><p id="pause-description">点击开始后，棋盘与计时一起开启。</p><button id="start-btn" class="primary-btn">开始游戏<svg class="icon"><use href="#i-arrow"/></svg></button><button id="resume-btn" class="primary-btn" hidden>继续这一局<svg class="icon"><use href="#i-arrow"/></svg></button></div>
+</div>
+</div>
+</section>
+<aside class="control-panel" aria-label="填数与工具">
+<div id="play-controls">
+<div class="pad-heading"><h2>填入数字</h2><span id="notes-state">数字模式</span></div>
+<div id="number-pad" class="number-pad" role="group" aria-label="数字键盘"></div>
+<div class="tools-grid"><button class="tool-btn" id="undo-btn"><svg class="icon"><use href="#i-undo"/></svg><span>撤销</span></button><button class="tool-btn" id="erase-btn"><svg class="icon"><use href="#i-erase"/></svg><span>擦除</span></button><button class="tool-btn" id="notes-btn" aria-pressed="false"><svg class="icon"><use href="#i-pencil"/></svg><span>笔记</span><span class="tool-shortcut">N</span></button><button class="tool-btn" id="hint-btn"><svg class="icon"><use href="#i-hint"/></svg><span>提示</span></button><button class="tool-btn" id="check-btn"><svg class="icon"><use href="#i-check"/></svg><span>检查</span></button><button class="tool-btn" id="error-toggle" aria-pressed="true" title="切换错误数字即时标红"><svg class="icon"><use href="#i-eye"/></svg><span>纠错</span><span class="mini-dot"></span></button></div>
+<button id="auto-notes-btn" class="auto-notes-btn" type="button"><svg class="icon"><use href="#i-pencil"/></svg><span>候选速记</span><small>自动列出可填数字</small></button>
+<section id="hint-panel" class="hint-panel" aria-labelledby="hint-title" hidden>
+<div class="hint-topline"><span id="hint-stage">01 / 03 · 观察</span><button id="hint-close" class="icon-btn" type="button" aria-label="收起提示"><svg class="icon"><use href="#i-close"/></svg></button></div>
+<h3 id="hint-title">先看这一片区域</h3>
+<p id="hint-text" aria-live="polite"></p>
+<div class="hint-actions"><button id="hint-next" class="secondary-btn" type="button">看看推理</button><button id="hint-apply" class="primary-btn" type="button" hidden>填入这一格</button></div>
+</section>
+<div class="status-box"><p id="status-message" role="status" aria-live="polite">从一个空格开始，让答案慢慢浮现。</p></div>
+</div>
+</aside>
+</div>
+<details id="explore-settings" class="scene-drawer">
+<summary><span>更多玩法</span><span class="summary-note">假设 · 迷雾 · 分享</span><svg class="icon drawer-arrow" aria-hidden="true"><use href="#i-arrow"/></svg></summary>
+<div class="play-utilities" role="group" aria-label="探索与同题挑战"><button id="branch-btn" class="utility-btn" type="button" aria-pressed="false" title="建立检查点，用另一种颜色试填，再决定回退或采纳"><svg class="icon"><use href="#i-branch"/></svg><span>建立假设</span></button><button id="fog-toggle" class="utility-btn" type="button" aria-pressed="false" title="逐片点亮棋盘，可随时散去迷雾"><svg class="icon"><use href="#i-eye"/></svg><span>迷雾探索</span></button><button id="share-btn" class="utility-btn" type="button" title="生成本题的离线挑战码"><svg class="icon"><use href="#i-share"/></svg><span>分享本题</span></button><button id="import-btn" class="utility-btn" type="button" title="输入朋友分享的挑战码"><svg class="icon"><use href="#i-import"/></svg><span>输入挑战码</span></button></div>
+</details>
+<div class="discovery-cards">
+<section class="voyage-card" aria-label="星图远征">
+<div class="voyage-card-orbit" aria-hidden="true"><svg class="icon"><use href="#i-voyage"/></svg></div>
+<div class="voyage-card-copy"><div class="voyage-card-heading"><strong>星图远征</strong><span>CONSTELLATION</span></div><p id="voyage-card-title">从启明星出发</p><small id="voyage-card-progress">0 / 27 星</small></div>
+<button id="voyage-btn" class="daily-open" type="button">开启远征<svg class="icon"><use href="#i-arrow"/></svg></button>
+</section>
+<section class="daily-card" aria-label="每日一境">
+<div class="daily-orbit" aria-hidden="true"><svg class="icon"><use href="#i-spark"/></svg></div>
+<div class="daily-card-copy"><div class="daily-card-title"><strong>每日一境</strong><span id="daily-card-date"></span></div><p id="daily-card-status">每天一题，留下一点专注的印记。</p></div>
+<button id="daily-btn" class="daily-open" type="button">今日挑战<svg class="icon"><use href="#i-arrow"/></svg></button>
+</section>
+</div>
+
+</main>
+<footer><div class="footer-copy"><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 7</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+</div>
+<canvas id="fx-canvas" aria-hidden="true"></canvas>
+<div id="toast" class="toast" role="status" hidden></div>
+<dialog id="mode-dialog" class="game-dialog mode-dialog" aria-labelledby="mode-title">
+<button id="mode-close" class="dialog-close icon-btn" type="button" aria-label="关闭玩法目录"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">EXPLORE THE RULES</div><h2 id="mode-title">玩法图鉴</h2><p class="mode-intro">从经典九宫到线条、求和与边缘线索，选择一种新的思路。</p>
+<p id="library-summary" class="library-summary"></p>
+<label class="mode-search-label" for="mode-search">搜索玩法</label><input id="mode-search" type="search" placeholder="试试：杀手、温度计、箭头…" autocomplete="off">
+<div id="mode-categories" class="mode-categories" role="group" aria-label="按玩法分类"></div>
+<p id="mode-results" class="mode-results" aria-live="polite"></p><div id="mode-switcher" class="mode-catalog" role="group" aria-label="数独玩法"></div>
+</dialog>
+<dialog id="rules-dialog" class="game-dialog rules-dialog" aria-labelledby="rules-title">
+<button id="rules-close" class="dialog-close icon-btn" type="button" aria-label="关闭规则说明"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="eyebrow">HOW TO PLAY</div><h2 id="rules-title">经典九宫</h2><p id="rules-description"></p><p id="variant-legend" class="variant-legend"></p>
+<p class="rules-footnote">选择空格后可用候选速记整理可能的数字，也可以展开提示逐步查看思路。</p>
+</dialog>
+<dialog id="completion-dialog" class="game-dialog"><button id="close-completion" class="dialog-close icon-btn" aria-label="关闭完成弹窗"><svg class="icon"><use href="#i-close"/></svg></button><div class="completion-emblem"><svg class="icon"><use href="#i-spark"/></svg></div><div class="eyebrow">A PERFECT LITTLE UNIVERSE</div><h2>这一境，已圆满。</h2><p>每一个数字，都找到了自己的位置。</p><p id="completion-daily" class="completion-daily" hidden></p><p id="completion-voyage" class="completion-voyage" hidden></p><div class="completion-stats"><div><span>专注时长</span><strong id="completion-time">00:00</strong></div><div><span>失误次数</span><strong id="completion-mistakes">0</strong></div></div><button id="play-again" class="primary-btn">探索下一境<svg class="icon"><use href="#i-arrow"/></svg></button></dialog>
+<dialog id="confirm-dialog" class="game-dialog confirm-dialog"><div class="eyebrow">A FRESH START</div><h2 id="confirm-title">开启新的一境？</h2><p id="confirm-description">当前棋局将被替换。</p><div class="dialog-actions"><button id="confirm-cancel" class="secondary-btn">继续当前棋局</button><button id="confirm-accept" class="primary-btn">准备新局<svg class="icon"><use href="#i-arrow"/></svg></button></div></dialog>
+<dialog id="challenge-dialog" class="game-dialog challenge-dialog" aria-labelledby="challenge-title">
+<button id="challenge-close" class="dialog-close icon-btn" aria-label="关闭挑战码弹窗"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="challenge-emblem"><svg class="icon"><use href="#i-share"/></svg></div>
+<div class="eyebrow">SAME PUZZLE. YOUR OWN JOURNEY.</div>
+<h2 id="challenge-title">一起探索同一境</h2>
+<p id="challenge-description">一枚挑战码，让朋友遇见同一道题。</p>
+<div id="challenge-export-panel">
+<label class="challenge-label" for="challenge-output">本题挑战码</label>
+<textarea id="challenge-output" class="challenge-code" rows="3" readonly spellcheck="false" aria-label="本题挑战码"></textarea>
+<p class="challenge-note">分享内容：原始题面、规则线索、玩法和难度。</p>
+<button id="challenge-copy" class="primary-btn" type="button"><svg class="icon"><use href="#i-copy"/></svg>复制挑战码</button>
+</div>
+<div id="challenge-import-panel" hidden>
+<label class="challenge-label" for="challenge-input">粘贴收到的挑战码</label>
+<textarea id="challenge-input" class="challenge-code" rows="3" maxlength="32768" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="NR1-… 或 NR2-…" aria-describedby="challenge-error"></textarea>
+<p class="challenge-note">载入后会先准备棋盘，点击开始游戏后才计时。</p>
+<button id="challenge-import" class="primary-btn" type="button">载入这盘题<svg class="icon"><use href="#i-arrow"/></svg></button>
+</div>
+<p id="challenge-error" class="challenge-error" role="alert"></p>
+</dialog>
+<dialog id="daily-dialog" class="game-dialog daily-dialog" aria-labelledby="daily-title">
+<button id="daily-close" class="dialog-close icon-btn" type="button" aria-label="关闭每日一境"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="daily-dialog-emblem"><svg class="icon"><use href="#i-spark"/></svg><span aria-hidden="true"></span></div>
+<div class="eyebrow">A SMALL RITUAL. EVERY DAY.</div>
+<h2 id="daily-title">每日一境</h2>
+<p id="daily-date" class="daily-date"></p>
+<p id="daily-description"></p>
+<div id="daily-calendar" class="daily-calendar" role="list" aria-label="最近七天的完成记录"></div>
+<div class="daily-stat-row"><div><strong id="daily-streak">0</strong><span>连续完成 / 天</span></div><div><strong id="daily-total">0</strong><span>累计完成 / 天</span></div></div>
+<button id="daily-start" class="primary-btn" type="button">开启今日挑战</button>
+<p class="daily-footnote">北京时间 00:00 更新 · 完成记录仅保存在本设备</p>
+</dialog>
+<dialog id="voyage-dialog" class="game-dialog voyage-dialog" aria-labelledby="voyage-title">
+<button id="voyage-close" class="dialog-close icon-btn" type="button" aria-label="关闭星图远征"><svg class="icon"><use href="#i-close"/></svg></button>
+<div class="voyage-titleline"><div><div class="eyebrow">YOUR CONSTELLATION AWAITS</div><h2 id="voyage-title">星图远征</h2></div><div class="voyage-star-total"><svg class="icon"><use href="#i-spark"/></svg><strong id="voyage-total-stars">0</strong><span>/ 27</span></div></div>
+<p id="voyage-description">完成一境点亮一星；无提示、零失误各加一星。使用提示也能继续前进。</p>
+<div class="voyage-map-wrap"><div class="voyage-map-orbit" aria-hidden="true"></div><div id="voyage-map" class="voyage-map" role="group" aria-label="九境关卡"></div></div>
+<div class="voyage-selection"><div><span class="eyebrow">NEXT DESTINATION</span><h3 id="voyage-selected-title">启明星</h3><p id="voyage-selected-rule">经典九宫 · 入门</p></div><button id="voyage-start" class="primary-btn" type="button">准备这一境<svg class="icon"><use href="#i-arrow"/></svg></button></div>
+<p class="voyage-footnote">按顺序解锁 · 星级取最佳成绩 · 每一境都由你点击开始</p>
+</dialog>
+<dialog id="secrets-dialog" class="game-dialog secrets-dialog" aria-labelledby="secrets-heading">
+<button id="secrets-close" class="dialog-close icon-btn" type="button" aria-label="关闭旅途拾遗"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+<div class="secrets-heading"><div><div class="eyebrow">A LITTLE OFF THE GRID</div><h2 id="secrets-heading">旅途拾遗</h2></div><span id="secret-collection-count" class="secret-collection-count">0 / 7</span></div>
+<p class="secret-intro">选一枚线索，试试它的小机关。左右滑动，还能看到更多。</p>
+<div class="secret-cards" role="group" aria-label="已发现与未发现的彩蛋">
+<button type="button" data-secret-card="gate" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">◌</span><strong data-secret-name>未知星门</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="visitor" aria-pressed="false"><span class="secret-card-symbol pixel-symbol" aria-hidden="true">⌘</span><strong data-secret-name>神秘访客</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="lotus" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">❋</span><strong data-secret-name>静庭来信</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="constellation" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">✧</span><strong data-secret-name>散落的星图</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="gravity" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">◉</span><strong data-secret-name>偏航的轨道</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="rain" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">π</span><strong data-secret-name>未解的讯号</strong><small data-secret-state>尚未发现</small></button>
+<button type="button" data-secret-card="crane" aria-pressed="false"><span class="secret-card-symbol" aria-hidden="true">◇</span><strong data-secret-name>未折的信纸</strong><small data-secret-state>尚未发现</small></button>
+</div>
+<div id="secret-scene" class="secret-scene" data-secret="locked" aria-hidden="true">
+<div class="secret-stars"><i style="--sx:11%;--sy:8%;--delay:0.0s"></i><i style="--sx:48%;--sy:61%;--delay:0.47s"></i><i style="--sx:85%;--sy:21%;--delay:0.94s"></i><i style="--sx:26%;--sy:74%;--delay:1.41s"></i><i style="--sx:63%;--sy:34%;--delay:1.88s"></i><i style="--sx:4%;--sy:87%;--delay:0.0s"></i><i style="--sx:41%;--sy:47%;--delay:0.47s"></i><i style="--sx:78%;--sy:7%;--delay:0.94s"></i><i style="--sx:19%;--sy:60%;--delay:1.41s"></i><i style="--sx:56%;--sy:20%;--delay:1.88s"></i><i style="--sx:93%;--sy:73%;--delay:0.0s"></i><i style="--sx:34%;--sy:33%;--delay:0.47s"></i><i style="--sx:71%;--sy:86%;--delay:0.94s"></i><i style="--sx:12%;--sy:46%;--delay:1.41s"></i><i style="--sx:49%;--sy:6%;--delay:1.88s"></i><i style="--sx:86%;--sy:59%;--delay:0.0s"></i><i style="--sx:27%;--sy:19%;--delay:0.47s"></i><i style="--sx:64%;--sy:72%;--delay:0.94s"></i><i style="--sx:5%;--sy:32%;--delay:1.41s"></i><i style="--sx:42%;--sy:85%;--delay:1.88s"></i><i style="--sx:79%;--sy:45%;--delay:0.0s"></i><i style="--sx:20%;--sy:5%;--delay:0.47s"></i><i style="--sx:57%;--sy:58%;--delay:0.94s"></i><i style="--sx:94%;--sy:18%;--delay:1.41s"></i></div>
+<div class="secret-mystery"><span>?</span><i></i><i></i><i></i></div>
+<div class="secret-gate"><div class="secret-planet"></div><div class="secret-ring ring-one"></div><div class="secret-ring ring-two"></div><div class="secret-number-orbit"><span style="--nx:90.0%;--ny:50.0%">1</span><span style="--nx:80.64%;--ny:75.71%">2</span><span style="--nx:56.95%;--ny:89.39%">3</span><span style="--nx:30.0%;--ny:84.64%">4</span><span style="--nx:12.41%;--ny:63.68%">5</span><span style="--nx:12.41%;--ny:36.32%">6</span><span style="--nx:30.0%;--ny:15.36%">7</span><span style="--nx:56.95%;--ny:10.61%">8</span><span style="--nx:80.64%;--ny:24.29%">9</span></div><div class="secret-shooting-star"></div><div class="secret-shooting-star second"></div><span class="secret-scene-caption">REALM 010 · UNCHARTED</span></div>
+<div class="secret-visitor"><div class="secret-pixel-grid"></div><svg class="secret-pixel" viewBox="0 0 80 80" shape-rendering="crispEdges"><rect x="19" y="16" width="6" height="6"/><rect x="55" y="16" width="6" height="6"/><rect x="25" y="22" width="6" height="6"/><rect x="49" y="22" width="6" height="6"/><rect x="19" y="28" width="6" height="6"/><rect x="25" y="28" width="6" height="6"/><rect x="31" y="28" width="6" height="6"/><rect x="37" y="28" width="6" height="6"/><rect x="43" y="28" width="6" height="6"/><rect x="49" y="28" width="6" height="6"/><rect x="55" y="28" width="6" height="6"/><rect x="13" y="34" width="6" height="6"/><rect x="19" y="34" width="6" height="6"/><rect x="31" y="34" width="6" height="6"/><rect x="37" y="34" width="6" height="6"/><rect x="43" y="34" width="6" height="6"/><rect x="55" y="34" width="6" height="6"/><rect x="61" y="34" width="6" height="6"/><rect x="7" y="40" width="6" height="6"/><rect x="13" y="40" width="6" height="6"/><rect x="19" y="40" width="6" height="6"/><rect x="25" y="40" width="6" height="6"/><rect x="31" y="40" width="6" height="6"/><rect x="37" y="40" width="6" height="6"/><rect x="43" y="40" width="6" height="6"/><rect x="49" y="40" width="6" height="6"/><rect x="55" y="40" width="6" height="6"/><rect x="61" y="40" width="6" height="6"/><rect x="67" y="40" width="6" height="6"/><rect x="7" y="46" width="6" height="6"/><rect x="19" y="46" width="6" height="6"/><rect x="25" y="46" width="6" height="6"/><rect x="31" y="46" width="6" height="6"/><rect x="37" y="46" width="6" height="6"/><rect x="43" y="46" width="6" height="6"/><rect x="49" y="46" width="6" height="6"/><rect x="55" y="46" width="6" height="6"/><rect x="67" y="46" width="6" height="6"/><rect x="7" y="52" width="6" height="6"/><rect x="19" y="52" width="6" height="6"/><rect x="55" y="52" width="6" height="6"/><rect x="67" y="52" width="6" height="6"/><rect x="25" y="58" width="6" height="6"/><rect x="31" y="58" width="6" height="6"/><rect x="43" y="58" width="6" height="6"/><rect x="49" y="58" width="6" height="6"/></svg><div class="secret-pixel-shadow"></div><div class="secret-pixel-speech">HELLO, HUMAN.</div><span class="secret-scene-caption">PLAYER 9 HAS ENTERED</span></div>
+<div class="secret-lotus"><div class="secret-moon"></div><div class="secret-ripple ripple-one"></div><div class="secret-ripple ripple-two"></div><div class="secret-flower"><i style="--petal-angle:-62deg"></i><i style="--petal-angle:-37deg"></i><i style="--petal-angle:37deg"></i><i style="--petal-angle:62deg"></i><i style="--petal-angle:0deg"></i><span></span></div><span class="secret-scene-caption">LET A LITTLE STILLNESS BLOOM</span></div>
+<div class="secret-constellation secret-extra-art"><svg viewBox="0 0 500 228"><defs><linearGradient id="secret-starlight"><stop stop-color="#9eeaff"/><stop offset="1" stop-color="#dfb3ff"/></linearGradient></defs><path class="secret-star-path" d="M70 155 L116 91 L163 134 L208 58 L250 111 L291 72 L335 138 L384 94 L428 157" fill="none" stroke="url(#secret-starlight)" stroke-width="2"/><g class="secret-nine-stars" fill="#e9f7ff"><g style="--i:0"><circle cx="70" cy="155" r="4"/><circle cx="70" cy="155" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:1"><circle cx="116" cy="91" r="4"/><circle cx="116" cy="91" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:2"><circle cx="163" cy="134" r="4"/><circle cx="163" cy="134" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:3"><circle cx="208" cy="58" r="4"/><circle cx="208" cy="58" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:4"><circle cx="250" cy="111" r="4"/><circle cx="250" cy="111" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:5"><circle cx="291" cy="72" r="4"/><circle cx="291" cy="72" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:6"><circle cx="335" cy="138" r="4"/><circle cx="335" cy="138" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:7"><circle cx="384" cy="94" r="4"/><circle cx="384" cy="94" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g><g style="--i:8"><circle cx="428" cy="157" r="4"/><circle cx="428" cy="157" r="12" fill="none" stroke="#a8dfff" stroke-opacity=".25"/></g></g></svg><div class="secret-star-halo"></div><span class="secret-scene-caption">NINE LIGHTS · ONE LITTLE BRIDGE</span></div>
+<div class="secret-gravity secret-extra-art"><div class="secret-gravity-lens"><div class="secret-accretion outer"></div><div class="secret-accretion inner"></div><div class="secret-event-horizon"></div><div class="secret-gravity-arc"></div></div><span class="secret-scene-caption">EVERYTHING FINDS ITS ORBIT</span></div>
+<div class="secret-rain secret-extra-art"><div class="secret-rain-streams"><span style="--column:0;--fall:4s;--delay:-0.0s">036925814703692581</span><span style="--column:1;--fall:5s;--delay:-1.7s">703692581470369258</span><span style="--column:2;--fall:6s;--delay:-3.4s">470369258147036925</span><span style="--column:3;--fall:7s;--delay:-5.1s">147036925814703692</span><span style="--column:4;--fall:8s;--delay:-6.8s">814703692581470369</span><span style="--column:5;--fall:4s;--delay:-0.5s">581470369258147036</span><span style="--column:6;--fall:5s;--delay:-2.2s">258147036925814703</span><span style="--column:7;--fall:6s;--delay:-3.9s">925814703692581470</span><span style="--column:8;--fall:7s;--delay:-5.6s">692581470369258147</span><span style="--column:9;--fall:8s;--delay:-7.3s">369258147036925814</span><span style="--column:10;--fall:4s;--delay:-1.0s">036925814703692581</span><span style="--column:11;--fall:5s;--delay:-2.7s">703692581470369258</span><span style="--column:12;--fall:6s;--delay:-4.4s">470369258147036925</span><span style="--column:13;--fall:7s;--delay:-6.1s">147036925814703692</span><span style="--column:14;--fall:8s;--delay:-7.8s">814703692581470369</span><span style="--column:15;--fall:4s;--delay:-1.5s">581470369258147036</span><span style="--column:16;--fall:5s;--delay:-3.2s">258147036925814703</span></div><div class="secret-rain-message"><small>FREQUENCY FOUND</small><strong>3.14159<span>…</span></strong><em>世界的另一面，也有数字在发光。</em></div><span class="secret-scene-caption">INFINITE DIGITS · A FINITE MOMENT</span></div>
+<div class="secret-crane secret-extra-art"><div class="secret-crane-sun"></div><div class="secret-crane-flight"><svg viewBox="0 0 300 200"><polygon class="secret-crane-wing wing-back" points="142,110 115,28 190,98" fill="#d5b8da"/><polygon points="98,119 151,98 201,111 149,133" fill="#f7e7db"/><polygon class="secret-crane-wing wing-front" points="147,111 58,32 113,139" fill="#fbeee5"/><polygon points="182,112 222,67 228,72 205,117" fill="#e9d2d4"/><polygon points="222,67 248,80 226,78" fill="#cfabca"/><polygon points="100,119 48,107 113,139" fill="#d5b8da"/><path d="M147 111L113 139M147 111L58 32M182 112L205 117" fill="none" stroke="#9b7194" stroke-opacity=".45"/></svg></div><div class="secret-crane-cloud"></div><span class="secret-scene-caption">SOME LETTERS TRAVEL WITH THE WIND</span></div>
+</div>
+<div class="secret-story"><span id="secret-discovery" class="secret-discovery" role="status" aria-live="polite">七枚线索，等你偶然遇见。</span><h3 id="secret-title">留一点好奇心</h3><p id="secret-description">轻叩、回忆，或者安静地停留。线索就在九境里。</p><button id="secret-replay" class="secondary-btn secret-replay" type="button" hidden>再看一次 <span aria-hidden="true">↻</span></button></div>
+
+<section class="secret-task" data-secret-task="constellation" aria-label="九星连线" hidden>
+<div class="secret-star-game"><svg id="secret-star-trail" viewBox="0 0 300 132" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M30 35L90 100L120 25L150 70L180 32L210 105L240 55L270 95L270 20"/></svg><button type="button" data-secret-star="1" style="--x:10%;--y:26%" aria-label="第 1 颗星" aria-pressed="false">1</button><button type="button" data-secret-star="2" style="--x:30%;--y:76%" aria-label="第 2 颗星" aria-pressed="false">2</button><button type="button" data-secret-star="3" style="--x:40%;--y:19%" aria-label="第 3 颗星" aria-pressed="false">3</button><button type="button" data-secret-star="4" style="--x:50%;--y:53%" aria-label="第 4 颗星" aria-pressed="false">4</button><button type="button" data-secret-star="5" style="--x:60%;--y:24%" aria-label="第 5 颗星" aria-pressed="false">5</button><button type="button" data-secret-star="6" style="--x:70%;--y:80%" aria-label="第 6 颗星" aria-pressed="false">6</button><button type="button" data-secret-star="7" style="--x:80%;--y:42%" aria-label="第 7 颗星" aria-pressed="false">7</button><button type="button" data-secret-star="8" style="--x:90%;--y:72%" aria-label="第 8 颗星" aria-pressed="false">8</button><button type="button" data-secret-star="9" style="--x:90%;--y:15%" aria-label="第 9 颗星" aria-pressed="false">9</button></div><p id="secret-constellation-status" class="secret-task-status" role="status">从第 1 颗星开始 · 0 / 9</p></section>
+<section class="secret-task" data-secret-task="gravity" aria-label="对齐三条轨道" hidden><div class="secret-orbit-controls"><button type="button" data-secret-orbit="0"><span class="secret-orbit-dial" aria-hidden="true"><i></i><b>III</b></span><strong></strong><small>轨道 1</small></button><button type="button" data-secret-orbit="1"><span class="secret-orbit-dial" aria-hidden="true"><i></i><b>III</b></span><strong></strong><small>轨道 2</small></button><button type="button" data-secret-orbit="2"><span class="secret-orbit-dial" aria-hidden="true"><i></i><b>III</b></span><strong></strong><small>轨道 3</small></button></div><p id="secret-gravity-status" class="secret-task-status" role="status">目标：三条轨道都停在 III</p></section>
+<section class="secret-task" data-secret-task="rain" aria-label="解读圆周讯号" hidden><form id="secret-rain-form"><label for="secret-rain-code">输入六位数字</label><div class="secret-rain-entry"><input id="secret-rain-code" type="text" inputmode="numeric" maxlength="6" autocomplete="off" spellcheck="false" placeholder="· · · · · ·" aria-describedby="secret-rain-status"><button type="submit" class="primary-btn">接通讯号</button></div><p id="secret-rain-status" class="secret-task-status" role="status">六位数字，等待接通。</p></form></section>
+<section class="secret-task" data-secret-task="crane" aria-label="折一只纸鹤" hidden><div class="secret-fold-workbench"><div id="secret-fold-paper" data-fold="0" aria-hidden="true"><i></i><i></i><i></i></div><button id="secret-fold" type="button" class="secondary-btn">对折信纸</button></div><p id="secret-crane-status" class="secret-task-status" role="status">一张纸，等待第一道折痕。</p></section>
+<div class="secret-bottom"><details id="secret-console" class="secret-console"><summary>一枚旧手柄 <span aria-hidden="true">＋</span></summary><div class="secret-controller"><div class="secret-dpad" role="group" aria-label="旧手柄方向键"><button type="button" data-secret-key="ArrowUp" aria-label="上">↑</button><button type="button" data-secret-key="ArrowLeft" aria-label="左">←</button><span aria-hidden="true">✚</span><button type="button" data-secret-key="ArrowRight" aria-label="右">→</button><button type="button" data-secret-key="ArrowDown" aria-label="下">↓</button></div><div class="secret-ab" role="group" aria-label="旧手柄按键"><button type="button" data-secret-key="b">B</button><button type="button" data-secret-key="a">A</button></div></div><p id="secret-code-status" role="status" aria-live="polite">有些肌肉记忆，来自很久以前。</p></details><button id="secret-calm-trigger" class="secret-calm-trigger" type="button"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>静待一朵花</span></button></div>
+</dialog>
+<script src="./variant-bank.js"></script><script src="./multigrid-bank.js"></script><script src="./engine.js"></script><script src="./challenge.js"></script><script src="./daily.js"></script><script src="./hints.js"></script><script src="./voyage.js"></script><script src="./variant-view.js"></script><script src="./scene-webgl.js"></script><script src="./atmosphere.js"></script><script src="./easter-eggs.js"></script><script src="./history.js"></script><script src="./puzzle-deck.js"></script><script src="./app.js"></script>
+</body></html>
