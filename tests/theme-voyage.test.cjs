@@ -11,8 +11,8 @@ const pinned={
  'sums-constellation-v1':'5d5940bd2310ddf81d9ddc78e97dce01b73002e9c639afdc89f297559932d68e'
 };
 const stats={elapsedMs:12345,mistakes:0,hints:0};let progress={};
-assert.equal(V.chapters().length,15);assert.deepEqual(V.tracks().map(t=>t.id),['legacy','lines','sums']);
-assert.equal(new Set(V.chapters().map(c=>c.id)).size,15);
+assert.equal(V.chapters().length,16);assert.deepEqual(V.tracks().map(t=>t.id),['legacy','lines','sums','fusion']);
+assert.equal(new Set(V.chapters().map(c=>c.id)).size,16);
 for(const p of fixture.voyage)assert.equal(hash(V.getPuzzle(p.id)),p.sha256,'old voyage puzzle '+p.id+' changed');
 assert.equal(V.getStatus({}).total,9);assert.equal(V.getStatus({}).nextId,'dawn');
 for(const c of V.chapters('legacy'))progress=V.award(progress,c.id,stats);
@@ -43,7 +43,9 @@ for(const track of ['lines','sums']){
   progress=V.award(progress,c.id,stats);assert.equal(V.getStatus(progress,track).completed,c.index+1);
  }
 }
-assert.equal(V.getStatus(progress,'all').total,15);assert.equal(V.getStatus(progress,'all').completed,15);assert.equal(V.getStatus(progress,'all').stars,45);
+assert.equal(V.getStatus(progress,'all').total,16);assert.equal(V.getStatus(progress,'all').completed,15);assert.equal(V.getStatus(progress,'all').stars,45);
+assert(!V.journey(progress).finished);assert(V.canEnter(progress,'fusion-homecoming-v1'));assert.equal(V.nextAfter(progress,'sums-constellation-v1'),'fusion-homecoming-v1');
+const withFusion=V.award(progress,'fusion-homecoming-v1',stats);assert.equal(V.getStatus(withFusion,'all').completed,16);assert.equal(V.getStatus(withFusion,'all').stars,48);assert(V.journey(withFusion).finished);
 assert.deepEqual(Object.fromEntries(Object.entries(progress).filter(([id])=>Object.hasOwn(legacy,id))),legacy,'old records lost');
 const orphan=JSON.parse(JSON.stringify(progress));delete orphan['lines-mirror-v1'];const clean=V.normalizeProgress(orphan);
 assert(clean['lines-rise-v1']);assert(!clean['lines-spectrum-v1']);assert.equal(V.getStatus(clean,'sums').completed,3);assert.equal(V.getStatus(clean).completed,9);
@@ -51,10 +53,10 @@ assert.deepEqual(V.award(progress,'lines-rise-v1',{elapsedMs:99999,mistakes:1,hi
 const corrupt=JSON.parse(JSON.stringify(progress));corrupt['sums-arrows-v1'].stars=2;assert(!V.normalizeProgress(corrupt)['sums-constellation-v1']);
 const copied=V.chapters();copied[0].title='mutated';assert.notEqual(V.chapters()[0].title,'mutated');
 // Fixed explicit source IDs, not a catalog position: preserve options through the public entry point.
-const calls=[],context={module:{exports:{}},require:()=>Object.assign({},E,{getPuzzle(...args){calls.push(args);return E.getPuzzle(...args);}})};
+const calls=[],context={module:{exports:{}},require:path=>path==='./training.js'?require('../src/training.js'):Object.assign({},E,{getPuzzle(...args){calls.push(args);return E.getPuzzle(...args);}})};
 vm.runInNewContext(fs.readFileSync('src/voyage.js','utf8'),context);
 for(const c of V.chapters().filter(c=>c.trackId!=='legacy'))context.module.exports.getPuzzle(c.id);
-assert(calls.every(args=>args[3].sourceId&&args[1].startsWith('nine-realms-themed-voyage-v1:')));
+assert.equal(calls.length,7);assert(calls.every(args=>args[3].sourceId&&args[1].startsWith('nine-realms-themed-voyage-v1:')));
 // The unchanged backup schema carries both old records and themed in-progress puzzles.
 const B=require('../src/backup.js');
 function storage(initial={}){const data=new Map(Object.entries(initial));return {getItem:k=>data.has(k)?data.get(k):null,setItem:(k,v)=>data.set(k,String(v)),removeItem:k=>data.delete(k)};}
@@ -63,4 +65,4 @@ for(const c of V.chapters().filter(c=>c.trackId!=='legacy')){
  const source=storage({[B.keys[0]]:JSON.stringify(snapshot),[B.keys[4]]:JSON.stringify(progress)}),backup=B.create(source,{appVersion:'1.0.1'}),target=storage();
  assert.equal(B.preview(backup).voyageCount,15);assert(B.replace(target,backup).replaced);assert.equal(target.getItem(B.keys[0]),source.getItem(B.keys[0]));assert.deepEqual(JSON.parse(target.getItem(B.keys[4])),progress);
 }
-console.log('PASS themed voyages: 9 legacy puzzles and records unchanged; 6 pinned unique full-rule puzzles, '+steps+' verified hint steps without answer fallback; independent unlock/progress/revisit, full clue matching and source stability.');
+console.log('PASS themed voyages: 9 legacy puzzles and records unchanged; 6 pinned unique full-rule puzzles, '+steps+' verified hint steps without answer fallback; independent unlock/progress/revisit, full clue matching and source stability; old15 completion opens fusion16 without inventing a win.');

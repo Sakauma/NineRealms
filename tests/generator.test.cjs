@@ -36,7 +36,7 @@ const realAnalyze=E.analyzeSolutions;
  assert.throws(()=>G.generate({mode:'classic',difficulty:'easy',seed:'budget-proof'}),/DENSITY_NOT_REACHED/);
  E.analyzeSolutions=realAnalyze;
  const sandbox=vm.createContext({});vm.runInContext(E.workerSource(),sandbox);
-assert.equal(vm.runInContext('SudokuEngine.getModes().length',sandbox),32);
+assert.equal(vm.runInContext('SudokuEngine.getModes().length',sandbox),E.getModes().length);
 assert.equal(vm.runInContext('SudokuEngine.getPuzzleCatalog().length',sandbox),E.getPuzzleCatalog().length);
 // Worker/client lifecycle checks without an actual browser: source is executed in an isolated JS context.
 const NativeWorker=global.Worker,makeURL=URL.createObjectURL,revokeURL=URL.revokeObjectURL;
@@ -71,6 +71,6 @@ global.Worker=class {
    const decoded=Challenge.decode(Challenge.create(puzzle));
    assert.deepEqual(decoded.givens,puzzle.givens);assert.deepEqual(E.normalizeClues(puzzle.mode,decoded.clues),puzzle.clues);assert.deepEqual(decoded.solution,puzzle.solution);
  }
- const report={challengeRoundtripModes:32,workerErrorAndTimeoutMock:true,status:'passed',samples:generated,modes:32,densityTiers:3,seedsPerTier:count,exactSampleDuplicates:0,seedReproducibility:true,uniqueSolutionRecheck:true,curatedApiUnchanged:true,workerSourceVm:true,workerCancellationMock:true,maxGenerationMs:maxMs,meanGenerationMs:totalMs/generated,visualBrowserTest:false};
+ const report={challengeRoundtripModes:E.getModes().length,workerErrorAndTimeoutMock:true,status:'passed',samples:generated,modes:E.getModes().length,densityTiers:3,seedsPerTier:count,exactSampleDuplicates:0,seedReproducibility:true,uniqueSolutionRecheck:true,curatedApiUnchanged:true,workerSourceVm:true,workerCancellationMock:true,maxGenerationMs:maxMs,meanGenerationMs:totalMs/generated,visualBrowserTest:false};
  fs.mkdirSync('evidence/generator',{recursive:true});fs.writeFileSync('evidence/generator/regression.json',JSON.stringify(report,null,2));console.log(report);
 })().catch(e=>{console.error(e);process.exitCode=1});

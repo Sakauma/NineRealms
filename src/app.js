@@ -7,7 +7,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.0.1";
+  var APP_VERSION = "1.1.0";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -34,6 +34,7 @@
   var STORAGE_KEY = "nine-realms.sudoku.v1";
   var SAVE_VERSION = 8;
   var History = window.NineRealmsHistory;
+  var Drafts = window.NineRealmsDrafts, draftUi = null, trainingUi = null;
   var historyOrigin = null;
   var boardLayout = null;
   var boardLayoutKey = '';
@@ -74,7 +75,7 @@
   }
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var preferences = { theme: "nebula", fx: true, errorCheck: true, fog: false, sound: false, focus: false, zen: false, zenMotion: true, intensity: "cinematic" };
+  var preferences = { theme: "nebula", fx: true, errorCheck: true, fog: false, sound: false, focus: false, zen: false, zenMotion: true, intensity: "cinematic", textSize: "normal", lineContrast: "standard", colorAssist: false, handedness: "right" };
   var game = null;
   var currentContext = null;
   var catalogCategory = "全部";
@@ -161,26 +162,27 @@
     return board.every(function (value, i) { return !givens[i] || value === givens[i]; });
   }
 
-  function validSnapshot(snapshot, givens) {
+  function validSnapshot(snapshot, givens, clues) {
+    try { if (snapshot && Drafts) Drafts.validate(snapshot.draft, givens.length, clues); } catch (error) { return false; }
     return snapshot && isBoard(snapshot.board, false, givens.length) && isNotes(snapshot.notes, givens.length) &&
       respectsGivens(snapshot.board, givens) &&
       snapshot.notes.every(function (mask, i) { return !snapshot.board[i] || mask === 0; });
   }
 
   function copySnapshot(snapshot) {
-    return { board: snapshot.board.slice(), notes: snapshot.notes.slice(),
+    return { board: snapshot.board.slice(), notes: snapshot.notes.slice(), draft: Drafts.clone(snapshot.draft, snapshot.board.length),
       selected: Number.isInteger(snapshot.selected) && snapshot.selected >= 0 && snapshot.selected < snapshot.board.length ? snapshot.selected : 0,
       noteMode: Boolean(snapshot.noteMode) };
   }
 
-  function restoreBranch(source, givens) {
-    if (!source || !validSnapshot(source, givens) ||
+  function restoreBranch(source, givens, clues) {
+    if (!source || !validSnapshot(source, givens, clues) ||
         !Number.isInteger(source.mistakes) || source.mistakes < 0 ||
         !Array.isArray(source.history)) return null;
     var branch = copySnapshot(source);
     branch.mistakes = source.mistakes;
     branch.history = source.history.slice(-80).filter(function (item) {
-      return validSnapshot(item, givens);
+      return validSnapshot(item, givens, clues);
     }).map(copySnapshot);
     return branch;
   }
@@ -203,6 +205,10 @@
       nextPreferences.zen = prefs.zen === true;
       nextPreferences.zenMotion = prefs.zenMotion !== false;
       nextPreferences.intensity = ["cinematic", "balanced", "soft"].indexOf(prefs.intensity) >= 0 ? prefs.intensity : "cinematic";
+      nextPreferences.textSize = prefs.textSize === "large" ? "large" : "normal";
+      nextPreferences.lineContrast = prefs.lineContrast === "strong" ? "strong" : "standard";
+      nextPreferences.colorAssist = prefs.colorAssist === true;
+      nextPreferences.handedness = prefs.handedness === "left" ? "left" : "right";
       }
       var source = saved.game;
       if (!source) return false;
@@ -215,14 +221,14 @@
           !isBoard(source.givens, false, restoredSize) || !isBoard(source.solution, true, restoredSize) ||
           !Engine.validateComplete(source.solution, restoredContext) ||
           !respectsGivens(source.solution, source.givens) ||
-          !validSnapshot(source, source.givens) ||
+          !validSnapshot(source, source.givens, clues) ||
           !Number.isFinite(source.elapsedMs) || source.elapsedMs < 0 || source.elapsedMs > 1e12 ||
           !Number.isInteger(source.mistakes) || source.mistakes < 0 ||
           !Number.isInteger(source.hints) || source.hints < 0) return false;
       // A saved answer must belong to this puzzle, not just be another complete grid.
       var trustedSolution = Engine.solve(source.givens, restoredContext);
       if (!trustedSolution || !trustedSolution.every(function (v, i) { return v === source.solution[i]; })) return false;
-      var branch = restoreBranch(source.branch, source.givens);
+      var branch = restoreBranch(source.branch, source.givens, clues);
       var completed = !branch && source.board.every(function (value, i) { return value === source.solution[i]; });
       // Older saves were always live. Keep their time, but wait for an explicit resume.
       var recordedProgress = source.elapsedMs > 0 || source.hints > 0 || source.mistakes > 0 ||
@@ -243,8 +249,9 @@
         solution: source.solution.slice(),
         board: source.board.slice(),
         notes: source.notes.slice(),
+        draft: Drafts.validate(source.draft, restoredSize, clues),
         history: Array.isArray(source.history) ? source.history.filter(function (item) {
-          return validSnapshot(item, source.givens);
+          return validSnapshot(item, source.givens, clues);
         }).slice(-80) : [],
         selected: Number.isInteger(source.selected) && source.selected >= 0 && source.selected < restoredSize
           ? source.selected : source.givens.indexOf(0),
@@ -450,10 +457,10 @@
       if (multi) {
         var outerTop = focused ? local.row === 0 : position.boards.some(function (b) { return b.row === 0; });
         var outerLeft = focused ? local.col === 0 : position.boards.some(function (b) { return b.col === 0; });
-        cell.style.borderTop = outerTop ? "2px solid var(--grid-strong)" : "0";
-        cell.style.borderLeft = outerLeft ? "2px solid var(--grid-strong)" : "0";
-        cell.style.borderRight = (local.col % 3 === 2 ? "2px solid var(--grid-strong)" : "1px solid var(--grid-line)");
-        cell.style.borderBottom = (local.row % 3 === 2 ? "2px solid var(--grid-strong)" : "1px solid var(--grid-line)");
+        cell.style.borderTop = outerTop ? "var(--reading-strong-width,2px) solid var(--grid-strong)" : "0";
+        cell.style.borderLeft = outerLeft ? "var(--reading-strong-width,2px) solid var(--grid-strong)" : "0";
+        cell.style.borderRight = (local.col % 3 === 2 ? "var(--reading-strong-width,2px) solid var(--grid-strong)" : "var(--reading-thin-width,1px) solid var(--grid-line)");
+        cell.style.borderBottom = (local.row % 3 === 2 ? "var(--reading-strong-width,2px) solid var(--grid-strong)" : "var(--reading-thin-width,1px) solid var(--grid-line)");
       }
     });
     if ($("multigrid-tools")) $("multigrid-tools").hidden = !multi;
@@ -489,6 +496,13 @@
   }
 
   function renderPreferences() {
+    document.body.dataset.textSize = preferences.textSize;
+    document.body.dataset.lineContrast = preferences.lineContrast;
+    document.body.dataset.colorAssist = String(preferences.colorAssist);
+    document.body.dataset.handedness = preferences.handedness;
+    document.querySelectorAll("[data-reading-pref]").forEach(function(button){
+      button.setAttribute("aria-pressed", String(String(preferences[button.dataset.readingPref]) === button.dataset.readingValue));
+    });
     document.body.dataset.theme = preferences.theme;
     document.body.dataset.intensity = preferences.intensity;
     if ($("scene-intensity")) $("scene-intensity").value = preferences.intensity;
@@ -721,6 +735,7 @@
     $("daily-game-badge").hidden = !game.dailyDate;
     $("daily-game-badge").textContent = game.dailyDate ? "每日一境 · " + game.dailyDate.slice(5).replace("-", "/") : "";
     renderHint();
+    if (draftUi) draftUi.render();
     if ($("pause-btn")) {
       $("pause-btn").disabled = waitingToStart || game.completed;
       var pauseText = waitingToStart ? "尚未开始" : game.paused ? "继续游戏" : "暂停游戏";
@@ -767,6 +782,7 @@
     game.history.push({
       board: game.board.slice(),
       notes: game.notes.slice(),
+      draft: Drafts.clone(game.draft, game.board.length, game.clues),
       selected: game.selected,
       noteMode: noteMode
     });
@@ -844,6 +860,7 @@
     var previous = game.history.pop();
     game.board = previous.board.slice();
     game.notes = previous.notes.slice();
+    game.draft = Drafts.clone(previous.draft, game.board.length, game.clues);
     if (Number.isInteger(previous.selected) && previous.selected >= 0 && previous.selected < game.board.length) {
       game.selected = previous.selected;
     }
@@ -867,7 +884,7 @@
     if (!canInteract() || game.branch) return;
     game.energy.combo = 0;
     game.branch = {
-      board: game.board.slice(), notes: game.notes.slice(), selected: game.selected,
+      board: game.board.slice(), notes: game.notes.slice(), draft: Drafts.clone(game.draft, game.board.length, game.clues), selected: game.selected,
       noteMode: noteMode, history: game.history.map(copySnapshot), mistakes: game.mistakes
     };
     game.history = [];
@@ -882,6 +899,7 @@
     var checkpoint = game.branch;
     game.board = checkpoint.board.slice();
     game.notes = checkpoint.notes.slice();
+    game.draft = Drafts.clone(checkpoint.draft, game.board.length, game.clues);
     game.selected = checkpoint.selected;
     game.history = checkpoint.history.map(copySnapshot);
     game.mistakes = checkpoint.mistakes;
@@ -896,7 +914,7 @@
   function commitBranch() {
     if (!canInteract() || !game.branch) return;
     var checkpoint = game.branch;
-    var changed = game.board.some(function (value, i) {
+    var changed = !Drafts.equal(game.draft, checkpoint.draft, game.board.length) || game.board.some(function (value, i) {
       return value !== checkpoint.board[i] || game.notes[i] !== checkpoint.notes[i];
     });
     var newErrors = game.board.reduce(function (count, value, i) {
@@ -1075,7 +1093,53 @@
     catch (error) { toast("星图成绩暂时无法保存到本机，本局仍可继续游玩。"); }
   }
 
+  function renderVoyageWorld() {
+    var world = Voyage.worldState(voyageProgress), nodes = $("voyage-world-nodes"), svg = $("voyage-world-edges");
+    var active = document.activeElement && document.activeElement.dataset.worldId;
+    nodes.replaceChildren(); svg.replaceChildren();
+    function point(index) { return { x: 50 + (index % 4) * 100, y: 50 + Math.floor(index / 4) * 100 }; }
+    function reaches(from, target, seen) {
+      if (from === target) return true;
+      if (seen.indexOf(from) >= 0) return false;
+      return world.edges.some(function (edge) { return edge.from === from && reaches(edge.to, target, seen.concat(from)); });
+    }
+    // Draw the minimal dependency paths; retain every prerequisite in voyage validation.
+    world.edges.filter(function (edge) {
+      return !world.edges.some(function (first) { return first.from === edge.from && first.to !== edge.to && reaches(first.to, edge.to, []); });
+    }).forEach(function (edge) {
+      var a = point(world.nodes.findIndex(function (node) { return node.id === edge.from; }));
+      var b = point(world.nodes.findIndex(function (node) { return node.id === edge.to; }));
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      path.setAttribute("x1", a.x); path.setAttribute("y1", a.y); path.setAttribute("x2", b.x); path.setAttribute("y2", b.y);
+      path.setAttribute("class", "world-edge" + (edge.repaired ? " repaired" : "")); svg.appendChild(path);
+    });
+    world.nodes.forEach(function (node, index) {
+      var p = point(index), button = document.createElement("button"), title = document.createElement("span");
+      button.type = "button"; button.className = "world-node"; button.dataset.worldId = node.id; button.dataset.repaired = String(node.repaired);
+      button.dataset.phase = node.phase; button.style.left = p.x / 4 + "%"; button.style.top = p.y / 4 + "%";
+      button.textContent = String(index + 1).padStart(2, "0"); title.textContent = node.title; button.appendChild(title);
+      button.disabled = voyageStorageBlocked; button.setAttribute("aria-label", node.title + (node.repaired ? "，已修复" : "，未修复，查看任务"));
+      nodes.appendChild(button);
+    });
+    $("voyage-world").dataset.finished = String(world.finished);
+    $("voyage-world-feedback").textContent = voyageStorageBlocked ? "原始远征记录保留，星图状态暂不可读取。" :
+      world.phases.map(function (phase) { return phase.title + " " + phase.repaired + "/" + phase.total; }).join(" · ") +
+      (world.finished ? " · 归航环已亮起。" : " · 已修复节点与航线随实际通关点亮，旧版通行不会代替完成。") ;
+    var links = $("voyage-training-links");
+    if (!links.children.length) window.NineRealmsTraining.stations().forEach(function (station) {
+      var button = document.createElement("button"); button.type = "button"; button.dataset.station = station.id || station.technique; links.appendChild(button);
+    });
+    var practice = Voyage.practiceProgress(voyageProgress);
+    links.querySelectorAll("button").forEach(function (button) {
+      var station = window.NineRealmsTraining.stations().find(function (item) { return (item.id || item.technique) === button.dataset.station; });
+      var ids = station.exerciseIds; button.textContent = station.title + " · " + ids.filter(function (id) { return practice.completed.indexOf(id) >= 0; }).length + "/" + ids.length;
+      button.disabled = voyageStorageBlocked;
+    });
+    if (active && $("voyage-dialog").open) { var focus = nodes.querySelector('[data-world-id="' + active + '"]'); if (focus) focus.focus(); }
+  }
+
   function renderVoyage() {
+    renderVoyageWorld();
     var journey = Voyage.journey(voyageProgress, game && game.voyageId);
     var status = Voyage.getStatus(voyageProgress, selectedVoyageTrack);
     var overall = Voyage.getStatus(voyageProgress, "all");
@@ -1096,8 +1160,8 @@
     $("voyage-track-summary").textContent = track.description || track.subtitle || "沿着熟悉的九颗星，重温最初的旅程。";
     $("voyage-star-max").textContent = "/ " + overall.total * 3;
     var recommended = chapterInfo(journey.nextId);
-    $("voyage-objective").textContent = journey.finished ? "归航星图已复原。所有已点亮星点都可自由回访。" : "修复归航星图：校准星位 → 分头连线与汇能 → 群星合奏。";
-    $("voyage-milestones").textContent = "星位 " + Voyage.getStatus(voyageProgress, "legacy").completed + "/9 → 航路 " + Voyage.getStatus(voyageProgress, "lines").completed + "/3 ＋ 能量 " + ["sums-sparks-v1", "sums-arrows-v1"].filter(function (id) { return Boolean(voyageProgress[id]); }).length + "/2 → 合流 " + (voyageProgress["sums-constellation-v1"] ? "1" : "0") + "/1";
+    $("voyage-objective").textContent = journey.finished ? "归航星图已复原。所有已点亮星点都可自由回访。" : "修复归航星图：校准星位 → 连线与汇能 → 群星合奏 → 融合归航。";
+    $("voyage-milestones").textContent = "星位 " + Voyage.getStatus(voyageProgress, "legacy").completed + "/9 → 航路 " + Voyage.getStatus(voyageProgress, "lines").completed + "/3 ＋ 能量 " + ["sums-sparks-v1", "sums-arrows-v1"].filter(function (id) { return Boolean(voyageProgress[id]); }).length + "/2 → 合流 " + (voyageProgress["sums-constellation-v1"] ? "1" : "0") + "/1 → 归航 " + (voyageProgress["fusion-homecoming-v1"] ? "1" : "0") + "/1";
     $("voyage-next-stop").textContent = recommended ? "继续主线 · " + recommended.title : "星图已完整 · 自由回访";
     $("voyage-next-stop").disabled = !recommended || voyageStorageBlocked;
     $("voyage-card-title").textContent = journey.finished ? "归航星图已复原 · 自由回访" : "修复归航星图 · 下一站 · " + (recommended ? recommended.title : next.title);
@@ -1140,7 +1204,7 @@
     $("voyage-description").textContent = "通关推进主线，不以星级设门槛。启程完成后分头循线、求和；两支汇齐才开启群星合奏。旧版通行与最佳成绩保留。";
     var allowed = Voyage.canEnter(voyageProgress, selected.id, game && game.voyageId);
     $("voyage-connection").textContent = (selected.bridge || "") + "\n任务：" + (selected.mission || selected.goal || selected.subtitle) + "\n" + (selected.nextLink || "");
-    $("voyage-gate").textContent = allowed ? (voyageProgress.__journey && voyageProgress.__journey.granted.indexOf(selected.id) >= 0 ? "旧版通行已保留；成绩仍需实际通关获得。" : "此站已开放；完成后主线会指向下一处缺口。") : selected.id === "sums-constellation-v1" ? "合流条件：循线三关与求和前两关全部通关（无需满星）。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "先完成启程九关，建立共同的星位基础。" : "先完成本章前一站，再将学到的关系带到这里。";
+    $("voyage-gate").textContent = allowed ? (voyageProgress.__journey && voyageProgress.__journey.granted.indexOf(selected.id) >= 0 ? "旧版通行已保留；成绩仍需实际通关获得。" : "此站已开放；完成后主线会指向下一处缺口。") : selected.id === "fusion-homecoming-v1" ? "归航条件：完成前十五处星点，再联合运用温度计与杀手笼。" : selected.id === "sums-constellation-v1" ? "合流条件：循线三关与求和前两关全部通关（无需满星）。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "先完成启程九关，建立共同的星位基础。" : "先完成本章前一站，再将学到的关系带到这里。";
     var current = game && game.voyageId === selected.id && !game.completed;
     $("voyage-start").textContent = current ? "返回这一关" : voyageProgress[selected.id] ? "重访这一星" : "准备出发";
     $("voyage-start").disabled = loadingVoyage || !allowed || voyageStorageBlocked;
@@ -1315,7 +1379,7 @@
   function renderLogicRating() {
     var target = $("logic-rating"), context = gameContext(), givens = game.givens.slice();
     var key = JSON.stringify(["classic-logic-v1", context, givens]);
-    target.textContent = "正在分析原始题面…";
+    target.textContent = "技巧 · 分析中";
     setTimeout(function () {
       if (!game || key !== JSON.stringify(["classic-logic-v1", gameContext(), game.givens])) return;
       var result = ratingCache.get(key);
@@ -1324,8 +1388,8 @@
         if (ratingCache.size >= 64) ratingCache.delete(ratingCache.keys().next().value);
         ratingCache.set(key, result);
       }
-      target.textContent = result.label + (result.solved ? " · 完整逻辑解出，" + result.steps + " 步。" : "。") +
-        (result.reason ? " " + result.reason : "") + " 不代表所有人使用同一路径，也不等同于所选难度档。";
+      var labels = { "naked-single": "唯一候选", "hidden-single": "唯一位置", "locked-candidate": "锁定候选", "naked-pair": "显性数对", "hidden-pair": "隐性数对" };
+      target.textContent = "技巧 · " + (result.solved ? (result.steps === 0 ? "无需推理" : labels[result.highestTechnique] || "已评级") : result.status === "unsupported" ? "暂不支持" : "未评级");
     }, 0);
   }
 
@@ -1499,6 +1563,7 @@
   }
 
   function showDialog(element) {
+    if (window.NineRealmsFloatingDraft) window.NineRealmsFloatingDraft.close(false);
     if(storageTransition)return;
     if (generatingPuzzle) {
       cancelPuzzleGeneration(); renderModeControls();
@@ -1619,6 +1684,7 @@
       solution: puzzle.solution.slice(),
       board: puzzle.givens.slice(),
       notes: Array(puzzle.givens.length).fill(0),
+      draft: Drafts.empty(puzzle.givens.length),
       history: [],
       selected: Math.max(0, puzzle.givens.indexOf(0)),
       mistakes: 0,
@@ -1967,6 +2033,17 @@
   bind("voyage-start", "click", startVoyage);
   bind("voyage-close", "click", function () { closeDialog($("voyage-dialog")); });
   bind("voyage-dialog", "close", function () { resumeClock(); save(); });
+  bind("voyage-world-nodes", "click", function (event) {
+    var button = event.target.closest("[data-world-id]"); if (!button || button.disabled) return;
+    selectedVoyage = button.dataset.worldId; selectedVoyageTrack = chapterInfo(selectedVoyage).trackId; renderVoyage(); $("voyage-selected-title").scrollIntoView({ block: "nearest" });
+  });
+  bind("voyage-training-links", "click", function (event) {
+    var button = event.target.closest("[data-station]"); if (!button || button.disabled || !trainingUi) return;
+    closeDialog($("voyage-dialog")); trainingUi.open(button.dataset.station);
+  });
+  bind("completion-review", "click", function () {
+    if (!History || !game) return; var id = game.sessionId; closeDialog($("completion-dialog")); save(); History.flush(); History.open(id); var review = $("history-review"); if (review) review.open = true;
+  });
   bind("voyage-next-stop", "click", function () {
     var nextId = Voyage.journey(voyageProgress, game && game.voyageId).nextId;
     if (!nextId) return;
@@ -2069,6 +2146,14 @@
   });
   bind("rules-close", "click", function () { closeDialog($("rules-dialog")); });
   bind("rules-dialog", "close", function () { resumeClock(); save(); });
+  bind("reading-settings", "click", function(event){
+    var button = event.target.closest("[data-reading-pref]");
+    if (!button || storageTransition) return;
+    var key = button.dataset.readingPref, value = button.dataset.readingValue;
+    preferences[key] = key === "colorAssist" ? value === "true" : value;
+    renderPreferences(); save();
+  });
+  bind("reading-settings", "keydown", function(event){ if(event.key !== "Escape") event.stopPropagation(); });
   bind("scene-intensity", "change", function (event) {
     preferences.intensity = event.target.value;
     resetTilt(); renderPreferences(); save();
@@ -2290,6 +2375,23 @@
       throw error;
     }
   }
+
+  if (window.NineRealmsTrainingUI) trainingUi = window.NineRealmsTrainingUI({
+    progress: function () { return Voyage.practiceProgress(voyageProgress); },
+    blocked: function () { return storageTransition || voyageStorageBlocked; },
+    open: showDialog, close: closeDialog, afterClose: function () { resumeClock(); save(); },
+    success: function (id, cell, digit) { if (storageTransition || voyageStorageBlocked) throw new Error("练习成绩暂不可保存，原记录未改变。"); voyageProgress = Voyage.recordPractice(voyageProgress, id, cell, digit); saveVoyage(); renderVoyage(); }
+  });
+
+  if (window.NineRealmsDraftUI) draftUi = window.NineRealmsDraftUI({
+    game: function () { return game; }, layout: function () { return boardLayout; }, view: function () { return activeBoardId; },
+    blocked: function () { return !canInteract(); },
+    change: function (next, label) { if (!canInteract()) return; if (Drafts.equal(next, game.draft, game.board.length)) return;
+      remember(); game.draft = Drafts.validate(next, game.board.length, game.clues); render(); save(label); },
+    message: setStatus, undo: undo
+  });
+
+  bind("checkpoints-open", "click", function () { if (storageTransition || !History) return; save(); History.flush(); History.openCheckpoints(); });
 
   if (History) History.init({
     Engine: Engine,

@@ -60,4 +60,4 @@ for(const mode of Engine.getModes().map(m=>m.id).filter(m=>m!=='classic')){
  const hint=Hints.getStep(variant.givens,variant.givens,variant.solution,context);
  assert(hint&&hint.kind!=='elimination',mode);assert.equal(hint.value,variant.solution[hint.index]);
 }
-console.log('PASS classic logic hints: 64 source paths, locked candidates + naked/hidden pairs, sound eliminations, notes-proof progression, honest bounded ratings, correction and 31-mode regressions.',counts);
+console.log('PASS classic logic hints: 64 source paths, locked candidates + naked/hidden pairs, sound eliminations, notes-proof progression, honest bounded ratings, correction and '+(Engine.getModes().length-1)+'-mode regressions.',counts);

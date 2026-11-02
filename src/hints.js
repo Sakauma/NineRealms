@@ -162,6 +162,19 @@
         var peers = Engine.getPeers(cell, context);
         var filled = peers.filter(function (peer) { return board[peer] !== 0; });
         var excluded = Array.from(new Set(filled.map(function (peer) { return board[peer]; }))).sort();
+        if (mode === "thermo-killer" && Engine.getFusionCandidateEvidence) {
+          var evidence = Engine.getFusionCandidateEvidence(board, cell, context);
+          var fusion = step("fusion-single", cell, available[cell][0], [cell].concat(Engine.getRelatedCells(cell, context)),
+            "交叉检查温度计与杀手笼", "先看高亮格所在的笼，再沿相交温度计核对递增范围；两类规则必须同时满足。",
+            "行列宫基础候选为 " + evidence.classic.join("、") + "；只加温度计后为 " + evidence.thermo.join("、") +
+            "。所在笼总和 " + evidence.cageSum + "，未填 " + evidence.remainingCount + " 格合计 " + evidence.remainingSum +
+            "，不重复组合有 " + evidence.cageCombinations.slice(0,8).map(function(c){return "{" + c.join("、") + "}";}).join("、") +
+            (evidence.cageCombinations.length > 8 ? " 等 " + evidence.cageCombinations.length + " 组" : "") +
+            "（组合尚未指定格子次序）。只加笼约束后此格候选为 " + evidence.cage.join("、") +
+            "；两类规则共同检查后只剩 " + available[cell][0] + "。这些是当前盘面的局部候选核验，不是读取答案。");
+          fusion.evidence = evidence;
+          return fusion;
+        }
         if (["classic", "diagonal", "hyper", "knight"].indexOf(mode) < 0) {
           var related = typeof Engine.getRelatedCells === "function" ? Engine.getRelatedCells(cell, context) : peers;
           return step("rule-single", cell, available[cell][0], [cell].concat(related),

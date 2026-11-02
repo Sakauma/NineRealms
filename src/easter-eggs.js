@@ -2,7 +2,8 @@
 (function (root) {
   "use strict";
   var STORAGE_KEY = "nine-realms.secrets.v1";
-  var IDS = ["gate", "visitor", "lotus", "constellation", "gravity", "rain", "crane"];
+  var Archives = root.NineRealmsSecretArchives;
+  var IDS = ["gate", "visitor", "lotus", "constellation", "gravity", "rain", "crane"].concat(Archives.ids);
   var CODE = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
   var DETAILS = {
     gate: {
@@ -41,6 +42,12 @@
       description: "一张纸，三次折叠，一封没有字的信。愿每一个停顿，都有风替你捎去远方。"
     }
   };
+  Object.assign(DETAILS, {
+    fragment:{title:"残页星盘",locked:"残页星盘",hint:"一张只有 1–4 的教学纸片。补齐行、列与 2×2 宫，让残页恢复完整。",description:"观测笔记：不是把数字放满就算完成。行、列、宫与给定必须同时成立；本页经穷举只有一个解。"},
+    twins:{title:"双生星图",locked:"双生星图",hint:"档案里已有一份合法答案。你能为同一题面找到不同的第二份吗？",description:"观测笔记：两个不同答案都满足全部条件，就足以反证唯一性。这不是玩家犯错，而是给定不足；本纸片穷举共有四解。"},
+    observatory:{title:"零号观测站",locked:"零号观测站",hint:"四个独立节点，两条规则。切换规则并比较真实可行数量，再提交联合结论。",description:"观测笔记：设四格为 a<b<c<d，数字至少为 1。于是 c≥3、d≥4；又 c+d=7，所以 c=3、d=4，前两格只能是 1、2。单条规则都不足，交集才唯一。"},
+    "homecoming-notes":{title:"返航者手记",locked:"返航者手记",hint:"假设定位九星已修复，自由规划七处后续航点。可以先走任一分支，但汇合必须有前置。",description:"观测笔记：顺序不必唯一，依赖却不能倒置。循线三站和求和前两站可以交错；群星合奏等待两路，归航合鸣等待所有先行节点。这份模拟不改真实旅程。"}
+  });
   var initialized = false, persistenceSuspended = false;
   var exportSecrets = function () { return { version: 1, found: [] }; };
 
@@ -55,8 +62,9 @@
     if (!dialog || !scene || !brand || !opener || typeof callbacks.openDialog !== "function") return;
     initialized = true;
 
-    var found = [], selected = null, warnedStorage = false;
-    exportSecrets = function () { return { version: 1, found: found.slice() }; };
+    var found = [], archiveState = null, collectionBlocked = false, selected = null, warnedStorage = false;
+    function collectionValue(){var value={version:1,found:found.slice()};if(archiveState)value.archives=archiveState;return Archives.validateEnvelope(value);}
+    exportSecrets = function () { if(collectionBlocked)throw new Error("彩蛋收藏格式较新或已损坏，完整备份已暂停，原数据未改变。");return collectionValue(); };
     var brandClicks = 0, lastBrandClick = 0;
     var suppressPointerClick = false;
     var keyHistory = [], lastCodeKey = 0;
@@ -81,23 +89,18 @@
 
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        var saved = JSON.parse(raw);
-        if (saved && saved.version === 1 && Array.isArray(saved.found)) {
-          found = IDS.filter(function (id) { return saved.found.indexOf(id) !== -1; });
-        }
+      if (raw !== null) {
+        var saved = Archives.validateEnvelope(JSON.parse(raw));
+        found = saved.found.slice();archiveState=saved.archives||null;
       }
-    } catch (error) {
-      // Corrupt data can safely start a fresh collection. Storage denial is
-      // reported on the first attempted discovery save, never at game startup.
-    }
+    } catch (error) { collectionBlocked=true; }
     if (found.length) selected = found[0];
 
     function saveCollection() {
       try {
-        if(persistenceSuspended)return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, found: found.slice() }));
-      } catch (error) { storageWarning(); }
+        if(persistenceSuspended||collectionBlocked)return false;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectionValue()));return true;
+      } catch (error) { storageWarning();return false; }
     }
 
     function otherDialogOpen() {
@@ -147,7 +150,7 @@
       if (collectionCount) collectionCount.textContent = "已发现 " + found.length + " / " + IDS.length;
       opener.setAttribute("aria-label", "打开旅途拾遗，已发现 " + found.length + " 个彩蛋，共 " + IDS.length + " 个");
       var replayButton = byId("secret-replay");
-      if (replayButton) replayButton.hidden = !unlocked;
+      if (replayButton) replayButton.hidden = !unlocked || Archives.ids.indexOf(selected)>=0;
       cards.forEach(function (card) {
         var id = card.dataset.secretCard;
         if (IDS.indexOf(id) === -1) return;
@@ -155,12 +158,14 @@
         var name = card.querySelector("[data-secret-name]");
         var state = card.querySelector("[data-secret-state]");
         if (name) name.textContent = known ? DETAILS[id].title : DETAILS[id].locked;
-        if (state) state.textContent = known ? "已发现 · 可以重看" : "未发现 · 查看线索";
+        if (state) state.textContent = known ? "已发现 · 可以重看" : Archives.ids.indexOf(id)>=0 ? "互动档案 · 开始探索" : "未发现 · 查看线索";
         card.dataset.found = known ? "true" : "false";
         card.setAttribute("aria-pressed", String(selected === id));
         card.setAttribute("aria-label", (known ? DETAILS[id].title : DETAILS[id].locked) + (known ? "，已发现，点击重看" : "，未发现，点击查看线索"));
       });
       renderMiniGames();
+      renderArchive();
+      if(collectionBlocked&&discovery)discovery.textContent="收藏数据暂不可读取；已进入只读，原内容不会覆盖。";
       updateMotion();
     }
 
@@ -202,6 +207,47 @@
       if (paper) paper.dataset.fold = String(foldProgress);
       var foldButton = byId("secret-fold");
       if (foldButton) foldButton.textContent = foldProgress === 3 ? "再折一只" : ["对折信纸", "折出双翼", "展开，让它飞"][foldProgress];
+    }
+
+    var archiveHints = {};
+    function archiveAvailable(){return !collectionBlocked&&!persistenceSuspended&&dialog.open&&Archives.ids.indexOf(selected)>=0&&!document.hidden&&!otherDialogOpen();}
+    function archiveSave(){if(!archiveAvailable())return;saveCollection();}
+    function renderArchive(){
+      var panel=byId('secret-archive-panel'),active=Archives.ids.indexOf(selected)>=0;
+      if(!panel)return;panel.hidden=!active;scene.hidden=active;if(!active)return;
+      if(!archiveState)archiveState=Archives.defaults();
+      panel.replaceChildren();panel.dataset.archive=selected;
+      function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
+      function button(text,fn){var b=el('button','secondary-btn',text);b.type='button';b.disabled=collectionBlocked;b.addEventListener('click',function(){if(archiveAvailable())fn();});return b;}
+      var intro=el('p','archive-instructions'),area=el('div','archive-workspace'),status=el('p','secret-task-status');status.id='secret-archive-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+      var hints=el('p','archive-hint');hints.id='secret-archive-hint';hints.setAttribute('aria-live','polite');
+      function numericInput(value,max,label,onChange,readOnly,readOnlyKind){
+        var input=el('input','archive-digit');input.type='text';input.inputMode='numeric';input.maxLength=1;input.autocomplete='off';input.spellcheck=false;input.value=value?String(value):'';input.readOnly=Boolean(readOnly);input.disabled=collectionBlocked;input.setAttribute('aria-label',label+(readOnly?'，'+(readOnlyKind||'给定'):''));input.setAttribute('aria-describedby','secret-archive-status');
+        input.addEventListener('input',function(){if(!archiveAvailable()||input.readOnly){input.value=value?String(value):'';return;}if(!new RegExp('^[1-'+max+']?$').test(input.value)){input.value=value?String(value):'';status.textContent='请输入 1–'+max+'，或清空这一格。';return;}value=input.value?Number(input.value):0;onChange(value);archiveSave();});return input;
+      }
+      function grid(board,givens,readOnly,label){var g=el('div','archive-mini-grid');g.setAttribute('role','group');g.setAttribute('aria-label',label);board.forEach(function(value,index){var input=numericInput(value,4,'第 '+(Math.floor(index/4)+1)+' 行第 '+(index%4+1)+' 列',function(n){board[index]=n;},readOnly||givens[index],givens[index]?'给定':'参考答案');input.dataset.archiveCell=String(index);g.appendChild(input);});return g;}
+      if(selected==='fragment'||selected==='twins'){
+        var paper=Archives.mini(selected);intro.textContent='独立教学纸片：4×4，每行、每列和每个 2×2 宫各填 1–4；不影响当前 9×9 棋局。'+(selected==='twins'?'为同一给定找出不同于展示的首份解的另一份合法完整答案。':'补齐空格后提交规则检验；本纸片已验证唯一解。');
+        if(selected==='twins'){var witness=el('div','archive-grid-group');witness.append(el('h4','','档案已有的首份合法解'),grid(paper.firstSolution,paper.givens,true,'首份合法解，只读'));area.appendChild(witness);}
+        var player=el('div','archive-grid-group');player.append(el('h4','',selected==='twins'?'你的第二份答案':'你的补全'),grid(archiveState.drafts[selected],paper.givens,false,'可填写的教学纸片'));area.appendChild(player);
+      }else if(selected==='observatory'){
+        intro.textContent='独立四节点示意，不是数独的一行：每格可取 1–9，未预设互异，也没有行列宫约束。可单独开关规则，比较整个取值空间的精确数量；提交时必须同时满足两条规则。';
+        var settings=el('div','archive-rule-switches'),observation=el('p','archive-observation'),d=archiveState.drafts.observatory,values=el('div','archive-four-grid');observation.setAttribute('aria-live','polite');
+        function updateObservation(){var result=Archives.observe(d.thermo,d.sum);observation.textContent='当前规则可行组合：'+result.count+'。各格候选：'+result.candidates.map(function(a,i){return 'ABCD'[i]+'={'+a.join(',')+'}';}).join('；')+'。这是穷举全部 9⁴ 个取值组合，不依据你的试填计数。';}
+        [['thermo','A < B < C < D（温度计）'],['sum','C + D = 7（求和）']].forEach(function(pair){var label=el('label'),input=el('input');input.type='checkbox';input.checked=d[pair[0]];input.disabled=collectionBlocked;input.dataset.archiveRule=pair[0];input.addEventListener('change',function(){if(!archiveAvailable())return;d[pair[0]]=input.checked;archiveSave();updateObservation();});label.append(input,document.createTextNode(pair[1]));settings.appendChild(label);});
+        d.values.forEach(function(n,i){var label=el('label','','ABCD'[i]);var input=numericInput(n,9,'观测节点 '+'ABCD'[i],function(value){d.values[i]=value;},false);input.dataset.archiveCell=String(i);label.appendChild(input);values.appendChild(label);});area.append(settings,observation,values);updateObservation();
+      }else{
+        intro.textContent='独立航线规划：假设九颗定位星已经修复。把下面七个真实后续航点排成完整顺序，再提交检查；允许先走任一分支或交错，系统不会替你禁止错误选择。此模拟不改变真实主线进度、星级或解锁。';
+        var choices=el('div','archive-route-choices'),order=el('ol','archive-route-order'),nodes=Archives.routeNodes(),route=archiveState.drafts.route;
+        var clues=el('details','archive-route-clues'),clueList=el('ul');clues.appendChild(el('summary','','查看航线前置关系（可随时查阅）'));nodes.forEach(function(node){clueList.appendChild(el('li','',node.title+'：'+(node.requires.length?'须先完成 '+node.requires.map(function(id){return nodes.find(function(n){return n.id===id;}).title;}).join('、'):'定位九星已修复，可作为第一站')));});clues.appendChild(clueList);area.appendChild(clues);
+        nodes.forEach(function(node){var b=button(node.title,function(){route.push(node.id);archiveSave();renderArchive();byId('secret-archive-panel').querySelector('.archive-route-choices button:not(:disabled),#secret-archive-check').focus();});b.dataset.archiveNode=node.id;b.disabled=collectionBlocked||route.indexOf(node.id)>=0;b.title=node.requires.length?'前置：'+node.requires.map(function(id){return nodes.find(function(n){return n.id===id;}).title;}).join('、'):'前置定位九星已作为模拟背景完成';choices.appendChild(b);});
+        route.forEach(function(id){order.appendChild(el('li','',nodes.find(function(n){return n.id===id;}).title));});var undo=button('撤回最后一站',function(){route.pop();archiveSave();renderArchive();byId('secret-archive-panel').querySelector('.archive-route-choices button:not(:disabled)').focus();});undo.disabled=collectionBlocked||!route.length;area.append(choices,order,undo);
+      }
+      var actions=el('div','archive-actions'),checkButton=button('验证并收入档案',function(){var result=Archives.submit(collectionValue(),selected);if(!result.ok){status.textContent='还未成立：'+result.message;return;}found=result.value.found;archiveState=result.value.archives;var saved=saveCollection();render('完成档案 · '+DETAILS[selected].title);byId('secret-archive-status').textContent=(saved?'已验证并保存观测笔记。':'本次已验证，但尚未保存到本机；请导出完整备份保留。')+DETAILS[selected].description;byId('secret-archive-check').focus();});checkButton.id='secret-archive-check';
+      var hintButton=button('查看下一条线索',function(){var all={fragment:['从第一行开始：已有 1、2、4，缺少哪个数字？','给定不能更改。每填一格，都同时检查行、列与 2×2 宫；没有计时或失误惩罚。'],twins:['观察给定只出现了 3 和 4；1 与 2 的位置是否被题面区分？','可以尝试把首份解中的全部 1 与 2 互换，再逐行、逐列、逐宫检查；必须完整提交另一份合法解。'],observatory:['先只开一条规则，再打开另一条，观察可行组合数和候选的交集。','严格递增使 C 至少为 3、D 至少为 4；它们之和恰好是 7。再向前推导 A 与 B。'],'homecoming-notes':['循线三站有先后；求和前两站也有先后。你可以把这两条分支交错排列。','群星合奏等待循线三站和求和前两站全部完成；归航合鸣必须在其余六站之后。重玩可以尝试先走另一条分支。']}[selected];var index=archiveHints[selected]||0;hints.textContent=all[Math.min(index,all.length-1)];archiveHints[selected]=index+1;});
+      var reset=button('重玩此档案',function(){var fresh=Archives.defaults();if(selected==='homecoming-notes')archiveState.drafts.route=[];else archiveState.drafts[selected]=fresh.drafts[selected];archiveHints[selected]=0;archiveSave();renderArchive();var first=byId('secret-archive-panel').querySelector('input:not([readonly]):not(:disabled),button:not(:disabled)');if(first)first.focus();});
+      actions.append(checkButton,hintButton,reset);panel.append(intro,area,actions,hints,status);if(collectionBlocked)status.textContent='只读：收藏格式未知或损坏，原始内容已保留。请使用匹配版本恢复。';else if(found.indexOf(selected)>=0)status.textContent='已收入档案；重玩只修改练习草稿，不抹去已验证的观测笔记。';
+      panel.onkeydown=function(event){event.stopPropagation();};
     }
 
     function resetMiniGames() {
@@ -301,7 +347,7 @@
     }
 
     function discover(id) {
-      if (IDS.indexOf(id) === -1 || otherDialogOpen() || document.hidden) return false;
+      if (collectionBlocked || persistenceSuspended || IDS.indexOf(id) === -1 || Archives.ids.indexOf(id)>=0 || otherDialogOpen() || document.hidden) return false;
       var isNew = found.indexOf(id) === -1;
       if (isNew) {
         found.push(id);
@@ -470,6 +516,7 @@
     }
 
     document.addEventListener("keydown", function (event) {
+      if(event.target&&event.target.closest&&event.target.closest("#secret-archive-panel"))return;
       var onBrand = event.target === brand || brand.contains(event.target);
       if ((event.key === " " || event.key === "Spacebar") && onBrand && zenEnabled() && brandAvailable() &&
           !event.ctrlKey && !event.metaKey && !event.altKey) {

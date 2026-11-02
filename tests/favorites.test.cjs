@@ -17,9 +17,9 @@ for(const m of E.getModes()){
  const frozen=store.get(record.id);puzzle.givens.fill(0);frozen.puzzle.solution.fill(0);
  assert(store.get(record.id).puzzle.givens.some(Boolean));assert(store.get(record.id).puzzle.solution.every(Boolean));
 }
-assert.equal(store.list().length,32);assert.equal(store.list({status:'completed'}).length,32);assert.equal(store.list({status:'unfinished'}).length,0);assert.equal(store.list({status:'later'}).length,0);
+assert.equal(store.list().length,E.getModes().length);assert.equal(store.list({status:'completed'}).length,E.getModes().length);assert.equal(store.list({status:'unfinished'}).length,0);assert.equal(store.list({status:'later'}).length,0);
 const exported=store.exportData(),reloaded=F.createStore(storage);assert.deepEqual(reloaded.exportData(),exported);assert.deepEqual(F.validateEnvelope(exported),exported);
-assert.equal(reloaded.remove([...ids][0]),true);assert.equal(reloaded.remove('fav-missing'),false);assert.equal(reloaded.list().length,31);
+assert.equal(reloaded.remove([...ids][0]),true);assert.equal(reloaded.remove('fav-missing'),false);assert.equal(reloaded.list().length,E.getModes().length-1);
 // Different clue masks sharing a source and seed must not merge.
 const classic=E.getPuzzle('easy','same-source','classic'),other={...classic,givens:classic.solution.slice()};
 const local=memory(),s=F.createStore(local,{now:()=>99999});
@@ -57,5 +57,5 @@ assert(F.samePuzzle(classic,{...classic,sourceId:'ignored'}));assert(!F.samePuzz
  await assert.rejects(F.validateEnvelopeAsync(duplicate),/DUPLICATE_FAVORITE_PUZZLE/);
  const dateNow=Date.now;let simulated=0;Date.now=()=>{simulated+=9000;return simulated;};
  try{await assert.rejects(F.validateEnvelopeAsync(exported),/FAVORITES_VALIDATION_TIMEOUT/)}finally{Date.now=dateNow}
- console.log('PASS favorites: all 32 modes incl 81/153/369 cells, exact frozen identity, session separation, strict sync/async imports, quota preservation and stale-tab protection.');
+ console.log('PASS favorites: all '+E.getModes().length+' modes incl 81/153/369 cells, exact frozen identity, session separation, strict sync/async imports, quota preservation and stale-tab protection.');
 })().catch(error=>{console.error(error);process.exitCode=1});

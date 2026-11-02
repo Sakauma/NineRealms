@@ -6,9 +6,11 @@ const hash=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex'
 const source=fs.readFileSync('src/engine.js','utf8');
 const bank=JSON.parse(source.split('/* BANK_START */')[1].split('; /* BANK_END */')[0]);
 const data=bank.filter(p=>p.id.startsWith('SE-'));
-assert.equal(data.length,9000);assert.equal(E.getPuzzleCatalog().length,10258);
-assert.equal(new Set(E.getPuzzleCatalog().map(p=>p.id)).size,10258);
-assert.equal(hash(E.getSeedPuzzles().filter(p=>!p.id.startsWith('SE-'))),fixture.seedBankSha256,'Original seed bank changed');
+const catalog=E.getPuzzleCatalog(),totalCatalog=catalog.length;
+assert.equal(catalog.filter(p=>p.mode!=='thermo-killer').length,10258,'Pre-fusion catalog count changed');
+assert.equal(data.length,9000);
+assert.equal(new Set(catalog.map(p=>p.id)).size,totalCatalog);
+assert.equal(hash(E.getSeedPuzzles().filter(p=>!p.id.startsWith('SE-')&&!p.id.startsWith('F-thermo-killer-'))),fixture.seedBankSha256,'Original seed bank changed');
 let maxMs=0;
 for(const p of data){
  const a=E.analyzeSolutions(Array.from(p.text,Number),'classic',{limit:2,maxNodes:1000000});assert.equal(a.count,1);assert.equal(a.exhausted,false);assert(E.validateComplete(a.solution,'classic'));assert(Array.from(p.text,Number).every((v,i)=>!v||v===a.solution[i]));
@@ -23,6 +25,6 @@ for(const tier of ['easy','medium','hard'])for(const p of data.filter(p=>p.diffi
  const q=E.getPuzzle(tier,'challenge',p.mode,{sourceId:p.id}),r=C.decode(C.create(q));assert.deepEqual(q.givens,r.givens);assert.deepEqual(q.solution,r.solution);
  const generated=G.generate({mode:'classic',difficulty:tier,seed:p.id,sourceId:p.id});assert(E.validateComplete(generated.solution,'classic'));
 }
-const context=vm.createContext({});vm.runInContext(E.workerSource(),context);assert.equal(vm.runInContext('SudokuEngine.getPuzzleCatalog().length',context),10258);
-const report={status:'passed',imported:9000,totalCatalog:10258,allImportedUniqueAndAnswersRechecked:true,allImportedGetPuzzleValidated:true,oldSourcesUnchanged:1258,dailyDatesUnchanged:366,voyageChaptersUnchanged:9,challengeRoundtrips:30,generatedFromImported:30,workerCatalog:10258,maxGetPuzzleMs:maxMs,browserTest:false};
+const context=vm.createContext({});vm.runInContext(E.workerSource(),context);assert.equal(vm.runInContext('SudokuEngine.getPuzzleCatalog().length',context),totalCatalog);
+const report={status:'passed',imported:9000,totalCatalog,allImportedUniqueAndAnswersRechecked:true,allImportedGetPuzzleValidated:true,oldSourcesUnchanged:1258,dailyDatesUnchanged:366,voyageChaptersUnchanged:9,challengeRoundtrips:30,generatedFromImported:30,workerCatalog:totalCatalog,maxGetPuzzleMs:maxMs,browserTest:false};
 fs.mkdirSync('evidence/exchange',{recursive:true});fs.writeFileSync('evidence/exchange/regression.json',JSON.stringify(report,null,2));console.log(report);

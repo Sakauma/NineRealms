@@ -19,5 +19,5 @@ assert(html.includes('aria-haspopup="dialog" aria-controls="rules-dialog"'));
 assert(css.includes('#mode-rule,#puzzle-bank-status,.status-box.status-quiet{'));
 assert(css.includes('min-height:44px;padding:10px 14px'));
 assert(!css.includes('var(--glass-button-bg)'));
-assert.equal(E.getPuzzleCatalog().length,10258);
-console.log('PASS: 96 mode-ready messages quiet; 7 actionable statuses visible; live-region semantics retained.');
+assert(E.getPuzzleCatalog().every(p=>E.getModes().some(m=>m.id===p.mode)),'All catalog sources have a UI mode');
+console.log('PASS: '+(E.getModes().length*3)+' mode-ready messages quiet; 7 actionable statuses visible; live-region semantics retained.');

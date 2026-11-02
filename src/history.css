@@ -72,3 +72,22 @@
  .history-detail-heading h3{font-size:16px}.history-meta{font-size:10px}.history-actions{gap:6px}.history-actions button{font-size:12px;padding:8px}
  .history-action-line{flex-direction:column}.history-board-viewport.has-outside{padding:22px}
 }
+
+/* Match the mode catalog's rounded scroll chrome, including nested replay panes. */
+.history-dialog,.history-list,.history-board-viewport,.history-review-events{
+ scrollbar-width:thin;
+ scrollbar-color:color-mix(in srgb,var(--accent) 44%,transparent) transparent;
+ scrollbar-gutter:stable;
+}
+@supports selector(::-webkit-scrollbar){
+ .history-dialog,.history-list,.history-board-viewport,.history-review-events{scrollbar-width:auto;scrollbar-color:auto}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar{width:10px;height:10px}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar-track{background:transparent;margin:16px 0}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar-thumb{border:3px solid transparent;border-radius:999px;background:color-mix(in srgb,var(--accent) 42%,transparent);background-clip:padding-box}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar-thumb:hover{background-color:color-mix(in srgb,var(--accent) 66%,transparent)}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar-corner{background:transparent}
+}
+@media(forced-colors:active){
+ .history-dialog,.history-list,.history-board-viewport,.history-review-events{scrollbar-color:auto}
+ :is(.history-dialog,.history-list,.history-board-viewport,.history-review-events)::-webkit-scrollbar-thumb{background:ButtonText;background-clip:padding-box}
+}

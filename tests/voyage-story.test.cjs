@@ -6,20 +6,21 @@ function complete(p,track,count=Infinity){for(const c of V.chapters(track).slice
 function storage(initial={}){const m=new Map(Object.entries(initial));return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)};}
 let fresh=V.migrateProgress(null,null,{existing:false});assert.deepEqual(fresh,{__journey:{version:1,granted:[]}});
 assert(V.canEnter(fresh,'dawn'));assert(!V.canEnter(fresh,'orbit'));assert(!V.canEnter(fresh,'lines-rise-v1'));assert(!V.canEnter(fresh,'sums-sparks-v1'));
-assert.equal(V.journey(fresh).nextId,'dawn');assert.equal(V.journey(fresh).total,15);
+assert.equal(V.journey(fresh).nextId,'dawn');assert.equal(V.journey(fresh).total,16);assert(!V.canEnter(fresh,'fusion-homecoming-v1'));
 let oldNine=complete(fresh,'legacy');assert(V.canEnter(oldNine,'lines-rise-v1'));assert(V.canEnter(oldNine,'sums-sparks-v1'));assert(!V.canEnter(oldNine,'sums-constellation-v1'));
 assert.equal(V.nextAfter(oldNine,'home'),'lines-rise-v1');
 let sumsFirst=complete(oldNine,'sums',2);assert(!V.canEnter(sumsFirst,'sums-constellation-v1'),'sum progress alone never bypasses join');
 assert.equal(V.nextAfter(sumsFirst,'sums-arrows-v1'),'lines-rise-v1');
 let linesFirst=complete(oldNine,'lines');assert(!V.canEnter(linesFirst,'sums-constellation-v1'));assert(V.canEnter(linesFirst,'sums-sparks-v1'));
 let joined=complete(sumsFirst,'lines');assert(V.canEnter(joined,'sums-constellation-v1'));assert.equal(V.nextAfter(joined,'lines-spectrum-v1'),'sums-constellation-v1');
-let all=V.award(joined,'sums-constellation-v1',stats);assert.equal(V.journey(all).completed,15);assert.equal(V.journey(all).stars,45);assert(V.journey(all).finished);assert.equal(V.nextAfter(all,'sums-constellation-v1'),null);
+let all=V.award(joined,'sums-constellation-v1',stats);assert.equal(V.journey(all).completed,15);assert.equal(V.journey(all).stars,45);assert(!V.journey(all).finished);assert(V.canEnter(all,'fusion-homecoming-v1'));assert.equal(V.nextAfter(all,'sums-constellation-v1'),'fusion-homecoming-v1');
+const all16=V.award(all,'fusion-homecoming-v1',stats);assert.equal(V.journey(all16).completed,16);assert.equal(V.journey(all16).stars,48);assert(V.journey(all16).finished);assert.equal(V.nextAfter(all16,'fusion-homecoming-v1'),null);
 // Exact old access migration is durable; later completions do not expand grants.
 const rawPartial=complete({},'lines',1),oldPartial=V.migrateProgress(rawPartial,null,{existing:true});
 assert(oldPartial.__journey.granted.includes('lines-mirror-v1'));assert(!oldPartial.__journey.granted.includes('lines-spectrum-v1'));
 assert(V.canEnter(oldPartial,'lines-mirror-v1'));assert(!V.canEnter(oldPartial,'lines-spectrum-v1'));assert(V.journey(oldPartial).inheritedPassage);assert.equal(V.journey(oldPartial).nextId,'lines-mirror-v1','continue the actually active later route before unrelated open routes');
 const same=JSON.parse(JSON.stringify(oldPartial));assert.deepEqual(V.migrateProgress(oldPartial,'sums-constellation-v1',{existing:true}),same,'migration must only happen once');
-const existingEmpty=V.migrateProgress({},null,{existing:true});assert(V.canEnter(existingEmpty,'lines-rise-v1'));assert(V.canEnter(existingEmpty,'sums-sparks-v1'));
+const existingEmpty=V.migrateProgress({},null,{existing:true});assert(!existingEmpty.__journey.granted.includes('fusion-homecoming-v1'));assert(!V.canEnter(existingEmpty,'fusion-homecoming-v1'));assert(V.canEnter(existingEmpty,'lines-rise-v1'));assert(V.canEnter(existingEmpty,'sums-sparks-v1'));
 const oldSums1=V.migrateProgress(complete({},'sums',1),null,{existing:true});const nowSums2=V.award(oldSums1,'sums-arrows-v1',stats);assert(!V.canEnter(nowSums2,'sums-constellation-v1'),'newly obtained sums2 cannot inherit final permission');
 const oldSums2=V.migrateProgress(complete({},'sums',2),null,{existing:true});assert(V.canEnter(oldSums2,'sums-constellation-v1'),'actual old final unlock is preserved');
 const current=V.migrateProgress({},'lines-rise-v1',{existing:true});assert(V.canEnter(current,'lines-rise-v1','lines-rise-v1'));assert.equal(V.journey(current,'lines-rise-v1').stages.find(c=>c.id==='lines-rise-v1').status,'current');
@@ -45,4 +46,4 @@ const malformed=JSON.parse(JSON.stringify(existingEmpty));malformed.__journey.gr
 const highStore=storage({[B.keys[4]]:JSON.stringify(highWon)});assert.deepEqual(B.create(highStore).entries[B.keys[4]],highWon);
 const source=storage({[B.keys[4]]:JSON.stringify(late)}),backup=B.create(source,{appVersion:'1.0.1'}),target=storage();assert(B.replace(target,backup).replaced);assert.deepEqual(JSON.parse(target.getItem(B.keys[4])),late);
 const bad=JSON.parse(JSON.stringify(backup));bad.entries[B.keys[4]]=malformed;assert.throws(()=>B.validate(bad));
-console.log('PASS voyage story: fresh DAG gates; parallel routes and real final join; exact one-time inherited access; current resume; 15-stage completion; old stats/puzzles and backup marker retained; malformed grants rejected.');
+console.log('PASS voyage story: fresh DAG gates; parallel routes and real final join; exact one-time inherited access; current resume; old15 opens new fusion and only16 finishes; old stats/puzzles and backup marker retained; malformed grants rejected.');

@@ -15,7 +15,10 @@ function envelope(p,id){return {version:8,preferences:{theme:'nebula',fx:true,in
  assert.deepEqual(JSON.parse(oldTarget.getItem(B.keys[4])),legacy);assert.deepEqual(JSON.parse(oldTarget.getItem(B.keys[0])),oldSave);
  let progress=clone(legacy);
  for(const track of ['lines','sums'])for(const c of V.chapters(track))progress=V.award(progress,c.id,stats);
+ assert.equal(V.getStatus(progress,'all').completed,15);assert(!V.journey(progress).finished);assert(V.canEnter(progress,'fusion-homecoming-v1'));
+ let roundtrips=0;
  for(const c of V.chapters().filter(c=>c.trackId!=='legacy')){
+  roundtrips++;
   const p=V.getPuzzle(c.id),snap=envelope(p,c.id),source=storage(),history=H.createStore({Engine:E,storage:source}),favorites=F.createStore(source);
   history.capture(snap,{origin:'new'});const i=snap.game.givens.findIndex(v=>!v);
   snap.game.selected=i;snap.game.started=true;snap.game.elapsedMs=100;
@@ -30,6 +33,9 @@ function envelope(p,id){return {version:8,preferences:{theme:'nebula',fx:true,in
   assert.deepEqual(JSON.parse(target.getItem(B.keys[4])),progress);
   const tampered=clone(backup);tampered.entries[B.keys[0]].game.clues={version:1,regions:[],cages:[],lines:[],edges:[],parity:[],outside:[],clones:[],quadruples:[]};await assert.rejects(B.validateAsync(tampered),'Removing theme clues must not retain voyage identity');
  }
+ assert.equal(roundtrips,7);
+ const all16=V.award(progress,'fusion-homecoming-v1',stats);assert.equal(V.getStatus(all16,'all').completed,16);assert(V.journey(all16).finished);
+ const full=storage();full.setItem(B.keys[4],JSON.stringify(all16));const fullBackup=await B.createAsync(full,{appVersion:'1.0.1'}),fullTarget=storage();B.replace(fullTarget,fullBackup);assert.deepEqual(JSON.parse(fullTarget.getItem(B.keys[4])),all16);assert.equal(B.preview(fullBackup).voyageCount,16);
  assert.equal(V.getStatus(legacy,'lines').unlocked,1);assert.equal(V.getStatus(legacy,'sums').unlocked,1);
- console.log('PASS theme persistence: 6 complete-clue current/history/favorites/backup roundtrips, tamper rejection, 9 legacy hashes and v1.0.0 backup compatibility.');
+ console.log('PASS theme persistence: 7 complete-clue current/history/favorites/backup roundtrips including fusion16, tamper rejection, 9 legacy hashes and v1.0.0 backup compatibility.');
 })().catch(e=>{console.error(e);process.exitCode=1});

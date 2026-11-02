@@ -172,6 +172,7 @@
       describe(cage.cells, "虚线笼内数字和为 " + cage.sum + (cage.unique ? "，数字不重复" : ""));
       legends.add("笼角数字为笼内总和");
     });
+    if (context.mode === "thermo-killer") legends.add("温笼合流：温度计递增与笼内不重复求和同时成立");
     var clueLines = clues.lines || [], arrowInfo = arrowLayouts(clueLines), endpointDraws = [];
     clueLines.forEach(function (line) {
       var cells = line.cells, type = line.type, first = point(cells[0]), last = point(cells[cells.length - 1]);

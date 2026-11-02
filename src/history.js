@@ -1,5 +1,5 @@
 /* Nine Realms — independent local history with real action diffs. */
-(function(root,factory){"use strict";if(typeof module==="object"&&module.exports)module.exports=factory(root);else root.NineRealmsHistory=factory(root);})(typeof globalThis!=="undefined"?globalThis:this,function(root){
+(function(root,factory){"use strict";if(typeof module==="object"&&module.exports)module.exports=factory(root,require("./drafts.js"),require("./checkpoints.js"));else root.NineRealmsHistory=factory(root,root.NineRealmsDrafts,root.NineRealmsCheckpoints);})(typeof globalThis!=="undefined"?globalThis:this,function(root,Drafts,Checkpoints){
 "use strict";
 var KEY="nine-realms.history.v1",LIMITS={records:40,steps:3000,bytes:3*1024*1024};
 var singleton=null,hooks={},ui=null,flushTimer=null,persistenceSuspended=false;
@@ -22,27 +22,30 @@ function cleanSnapshot(x,Engine){
    if(Engine.getLayout&&Engine.getLayout(g.mode).cellCount!==n)return null;
    Engine.normalizeClues(g.mode,g.clues);
  }catch(e){return null;}}
- try{var out=copy(x);out.game.selected=integer(g.selected,0,n-1);out.game.noteMode=Boolean(g.noteMode);out.game.completed=Boolean(g.completed);return out;}catch(e){return null;}
+ try{if(g.draft!==undefined)Drafts.validate(g.draft,n,g.clues||{});var out=copy(x);out.game.selected=integer(g.selected,0,n-1);out.game.noteMode=Boolean(g.noteMode);out.game.completed=Boolean(g.completed);return out;}catch(e){return null;}
 }
-function stateOf(s){var g=s.game;return {board:g.board.slice(),notes:g.notes.slice(),selected:g.selected||0,noteMode:Boolean(g.noteMode),branch:Boolean(g.branch),elapsedMs:Math.floor(g.elapsedMs),mistakes:g.mistakes,hints:g.hints,completed:Boolean(g.completed)};}
-function validFrame(f,g){return f&&numbers(f.board,g.length,9)&&numbers(f.notes,g.length,511)&&g.every(function(v,i){return !v||v===f.board[i];})&&f.notes.every(function(v,i){return !f.board[i]||!v;})&&Number.isFinite(f.elapsedMs)&&f.elapsedMs>=0&&f.elapsedMs<=1e12&&Number.isInteger(f.mistakes)&&f.mistakes>=0&&Number.isInteger(f.hints)&&f.hints>=0;}
-function sameState(a,b){return a.branch===b.branch&&a.completed===b.completed&&a.mistakes===b.mistakes&&a.hints===b.hints&&a.board.every(function(v,i){return v===b.board[i]&&a.notes[i]===b.notes[i];});}
-function applyStep(f,s){s.changes.forEach(function(c){f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});["selected","noteMode","branch","elapsedMs","mistakes","hints","completed"].forEach(function(k){f[k]=s[k];});return f;}
+function stateOf(s){var g=s.game;var out={board:g.board.slice(),notes:g.notes.slice(),selected:g.selected||0,noteMode:Boolean(g.noteMode),branch:Boolean(g.branch),elapsedMs:Math.floor(g.elapsedMs),mistakes:g.mistakes,hints:g.hints,completed:Boolean(g.completed)};if(g.draft!==undefined)out.draft=Drafts.validate(g.draft,g.board.length,g.clues||{});return out;}
+function validDraft(value,n,clues){try{if(value!==undefined)Drafts.validate(value,n,clues);return true;}catch(e){return false;}}
+function validFrame(f,g,clues){return f&&validDraft(f.draft,g.length,clues)&&numbers(f.board,g.length,9)&&numbers(f.notes,g.length,511)&&g.every(function(v,i){return !v||v===f.board[i];})&&f.notes.every(function(v,i){return !f.board[i]||!v;})&&Number.isFinite(f.elapsedMs)&&f.elapsedMs>=0&&f.elapsedMs<=1e12&&Number.isInteger(f.mistakes)&&f.mistakes>=0&&Number.isInteger(f.hints)&&f.hints>=0;}
+function sameState(a,b){return Drafts.equal(a.draft,b.draft,a.board.length)&&a.branch===b.branch&&a.completed===b.completed&&a.mistakes===b.mistakes&&a.hints===b.hints&&a.board.every(function(v,i){return v===b.board[i]&&a.notes[i]===b.notes[i];});}
+function applyStep(f,s){if(s.draft!==undefined)f.draft=copy(s.draft);s.changes.forEach(function(c){f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});["selected","noteMode","branch","elapsedMs","mistakes","hints","completed"].forEach(function(k){f[k]=s[k];});return f;}
 function makeStep(a,b,label){
  var changes=[];b.board.forEach(function(v,i){if(v!==a.board[i]||b.notes[i]!==a.notes[i])changes.push([i,v,b.notes[i]]);});
- if(!changes.length&&a.branch===b.branch&&a.hints===b.hints&&a.mistakes===b.mistakes&&a.completed===b.completed)return null;
+ var draftChanged=!Drafts.equal(a.draft,b.draft,b.board.length);
+ if(!draftChanged&&!changes.length&&a.branch===b.branch&&a.hints===b.hints&&a.mistakes===b.mistakes&&a.completed===b.completed)return null;
  var title=typeof label==="string"?label.trim().slice(0,60):"";
  if(!title){
-   if(a.branch!==b.branch)title=b.branch?"建立假设分支":"结束假设分支";
+   if(draftChanged&&!changes.length)title="修改推理草稿";
+   else if(a.branch!==b.branch)title=b.branch?"建立假设分支":"结束假设分支";
    else if(b.completed&&!a.completed)title="完成棋局";
    else if(b.hints>a.hints&&!changes.length)title="查看提示";
    else if(changes.length===1&&a.board[changes[0][0]]!==b.board[changes[0][0]])title=changes[0][1]?"填入数字":"擦除数字";
    else title=changes.every(function(c){return a.board[c[0]]===c[1];})?"修改候选笔记":"修改棋盘";
  }
- return {action:title,changes:changes,selected:b.selected,noteMode:b.noteMode,branch:b.branch,elapsedMs:b.elapsedMs,mistakes:b.mistakes,hints:b.hints,completed:b.completed};
+ var result={action:title,changes:changes,selected:b.selected,noteMode:b.noteMode,branch:b.branch,elapsedMs:b.elapsedMs,mistakes:b.mistakes,hints:b.hints,completed:b.completed};if(draftChanged)result.draft=Drafts.validate(b.draft,b.board.length);return result;
 }
-function validStep(s,n,g){
- if(!s||typeof s.action!=="string"||s.action.length>60||!Array.isArray(s.changes)||s.changes.length>n||
+function validStep(s,n,g,clues){
+ if(!s||!validDraft(s.draft,n,clues)||typeof s.action!=="string"||s.action.length>60||!Array.isArray(s.changes)||s.changes.length>n||
  !Number.isFinite(s.elapsedMs)||s.elapsedMs<0||s.elapsedMs>1e12||!Number.isInteger(s.selected)||s.selected<0||s.selected>=n||
  !Number.isInteger(s.mistakes)||s.mistakes<0||!Number.isInteger(s.hints)||s.hints<0||
  typeof s.branch!=="boolean"||typeof s.completed!=="boolean"||typeof s.noteMode!=="boolean")return false;
@@ -81,13 +84,14 @@ function createStore(options){
      data.records.slice(-80).forEach(function(s){
        var snap=cleanSnapshot(s&&s.snapshot,Engine);if(!snap||s.sessionId!==snap.game.sessionId||raw(s.sessionId))return;
        var r={sessionId:s.sessionId,createdAt:stamp(s.createdAt,now()),updatedAt:stamp(s.updatedAt,now()),origin:s.origin==="new"?"new":"legacy",snapshot:snap,base:s.base,steps:[],droppedSteps:integer(s.droppedSteps,0,1e9)};
-       var valid=validFrame(r.base,snap.game.givens)&&Array.isArray(s.steps)&&s.steps.length<=3000;
-       if(valid)valid=s.steps.every(function(step){return validStep(step,snap.game.board.length,snap.game.givens);});
+       if(s.checkpoints!==undefined){try{r.checkpoints=Checkpoints.validate(s.checkpoints,r.droppedSteps+(Array.isArray(s.steps)?s.steps.length:0));}catch(e){warn("部分卡点标记无法读取，棋局及可用回放仍保留。");}}
+       var valid=validFrame(r.base,snap.game.givens,snap.game.clues||{})&&Array.isArray(s.steps)&&s.steps.length<=3000;
+       if(valid)valid=s.steps.every(function(step){return validStep(step,snap.game.board.length,snap.game.givens,snap.game.clues||{});});
        if(valid){
          r.base=copy(r.base);r.base.selected=integer(r.base.selected,0,snap.game.board.length-1);r.base.noteMode=Boolean(r.base.noteMode);r.base.branch=Boolean(r.base.branch);r.base.completed=Boolean(r.base.completed);r.steps=copy(s.steps);
          valid=sameState(last(r),stateOf(snap));
        }
-       if(!valid){r.base=stateOf(snap);r.steps=[];r.origin="legacy";r.droppedSteps=0;r.replayRecovered=true;}
+       if(!valid){r.base=stateOf(snap);r.steps=[];r.origin="legacy";r.droppedSteps=0;r.replayRecovered=true;delete r.checkpoints;}
        else if(s.replayRecovered)r.replayRecovered=true;
        records.push(r);
      });
@@ -113,15 +117,44 @@ function createStore(options){
  function summaries(){return records.slice().sort(function(a,b){return b.updatedAt-a.updatedAt;}).map(function(r){var g=r.snapshot.game;return {sessionId:r.sessionId,createdAt:r.createdAt,updatedAt:r.updatedAt,mode:g.mode,difficulty:g.difficulty,puzzleId:g.puzzleId,completed:Boolean(g.completed),started:Boolean(g.started),elapsedMs:g.elapsedMs,mistakes:g.mistakes,hints:g.hints,filled:g.board.filter(Boolean).length,total:g.board.length,steps:r.steps.length,droppedSteps:r.droppedSteps,current:r.sessionId===currentId,origin:r.origin};});}
  function frameAt(id,index){
    var r=raw(id);if(!r)return null;index=Math.max(0,Math.min(r.steps.length,Math.floor(Number(index)||0)));
-   var f=copy(r.base);for(var i=0;i<index;i++)applyStep(f,r.steps[i]);
-   f.index=index;f.totalSteps=r.steps.length;f.action=index?r.steps[index-1].action:"回放起点";f.changed=index?r.steps[index-1].changes.map(function(c){return c[0];}):[];return f;
+   var f=copy(r.base),priorDraft;for(var i=0;i<index;i++){if(i===index-1)priorDraft=Drafts.validate(f.draft,f.board.length);applyStep(f,r.steps[i]);}
+   f.index=index;f.totalSteps=r.steps.length;f.action=index?r.steps[index-1].action:"回放起点";f.changed=index?r.steps[index-1].changes.map(function(c){return c[0];}):[];
+   if(index&&r.steps[index-1].draft!==undefined){var nextDraft=Drafts.validate(f.draft,f.board.length),changed=new Set(f.changed);nextDraft.colors.forEach(function(v,i){if(v!==priorDraft.colors[i]||nextDraft.marks[i]!==priorDraft.marks[i])changed.add(i);});if(JSON.stringify(priorDraft.links)!==JSON.stringify(nextDraft.links))priorDraft.links.concat(nextDraft.links).forEach(function(l){changed.add(l.a);changed.add(l.b);});if(JSON.stringify(priorDraft.cages)!==JSON.stringify(nextDraft.cages)){var cages=r.snapshot.game.clues&&r.snapshot.game.clues.cages||[];priorDraft.cages.concat(nextDraft.cages).forEach(function(c){if(cages[c.index])cages[c.index].cells.forEach(function(i){changed.add(i);});});}f.changed=Array.from(changed);}
+   return f;
  }
+ function summarize(id){
+   var r=raw(id);if(!r)return null;var frame=copy(r.base),events=[],counts={hints:0,mistakes:0,notes:0,drafts:0,undo:0,branches:0,completion:0};
+   r.steps.forEach(function(step,index){var kinds=[];
+     if(step.hints>frame.hints){counts.hints+=step.hints-frame.hints;kinds.push('hint');}
+     if(step.mistakes>frame.mistakes){counts.mistakes+=step.mistakes-frame.mistakes;kinds.push('mistake');}
+     if(step.changes.some(function(c){return frame.notes[c[0]]!==c[2];})){counts.notes++;kinds.push('notes');}
+     if(step.draft!==undefined&&!Drafts.equal(frame.draft,step.draft,frame.board.length)){counts.drafts++;kinds.push('draft');}
+     if(/撤销|undo/i.test(step.action)){counts.undo++;kinds.push('undo');}
+     if(frame.branch!==step.branch){counts.branches++;kinds.push('branch');}
+     if(!frame.completed&&step.completed){counts.completion++;kinds.push('completion');}
+     if(kinds.length)events.push({stepIndex:index+1,absoluteStep:r.droppedSteps+index+1,action:step.action,kinds:kinds,elapsedMs:step.elapsedMs});
+     applyStep(frame,step);
+   });
+   return {sessionId:id,counts:counts,events:events,retainedSteps:r.steps.length,droppedSteps:r.droppedSteps,partial:Boolean(r.droppedSteps||r.origin==='legacy'||r.replayRecovered),scope:'仅统计保留日志中的可观察事件，不推断未记录的解题技巧。'};
+ }
+ function checkpointList(filter){return Checkpoints.list(records,filter);}
+ function markCheckpoint(id,index,label){
+   var r=raw(id);if(!r)throw new Error("这局历史已不在本机保留范围内。");
+   if(!Number.isInteger(index)||index<0||index>r.steps.length)throw new RangeError("这个回放步骤已不可用。");
+   label=label===undefined?'我想再看这一处':String(label).trim();if(label.length>80)throw new RangeError("卡点备注最多 80 字。");
+   var marks=Checkpoints.validate(r.checkpoints,r.droppedSteps+r.steps.length),absolute=r.droppedSteps+index;
+   var existing=marks.find(function(mark){return mark.absoluteStep===absolute;});
+   if(existing){existing.label=label;existing.createdAt=now();}
+   else{if(marks.length>=Checkpoints.limit)throw new RangeError("每局最多保留 20 条手动卡点，请先取消不再需要的标记。");existing={id:'cp-'+now().toString(36)+'-'+Math.random().toString(36).slice(2,10),absoluteStep:absolute,createdAt:now(),label:label};marks.push(existing);}
+   r.checkpoints=Checkpoints.validate(marks,r.droppedSteps+r.steps.length);dirty=true;var persisted=flush();return {checkpoint:copy(existing),persisted:persisted};
+ }
+ function removeCheckpoint(id,checkpointId){var r=raw(id);if(!r)return false;var marks=Checkpoints.validate(r.checkpoints,r.droppedSteps+r.steps.length),filtered=marks.filter(function(mark){return mark.id!==checkpointId;});if(marks.length===filtered.length)return false;r.checkpoints=filtered;dirty=true;return flush();}
  function flush(){
    if(!dirty)return !persistenceFailed;
    if(!storage||typeof storage.setItem!=="function"){warn("浏览器未允许保存历史，本次仍可查看回放；关闭窗口后这些新记录可能丢失。");return false;}
    try{var text=enforce();if(text.length*2>limits.bytes)throw new Error("History snapshot exceeds storage budget");storage.setItem(KEY,text);dirty=false;persistenceFailed=false;return true;}catch(e){warn("历史记录暂时无法保存到本机，本次仍可回放；当前棋局继续单独保存。");return false;}
  }
- return {capture:capture,flush:flush,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
+ return {capture:capture,flush:flush,summarize:summarize,checkpoints:checkpointList,markCheckpoint:markCheckpoint,removeCheckpoint:removeCheckpoint,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
 }
 function getStore(){
  if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
@@ -155,7 +188,8 @@ function init(options){
  var stage=el("div","history-board-stage");stage.id="history-board-stage";
  var board=el("div","history-replay-board");board.id="history-replay-board";board.setAttribute("role","grid");
  var overlay=doc.createElementNS("http://www.w3.org/2000/svg","svg");overlay.id="history-replay-overlay";overlay.classList.add("history-replay-overlay");overlay.setAttribute("aria-hidden","true");
- stage.append(board,overlay);viewport.appendChild(stage);
+ var draftOverlay=doc.createElementNS("http://www.w3.org/2000/svg","svg");draftOverlay.id="history-draft-overlay";draftOverlay.setAttribute("aria-hidden","true");draftOverlay.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible";
+ stage.append(board,overlay,draftOverlay);viewport.appendChild(stage);
  var diagramHint=el("p","history-diagram-hint");diagramHint.id="history-diagram-hint";
  var actionLine=el("div","history-action-line"),actionLabel=el("strong"),stepTime=el("span","history-step-time");
  actionLabel.id="history-action-label";actionLabel.setAttribute("aria-live","polite");stepTime.id="history-step-time";actionLine.append(actionLabel,stepTime);
@@ -164,16 +198,47 @@ function init(options){
  playback.append(previous,play,next);
  var replayNote=el("p","history-replay-note");replayNote.id="history-replay-note";
  var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");var favorite=btn("history-favorite","收藏题目","secondary-btn");favorite.disabled=typeof hooks.onFavorite!=="function";actions.append(resume,restart,favorite);
- detail.append(detailHead,recordMeta,viewport,diagramHint,actionLine,slider,playback,replayNote,actions);main.append(sidebar,detail);
+ var review=el("details","history-review"),reviewTitle=el("summary","","本局复盘 · 已记录事件"),reviewSummary=el("p","history-review-summary"),reviewEvents=el("div","history-review-events"),draftSummary=el("p","history-draft-summary");review.id="history-review";review.append(reviewTitle,reviewSummary,reviewEvents);
+ detail.append(detailHead,recordMeta,viewport,diagramHint,draftSummary,actionLine,slider,playback,replayNote,review,actions);main.append(sidebar,detail);
  var retention=el("p","history-retention");retention.id="history-retention";
  dialog.append(closeButton,heading,intro,main,retention);doc.body.appendChild(dialog);
+ var checkpointPanel=el("details","checkpoint-panel"),checkpointTitle=el("summary","","我的卡点"),checkpointNote=el("p","checkpoint-scope",Checkpoints.scope),checkpointStatus=el("p","checkpoint-status"),checkpointRows=el("div","checkpoint-list"),checkpointFilter=el("div","checkpoint-filters"),checkpointMore=btn("checkpoint-more","再显示 40 条","secondary-btn");
+ checkpointPanel.id="checkpoint-panel";checkpointPanel.setAttribute("aria-labelledby","checkpoint-title");checkpointTitle.id="checkpoint-title";checkpointStatus.id="checkpoint-status";checkpointStatus.setAttribute("role","status");checkpointFilter.setAttribute("role","group");checkpointFilter.setAttribute("aria-label","卡点类型");
+ var checkpointKind='all',checkpointLimit=40;
+ [['all','全部'],['manual','我的标记'],['hint','提示'],['mistake','失误计数'],['undo','撤销'],['rewrite','反复改写']].forEach(function(item){var b=btn('',item[1],'secondary-btn');b.dataset.checkpointKind=item[0];b.addEventListener('click',function(){checkpointKind=item[0];checkpointLimit=40;renderCheckpoints();});checkpointFilter.appendChild(b);});
+ var checkpointMarkCurrent=btn("checkpoint-mark-current","标记当前局进度","secondary-btn"),checkpointMarkFrame=btn("checkpoint-mark-frame","标记此回放步","secondary-btn"),checkpointLabel=el("input","checkpoint-label");checkpointLabel.id="checkpoint-label";checkpointLabel.type="text";checkpointLabel.maxLength=80;checkpointLabel.placeholder="可选备注，如：想再看这个改写";checkpointLabel.setAttribute("aria-label","卡点备注，最多 80 字");
+ checkpointPanel.append(checkpointTitle,checkpointNote,checkpointFilter,checkpointMarkCurrent,checkpointLabel,checkpointStatus,checkpointRows,checkpointMore);intro.after(checkpointPanel);playback.appendChild(checkpointMarkFrame);
  var selectedId=null,selectedRecord=null,frameIndex=0,interval=null,frameCells=[],previewContext=null,previewLayout=null;
+ function anchor(){return selectedRecord?{id:selectedId,absolute:selectedRecord.droppedSteps+frameIndex}:null;}
+ function resyncAnchor(saved){
+   if(!saved)return true;var fresh=getStore().get(saved.id);select(saved.id);
+   if(!fresh||saved.absolute<fresh.droppedSteps||saved.absolute>fresh.droppedSteps+fresh.steps.length){
+     checkpointMarkFrame.disabled=true;checkpointStatus.textContent+=' 原回放步骤已被容量清理，请重新选择一个保留步骤后再标记。';return false;
+   }
+   frameIndex=saved.absolute-fresh.droppedSteps;renderFrame();return true;
+ }
+ function renderCheckpoints(){
+   checkpointFilter.querySelectorAll('button').forEach(function(button){button.setAttribute('aria-pressed',String(button.dataset.checkpointKind===checkpointKind));});
+   var items=getStore().checkpoints({kind:checkpointKind});checkpointRows.replaceChildren();checkpointMore.hidden=items.length<=checkpointLimit;
+   checkpointMarkCurrent.disabled=!getStore().status().currentId;
+   if(!items.length){checkpointRows.appendChild(el('p','checkpoint-empty','暂时没有符合条件的卡点。自动条目来自保留的真实日志；也可以主动标记当前局或回放步骤。'));return;}
+   items.slice(0,checkpointLimit).forEach(function(point){var row=el('article','checkpoint-row');row.dataset.checkpointKey=point.sessionId+':'+point.id;var label=el('strong','',modeName(point.mode)+' · '+(point.kind==='manual'?'我的标记':'日志线索')),text=el('p','',point.label),meta=el('small','',point.available?'原记录第 '+point.absoluteStep+' 步':'原记录第 '+point.absoluteStep+' 步已清理，不能精确回看');
+     var actions=el('div','checkpoint-actions'),view=btn('',point.available?'回看这一刻':'原步骤已清理','secondary-btn'),resumePoint=btn('',point.completed?'重新挑战':'继续最新进度','secondary-btn');view.disabled=!point.available;view.addEventListener('click',function(){flush();var fresh=getStore().get(point.sessionId);if(!fresh||point.absoluteStep<fresh.droppedSteps||point.absoluteStep>fresh.droppedSteps+fresh.steps.length){checkpointStatus.textContent='原步骤已清理，不能精确回看。';renderCheckpoints();return;}open(point.sessionId,point.absoluteStep-fresh.droppedSteps);slider.focus();});resumePoint.disabled=typeof(point.completed?hooks.onReplayNew:hooks.onResume)!=='function';resumePoint.addEventListener('click',function(){selectedId=point.sessionId;restore(point.completed?hooks.onReplayNew:hooks.onResume);});actions.append(view,resumePoint);
+     if(point.kind==='manual'){var remove=btn('','取消标记','secondary-btn');remove.addEventListener('click',function(){if(persistenceSuspended)return;var saved=anchor(),ok=getStore().removeCheckpoint(point.sessionId,point.id);checkpointStatus.textContent=ok?'已取消标记，棋局和回放不受影响。':'标记已在本次会话取消，但本机保存暂不可用。';resyncAnchor(saved);renderCheckpoints();checkpointMarkCurrent.focus();});actions.appendChild(remove);}
+     row.append(label,text,meta,actions);checkpointRows.appendChild(row);
+   });
+ }
+ function markPoint(id,index){try{if(persistenceSuspended)throw new Error('数据恢复期间暂不能修改卡点。');checkpointPanel.open=true;var saved=anchor(),result=getStore().markCheckpoint(id,index,checkpointLabel.value);checkpointLabel.value='';checkpointStatus.textContent=result.persisted?'已保存卡点，可从列表精确回看。':'已标记本次会话，但本机保存暂不可用；请勿依赖关闭后的保留。';resyncAnchor(saved);renderCheckpoints();}catch(error){checkpointStatus.textContent=error.message;}}
+ checkpointMarkCurrent.addEventListener('click',function(){var id=getStore().status().currentId,r=getStore().get(id);if(r)markPoint(id,r.steps.length);});
+ checkpointMarkFrame.addEventListener('click',function(){if(selectedId)markPoint(selectedId,frameIndex);});
+ checkpointMore.addEventListener('click',function(){checkpointLimit+=40;renderCheckpoints();(checkpointMore.hidden?checkpointFilter.querySelector('[aria-pressed="true"]'):checkpointMore).focus();});
  function modeName(id){var m=hooks.Engine.getModes().find(function(x){return x.id===id;});return m?m.label:id;}
  function difficultyName(mode,id){var d=hooks.Engine.getDifficulties(mode).find(function(x){return x.id===id;});return d?d.label:id;}
  function dateLabel(x){try{return new Date(x).toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false});}catch(e){return "";}}
  function timeLabel(x){var s=Math.floor(Math.max(0,x)/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
  function stop(){if(interval!==null)clearInterval(interval);interval=null;play.textContent="播放";play.setAttribute("aria-pressed","false");}
  function refreshList(selectDefault){
+   renderCheckpoints();
    var summaries=getStore().getRecords(),status=getStore().status();countLabel.textContent=summaries.length+" 局";list.replaceChildren();
    var filtered=summaries.filter(function(r){return filter.value==="all"||(filter.value==="completed"?r.completed:!r.completed);});empty.hidden=filtered.length!==0;
    filtered.forEach(function(r){
@@ -203,7 +268,7 @@ function init(options){
      if(g.mode==="jigsaw"&&Array.isArray(regions)){top=loc.row===0||regions[i-9]!==regions[i];bottom=loc.row===8||regions[i+9]!==regions[i];left=loc.col===0||regions[i-1]!==regions[i];right=loc.col===8||regions[i+1]!==regions[i];}
      if(top)cell.classList.add("edge-top");if(left)cell.classList.add("edge-left");if(right)cell.classList.add("edge-right");if(bottom)cell.classList.add("edge-bottom");
      if(hooks.Engine.getCellDecorations)hooks.Engine.getCellDecorations(i,previewContext).forEach(function(cls){cell.classList.add(cls);});
-     for(var d=1;d<=9;d++)notes.appendChild(el("span"));cell.append(value,notes);board.appendChild(cell);frameCells.push(cell);
+     for(var d=1;d<=9;d++)notes.appendChild(el("span"));cell.append(value,notes,el("span","history-draft-mark"),el("span","draft-color-layer"));board.appendChild(cell);frameCells.push(cell);
    });
    // A fresh SVG also resets the renderer's per-element cache when switching
    // from a multi-board view back to the same single-board clues.
@@ -217,17 +282,22 @@ function init(options){
 
  function renderFrame(){
    if(!selectedRecord)return;var f=getStore().frameAt(selectedId,frameIndex);if(!f)return;frameIndex=f.index;var changed=new Set(f.changed),g=selectedRecord.snapshot.game;
+   var draft=Drafts.validate(f.draft,f.board.length,g.clues||{});
    frameCells.forEach(function(cell,i){
+     cell.dataset.draftColor=String(draft.colors[i]);cell.dataset.draftMark=String(draft.marks[i]);cell.querySelector(".history-draft-mark").textContent=["","◎","?","×"][draft.marks[i]];
      var value=f.board[i],mask=f.notes[i];cell.querySelector(".history-value").textContent=value?String(value):"";
      Array.prototype.forEach.call(cell.querySelectorAll(".history-notes span"),function(span,d){span.textContent=!value&&(mask&(1<<d))?String(d+1):"";});
      cell.classList.toggle("replay-changed",changed.has(i));
      var coordinate=hooks.Engine.getCellLabel?hooks.Engine.getCellLabel(i,previewContext):"第 "+(Math.floor(i/9)+1)+" 行，第 "+(i%9+1)+" 列";
-     cell.setAttribute("aria-label",coordinate+"，"+(value?"数字 "+value:"空格")+(g.givens[i]?"，题目给定":""));
+     cell.setAttribute("aria-label",coordinate+"，"+(value?"数字 "+value:"空格")+(g.givens[i]?"，题目给定":"")+(draft.colors[i]?"，草稿色组 "+draft.colors[i]:"")+(draft.marks[i]?"，草稿标记 "+["","关注","待核对","暂排除"][draft.marks[i]]:""));
    });
+   draftOverlay.replaceChildren();draftOverlay.setAttribute("viewBox","0 0 "+previewLayout.columns*100+" "+previewLayout.rows*100);
+   draft.links.forEach(function(link){var a=previewLayout.cells[link.a],b=previewLayout.cells[link.b],line=doc.createElementNS("http://www.w3.org/2000/svg","line");line.setAttribute("x1",a.col*100+50);line.setAttribute("y1",a.row*100+50);line.setAttribute("x2",b.col*100+50);line.setAttribute("y2",b.row*100+50);line.setAttribute("stroke","var(--accent)");line.setAttribute("stroke-width","4");line.setAttribute("stroke-opacity",".7");if(link.type!=='same')line.setAttribute("stroke-dasharray",link.type==='different'?'10 5':'3 8');line.dataset.linkType=link.type;draftOverlay.appendChild(line);});
+   draftSummary.textContent=(draft.links.length?'草稿连线 '+draft.links.length+' 条（玩家假设，不是规则）。 ':'')+draft.cages.map(function(c){return '笼 '+(c.index+1)+' 备选：'+(c.combinations.length?c.combinations.map(function(m){return Drafts.values(m).join('+');}).join(' / '):'暂不保留组合');}).join('；');draftSummary.hidden=!draftSummary.textContent;
    board.setAttribute("aria-label",modeName(g.mode)+"回放，第 "+frameIndex+" 步，共 "+f.totalSteps+" 步");
    slider.max=String(f.totalSteps);slider.value=String(frameIndex);slider.disabled=f.totalSteps===0;slider.setAttribute("aria-valuetext","第 "+frameIndex+" 步，共 "+f.totalSteps+" 步，"+f.action);
    previous.disabled=frameIndex<=0;next.disabled=frameIndex>=f.totalSteps;play.disabled=f.totalSteps===0;
-   actionLabel.textContent=frameIndex+" / "+f.totalSteps+" · "+f.action+(f.branch?" · 假设中":"");stepTime.textContent="本步用时 "+timeLabel(f.elapsedMs);
+   actionLabel.textContent=frameIndex+" / "+f.totalSteps+" · "+f.action+(f.branch?" · 假设中":"");stepTime.textContent="累计用时 "+timeLabel(f.elapsedMs);
    var note=selectedRecord.origin==="legacy"?"从本次更新后的操作开始回放；更早的步骤没有记录。":"按当时的真实操作回放，不改变当前棋局或成绩。";
    if(selectedRecord.droppedSteps)note="较早的 "+selectedRecord.droppedSteps+" 步已清理；以下从保留起点回放最近 "+f.totalSteps+" 步。";
    if(selectedRecord.replayRecovered)note="这局较早的回放数据无法读取，已保留可继续的棋局，并从该状态重新记录。";
@@ -248,14 +318,17 @@ function init(options){
    }
  }
  function select(id){
-   stop();selectedRecord=getStore().get(id);selectedId=selectedRecord?id:null;detail.hidden=!selectedRecord;if(!selectedRecord)return;
+   stop();checkpointMarkFrame.disabled=false;selectedRecord=getStore().get(id);selectedId=selectedRecord?id:null;detail.hidden=!selectedRecord;if(!selectedRecord)return;
    var g=selectedRecord.snapshot.game,summary=getStore().getRecords().find(function(r){return r.sessionId===id;});
    recordTitle.textContent=modeName(g.mode)+" · "+difficultyName(g.mode,g.difficulty);recordState.textContent=g.completed?"已完成":g.started?"未完成":"待开始";
    recordMeta.textContent=dateLabel(selectedRecord.createdAt)+" 开始 · 用时 "+timeLabel(g.elapsedMs)+" · 提示 "+g.hints+" · 失误 "+g.mistakes;
    resume.hidden=Boolean(g.completed);resume.textContent=summary&&summary.current?"回到当前棋局":"继续这一局";
+   var report=getStore().summarize(id);reviewSummary.textContent='记录范围：'+report.retainedSteps+' 步。提示 '+report.counts.hints+' 次，新增失误 '+report.counts.mistakes+' 次，候选变更 '+report.counts.notes+' 步，草稿 '+report.counts.drafts+' 步。'+(report.partial?'较早日志缺失，以下不是整局完整统计。':'')+report.scope;
+   if(report.events.length>200)reviewSummary.textContent+=' 下方显示最近 200 个事件；可用步骤滑杆查看全部保留步骤。';
+   reviewEvents.replaceChildren();report.events.slice(-200).forEach(function(event){var jump=btn('',event.stepIndex+' · '+event.action,'history-review-jump');jump.dataset.stepIndex=String(event.stepIndex);jump.addEventListener('click',function(){moveTo(event.stepIndex);});reviewEvents.appendChild(jump);});
    frameIndex=selectedRecord.steps.length;drawPreview();renderFrame();refreshList(false);
  }
- function moveTo(index){stop();frameIndex=index;renderFrame();}
+ function moveTo(index){stop();checkpointMarkFrame.disabled=false;frameIndex=index;renderFrame();}
  previous.addEventListener("click",function(){moveTo(frameIndex-1);});next.addEventListener("click",function(){moveTo(frameIndex+1);});slider.addEventListener("input",function(){moveTo(Number(slider.value));});
  play.setAttribute("aria-pressed","false");
  play.addEventListener("click",function(){
@@ -267,7 +340,7 @@ function init(options){
  closeButton.addEventListener("click",close);dialog.addEventListener("close",function(){stop();flush();if(hooks.afterClose)hooks.afterClose();});dialog.addEventListener("cancel",stop);
  doc.addEventListener("visibilitychange",function(){if(doc.hidden){stop();flush();}});root.addEventListener("pagehide",flush);root.addEventListener("beforeunload",flush);
  filter.addEventListener("change",function(){stop();refreshList(true);});
- function open(targetId){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();if(typeof targetId==="string"&&getStore().getSnapshot(targetId)){selectedId=targetId;filter.value="all";}refreshList(true);if(root.NineRealmsSelect)root.NineRealmsSelect.syncAll();if(selectedId)select(selectedId);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
+ function open(targetId,targetStep){if(doc.querySelector("dialog[open]")&&!dialog.open)return;flush();if(typeof targetId==="string"&&getStore().getSnapshot(targetId)){selectedId=targetId;filter.value="all";}refreshList(true);if(root.NineRealmsSelect)root.NineRealmsSelect.syncAll();if(selectedId)select(selectedId);if(Number.isInteger(targetStep))frameIndex=Math.max(0,targetStep);if(!dialog.open)hooks.openDialog(dialog);renderFrame();stop();}
  var opener=doc.getElementById("history-open");if(opener)opener.addEventListener("click",open);
  async function restore(callback){
    if(!selectedId||typeof callback!=="function")return;stop();flush();var snapshot=getStore().getSnapshot(selectedId);if(!snapshot)return;
@@ -277,8 +350,8 @@ function init(options){
  }
  favorite.addEventListener("click",function(){if(!selectedId||typeof hooks.onFavorite!=="function")return;try{hooks.onFavorite(getStore().getSnapshot(selectedId));}catch(e){if(hooks.toast)hooks.toast("收藏暂未保存，原有数据已保留。");}});
  resume.addEventListener("click",function(){restore(hooks.onResume);});restart.addEventListener("click",function(){restore(hooks.onReplayNew);});
- ui={dialog:dialog,open:open,close:close,refreshList:refreshList};return api;
+ ui={dialog:dialog,open:open,close:close,refreshList:refreshList,anchor:anchor,resyncAnchor:resyncAnchor};return api;
 }
-var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},suspendPersistence:suspendPersistence,open:function(id){if(ui)ui.open(id);},close:function(){if(ui)ui.close();}};
+var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},summarize:function(id){return getStore().summarize(id);},checkpoints:function(filter){return getStore().checkpoints(filter);},markCheckpoint:function(id,index,label){if(persistenceSuspended)throw new Error("数据恢复期间暂不能修改卡点。");var saved=ui&&ui.dialog.open?ui.anchor():null,result=getStore().markCheckpoint(id,index,label);if(ui&&ui.dialog.open){ui.resyncAnchor(saved);ui.refreshList(false);}return result;},markCurrent:function(label){var state=getStore().status(),record=getStore().get(state.currentId);if(!record)throw new Error("当前棋局还没有可保留的历史记录。");return api.markCheckpoint(record.sessionId,record.steps.length,label);},openCheckpoints:function(){if(ui){ui.open();if(!ui.dialog.open)return;var panel=root.document.getElementById('checkpoint-panel');if(panel){panel.open=true;panel.scrollIntoView({block:'nearest'});}var button=root.document.getElementById('checkpoint-mark-current');if(button)button.focus();}},suspendPersistence:suspendPersistence,open:function(id,stepIndex){if(ui)ui.open(id,stepIndex);},close:function(){if(ui)ui.close();}};
 return api;
 });

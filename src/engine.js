@@ -11098,6 +11098,7 @@
     ["odd-even","奇偶数独","奇偶","标记","圆形标记格填奇数，方形标记格填偶数。"],
     ["killer","杀手数独","杀手","求和","每个虚线笼内数字不重复，数字之和等于笼角标。"],
     ["thermo","温度计数独","温度计","线条","从圆球到尖端，温度计上的数字严格递增。"],
+    ["thermo-killer","温笼合流","温笼合流","融合","同时遵守温度计严格递增与杀手笼不重复求和；两类线索共同约束同一棋盘。"],
     ["arrow","箭头数独","箭头","求和","圆圈内的数字等于相连箭身各格数字之和。"],
     ["kropki","黑白点数独","黑白点","相邻","白点两侧相差 1，黑点两侧为 2 倍；未标记的边不附加约束。"],
     ["xv","XV 数独","XV","相邻","V 两侧之和为 5，X 两侧之和为 10；未标记的边不附加约束。"],
@@ -11177,6 +11178,7 @@
       }
     }
     collection("cages",81,function(item){
+      if(mode === "thermo-killer" && Object.keys(item).some(function(k){return ["cells","sum","unique"].indexOf(k)<0;}))throw new RangeError("Unknown fusion cage field.");
       var c=cells(item.cells,1,9), sum=item.sum;
       var reached=new Set([c[0]]),queue=[c[0]];
       while(queue.length){var current=queue.pop();c.forEach(function(next){if(!reached.has(next)&&neighbours(current,next,false)){reached.add(next);queue.push(next);}});}
@@ -11185,8 +11187,9 @@
       return {cells:c,sum:sum,unique:true};
     });
     collection("lines",48,function(item){
+      if(mode === "thermo-killer" && Object.keys(item).some(function(k){return ["cells","type"].indexOf(k)<0;}))throw new RangeError("Unknown fusion line field.");
       var c=cells(item.cells,2,16);
-      if(lineTypes.indexOf(item.type)<0 || item.type!==mode)throw new RangeError("Unknown line rule.");
+      if(lineTypes.indexOf(item.type)<0 || (mode === "thermo-killer" ? item.type !== "thermo" : item.type!==mode))throw new RangeError("Unknown line rule.");
       if((item.type==="thermo"||item.type==="renban")&&c.length>9)throw new RangeError("Line too long.");
       if(item.type!=="thermo" && c.length<3)throw new RangeError("Line needs three or more cells.");
       for(var i=1;i<c.length;i++)if(!neighbours(c[i-1],c[i],true))throw new RangeError("Disconnected line.");
@@ -11244,10 +11247,11 @@
       ["kropki","xv","greater"].indexOf(mode)>=0?"edges":mode==="odd-even"?"parity":
       outsideTypes.indexOf(mode)>=0?"outside":mode==="clone"?"clones":mode==="quadruple"?"quadruples":null;
     Object.keys(result).forEach(function(key){
-      if(key!=="version"&&result[key].length&&key!==required)throw new RangeError("Clues do not match the selected mode.");
+      if(key!=="version"&&result[key].length&&(mode === "thermo-killer" ? ["cages","lines"].indexOf(key)<0 : key!==required))throw new RangeError("Clues do not match the selected mode.");
     });
     if(required&&!result[required].length)throw new RangeError("This mode requires " + required + " clues.");
-    if(mode==="killer") {
+    if(mode==="thermo-killer" && (!result.cages.length || !result.lines.length))throw new RangeError("Fusion requires killer cages and thermometer lines.");
+    if(mode==="killer" || mode==="thermo-killer") {
       var covered=result.cages.reduce(function(a,c){return a.concat(c.cells);},[]);
       if(covered.length!==81||new Set(covered).size!==81)throw new RangeError("Killer cages must partition the board.");
     }
@@ -11293,7 +11297,7 @@
     });
     clues.cages.forEach(function(c){
       c.cells.forEach(function(a){c.cells.forEach(function(b){if(a!==b)peers[a].add(b);});});
-      add({type:"killer",cells:c.cells,sum:c.sum});
+      add({type:mode === "thermo-killer" ? "fusion-cage" : "killer",cells:c.cells,sum:c.sum});
     });
     clues.lines.forEach(function(line){
       if(line.type==="renban")line.cells.forEach(function(a){line.cells.forEach(function(b){if(a!==b)peers[a].add(b);});});
@@ -11319,6 +11323,17 @@
     if(type==="kropki-black")return !a||!b||a===b*2||b===a*2;
     if(type==="xv")return sumPossible(v,rule.value);
     if(type==="greater")return (!a||a>1)&&(!b||b<9)&&(!a||!b||a>b);
+    if(type==="fusion-cage"){
+      if(new Set(filled).size!==filled.length)return false;
+      var target=rule.sum-filled.reduce(function(sum,n){return sum+n;},0),empty=v.length-filled.length;
+      function possible(next,left,sum){
+        if(!left)return sum===0;
+        if(sum<left*(left+1)/2||sum>left*(19-left)/2)return false;
+        for(var digit=next;digit<=9;digit++)if(filled.indexOf(digit)<0&&digit<=sum&&possible(digit+1,left-1,sum-digit))return true;
+        return false;
+      }
+      return possible(1,empty,target);
+    }
     if(type==="killer"||type==="littlekiller")return sumPossible(v,type==="killer"?rule.sum:rule.value);
     if(type==="thermo"){
       for(i=0;i<v.length;i++)if(v[i]){
@@ -11392,6 +11407,23 @@
     while(remaining){var bit=remaining&-remaining;remaining^=bit;board[index]=digitOf(bit);
       if(cfg.byCell[index].every(function(c){return satisfied(cfg.constraints[c],board);}))result|=bit;
     }board[index]=0;return result;
+  }
+  // Reproducible local evidence for the two supported fusion rule families.
+  // Each candidate list is recomputed from the current board, never the solution.
+  function getFusionCandidateEvidence(board,index,context){
+    if(modeId(context)!=="thermo-killer"||!wellFormed(board,81)||!Number.isInteger(index)||index<0||index>80||board[index])return null;
+    var cfg=config(context),state=board.slice(),cage=cfg.clues.cages.find(function(c){return c.cells.indexOf(index)>=0;});
+    var onlyCages=cfg.constraints.filter(function(c){return c.type==="fusion-cage";});
+    var cageCfg=Object.assign({},cfg,{constraints:onlyCages,byCell:Array.from({length:81},function(){return [];})});
+    onlyCages.forEach(function(c,n){c.cells.forEach(function(i){cageCfg.byCell[i].push(n);});});
+    function numbers(mask){var values=[];for(var n=1;n<=9;n++)if(mask&(1<<(n-1)))values.push(n);return values;}
+    var filled=cage.cells.map(function(i){return state[i];}).filter(Boolean),remaining=cage.cells.length-filled.length,target=cage.sum-filled.reduce(function(sum,n){return sum+n;},0),combinations=[];
+    function enumerate(next,left,sum,chosen){if(!left){if(sum===0)combinations.push(chosen.slice());return;}for(var n=next;n<=9;n++)if(filled.indexOf(n)<0&&n<=sum){chosen.push(n);enumerate(n+1,left-1,sum-n,chosen);chosen.pop();}}
+    enumerate(1,remaining,target,[]);
+    return {index:index,classic:candidates(board,index,"classic"),thermo:candidates(board,index,{mode:"thermo",clues:{version:1,lines:cfg.clues.lines}}),
+      cage:numbers(candidateMask(state,index,cageCfg)),joint:candidates(board,index,context),
+      cageCells:cage.cells.slice(),cageSum:cage.sum,remainingSum:target,remainingCount:remaining,cageCombinations:combinations,
+      thermoLines:cfg.clues.lines.filter(function(line){return line.cells.indexOf(index)>=0;}).map(function(line){return line.cells.slice();})};
   }
   function analyzeSolutions(board,context,options){
     options=options||{};var limit=options.limit===undefined?2:options.limit,maxNodes=options.maxNodes===undefined?Infinity:options.maxNodes;
@@ -11477,7 +11509,7 @@
     return BANK.map(function (item) { return { id: item.id, mode: item.mode, difficulty: item.difficulty,
       givens: item.text.split("").map(Number), clues: normalizeClues(item.mode), rating: item.rating || item.difficulty }; }).concat(variantBank.concat(multigridBank).map(function(item){return {id:item.id,mode:item.mode,difficulty:item.difficulty,givens:(item.givens||item.text.split("").map(Number)).slice(),clues:normalizeClues(item.mode,item.clues),rating:"density-"+item.difficulty};}));
   }
-  return { getLayout: getLayout, getCellLabel: getCellLabel, normalizeClues: normalizeClues, getConflicts: getConflicts, analyzeSolutions: analyzeSolutions, getRelatedCells: getRelatedCells, getPuzzle: getPuzzle, candidates: candidates, solve: solve, countSolutions: countSolutions,
+  return { getFusionCandidateEvidence: getFusionCandidateEvidence, getLayout: getLayout, getCellLabel: getCellLabel, normalizeClues: normalizeClues, getConflicts: getConflicts, analyzeSolutions: analyzeSolutions, getRelatedCells: getRelatedCells, getPuzzle: getPuzzle, candidates: candidates, solve: solve, countSolutions: countSolutions,
     validateComplete: validateComplete, getHint: getHint, getSeedPuzzles: getSeedPuzzles, getPuzzleCatalog: getPuzzleCatalog,
     getModes: getModes, getDifficulties: getDifficulties, arePeers: arePeers,
     getCellDecorations: getCellDecorations,

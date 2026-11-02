@@ -7,17 +7,17 @@ const tick=()=>new Promise(r=>setTimeout(r,0));
 const select=(id,label)=>`<label for="${id}">${label}</label><select id="${id}"><option value="a">Alpha</option><option value="b">Beta</option><option value="c" disabled>Closed</option><option value="d">Delta</option></select>`;
 async function fixture(popover){
  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- const dom=new JSDOM(`<body><details id="appearance" open><summary>Appearance</summary>${select('scene-intensity','视觉强度')}</details>${select('difficulty','难度')}${select('grid-view','查看棋盘')}<dialog id="personal" open>${select('personal-mode','玩法')}${select('personal-filter','状态')}</dialog><button id="outside">Outside</button></body>`,{runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
+ const dom=new JSDOM(`<body><details id="appearance" open><summary>Appearance</summary>${select('scene-intensity','视觉强度')}</details>${select('difficulty','难度')}${select('grid-view','查看棋盘')}${select('draft-link-type','关系')}<dialog id="personal" open>${select('personal-mode','玩法')}${select('personal-filter','状态')}</dialog><button id="outside">Outside</button></body>`,{runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window,d=w.document,$=id=>d.getElementById(id);
  w.HTMLElement.prototype.scrollIntoView=function(){};
  if(popover){w.HTMLElement.prototype.showPopover=function(){this.dataset.open='true';};w.HTMLElement.prototype.hidePopover=function(){delete this.dataset.open;};const matches=w.Element.prototype.matches;w.Element.prototype.matches=function(s){return s===':popover-open'?this.dataset.open==='true':matches.call(this,s);};}
  w.eval(source);w.NineRealmsSelect.syncAll();await tick();
  const trigger=id=>d.querySelector(`[data-select-id="${id}"] .glass-select-trigger`),panel=id=>$(trigger(id).getAttribute('aria-controls'));
  const key=(id,k)=>trigger(id).dispatchEvent(new w.KeyboardEvent('keydown',{key:k,bubbles:true,cancelable:true}));
- assert.equal(d.querySelectorAll('.glass-select-trigger').length,5);
+ assert.equal(d.querySelectorAll('.glass-select-trigger').length,6);
  const history=d.createElement('dialog');history.id='history';history.open=true;history.innerHTML=select('history-filter','筛选历史棋局');d.body.appendChild(history);await tick();await tick();
- assert.equal(d.querySelectorAll('.glass-select-trigger').length,6,'dynamic history enhanced');
- for(const id of ['scene-intensity','difficulty','grid-view','personal-mode','personal-filter','history-filter']){
+ assert.equal(d.querySelectorAll('.glass-select-trigger').length,7,'dynamic history enhanced');
+ for(const id of ['scene-intensity','difficulty','grid-view','personal-mode','personal-filter','history-filter','draft-link-type']){
   const b=trigger(id);assert(b);assert.equal(b.getAttribute('role'),'combobox');assert.equal(panel(id).getAttribute('role'),'listbox');assert.equal($(id).getAttribute('aria-hidden'),'true');assert.equal($(id).tabIndex,-1);assert.match(b.getAttribute('aria-label'),/Alpha/);$(id).focus();assert.equal(d.activeElement,b);
  }
  assert.equal(panel('scene-intensity').closest('details'),$('appearance'));
@@ -48,7 +48,7 @@ async function fullApp(){
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
  }});
  const w=dom.window,d=w.document,$=id=>d.getElementById(id),trigger=id=>d.querySelector(`[data-select-id="${id}"] .glass-select-trigger`),panel=id=>$(trigger(id).getAttribute('aria-controls'));
- await new Promise(r=>setTimeout(r,30));assert.deepEqual(errors,[]);assert.equal(d.querySelectorAll('.glass-select-trigger').length,6);
+ await new Promise(r=>setTimeout(r,30));assert.deepEqual(errors,[]);assert.equal(d.querySelectorAll('.glass-select-trigger').length,7);
  assert.equal(trigger('scene-intensity').textContent,'轻柔 · 安静背景');assert.equal(trigger('difficulty').textContent,$('difficulty').selectedOptions[0].textContent);
  $('appearance-settings').open=true;trigger('scene-intensity').click();panel('scene-intensity').querySelector('[data-index="1"]').click();assert.equal(d.body.dataset.intensity,'balanced');assert($('appearance-settings').open);assert.equal(trigger('scene-intensity').textContent,'标准 · 均衡层次');
  trigger('scene-intensity').click();trigger('scene-intensity').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert($('appearance-settings').open);$('appearance-settings').open=false;
@@ -61,4 +61,4 @@ async function fullApp(){
  w.NineRealmsHistory.open();trigger('history-filter').click();panel('history-filter').querySelector('[data-index="2"]').click();assert.equal($('history-filter').value,'completed');w.NineRealmsHistory.close();w.NineRealmsHistory.open('glass-session');assert.equal($('history-filter').value,'all');assert.equal(trigger('history-filter').textContent,'全部棋局');
  assert.deepEqual(errors,[]);dom.window.close();
 }
-(async()=>{await fixture(false);await fixture(true);await fullApp();console.log('PASS glass selects: six controls + dynamic history, state/events/options/disabled, keyboard isolation, dismissals, owner ancestry, labels/focus, fallback + mocked popover, and full-app twin/settings/favorites/history integration. DOM simulation, not visual verification.');})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{await fixture(false);await fixture(true);await fullApp();console.log('PASS glass selects: seven controls including draft relations + dynamic history, state/events/options/disabled, keyboard isolation, dismissals, owner ancestry, labels/focus, fallback + mocked popover, and full-app twin/settings/favorites/history integration. DOM simulation, not visual verification.');})().catch(e=>{console.error(e);process.exitCode=1;});

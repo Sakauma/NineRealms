@@ -1,8 +1,8 @@
 /* Nine Realms — stable legacy voyage plus independently unlocked themed expeditions. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
-  else root.SudokuVoyage = factory(root.SudokuEngine);
-})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"), require("./training.js"));
+  else root.SudokuVoyage = factory(root.SudokuEngine, root.NineRealmsTraining);
+})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine, Training) {
   "use strict";
 
   var CHAPTERS = [
@@ -90,6 +90,23 @@
   TRACKS[0].description = "第一幕：修复九颗定位星。行列宫是共同骨架，对角线、窗口与马步练习交叉约束；完成后同时开放线条与求和两路。";
   TRACKS[1].description = "第二幕：连接返航航线。在行列宫骨架上加入递增、对应相等与连续集合；完成三站后，与求和前两站共同解锁最终汇合。";
   TRACKS[2].description = "第二幕与终章：汇聚返航能量。把笼与箭头的局部总和同九宫骨架相互核对，前两站汇聚能量；与循线三站共同解锁最终关，修复全部十五处星点。";
+
+  TRACKS.push({ id: "fusion", title: "归航合鸣", subtitle: "递增与求和 · 同盘相证", description: "第十六处归航核心：旧十五处星点全部点亮后开放，在同一盘中同时使用温度计与杀手笼。" });
+  CHAPTERS.push({ id: "fusion-homecoming-v1", trackId: "fusion", index: 0, storyIndex: 15,
+    title: "归航合鸣", subtitle: "让两种规则在同一格相遇", mode: "thermo-killer", difficulty: "hard", sourceId: "F-thermo-killer-hard-v1",
+    lesson: "本题同时遵守温度计从圆球到尖端严格递增，以及杀手笼数字不重复且总和等于角标。两类线索都必须满足。",
+    goal: "先列出笼的可行组合，再用温度计方向排除位置；也可将线条上下界反过来缩小笼的组合。",
+    bridge: "坐标、航线与能量已经汇合；最后把两条推理路径放到同一盘中校验。",
+    mission: "用温度计与笼求和共同约束同一组格。例如假设同一个两格和为 5 的笼恰好沿温度计排列，则组合 1、4 或 2、3 只能按递增方向放置；这只是规则示例，不代表本盘必有该图形。",
+    outcome: "完成真正的双规则校准，点亮第十六处归航核心；原有十五关成绩全部保留。",
+    nextLink: "归航星图完整后，可回访任意关卡，或去可选技巧观察站继续练习。",
+    transition: "两路推理在归航核心相遇。", nextStep: "完成归航核心后，重访星图或选择可选练习。",
+    ratingNote: "双规则题经完整约束验证；进阶是来源密度档，不代表已覆盖变体人类技巧评级。" });
+  var convergence = CHAPTERS.find(function (chapter) { return chapter.id === "sums-constellation-v1"; });
+  convergence.mission = "用笼总和与行列宫交叉检查，点亮两路汇合点。例如完整覆盖一行的若干笼总和为 40，行内其余格合计为 5。";
+  convergence.outcome = "完成原有两路校准；旧十五处星点齐亮后，开放新的归航合鸣。";
+  convergence.nextStep = convergence.nextLink = "点亮旧十五处星点后，进入同盘温度计＋杀手笼的归航合鸣。";
+  TRACKS[2].description = "汇聚返航能量：求和前两站与循线三站共同解锁群星合奏；旧十五处星点完成后，再进入新的双规则归航核心。";
 
   function tracks() { return TRACKS.map(function (track) { return Object.assign({}, track); }); }
 
@@ -188,6 +205,13 @@
       if (Object.prototype.hasOwnProperty.call(raw, id) && validStats(record) &&
           Number.isInteger(record.stars) && record.stars === starsFor(record)) result[id] = copyRecord(record);
     });
+    if (result["fusion-homecoming-v1"] && !(result.__journey && result.__journey.granted.indexOf("fusion-homecoming-v1") >= 0) &&
+        CHAPTERS.some(function (chapter) { return chapter.id !== "fusion-homecoming-v1" && !result[chapter.id]; })) delete result["fusion-homecoming-v1"];
+    if (Object.prototype.hasOwnProperty.call(raw, "__practice")) {
+      var practice = Training.validateProgress(raw.__practice);
+      if (canonical(practice) !== canonical(raw.__practice)) throw new TypeError("练习进度格式无效，原数据不应被覆盖。");
+      result.__practice = practice;
+    }
     return result;
   }
 
@@ -210,6 +234,15 @@
   // One-time migration records the exact old access rights, not future unlocks.
   // Missing storage is different from an existing empty pre-story progress object.
   function migrateProgress(raw, currentVoyageId, options) {
+    if (raw && typeof raw === "object" && Object.prototype.hasOwnProperty.call(raw, "__practice")) {
+      try {
+        if (canonical(Training.validateProgress(raw.__practice)) !== canonical(raw.__practice)) throw new TypeError("练习标记不规范");
+      } catch (_) {
+        var practiceError = new Error("练习进度来自不支持的版本或格式已损坏；原数据已保留，请勿覆盖。");
+        practiceError.code = "VOYAGE_PROGRESS_UNSUPPORTED";
+        throw practiceError;
+      }
+    }
     if (raw && typeof raw === "object" && Object.prototype.hasOwnProperty.call(raw, "__journey")) {
       var marker = raw.__journey, normalizedMarker = normalizeProgress(raw).__journey;
       if (!marker || typeof marker !== "object" || Array.isArray(marker) || marker.version !== 1 ||
@@ -223,7 +256,7 @@
     if (clean.__journey) return clean;
     var granted = [];
     if (options && options.existing) {
-      TRACKS.forEach(function (track) {
+      TRACKS.filter(function (track) { return track.id !== "fusion"; }).forEach(function (track) {
         var unlocked = getStatus(clean, track.id).unlocked;
         chapters(track.id).forEach(function (chapter) { if (chapter.index < unlocked) granted.push(chapter.id); });
       });
@@ -247,6 +280,7 @@
   }
 
   function dependencies(chapter) {
+    if (chapter.id === "fusion-homecoming-v1") return CHAPTERS.filter(function (stage) { return stage.id !== chapter.id; }).map(function (stage) { return stage.id; });
     if (chapter.id === "sums-constellation-v1") return chapters("lines").concat(chapters("sums").slice(0, 2)).map(function (stage) { return stage.id; });
     if (chapter.index > 0) return chapters(chapter.trackId).slice(0, chapter.index).map(function (stage) { return stage.id; });
     return chapter.trackId === "legacy" ? [] : chapters("legacy").map(function (stage) { return stage.id; });
@@ -277,7 +311,8 @@
       var reason = done ? "已点亮，可随时回访；不会重置最佳成绩。" : isCurrent ? "继续已保存的当前远征棋局。" :
         enter ? inherited ? "沿用旧版已解锁资格，可继续这一关。" : "这一星点已开放，可以继续修复。" :
         chapter.index >= getStatus(clean, chapter.trackId).unlocked ? "先点亮本幕前一处星点。" :
-        chapter.id === "sums-constellation-v1" ? "循线三站与求和前两站都完成后，开放最终汇合。" : "完成九星远征后，线条与求和两路同时开放。";
+        chapter.id === "fusion-homecoming-v1" ? "旧十五处星点全部完成后，开放温度计与杀手笼的同盘归航。" :
+        chapter.id === "sums-constellation-v1" ? "循线三站与求和前两站都完成后，开放两路汇合。" : "完成九星远征后，线条与求和两路同时开放。";
       return Object.assign({}, chapter, { status: done ? "completed" : isCurrent ? "current" : enter ? "open" : "locked",
         canEnter: enter, reason: reason, requires: required, inherited: inherited });
     });
@@ -292,12 +327,12 @@
     }
     if (!next) next = stages.find(function (stage) { return stage.canEnter && !clean[stage.id]; }) || null;
     var returning = Boolean(next && next.trackId === "legacy" && TRACKS.slice(1).some(function (track) { return getStatus(clean, track.id).completed > 0; }));
-    return { title: "修复返航星图", objective: "先校准九颗定位星，再沿循线与求和两路准备；两路完成后汇合，点亮全部十五处星点。",
+    return { title: "修复返航星图", objective: "先校准九颗定位星，再沿循线与求和两路准备；两路完成后汇合，再完成双规则归航核心，点亮全部十六处星点。",
       total: overall.total, completed: overall.completed, stars: overall.stars, finished: overall.completed === overall.total,
       nextId: next ? next.id : null, nextTrackId: next ? next.trackId : null, stages: stages,
       inheritedPassage: inheritedPassage, granted: grants.slice(), returning: returning,
-      continuityMessage: overall.completed === overall.total ? "十五处星点全部点亮，返航星图已修复。你仍可重访任意关卡。" :
-        returning ? "后段成绩全部保留。可回访尚未点亮的早期星点，补全十五处星图；已通关部分无需重玩。" :
+      continuityMessage: overall.completed === overall.total ? "十六处星点全部点亮，返航星图已修复。你仍可重访任意关卡。" :
+        returning ? "后段成绩全部保留。可回访尚未点亮的早期星点，补全十六处星图；已通关部分无需重玩。" :
         inheritedPassage ? "已保留旧版实际解锁的关卡及当前棋局；不要求重玩已通关部分。后续新解锁仍遵循两路汇合条件。" :
         "完成九星远征后，循线与求和两路同时开放；循线三站和求和前两站完成后汇合。" };
   }
@@ -310,11 +345,56 @@
     return next ? next.id : state.nextId;
   }
 
+  function practiceProgress(progress) {
+    return Training.validateProgress(normalizeProgress(progress).__practice);
+  }
+
+  function recordPractice(progress, id, index, digit) {
+    var clean = normalizeProgress(progress);
+    clean.__practice = Training.recordSuccess(clean.__practice, id, index, digit);
+    return clean;
+  }
+
+  function worldState(progress) {
+    var clean = normalizeProgress(progress), practice = practiceProgress(clean);
+    var phaseDefinitions = [
+      { id: "coordinate", title: "定位星", total: 9 }, { id: "lines", title: "航路", total: 3 },
+      { id: "energy", title: "能量", total: 2 }, { id: "convergence", title: "两路汇合", total: 1 },
+      { id: "homecoming", title: "归航核心", total: 1 }
+    ];
+    function phase(chapter) {
+      if (chapter.trackId === "legacy") return "coordinate";
+      if (chapter.trackId === "lines") return "lines";
+      if (chapter.trackId === "fusion") return "homecoming";
+      return chapter.id === "sums-constellation-v1" ? "convergence" : "energy";
+    }
+    var nodes = CHAPTERS.map(function (chapter) { return { id: chapter.id, title: chapter.title,
+      phase: phase(chapter), order: chapter.storyIndex, repaired: Boolean(clean[chapter.id]),
+      stars: clean[chapter.id] ? clean[chapter.id].stars : 0 }; });
+    var edges = [];
+    CHAPTERS.forEach(function (chapter) { dependencies(chapter).forEach(function (id) {
+      edges.push({ from: id, to: chapter.id, repaired: Boolean(clean[id] && clean[chapter.id]) });
+    }); });
+    var phases = phaseDefinitions.map(function (item) {
+      var count = nodes.filter(function (node) { return node.phase === item.id && node.repaired; }).length;
+      return Object.assign({}, item, { repaired: count, complete: count === item.total });
+    });
+    var satellites = Training.stations().map(function (station) {
+      var completed = station.exerciseIds.filter(function (id) { return practice.completed.indexOf(id) >= 0; });
+      return { id: station.id, title: station.title, after: station.after, optional: true,
+        completed: completed.length, total: station.exerciseIds.length, complete: completed.length === station.exerciseIds.length };
+    });
+    var repaired = nodes.filter(function (node) { return node.repaired; }).length;
+    return { title: "返航星图", total: nodes.length, repaired: repaired, finished: repaired === nodes.length,
+      nodes: nodes, edges: edges, phases: phases, satellites: satellites };
+  }
+
   function award(progress, id, stats) {
     var chapter = chapterFor(id);
     if (!chapter) throw new RangeError("未知的星图关卡。");
     if (!validStats(stats)) throw new TypeError("星图通关记录无效。");
     var clean = normalizeProgress(progress);
+    if (chapter.id === "fusion-homecoming-v1" && !canEnter(clean, id)) return clean;
     if (chapter.index >= getStatus(clean, chapter.trackId).unlocked &&
         !(clean.__journey && clean.__journey.granted.indexOf(id) >= 0)) return clean;
     var next = copyRecord(stats);
@@ -326,5 +406,6 @@
 
   return { tracks: tracks, chapters: chapters, getPuzzle: getPuzzle, matchesPuzzle: matchesPuzzle,
     normalizeProgress: normalizeProgress, award: award, getStatus: getStatus,
-    journey: journey, canEnter: canEnter, nextAfter: nextAfter, migrateProgress: migrateProgress, retainCurrent: retainCurrent };
+    journey: journey, canEnter: canEnter, nextAfter: nextAfter, migrateProgress: migrateProgress, retainCurrent: retainCurrent,
+    practiceProgress: practiceProgress, recordPractice: recordPractice, worldState: worldState };
 });
