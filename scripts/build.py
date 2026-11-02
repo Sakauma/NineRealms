@@ -1,6 +1,7 @@
 """Build the recovered modular source into a standalone offline web game."""
 from pathlib import Path
 import argparse
+import base64
 import hashlib
 import json
 import re
@@ -21,6 +22,11 @@ SCRIPTS = (
 def render_html():
     """Keep module bodies and whitespace unchanged for a lossless round trip."""
     html = (SRC / "index.html").read_text(encoding="utf-8")
+    icon_reference = 'href="../desktop/icon.png"'
+    if html.count(icon_reference) != 1:
+        raise RuntimeError("Expected exactly one favicon reference")
+    icon = base64.b64encode((ROOT / "desktop/icon.png").read_bytes()).decode("ascii")
+    html = html.replace(icon_reference, 'href="data:image/png;base64,' + icon + '"', 1)
     for filename in STYLES:
         source = (SRC / filename).read_text(encoding="utf-8")
         pattern = r"""<link\b[^>]*href=["'](?:\./)?""" + re.escape(filename) + r"""["'][^>]*>"""
