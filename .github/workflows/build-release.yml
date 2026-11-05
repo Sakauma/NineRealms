@@ -45,6 +45,7 @@ jobs:
           node tests/product-version.test.cjs
           node tests/backup.test.cjs
           node tests/tauri-config.test.cjs
+          python3 tests/package-download.test.py
           npm run test:zen
       - name: Find Chromium
         shell: bash

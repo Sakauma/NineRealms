@@ -1,6 +1,6 @@
 """Reconstructed release utilities. Original desktop entry/assets are kept unchanged."""
 from pathlib import Path
-import argparse, hashlib, json, os, re, shutil, subprocess, sys, urllib.request, zipfile
+import argparse, hashlib, http.client, json, os, re, shutil, subprocess, sys, time, urllib.error, urllib.request, zipfile
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".build-cache"
 RUNTIME = CACHE / "recovered-installer"
@@ -12,6 +12,29 @@ def sha256(path):
     with Path(path).open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""): h.update(chunk)
     return h.hexdigest()
+
+def download(request, destination=None):
+    """Retry temporary network failures without hiding permanent errors."""
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                if destination is None:
+                    return response.read()
+                with destination.open("wb") as output:
+                    shutil.copyfileobj(response, output)
+                return None
+        except urllib.error.HTTPError as error:
+            if error.code not in (408, 429, 500, 502, 503, 504) or attempt == 3:
+                raise
+            reason = "HTTP " + str(error.code)
+        except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.IncompleteRead) as error:
+            if attempt == 3:
+                raise
+            reason = type(error).__name__
+        delay = 2 ** (attempt + 1)
+        print("Temporary download error (" + reason + "); retrying in " + str(delay) + "s.", file=sys.stderr)
+        time.sleep(delay)
+
 
 def manifest():
     return json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
@@ -47,8 +70,7 @@ def ensure_runtime():
     filename = "electron-v" + expected + "-win32-x64.zip"
     base = "https://github.com/electron/electron/releases/download/v" + expected + "/"
     request = urllib.request.Request(base + "SHASUMS256.txt", headers={"User-Agent": "NineRealms-build"})
-    with urllib.request.urlopen(request, timeout=120) as response:
-        entries = [line.split() for line in response.read().decode("utf-8").splitlines()]
+    entries = [line.split() for line in download(request).decode("utf-8").splitlines()]
     checksum = next((parts[0] for parts in entries if len(parts) == 2 and parts[1].lstrip("*") == filename), None)
     if not checksum or not re.fullmatch(r"[0-9a-fA-F]{64}", checksum):
         raise RuntimeError("Electron release checksum is missing.")
@@ -59,8 +81,7 @@ def ensure_runtime():
         pending = CACHE / (filename + ".part")
         try:
             request = urllib.request.Request(base + filename, headers={"User-Agent": "NineRealms-build"})
-            with urllib.request.urlopen(request, timeout=120) as response, pending.open("wb") as output:
-                shutil.copyfileobj(response, output)
+            download(request, pending)
             if sha256(pending) != checksum:
                 raise RuntimeError("Electron runtime checksum mismatch.")
             pending.replace(archive_path)
