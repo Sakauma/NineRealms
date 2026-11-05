@@ -24,7 +24,8 @@ async function launch(options={}){
   chrome.on('error',e=>{stderr+=e.message;});
   async function close(){chrome.kill('SIGTERM');server.close();await Promise.race([new Promise(r=>chrome.once('exit',r)),delay(1000)]);fs.rmSync(profile,{recursive:true,force:true});}
   try{
-    for(let n=0;n<80&&!fs.existsSync(path.join(profile,'DevToolsActivePort'));n++){if(chrome.exitCode!==null)throw Error('Chromium exited: '+stderr.slice(-1500));await delay(100);}
+    // Cold CI runners can take longer to start Chromium.
+    for(let n=0;n<300&&!fs.existsSync(path.join(profile,'DevToolsActivePort'));n++){if(chrome.exitCode!==null)throw Error('Chromium exited: '+stderr.slice(-1500));await delay(100);}
     if(!fs.existsSync(path.join(profile,'DevToolsActivePort')))throw Error('Chromium CDP startup timed out: '+stderr.slice(-1500));
     const port=Number(fs.readFileSync(path.join(profile,'DevToolsActivePort'),'utf8').split('\n')[0]);
     const target=await(await fetch('http://127.0.0.1:'+port+'/json/new?about:blank',{method:'PUT'})).json();
