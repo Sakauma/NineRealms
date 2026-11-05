@@ -1,0 +1,599 @@
+/* Shared desktop: a large board and one compact input column in every mode.
+   Original nodes are reordered by workspace.js; board geometry stays native. */
+body[data-workspace=unified][data-desktop=on]{
+ --desktop-tools-width:clamp(288px,24vw,320px);
+ --desktop-gap:24px;
+ --desktop-column:max(320px,min(620px,calc(100vw - 88px - var(--desktop-tools-width))));
+ --desktop-board:var(--desktop-column);
+ --desktop-digit:clamp(28px,4.1dvh,38px);
+}
+body[data-workspace=unified][data-desktop=on] .app-shell{width:min(calc(var(--desktop-column) + var(--desktop-tools-width) + var(--desktop-gap)),calc(100% - 64px))}
+body[data-workspace=unified][data-desktop=on] .topbar{min-height:64px}
+body[data-workspace=unified][data-desktop=on] main{padding-top:16px}
+body[data-workspace=unified][data-desktop=on] .game-layout{width:100%;display:grid;grid-template-columns:var(--desktop-column) var(--desktop-tools-width);grid-template-rows:44px auto auto;gap:16px var(--desktop-gap);justify-content:center;justify-items:stretch;align-items:start}
+.desktop-context,.desktop-heading,.desktop-board-area,.desktop-tools,.desktop-status{min-width:0}
+.desktop-context{grid-column:1;grid-row:1}
+.desktop-heading{grid-column:2;grid-row:1;display:flex;align-items:center;padding-left:19px}
+/* Keep the board and its following status row in the same scrolling flow. */
+.desktop-board-area{grid-column:1;grid-row:2;width:var(--desktop-board);max-width:100%;justify-self:center}
+.desktop-tools{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:14px;align-self:stretch;min-height:var(--desktop-board);padding-left:18px;border-left:1px solid var(--input-edge)}
+.desktop-tools>*{flex-shrink:0}
+.desktop-status{grid-column:1;grid-row:3}
+body[data-workspace=unified][data-desktop=on] .game-toolbar{width:100%;margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:none;gap:16px}
+body[data-workspace=unified][data-desktop=on] .mode-control{grid-area:auto;grid-column:1;min-width:0}
+body[data-workspace=unified][data-desktop=on] .game-actions{display:contents}
+body[data-workspace=unified][data-desktop=on] .desktop-heading>.difficulty-wrap{display:block;min-width:0;width:100%}
+body[data-workspace=unified][data-desktop=on] .desktop-heading .glass-select{width:100%;min-width:0}
+body[data-workspace=unified][data-desktop=on] .desktop-heading .glass-select-trigger{width:100%;min-width:0;min-height:44px;padding:8px 12px;font-size:13px;line-height:20px;border-radius:9px}
+body[data-workspace=unified][data-desktop=on] .game-toolbar .mode-picker-open{width:fit-content;max-width:100%;height:44px;min-width:0;padding:8px 0;gap:10px;border:0;background:transparent;box-shadow:none}
+body[data-workspace=unified][data-desktop=on] .mode-picker-open>strong{font-size:17px;line-height:20px;letter-spacing:.01em}
+body[data-workspace=unified][data-desktop=on] .mode-picker-arrow{margin-left:4px;width:14px;height:14px;opacity:.7}
+body[data-workspace=unified][data-desktop=on] #play-controls>.new-game-btn{grid-column:1/-1;grid-row:4;width:100%;height:44px;min-height:44px;min-width:0;padding:8px 12px;font-size:13px;gap:6px;border-radius:9px;background:var(--accent);color:var(--accent-text);border-color:transparent}
+body[data-workspace=unified][data-desktop=on] #play-controls>.new-game-btn:hover:not(:disabled){background:var(--accent-strong)}
+body[data-workspace=unified][data-desktop=on] .new-game-btn>.icon{width:16px;height:16px}
+body[data-workspace=unified][data-desktop=on] .game-toolbar>#rules-open{grid-area:auto;grid-column:2;justify-content:flex-end;padding:8px 0;font-size:12px;border:0;background:transparent;box-shadow:none}
+body[data-workspace=unified][data-desktop=on] .reasoning-workspace{display:none}
+body[data-workspace=unified][data-desktop=on] .desktop-board-area>.board-section{width:100%;max-width:100%}
+body[data-workspace=unified][data-desktop=on] .cell{font-size:var(--desktop-digit)}
+body[data-workspace=unified][data-desktop=on] .cell .notes{font-size:11.5px;inset:3px}
+/* Live session information begins the compact input rail. */
+body[data-workspace=unified][data-desktop=on] .desktop-tools>.stats{display:flex;align-items:flex-start;justify-content:space-between;width:100%;min-height:58px;padding-bottom:12px;border-bottom:1px solid var(--input-edge);gap:12px}
+body[data-workspace=unified][data-desktop=on] .stat{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+body[data-workspace=unified][data-desktop=on] .stat-label{font-size:11px}
+body[data-workspace=unified][data-desktop=on] .stat strong{font-size:22px;line-height:26px}
+body[data-workspace=unified][data-desktop=on] .time-stat{display:grid;grid-template-columns:auto 32px;gap:4px 7px}
+body[data-workspace=unified][data-desktop=on] .time-stat>.stat-label{grid-column:1/-1}
+body[data-workspace=unified][data-desktop=on] .time-stat .icon-btn{width:32px;height:32px;min-height:32px;padding:8px;margin-top:-3px;border:1px solid var(--input-edge);border-radius:8px}
+body[data-workspace=unified][data-desktop=on] .mistake-stat{min-width:52px}
+
+body[data-workspace=unified][data-desktop=on] .desktop-tools>.control-panel{display:block;width:100%;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+body[data-workspace=unified][data-desktop=on] #play-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px 6px;height:auto}
+body[data-workspace=unified][data-desktop=on] .pad-heading{position:static;grid-column:1/-1;grid-row:2;width:auto;height:auto;min-width:0;padding:6px 0 0;overflow:visible;clip-path:none;white-space:normal;display:flex;align-items:center;justify-content:space-between;gap:8px}
+body[data-workspace=unified][data-desktop=on] .pad-heading h2{font-size:11px;font-weight:500;color:var(--muted)}
+body[data-workspace=unified][data-desktop=on] .pad-heading>span{font-size:10px;color:var(--muted)}
+body[data-workspace=unified][data-desktop=on] :is(.tools-grid,.history-tools){display:contents}
+body[data-workspace=unified][data-desktop=on] #play-controls>:is(#undo-btn,#redo-btn,#erase-btn,#notes-btn,#hint-btn){grid-row:1;grid-column:span 1}
+body[data-workspace=unified][data-desktop=on] .number-pad{grid-column:1/-1;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,auto);gap:10px;flex:none;margin:0}
+body[data-workspace=unified][data-desktop=on] #play-controls>#more-tools-toggle{grid-row:5;grid-column:1/-1;min-height:36px;height:36px;border:0;background:transparent;color:var(--muted)}
+/* Desktop geometry stays generous; shared frosted material is defined below. */
+body[data-workspace=unified][data-desktop=on] .number-key{position:relative;display:grid;place-items:center;box-sizing:border-box;width:100%;max-width:100%;height:auto;aspect-ratio:1/1;min-width:44px;min-height:0;justify-self:center;align-self:start;padding:0;gap:0;border-radius:14px}
+body[data-workspace=unified][data-desktop=on] .key-value{font-size:36px;font-weight:600;line-height:1;letter-spacing:0;text-shadow:none}
+body[data-workspace=unified][data-desktop=on] .remaining{display:none}
+body[data-workspace=unified][data-desktop=on] .remaining::before{content:none}
+body[data-workspace=unified][data-desktop=on] .number-key.exhausted:not(:disabled){opacity:1}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){min-width:0;width:100%;height:44px;min-height:44px;margin:0;padding:6px 0;gap:4px;flex-direction:row;font-size:12px;line-height:20px;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);box-shadow:none}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.draft-toggle):where(#notes-btn,#hint-btn,#more-tools-toggle){border-color:var(--input-edge);background:var(--input-surface);color:var(--text)}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.auto-notes-btn):where(#check-btn,#error-toggle,#auto-notes-btn){font-size:11px;gap:4px}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.auto-notes-btn):where(#check-btn,#error-toggle,#auto-notes-btn)>.icon{width:14px;height:14px}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle):hover:not(:disabled){color:var(--text);background:var(--related);border-color:var(--input-edge)}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.draft-toggle)[aria-pressed=true],body[data-workspace=unified][data-desktop=on] .control-panel .draft-toggle[aria-expanded=true]{color:var(--accent);background:var(--related);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+body[data-workspace=unified][data-desktop=on] .control-panel #error-toggle[aria-pressed=true]{background:transparent;border-color:transparent}
+body[data-workspace=unified][data-desktop=on] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+body[data-workspace=unified][data-desktop=on] .control-panel .tool-btn .sr-only{position:static;width:auto;height:auto;margin:0;overflow:visible;clip:auto;clip-path:none;white-space:normal}
+body[data-workspace=unified][data-desktop=on] .tool-shortcut{display:none}
+body[data-workspace=unified][data-desktop=on] .auto-notes-btn>.icon{display:none}
+/* The answer temporarily uses the existing New Game action, not another rail row.
+   Closing it restores that action; the board and square keys never move. */
+body[data-workspace=unified][data-desktop=on] #play-controls>#hint-panel{order:0;grid-column:1/-1;grid-row:4;align-self:end;height:44px;min-height:44px}
+body[data-workspace=unified][data-desktop=on][data-workspace-tool=hint] #play-controls>#new-game{display:none}
+body[data-workspace=unified][data-desktop=on] .hint-panel h3{font-size:14px}
+body[data-workspace=unified][data-desktop=on] .hint-panel p{font-size:12px;line-height:1.65}
+body[data-workspace=unified][data-desktop=on] .hint-actions{display:flex;flex-wrap:wrap;gap:8px}
+body[data-workspace=unified][data-desktop=on] .hint-actions>button{flex:1;white-space:normal;padding:8px;font-size:12px}
+body[data-workspace=unified][data-desktop=on] .desktop-tools>.keyboard-guide{display:flex;flex-wrap:wrap;gap:4px 10px;margin:0;padding-top:10px;border-top:1px solid var(--input-edge);min-height:20px;color:var(--muted);font-size:10px;line-height:20px}
+body[data-workspace=unified][data-desktop=on] .keyboard-guide>span{gap:4px}
+body[data-workspace=unified][data-desktop=on] .keyboard-guide kbd{font-size:10px;padding:1px 4px}
+/* Quiet supporting information stays below the board. */
+body[data-workspace=unified][data-desktop=on] .session-strip{width:100%;margin:0;padding:0;border:0}
+body[data-workspace=unified][data-desktop=on] .normal-status{display:flex;min-height:28px;gap:16px;justify-content:space-between}
+body[data-workspace=unified][data-desktop=on] .energy-hud{display:flex;margin:0;gap:12px;opacity:.8}
+body[data-workspace=unified][data-desktop=on] .energy-stat{display:flex;gap:4px;align-items:baseline}
+body[data-workspace=unified][data-desktop=on] .energy-stat>span{font-size:10px}
+body[data-workspace=unified][data-desktop=on] .energy-stat>strong{font-family:"Nine Realms Numerals",sans-serif;font-size:12px;font-weight:400}
+body[data-workspace=unified][data-desktop=on] .desktop-tools>.board-bottomline{display:flex;align-items:center;min-width:0;width:100%;margin: auto 0 0;gap:10px}
+body[data-workspace=unified][data-desktop=on] .desktop-tools .progress-track{flex:1;width:auto;height:3px}
+body[data-workspace=unified][data-desktop=on] #progress-count{font-size:10px}
+body[data-workspace=unified][data-desktop=on] .desktop-status>.status-box{margin:0;padding:0;border:0}
+body[data-workspace=unified][data-desktop=on] .desktop-status>.status-box p{font-size:11px;line-height:20px}
+.desktop-board-alerts{grid-column:1/-1;grid-row:2;display:none;flex-direction:column;gap:8px;min-width:0}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts>.session-badges{margin:0}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts:has(.game-badge:not([hidden]),#branch-banner:not([hidden]),#fog-banner:not([hidden]),#multigrid-tools:not([hidden])){display:flex}
+body[data-workspace=unified][data-desktop=on] .game-layout:has(.desktop-board-alerts :is(.game-badge,#branch-banner,#fog-banner,#multigrid-tools):not([hidden]))>:is(.desktop-board-area,.desktop-tools){grid-row:3}
+body[data-workspace=unified][data-desktop=on] .game-layout:has(.desktop-board-alerts :is(.game-badge,#branch-banner,#fog-banner,#multigrid-tools):not([hidden]))>.desktop-status{grid-row:4}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts :is(.branch-banner,.fog-banner){margin:0}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts .branch-banner{grid-template-columns:minmax(0,1fr);gap:8px}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts .branch-actions{grid-column:1;grid-row:2;margin:0}
+body[data-workspace=unified][data-desktop=on] :is(.scene-drawer,.discovery-cards,footer){width:100%;margin-inline:0}
+body[data-workspace=unified][data-desktop=on] .scene-drawer{margin-top:16px}
+body[data-workspace=unified][data-desktop=on][data-handedness=left] .game-layout{grid-template-columns:var(--desktop-tools-width) var(--desktop-column)}
+body[data-workspace=unified][data-desktop=on][data-handedness=left] :is(.desktop-context,.desktop-board-area,.desktop-status){grid-column:2}
+body[data-workspace=unified][data-desktop=on][data-handedness=left] :is(.desktop-heading,.desktop-tools){grid-column:1}
+body[data-workspace=unified][data-desktop=on][data-handedness=left] .desktop-tools{padding-left:0;padding-right:18px;border-left:0;border-right:1px solid var(--input-edge)}
+body[data-workspace=unified][data-desktop=on][data-handedness=left] .desktop-heading{padding-left:0;padding-right:19px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .cell{font-size:calc(var(--desktop-digit) + 3px)}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .cell .notes{font-size:12.5px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .mode-picker-open>strong{font-size:19px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){font-size:13px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .control-panel :is(.tool-btn,.auto-notes-btn):where(#check-btn,#error-toggle,#auto-notes-btn){font-size:13px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .key-value{font-size:40px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] :is(.hint-panel p,#lens-status){font-size:14px}
+body[data-workspace=unified][data-desktop=on][data-zen=on] :is(.normal-status,.keyboard-guide,#error-toggle,.desktop-tools>.board-bottomline),body[data-workspace=unified][data-desktop=on][data-zen=on] .desktop-tools>.stats{display:none}
+/* With quiet-mode status hidden, the existing New Game action is the bottom
+   anchor. Its flexible grid track absorbs space; the nine keys remain square. */
+body[data-workspace=unified][data-desktop=on][data-zen=on] #play-controls{min-height:var(--desktop-board);grid-template-rows:auto auto auto minmax(44px,1fr);align-content:start}
+body[data-workspace=unified][data-desktop=on][data-zen=on] #play-controls>.new-game-btn{align-self:end}
+@media(max-height:760px){body[data-workspace=unified][data-desktop=on] .cell .notes{font-size:10.5px;inset:2px}body[data-workspace=unified][data-desktop=on][data-text-size=large] .cell .notes{font-size:11.5px}}
+@media(max-height:650px){
+ body[data-workspace=unified][data-desktop=on] .desktop-tools{gap:10px}
+ body[data-workspace=unified][data-desktop=on] .game-toolbar{grid-template-columns:minmax(0,1fr) auto}
+ body[data-workspace=unified][data-desktop=on] :is(.mode-picker-arrow,#rules-open>.rules-label,#rules-open>.icon){display:none}
+ body[data-workspace=unified][data-desktop=on] #rules-open>.rules-short{display:inline}
+}
+@media(forced-colors:active){body[data-workspace=unified][data-desktop=on] .control-panel :is(.number-key,.tool-btn,.auto-notes-btn,.draft-toggle){background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none}body[data-workspace=unified][data-desktop=on] .number-key:focus-visible{outline-color:Highlight}body[data-workspace=unified][data-desktop=on] .number-key:disabled{opacity:1;color:GrayText}}
+/* The draft keeps its independent rail or safe in-flow dock. */
+body[data-workspace=unified][data-desktop=on][data-draft-rail=on] .app-shell{width:calc(var(--desktop-column) + var(--desktop-tools-width) + 2 * var(--desktop-gap) + var(--draft-rail-width))}
+body[data-workspace=unified][data-desktop=on][data-draft-rail=on] .game-layout{grid-template-columns:var(--desktop-column) var(--desktop-tools-width) var(--draft-rail-width)}
+body[data-workspace=unified][data-desktop=on][data-draft-rail=on][data-handedness=left] .game-layout{grid-template-columns:var(--draft-rail-width) var(--desktop-tools-width) var(--desktop-column)}
+body[data-workspace=unified][data-desktop=on][data-draft-rail=on][data-handedness=left] :is(.desktop-context,.desktop-board-area,.desktop-status){grid-column:3}
+body[data-workspace=unified][data-desktop=on][data-draft-rail=on][data-handedness=left] :is(.desktop-heading,.desktop-tools){grid-column:2}
+body[data-workspace=unified][data-desktop=on] #draft-panel[data-placement=docked]{grid-column:1/-1;grid-row:6}
+
+/* The compact filter remains intact inside More Tools. It never replaces keys. */
+body .candidate-filter.candidate-lens{display:block;width:100%;max-width:100%;min-width:0;margin:12px 0 0;padding:10px 0 0;border:0;border-top:1px solid var(--input-edge);border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.candidate-filter-heading{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0}
+.candidate-filter-heading h3{margin:0;font-size:12px;font-weight:500;line-height:20px;color:var(--muted)}
+body .candidate-filter .lens-sources{display:flex;flex-wrap:wrap;gap:4px;min-width:0;margin-left:auto}
+body .candidate-filter .lens-sources button,body .candidate-filter #batch-toggle{flex:none;min-width:0;min-height:32px;height:auto;max-width:100%;padding:4px 8px;font-size:11px;line-height:20px;white-space:normal;border-radius:7px;background:transparent;border:1px solid var(--input-edge)}
+body .candidate-filter #batch-toggle{color:var(--muted)}
+body .candidate-filter .lens-digits{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:auto;gap:4px;margin:8px 0 6px}
+body .candidate-filter .lens-digits button{grid-column:auto;min-width:0;min-height:36px;height:36px;padding:2px;border:1px solid var(--input-edge);border-radius:7px;background:transparent;font-size:19px;line-height:1;font-family:"Nine Realms Numerals","Segoe UI",sans-serif}
+body .candidate-filter :is(.lens-sources button,.lens-digits button,#batch-toggle)[aria-pressed=true]{background:var(--related);color:var(--accent);border-color:var(--accent);outline:1px solid var(--accent);outline-offset:-3px}
+body .candidate-filter :is(button,select):focus-visible,.batch-panel :is(button,select):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body .candidate-filter #lens-status{min-width:0;margin:0;font-size:11px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.batch-panel{min-width:0;max-width:100%;margin-top:10px;padding:12px;border:1px solid var(--input-edge);border-radius:10px;background:var(--draft-surface)}
+.batch-heading{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px}
+.batch-heading h3{margin:0;font-size:12px;font-weight:600}
+.batch-heading #batch-count{margin:0;font-size:11px}
+.batch-digit-label{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;color:var(--muted)}
+.batch-digit-label .glass-select{width:64px}
+.batch-digit-label .glass-select .glass-select-trigger{min-height:36px;padding:4px 8px;gap:6px;border-radius:7px;font-size:14px}
+.batch-digit-label select{width:64px;min-height:36px;padding:4px 8px;border:1px solid var(--input-edge);border-radius:7px;background:var(--input-surface);color:var(--text);font:inherit;font-size:14px}
+.batch-panel .batch-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(130px,100%),1fr));gap:6px;padding-top:10px;margin-top:8px}
+.batch-panel .batch-tools button{min-width:0;min-height:36px;padding:6px 8px;white-space:normal;overflow-wrap:anywhere;font-size:11px}
+.batch-panel .batch-help{overflow-wrap:anywhere}
+body[data-text-size=large] .candidate-filter :is(.lens-sources button,#batch-toggle,#lens-status),body[data-text-size=large] .batch-panel :is(button,.batch-help,.batch-digit-label){font-size:13px}
+@media(forced-colors:active){body .candidate-filter :is(.lens-digits button,.lens-sources button,#batch-toggle),.batch-panel,.batch-panel :is(button,select){background:Canvas;color:CanvasText;border-color:ButtonText}body .candidate-filter button[aria-pressed=true]{color:HighlightText;background:Highlight;border-color:Highlight}}
+
+/* Optional tools have one shared, in-flow drawer; nothing expands the input column. */
+.more-tools-panel{grid-column:1/-1;width:100%;max-width:100%;min-width:0;padding:14px;border:1px solid var(--input-edge);border-radius:12px;background:var(--panel-soft)}
+.more-tools-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.more-tools-heading h3{margin:0;font-size:13px;font-weight:600}
+.more-tools-heading #more-tools-close{min-height:36px;padding:4px 10px;font-size:12px}
+.more-tools-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.more-tools-actions :is(.tool-btn,.auto-notes-btn,.draft-toggle){grid-column:auto;display:flex;align-items:center;justify-content:center;flex-direction:row;min-width:0;width:100%;min-height:44px;height:auto;margin:0;padding:8px;gap:6px;font-size:12px;line-height:20px;border:1px solid var(--input-edge);border-radius:8px;background:var(--input-surface);white-space:normal}
+.more-tools-actions .icon{width:16px;height:16px;flex:none}
+.more-tools-actions small{display:none}
+.more-tools-actions button[aria-pressed=true],.more-tools-actions button[aria-expanded=true]{color:var(--accent);border-color:var(--accent);background:var(--related)}
+.more-tools-content{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+.more-tools-content .batch-panel{margin:0}
+.more-tools-content:has(.batch-panel:not([hidden])){margin-top:12px}
+body .more-tools-content .candidate-filter{grid-column:auto;margin:0;padding-top:12px}
+#more-tools-toggle{line-height:18px;white-space:normal}
+body[data-text-size=large] .more-tools-actions button{font-size:13px}
+#more-tools-toggle[data-active-filter=true]{color:var(--accent)}
+.more-tools-panel :is(button,select):focus-visible,#more-tools-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+body[data-workspace=unified] .more-tools-panel{order:5}
+body[data-workspace=unified][data-desktop=on] .more-tools-panel{grid-column:1/-1;grid-row:4;order:0}
+body[data-workspace=unified][data-desktop=on] .game-layout:has(.desktop-board-alerts :is(.game-badge,#branch-banner,#fog-banner,#multigrid-tools):not([hidden]))>.more-tools-panel{grid-row:5}
+@media(min-width:980px){.more-tools-content:has(.batch-panel:not([hidden])){grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.more-tools-content:has(.batch-panel:not([hidden])) .candidate-filter{padding-top:0;border-top:0}}
+@media(max-width:520px){.more-tools-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.more-tools-panel{padding:10px}.more-tools-content .candidate-filter-heading{gap:6px}.more-tools-content .lens-sources{margin-left:0}}
+@media(forced-colors:active){.more-tools-panel,.more-tools-actions button{background:Canvas;color:CanvasText;border-color:ButtonText}.more-tools-actions button[aria-pressed=true]{background:Highlight;color:HighlightText}}
+
+/* Pause is a privacy cover, not an empty replacement workspace. The scaffold is
+   pure CSS and contains no puzzle values, candidate marks or selection state. */
+body[data-game-state=ready] #board-grid-shell,body[data-game-state=paused] #board-grid-shell{visibility:hidden}
+.pause-card{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0;max-width:100%}
+.pause-symbol{display:none}
+body[data-workspace=unified][data-desktop=on] .board-card{padding:8px;border-radius:13px}
+body[data-workspace=unified][data-desktop=on] .pause-overlay{padding:24px;border-radius:12px;background:var(--board-bg);backdrop-filter:none;-webkit-backdrop-filter:none;overflow:hidden;isolation:isolate}
+body[data-workspace=unified][data-desktop=on] .pause-overlay::before{content:"";position:absolute;z-index:0;inset:8px;border:1px solid color-mix(in srgb,var(--grid-strong) 38%,transparent);border-radius:5px;background-image:linear-gradient(to right,color-mix(in srgb,var(--grid-strong) 32%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--grid-strong) 32%,transparent) 1px,transparent 1px),linear-gradient(to right,color-mix(in srgb,var(--grid-line) 30%,transparent) 1px,transparent 1px),linear-gradient(to bottom,color-mix(in srgb,var(--grid-line) 30%,transparent) 1px,transparent 1px);background-size:33.333333% 100%,100% 33.333333%,11.111111% 100%,100% 11.111111%;pointer-events:none}
+body[data-workspace=unified][data-desktop=on] .pause-card{position:relative;z-index:1;width:320px;max-width:100%;padding:22px 24px;border:1px solid var(--input-edge);border-radius:12px;background:var(--panel);box-shadow:0 12px 32px -20px var(--shadow);gap:12px}
+body[data-workspace=unified][data-desktop=on] .pause-symbol{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--input-edge);border-radius:50%;color:var(--muted)}
+body[data-workspace=unified][data-desktop=on] .pause-symbol .icon{width:17px;height:17px}
+body[data-workspace=unified][data-desktop=on] .pause-card h2{margin:0;font-size:20px;line-height:1.4}
+body[data-workspace=unified][data-desktop=on] .pause-card p{margin:0;font-size:12px;line-height:1.6;max-width:260px}
+body[data-workspace=unified][data-desktop=on] .pause-card .primary-btn{min-height:44px;padding:10px 16px;font-size:13px;border-radius:9px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .pause-card h2{font-size:22px}
+body[data-workspace=unified][data-desktop=on][data-text-size=large] .pause-card p{font-size:14px}
+
+body[data-workspace=unified][data-desktop=on][data-game-state=ready] .pause-symbol{display:none}
+
+/* One translucent material for the main keypad in every layout. The opaque
+   baseline also covers WebViews without backdrop-filter or color-mix support.
+   No solid bottom edge, separate panel or moving keycap is introduced. */
+body{
+ --key-glass-face:linear-gradient(155deg,var(--panel-soft),var(--panel));
+ --key-glass-hover:linear-gradient(155deg,var(--related),var(--panel-soft));
+ --key-glass-pressed:linear-gradient(155deg,var(--selected),var(--related));
+ --key-glass-disabled:linear-gradient(155deg,var(--panel),var(--panel-soft));
+ --key-glass-rim:var(--grid-strong);
+ --key-glass-rim-top:var(--grid-strong);
+ --key-glass-highlight:rgba(255,255,255,.18);
+ --key-glass-blur:none;
+ --key-glass-rest-shadow:inset 0 1px 0 var(--key-glass-highlight),0 5px 18px -12px var(--shadow);
+ --key-glass-hover-shadow:inset 0 1px 0 var(--key-glass-highlight),0 7px 22px -12px var(--shadow);
+ --key-glass-pressed-shadow:inset 0 1px 5px var(--shadow);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) and (background:color-mix(in srgb,white 50%,transparent)){
+ body{
+  --key-glass-face:linear-gradient(150deg,rgba(255,255,255,.09),transparent 48%),linear-gradient(155deg,color-mix(in srgb,var(--panel-soft) 64%,transparent),color-mix(in srgb,var(--panel) 38%,transparent));
+  --key-glass-hover:linear-gradient(150deg,rgba(255,255,255,.13),transparent 52%),linear-gradient(155deg,color-mix(in srgb,var(--related) 72%,transparent),color-mix(in srgb,var(--panel-soft) 46%,transparent));
+  --key-glass-pressed:linear-gradient(155deg,color-mix(in srgb,var(--selected) 78%,transparent),color-mix(in srgb,var(--panel-soft) 60%,transparent));
+  --key-glass-disabled:linear-gradient(155deg,color-mix(in srgb,var(--panel) 54%,transparent),color-mix(in srgb,var(--panel) 34%,transparent));
+  --key-glass-rim:color-mix(in srgb,var(--text) 20%,transparent);
+  --key-glass-rim-top:color-mix(in srgb,var(--text) 30%,transparent);
+  --key-glass-blur:blur(18px) saturate(115%);
+ }
+ /* Light themes keep a pale pane instead of a grey wash over their scenery. */
+ body:is([data-color-scheme=light],[data-theme=ivory],[data-theme=sakura],[data-theme=sunset]){
+  --key-glass-face:linear-gradient(150deg,rgba(255,255,255,.42),transparent 52%),linear-gradient(155deg,color-mix(in srgb,var(--panel) 68%,transparent),color-mix(in srgb,var(--panel-soft) 42%,transparent));
+  --key-glass-hover:linear-gradient(150deg,rgba(255,255,255,.54),transparent 56%),linear-gradient(155deg,color-mix(in srgb,var(--panel) 76%,transparent),color-mix(in srgb,var(--related) 50%,transparent));
+  --key-glass-highlight:rgba(255,255,255,.68);
+ }
+ body[data-zen=on]{--key-glass-blur:blur(18px) saturate(100%)}
+}
+body #number-pad .number-key{position:relative;box-sizing:border-box;border:1px solid var(--key-glass-rim);border-top-color:var(--key-glass-rim-top);background:var(--key-glass-face);color:var(--text);box-shadow:var(--key-glass-rest-shadow);backdrop-filter:var(--key-glass-blur);-webkit-backdrop-filter:var(--key-glass-blur);transform:none;transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,color .16s ease}
+body #number-pad .key-value{line-height:1;text-shadow:none}
+/* Touch does not acquire a persistent hover treatment. */
+body #number-pad .number-key:hover:not(:disabled){border-color:var(--key-glass-rim);border-top-color:var(--key-glass-rim-top);background:var(--key-glass-face);box-shadow:var(--key-glass-rest-shadow);transform:none}
+@media(hover:hover) and (pointer:fine){body #number-pad .number-key:hover:not(:disabled){border-color:var(--accent);background:var(--key-glass-hover);box-shadow:var(--key-glass-hover-shadow);transform:none}}
+body #number-pad .number-key:focus-visible:not(:disabled){border-color:var(--accent);outline:2px solid var(--accent);outline-offset:4px}
+body #number-pad .number-key:active:not(:disabled){border-color:var(--accent);background:var(--key-glass-pressed);box-shadow:var(--key-glass-pressed-shadow);transform:none}
+body #number-pad .number-key:disabled{opacity:1;color:var(--muted);border-color:var(--line);background:var(--key-glass-disabled);box-shadow:inset 0 1px 0 var(--key-glass-highlight);transform:none;cursor:default}
+
+/* A concise answer and an optional real warning share one 44px action slot.
+   No clipped text, absolute overlay, hidden spacer or nested scroll area. */
+body #hint-panel{display:grid;box-sizing:border-box;grid-template-columns:minmax(0,1fr) auto 44px;grid-template-rows:1fr auto;align-items:center;column-gap:8px;row-gap:0;width:100%;max-width:100%;min-width:0;min-height:44px;margin:0;padding:0 0 0 10px;border:0;border-radius:9px;background:var(--key-glass-face);box-shadow:inset 0 0 0 1px var(--key-glass-rim);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 36%,transparent);backdrop-filter:var(--key-glass-blur);-webkit-backdrop-filter:var(--key-glass-blur)}
+body #hint-panel .hint-symbol{grid-column:1;grid-row:1;justify-self:start;width:14px;height:14px;color:var(--accent);pointer-events:none}
+body #hint-panel .hint-topline{grid-column:3;grid-row:1/3;align-self:center;min-height:0;display:block}
+body #hint-panel #hint-close{width:44px;height:44px;min-height:44px;padding:12px;border:0;background:transparent;color:var(--muted);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+body #hint-panel #hint-close:hover{background:var(--related);color:var(--text)}
+body #hint-panel #hint-title{grid-column:1;grid-row:1;min-width:0;margin:0;padding-left:18px;font-size:13px;font-weight:500;line-height:20px;color:var(--text);overflow-wrap:anywhere}
+body #hint-panel #hint-value{grid-column:2;grid-row:1/3;display:block;min-width:28px;text-align:center;font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:32px;font-weight:600;line-height:1;color:var(--text)}
+body #hint-panel #hint-text{grid-column:1;grid-row:2;margin:0;padding-left:18px;font-size:12px;line-height:18px;color:var(--muted)}
+body #hint-panel #hint-text:empty{display:none}
+body #hint-panel:has(#hint-value[hidden]) :is(#hint-title,#hint-text){grid-column:1/3}
+body[data-text-size=large] #hint-panel #hint-title{font-size:15px}
+body[data-text-size=large] #hint-panel #hint-text{font-size:14px}
+body[data-text-size=large] #hint-panel #hint-value{font-size:34px}
+body[data-advanced-tools=off] :is(#more-tools-toggle,#more-tools-panel){display:none!important}
+
+/* Accessibility preferences preserve feedback without movement or transparency. */
+body:is([data-fx=off],[data-motion=reduced]) #number-pad .number-key{transition:none}
+@media(prefers-reduced-motion:reduce){body #number-pad .number-key{transition:none}}
+@media(prefers-reduced-transparency:reduce){
+ body #number-pad .number-key,body #number-pad .number-key:hover:not(:disabled),body #hint-panel{background:var(--panel-soft);backdrop-filter:none;-webkit-backdrop-filter:none}
+ body #number-pad .number-key:hover:not(:disabled){border-color:var(--accent)}
+ body #number-pad .number-key:active:not(:disabled){background:var(--selected)}
+ body #number-pad .number-key:disabled{background:var(--panel)}
+}
+@media(forced-colors:active){
+ body #number-pad .number-key,body #number-pad .number-key:is(:hover,:active,:focus-visible){background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none}
+ body #number-pad .number-key:active:not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight}
+ body #number-pad .number-key:focus-visible:not(:disabled){border-color:ButtonText;outline:2px solid Highlight;outline-offset:4px}
+ body #number-pad .number-key:disabled{color:GrayText;border-color:GrayText;background:ButtonFace}
+ body #hint-panel{background:Canvas;color:CanvasText;outline:1px solid CanvasText;outline-offset:-1px;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+ body #hint-panel :is(.hint-symbol,#hint-title,#hint-value,#hint-text,#hint-close){color:CanvasText}
+}
+
+/* Final geometry guards outrank shared desktop padding, large-text rules and
+   short-window typography without touching classic or any cell's inline edges. */
+body[data-workspace=unified][data-desktop=on][data-outside-clues=true] .board-card{padding:var(--outside-clue-gutter)}
+body[data-workspace=unified][data-desktop=on][data-multi=true] .board-card{padding:var(--multi-board-padding)}
+body[data-workspace=unified][data-desktop=on][data-multi=true]{--multi-overview-board:var(--desktop-board)}
+body[data-workspace=unified][data-desktop=on][data-multi=true][data-multi-view=overview]{--desktop-column:min(760px,calc(100vw - 88px - var(--desktop-tools-width)))}
+body[data-workspace=unified][data-desktop=on][data-multi=true][data-multi-view=overview][data-draft-rail=on]{--desktop-column:min(760px,calc(100vw - 112px - var(--desktop-tools-width) - var(--draft-rail-width)))}
+body[data-workspace=unified][data-desktop=on] .desktop-board-alerts>#multigrid-tools{width:100%;margin:0}
+
+/* Resolve the live dimension on .board, where applyBoardView sets it. Container
+   units use the actual inner width; the length fallback covers older WebViews.
+   Focused sub-boards deliberately keep the shared 9x9 typography and 620px cap. */
+body[data-workspace=unified][data-multi=true][data-multi-view=overview] .board{
+ --multi-cell-size:calc((var(--multi-overview-board) - 2 * var(--multi-board-padding) - 2px) / var(--board-dimension));
+ --multi-digit-scale:.64;--multi-note-scale:.23;--multi-digit-max:30px;--multi-note-max:11px;
+}
+body[data-workspace=unified][data-multi=true][data-multi-view=overview][data-text-size=large] .board{--multi-digit-scale:.72;--multi-note-scale:.25;--multi-digit-max:33px;--multi-note-max:12px}
+body[data-workspace=unified][data-multi=true][data-multi-view=overview] .board .cell{font-size:clamp(8px,calc(var(--multi-cell-size) * var(--multi-digit-scale)),var(--multi-digit-max))}
+body[data-workspace=unified][data-multi=true][data-multi-view=overview] .board .cell .notes{inset:0;font-size:clamp(3px,calc(var(--multi-cell-size) * var(--multi-note-scale)),var(--multi-note-max))}
+body[data-workspace=unified][data-multi=true][data-multi-view=overview] .cell.selected::after{inset:1px;border-width:1px;border-radius:2px}
+@supports (width:1cqi){body[data-workspace=unified][data-multi=true][data-multi-view=overview] .board{--multi-cell-size:calc(100cqi / var(--board-dimension))}}
+
+/* Clue gutters make compact cells smaller than classic cells. Fit all three
+   note rows inside the actual cell, including the user's stronger grid stroke.
+   The 300px board floor also applies in short, non-desktop windows. */
+body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board{
+ --clue-board-width:min(max(300px,var(--workspace-board)),var(--workspace-dock),calc(100vw - 24px));
+ --clue-cell-size:calc((var(--clue-board-width) - 2 * var(--outside-clue-gutter) - 4px) / var(--board-dimension));
+ --clue-digit-scale:.78;--clue-digit-max:32px;--clue-note-scale:.9;--clue-note-max:11px;
+}
+body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on])[data-text-size=large] .board{--clue-digit-scale:.84;--clue-digit-max:36px;--clue-note-scale:1;--clue-note-max:12px}
+body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board .cell{font-size:min(var(--clue-digit-max),calc((var(--clue-cell-size) - var(--reading-strong-width,2px)) * var(--clue-digit-scale)))}
+body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board .cell .notes{inset:1px;font-size:min(var(--clue-note-max),calc((var(--clue-cell-size) - var(--reading-strong-width,2px) - 2px) / 3 * var(--clue-note-scale)))}
+@supports (width:1cqi){body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board{--clue-cell-size:calc((100cqi - 2px) / var(--board-dimension))}}
+@media(min-width:761px) and (max-height:800px){
+ body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board{--clue-digit-max:27px;--clue-note-max:10.5px}
+ body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on])[data-text-size=large] .board{--clue-digit-max:30px;--clue-note-max:11.5px}
+}
+@media(max-width:760px){
+ body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board{--clue-digit-max:26px;--clue-note-max:10.5px}
+ body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on])[data-text-size=large] .board{--clue-digit-max:29px;--clue-note-max:11.5px}
+}
+@media(max-width:350px){body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]):not([data-text-size=large]) .board{--clue-digit-max:24px}}
+
+/* No invented 9x9 scaffold for irregular/linked geometry. This faint field is
+   decorative only; the actual board, clues and draft marks remain hidden. */
+body[data-workspace=unified]:is([data-multi=true],[data-mode=jigsaw]) .pause-overlay::before{content:"";position:absolute;z-index:0;inset:8px;border:0;border-radius:5px;background-image:radial-gradient(circle,color-mix(in srgb,var(--grid-strong) 32%,transparent) .8px,transparent 1px);background-size:18px 18px;pointer-events:none}
+body[data-workspace=unified]:is([data-multi=true],[data-mode=jigsaw]) .pause-card{position:relative;z-index:1}
+
+/* Immutable clue materials are shared by live play and history replay. Each
+   family keeps its conventional hue/shape; contrast follows the user's theme. */
+body{
+ --clue-ink-share:70%;--clue-neutral-share:78%;--clue-thermo-share:74%;
+ --clue-line:color-mix(in srgb,var(--text) var(--clue-ink-share),var(--accent-two));
+ --clue-neutral:color-mix(in srgb,var(--text) var(--clue-neutral-share),var(--cell-bg));
+ --clue-thermo-ink:color-mix(in srgb,var(--text) var(--clue-thermo-share),var(--cell-bg));
+ --clue-thermo-fill:color-mix(in srgb,var(--text) 20%,var(--cell-bg));
+ --clue-renban:color-mix(in srgb,var(--text) var(--clue-ink-share),#a46bcd);
+ --clue-whispers:color-mix(in srgb,var(--text) var(--clue-ink-share),#2cad75);
+ --clue-palindrome:var(--clue-neutral);
+ --clue-between:var(--clue-line);
+ --clue-lockout:color-mix(in srgb,var(--text) var(--clue-ink-share),#719bd1);
+ --clue-entropic:color-mix(in srgb,var(--text) var(--clue-ink-share),#ce9a47);
+ --clue-modular:color-mix(in srgb,var(--text) var(--clue-ink-share),#648fc3);
+ --clue-region-sum:color-mix(in srgb,var(--text) var(--clue-ink-share),#51a5b8);
+ --clue-label:color-mix(in srgb,var(--text) 90%,var(--accent));
+ --clue-edge:var(--text);--clue-cage:var(--clue-neutral);
+}
+body[data-line-contrast=strong]{--clue-ink-share:82%;--clue-neutral-share:88%;--clue-thermo-share:86%}
+
+/* One common stacking context: backgrounds, draft marks, immutable clues,
+   then digits/notes. A separate isolated .board would trap its text beneath SVG. */
+body[data-workspace=unified] .board{isolation:auto}
+.board-grid-shell .cell,.board-grid-shell .cell.hint-cell,.board-grid-shell .cell:focus-visible,.history-cell{z-index:auto}
+.board-grid-shell .cell:disabled{opacity:1}
+.variant-overlay,#history-replay-overlay{z-index:4;pointer-events:none}
+.draft-overlay,#history-draft-overlay{z-index:3;pointer-events:none}
+.board-grid-shell .cell .value,.board-grid-shell .cell .notes,.history-cell .history-value,.history-cell .history-notes{z-index:6;pointer-events:none}
+.board-grid-shell .cell.selected::after{z-index:7}
+
+/* Structural clues stay understated but continuous; these do not introduce
+   any new marks into modes without visible immutable clues. */
+:is(.cell,.history-cell).diagonal-main{background-image:linear-gradient(45deg,transparent 48.5%,var(--clue-line) 49%,var(--clue-line) 51%,transparent 51.5%)}
+:is(.cell,.history-cell).diagonal-anti{background-image:linear-gradient(-45deg,transparent 48.5%,var(--clue-line) 49%,var(--clue-line) 51%,transparent 51.5%)}
+:is(.cell,.history-cell).diagonal-main.diagonal-anti{background-image:linear-gradient(45deg,transparent 48.5%,var(--clue-line) 49%,var(--clue-line) 51%,transparent 51.5%),linear-gradient(-45deg,transparent 48.5%,var(--clue-line) 49%,var(--clue-line) 51%,transparent 51.5%)}
+:is(.cell,.history-cell)[class*="hyper-"]::before{content:"";position:absolute;inset:0;border:0 dashed var(--clue-cage);background:color-mix(in srgb,var(--clue-line) 8%,transparent);pointer-events:none}
+:is(.cell,.history-cell).window-top::before{border-top-width:1px}
+:is(.cell,.history-cell).window-bottom::before{border-bottom-width:1px}
+:is(.cell,.history-cell).window-left::before{border-left-width:1px}
+:is(.cell,.history-cell).window-right::before{border-right-width:1px}
+:is(.cell,.history-cell).window-top.window-left::before{border-top-left-radius:4px}
+:is(.cell,.history-cell).window-top.window-right::before{border-top-right-radius:4px}
+:is(.cell,.history-cell).window-bottom.window-left::before{border-bottom-left-radius:4px}
+:is(.cell,.history-cell).window-bottom.window-right::before{border-bottom-right-radius:4px}
+@media(forced-colors:active){
+ body{--clue-line:CanvasText;--clue-neutral:CanvasText;--clue-thermo-ink:CanvasText;--clue-thermo-fill:Canvas;--clue-renban:CanvasText;--clue-whispers:CanvasText;--clue-palindrome:CanvasText;--clue-between:CanvasText;--clue-lockout:CanvasText;--clue-entropic:CanvasText;--clue-modular:CanvasText;--clue-region-sum:CanvasText;--clue-label:CanvasText;--clue-edge:CanvasText;--clue-cage:CanvasText}
+ :is(.variant-overlay,#history-replay-overlay) [data-arrow-path],:is(.variant-overlay,#history-replay-overlay) [data-arrow-circle],:is(.variant-overlay,#history-replay-overlay) [data-arrow-head]{stroke:CanvasText}
+ :is(.variant-overlay,#history-replay-overlay) [data-arrow-underlay]{stroke:Canvas}
+}
+
+/* System colors retain hollow/solid marker meaning and text halos. Opt out only
+   for the clue SVG and diagonal pseudo-layer, not the selectable cell itself. */
+@media(forced-colors:active){
+ :is(.variant-overlay,#history-replay-overlay){forced-color-adjust:none}
+ :is(.variant-overlay,#history-replay-overlay) [fill="var(--cell-bg)"]{fill:Canvas}
+ :is(.variant-overlay,#history-replay-overlay) [stroke="var(--cell-bg)"]{stroke:Canvas}
+ :is(.variant-overlay,#history-replay-overlay) :is([fill="var(--accent)"],[fill="var(--branch)"]){fill:CanvasText}
+ :is(.cell,.history-cell):is(.diagonal-main,.diagonal-anti)::before{content:"";position:absolute;inset:0;pointer-events:none;forced-color-adjust:none}
+ :is(.cell,.history-cell).diagonal-main::before{background-image:linear-gradient(45deg,transparent 48.5%,CanvasText 49%,CanvasText 51%,transparent 51.5%)}
+ :is(.cell,.history-cell).diagonal-anti::before{background-image:linear-gradient(-45deg,transparent 48.5%,CanvasText 49%,CanvasText 51%,transparent 51.5%)}
+ :is(.cell,.history-cell).diagonal-main.diagonal-anti::before{background-image:linear-gradient(45deg,transparent 48.5%,CanvasText 49%,CanvasText 51%,transparent 51.5%),linear-gradient(-45deg,transparent 48.5%,CanvasText 49%,CanvasText 51%,transparent 51.5%)}
+}
+
+
+/* Quiet frosted annotations: numbers are foreground; clue shapes are a single
+   restrained material rather than bright double rails. Strong/system modes
+   retain solid, higher-contrast silhouettes without decorative lighting. */
+body{
+ --clue-material-share:56%;--clue-glass-light:#d9eafa;--clue-glass-shade:#141d30;
+ --clue-arrow-base:color-mix(in srgb,var(--text) 42%,var(--cell-bg));
+}
+body:is([data-theme=ivory],[data-theme=sakura],[data-theme=sunset]){
+ --clue-material-share:40%;--clue-glass-light:#ffffff;--clue-glass-shade:#717789;
+}
+body:not([data-line-contrast=strong]){
+ --clue-thermo-fill:color-mix(in srgb,var(--text) 34%,var(--cell-bg));
+ --clue-line:color-mix(in srgb,color-mix(in srgb,var(--accent-two) 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-palindrome:color-mix(in srgb,var(--text) 44%,var(--cell-bg));
+ --clue-cage:color-mix(in srgb,var(--text) 55%,var(--cell-bg));
+ --clue-renban:color-mix(in srgb,color-mix(in srgb,#a46bcd 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-whispers:color-mix(in srgb,color-mix(in srgb,#2cad75 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-between:color-mix(in srgb,color-mix(in srgb,#a18abf 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-lockout:color-mix(in srgb,color-mix(in srgb,#719bd1 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-entropic:color-mix(in srgb,color-mix(in srgb,#ce9a47 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-modular:color-mix(in srgb,color-mix(in srgb,#648fc3 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+ --clue-region-sum:color-mix(in srgb,color-mix(in srgb,#51a5b8 65%,var(--text)) var(--clue-material-share),var(--cell-bg));
+}
+body:is([data-theme=ivory],[data-theme=sakura],[data-theme=sunset]):not([data-line-contrast=strong]){
+ --clue-thermo-fill:color-mix(in srgb,var(--text) 18%,var(--cell-bg));
+ --clue-arrow-base:color-mix(in srgb,var(--text) 24%,var(--cell-bg));
+ --clue-palindrome:color-mix(in srgb,var(--text) 32%,var(--cell-bg));
+}
+body{
+ --clue-thermo-glass-start:color-mix(in srgb,var(--clue-thermo-fill) 86%,var(--clue-glass-light));
+ --clue-thermo-glass-mid:var(--clue-thermo-fill);
+ --clue-thermo-glass-end:color-mix(in srgb,var(--clue-thermo-fill) 91%,var(--clue-glass-shade));
+ --clue-renban-glass-start:color-mix(in srgb,var(--clue-renban) 86%,var(--clue-glass-light));
+ --clue-renban-glass-mid:var(--clue-renban);
+ --clue-renban-glass-end:color-mix(in srgb,var(--clue-renban) 91%,var(--clue-glass-shade));
+ --clue-whispers-glass-start:color-mix(in srgb,var(--clue-whispers) 86%,var(--clue-glass-light));
+ --clue-whispers-glass-mid:var(--clue-whispers);
+ --clue-whispers-glass-end:color-mix(in srgb,var(--clue-whispers) 91%,var(--clue-glass-shade));
+ --clue-palindrome-glass-start:color-mix(in srgb,var(--clue-palindrome) 86%,var(--clue-glass-light));
+ --clue-palindrome-glass-mid:var(--clue-palindrome);
+ --clue-palindrome-glass-end:color-mix(in srgb,var(--clue-palindrome) 91%,var(--clue-glass-shade));
+ --clue-between-glass-start:color-mix(in srgb,var(--clue-between) 86%,var(--clue-glass-light));
+ --clue-between-glass-mid:var(--clue-between);
+ --clue-between-glass-end:color-mix(in srgb,var(--clue-between) 91%,var(--clue-glass-shade));
+ --clue-lockout-glass-start:color-mix(in srgb,var(--clue-lockout) 86%,var(--clue-glass-light));
+ --clue-lockout-glass-mid:var(--clue-lockout);
+ --clue-lockout-glass-end:color-mix(in srgb,var(--clue-lockout) 91%,var(--clue-glass-shade));
+ --clue-entropic-glass-start:color-mix(in srgb,var(--clue-entropic) 86%,var(--clue-glass-light));
+ --clue-entropic-glass-mid:var(--clue-entropic);
+ --clue-entropic-glass-end:color-mix(in srgb,var(--clue-entropic) 91%,var(--clue-glass-shade));
+ --clue-modular-glass-start:color-mix(in srgb,var(--clue-modular) 86%,var(--clue-glass-light));
+ --clue-modular-glass-mid:var(--clue-modular);
+ --clue-modular-glass-end:color-mix(in srgb,var(--clue-modular) 91%,var(--clue-glass-shade));
+ --clue-region-sum-glass-start:color-mix(in srgb,var(--clue-region-sum) 86%,var(--clue-glass-light));
+ --clue-region-sum-glass-mid:var(--clue-region-sum);
+ --clue-region-sum-glass-end:color-mix(in srgb,var(--clue-region-sum) 91%,var(--clue-glass-shade));
+}
+/* Small note glyphs keep ordinary ink contrast, not a glowing badge. */
+body[data-workspace=unified] .cell .notes{color:var(--text)}
+.history-cell .history-notes{color:var(--text);font-family:"Nine Realms Numerals","Segoe UI",sans-serif}
+.history-cell .history-value{font-family:"Nine Realms Numerals","Segoe UI",sans-serif}
+:is(.variant-overlay,#history-replay-overlay) text[fill="var(--clue-renban)"]{fill:var(--clue-label)}
+.variant-thermo-shell{display:none}
+body[data-line-contrast=strong]{--clue-arrow-base:var(--text)}
+body[data-line-contrast=strong] .variant-thermo-shell{display:inline}
+body[data-line-contrast=strong] .variant-thermometer-material{filter:none}
+body[data-line-contrast=strong] .variant-glass-line{stroke:var(--variant-solid-color)}
+body[data-line-contrast=strong] .variant-glass-fill{fill:var(--variant-solid-color)}
+body[data-line-contrast=strong] .variant-line--renban{stroke-width:9}
+body[data-line-contrast=strong] :is(.variant-line--whispers,.variant-line--palindrome){stroke-width:6.5}
+body[data-line-contrast=strong] :is(.variant-line--between,.variant-line--lockout){stroke-width:5}
+body[data-line-contrast=strong] :is(.variant-line--entropic,.variant-line--modular,.variant-line--region-sum){stroke-width:6}
+body[data-line-contrast=strong] :is(.variant-endpoint--between,.variant-endpoint--lockout){stroke-width:4.5}
+body:is([data-fx=off],[data-motion=reduced]) .variant-thermometer-material{filter:none}
+@media(prefers-reduced-motion:reduce){.variant-thermometer-material{filter:none}}
+@media(prefers-reduced-transparency:reduce){
+ .variant-thermometer-material{filter:none}
+ .variant-glass-line{stroke:var(--variant-solid-color)}
+ .variant-glass-fill{fill:var(--variant-solid-color)}
+}
+@media(forced-colors:active){
+ body:not([data-line-contrast=strong]),body:is([data-theme=ivory],[data-theme=sakura],[data-theme=sunset]):not([data-line-contrast=strong]){--clue-line:CanvasText;--clue-thermo-fill:Canvas;--clue-renban:CanvasText;--clue-whispers:CanvasText;--clue-palindrome:CanvasText;--clue-between:CanvasText;--clue-lockout:CanvasText;--clue-entropic:CanvasText;--clue-modular:CanvasText;--clue-region-sum:CanvasText;--clue-cage:CanvasText;--clue-arrow-base:CanvasText}
+ .variant-thermometer-material{filter:none}
+ .variant-thermo-shell{display:inline}
+ .variant-glass-line{stroke:var(--variant-solid-color)}
+ .variant-glass-fill{fill:var(--variant-solid-color)}
+ body[data-workspace=unified] .cell .notes,.history-cell .history-notes{color:CanvasText}
+}
+
+/* A narrow contour clearance only for editable ink and tiny note glyphs on
+   line-clue boards. It is not a glow or a rectangle, and leaves ordinary givens
+   and all clue routes untouched. Progressive enhancement, no fake backdrop. */
+@supports (-webkit-text-stroke:1px black) and (paint-order:stroke fill){
+ .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell:not(.given) .value,
+ .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell:not(.given) .history-value{
+  --ink-clearance:.04em;--ink-clearance-surface:var(--cell-bg);
+  -webkit-text-stroke:var(--ink-clearance) var(--ink-clearance-surface);paint-order:stroke fill;
+ }
+ .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell .notes>span,
+ .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell .history-notes>span{
+  --ink-clearance:.12em;--ink-clearance-surface:var(--cell-bg);
+  -webkit-text-stroke:var(--ink-clearance) var(--ink-clearance-surface);paint-order:stroke fill;
+ }
+ body[data-line-contrast=strong] .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell.given .value,
+ body[data-line-contrast=strong] .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell.given .history-value{
+  --ink-clearance:.04em;--ink-clearance-surface:var(--cell-bg);
+  -webkit-text-stroke:var(--ink-clearance) var(--ink-clearance-surface);paint-order:stroke fill;
+ }
+}
+@media(forced-colors:active){
+ .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell:not(.given) .value,
+ .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell .notes>span,
+ .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell:not(.given) .history-value,
+ .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell .history-notes>span,
+ body[data-line-contrast=strong] .board-grid-shell:has(.variant-overlay [data-line-cells]) .cell.given .value,
+ body[data-line-contrast=strong] .history-board-stage:has(.history-replay-overlay [data-line-cells]) .history-cell.given .history-value{--ink-clearance-surface:Canvas}
+}
+
+/* Arrow numerals: a small glyph-shaped clearance, not a cell-sized plate.
+   Mirror the existing background selectors/order through zero-specificity
+   board scopes. Candidate glyphs and every non-arrow family stay unchanged. */
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell:hover:not(:disabled){--numeral-base:var(--selected)}
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell{--numeral-base:var(--cell-bg)}
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell.shared{--numeral-base:color-mix(in srgb,var(--accent) 13%,var(--cell-bg))}
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell.replay-changed{--numeral-base:var(--selected)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell{--numeral-base:var(--cell-bg)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.related{--numeral-base:color-mix(in srgb,var(--related) 72%,var(--cell-bg))}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.same-value{--numeral-base:var(--same)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.selected{--numeral-base:var(--selected)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.conflict{--numeral-base:var(--error-bg)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.hint-focus{--numeral-base:color-mix(in srgb,var(--accent) 16%,var(--cell-bg))}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.branch-cell:not(.conflict){--numeral-base:var(--branch-tint)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.batch-selected{--numeral-base:var(--selected)}
+body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.fogged{--numeral-base:var(--panel-soft)}
+@media(hover:hover) and (pointer:fine){
+ body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell:hover:not(:disabled):not(.selected):not(.conflict){--numeral-base:color-mix(in srgb,var(--related) 78%,var(--cell-bg))}
+}
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell,
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell{--numeral-surface:var(--numeral-base);--arrow-value-clearance:.08em}
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color="1"],
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color="1"]{--numeral-surface:color-mix(in srgb,#23bac2 20%,var(--numeral-base))}
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color="2"],
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color="2"]{--numeral-surface:color-mix(in srgb,#dfad38 20%,var(--numeral-base))}
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color="3"],
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color="3"]{--numeral-surface:color-mix(in srgb,#a184e8 20%,var(--numeral-base))}
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color="4"],
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color="4"]{--numeral-surface:color-mix(in srgb,#e47d99 20%,var(--numeral-base))}
+/* The SVG bulb disk covers the selected/related background and draft color. */
+:where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell.arrow-bulb-cell,
+:where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell.arrow-bulb-cell{--numeral-value-surface:var(--cell-bg)}
+/* A flat contour cannot reproduce the spatial dots/stripes or a compact
+   draft layer's inset rounded edge. Leave those non-bulb numerals unoutlined. */
+body[data-color-assist=true] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color]:not([data-draft-color="0"]):not(.arrow-bulb-cell),
+body[data-color-assist=true] :where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color]:not([data-draft-color="0"]):not(.arrow-bulb-cell){--arrow-value-clearance:0}
+@media(max-width:800px){
+ :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell[data-draft-color]:not([data-draft-color="0"]):not(.arrow-bulb-cell),
+ :where(.history-board-stage:has(.history-replay-overlay [data-arrow-path])) .history-cell[data-draft-color]:not([data-draft-color="0"]):not(.arrow-bulb-cell){--arrow-value-clearance:0}
+}
+@supports (-webkit-text-stroke:1px black) and (paint-order:stroke fill){
+ /* Switch a flat background and its contour together; retain semantic ink
+    fading. Global no-motion rules still override this with !important. */
+ body[data-workspace=unified] :where(.board-grid-shell:has(.variant-overlay [data-arrow-path])) .cell{transition:color .15s}
+ body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell:is(.given,:not(.given)) .value,
+ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell:is(.given,:not(.given)) .history-value{
+  --ink-clearance:var(--arrow-value-clearance,.08em);--ink-clearance-surface:var(--numeral-value-surface,var(--numeral-surface,var(--cell-bg)));
+  -webkit-text-stroke:var(--ink-clearance) var(--ink-clearance-surface);paint-order:stroke fill;
+ }
+}
+@media(forced-colors:active){
+ body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell:is(.given,:not(.given)) .value,
+ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell:is(.given,:not(.given)) .history-value{--ink-clearance:.08em;--ink-clearance-surface:Canvas}
+}
+
+/* A bulb already removes every shaft beneath its centered value. A numeral's
+   contour can extend beyond the disk on compact boards, so never paint one
+   there, including forced colors. Arrowhead placement is independent. */
+body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell.arrow-bulb-cell:is(.given,:not(.given)) .value,
+body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell.arrow-bulb-cell:is(.given,:not(.given)) .history-value{--ink-clearance:0}
+
+/* Arrow-only, preserves preferred sizes by capping at each glyph child.
+   Conservative fixed caps serve engines without board container units.
+   The shared shell contains both SVG and digits; cells never gain a new
+   stacking context. Existing .12em note clearance scales with each glyph. */
+body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell .notes,
+body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-notes{inset:20%}
+body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell .value,
+body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-value{font-size:min(1em,20px)}
+body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell .notes>span,
+body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-notes>span{font-size:min(1em,6px)}
+@supports (container-type:inline-size) and (font-size:1cqw){
+ .board-grid-shell:has(.variant-overlay [data-arrow-path]),
+ .history-board-stage:has(.history-replay-overlay [data-arrow-path]){container-type:inline-size}
+ body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell .value,
+ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-value{font-size:min(1em,7.777777cqw)}
+ body[data-workspace=unified] .board-grid-shell:has(.variant-overlay [data-arrow-path]) .cell .notes>span,
+ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-notes>span{font-size:min(1em,2.222222cqw)}
+}

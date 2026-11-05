@@ -1,5 +1,6 @@
 /* Optional DOM simulation only, not actual rendered layout. */
 'use strict';
+const {enableDormantDOM}=require('./dormant-tools-fixture.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
 const dom=new JSDOM('<button id="history-open">历史</button><dialog id="other"><button id="other-focus">别的对话框</button></dialog>',{url:'https://ninerealms.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,d=w.document,$=id=>d.getElementById(id),resumed=[];
 w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
@@ -33,6 +34,8 @@ async function fullApp(){
  }}),w=dom.window,d=w.document,$=id=>d.getElementById(id),tick=()=>new Promise(r=>setTimeout(r,25)),saved=()=>JSON.parse(w.localStorage.getItem('nine-realms.sudoku.v1')).game;
  try{
   await tick();assert.deepEqual(errors,[]);assert.equal(saved().sessionId,initial.game.sessionId);if(saved().paused)$('resume-btn').click();
+  // Explicit dormant draft/checkpoint fixture; no current UI reachability claim.
+  enableDormantDOM(w);
   const target=w.JSON.parse(JSON.stringify({version:8,game:{...initial.game,sessionId:'cp-target',puzzleId:q.id,sourceId:q.sourceId,clues:q.clues,givens:q.givens,solution:q.solution,board:q.givens.slice(),notes:Array(81).fill(0)}}));w.NineRealmsHistory.capture(target,{origin:'new'});target.game.hints=1;w.NineRealmsHistory.capture(target,{action:'查看提示'});w.NineRealmsHistory.markCheckpoint('cp-target',1,'回看另一局');
   $('draft-toggle').click();$('checkpoints-open').click();assert($('history-dialog').open);assert($('checkpoint-panel').open);$('checkpoint-label').value='当前笔记卡点';$('checkpoint-mark-current').click();assert(w.NineRealmsHistory.checkpoints({sessionId:'cp-live-session',kind:'manual'}).length,$('checkpoint-status').textContent);
   d.querySelector('[data-checkpoint-kind="manual"]').click();let row=[...d.querySelectorAll('.checkpoint-row')].find(r=>r.dataset.checkpointKey.startsWith('cp-target:'));row.querySelectorAll('button')[0].click();assert.equal($('history-replay-slider').value,'1');

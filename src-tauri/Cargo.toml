@@ -1,0 +1,26 @@
+[package]
+name = "nine-realms-tauri"
+version = "1.2.0"
+description = "Nine Realms offline desktop shell"
+edition = "2021"
+license = "MIT"
+
+[build-dependencies]
+tauri-build = { version = "=2.7.4", features = [] }
+
+[dependencies]
+tauri = { version = "=2.12.5", features = [] }
+tauri-plugin-single-instance = "=2.5.5"
+tauri-plugin-dialog = "=2.8.4"
+tauri-plugin-clipboard-manager = "=2.5.0"
+serde_json = "1"
+tempfile = "3"
+
+[features]
+default = []
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true

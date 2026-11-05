@@ -46,7 +46,7 @@
  $('backup-close').addEventListener('click',function(){if(!busy&&!options.locked())options.close($('backup-dialog'));});
  $('backup-dialog').addEventListener('cancel',function(event){if(busy||options.locked())event.preventDefault();});
  $('backup-dialog').addEventListener('close',function(){resetImport();options.afterClose();});
- $('backup-export').addEventListener('click',async function(){try{await options.exportBackup();message('backup-status','备份文件已准备下载，请保存到安全位置。');}catch(e){message('backup-status',e.message);}});
+ $('backup-export').addEventListener('click',async function(){try{var saved=await options.exportBackup();message('backup-status',saved===false?'已取消保存，当前数据保留。':options.nativeSave&&options.nativeSave()?'备份文件已保存。':'备份文件已准备下载，请保存到安全位置。');}catch(e){message('backup-status',e.message||'备份保存未完成。');}});
  $('backup-file').addEventListener('change',async function(){
   resetImport();var request=epoch,file=this.files&&this.files[0];if(!file)return;
   if(file.size>options.maxBackupBytes){message('backup-status','文件过大，请选择九境导出的备份文件。');return;}
@@ -59,7 +59,7 @@
  $('backup-replace').addEventListener('click',async function(){
   if(!pending||!$('backup-confirm').checked||busy)return;busy=true;$('backup-replace').disabled=true;message('backup-status','正在替换数据，完成后自动重新载入……');
   try{await options.commitBackup(pending);}
-  catch(e){message('backup-status',e.message||'导入未完成。');if(e.recoveryRequired){message('backup-status',e.message+' 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。');['backup-file','backup-export','backup-confirm'].forEach(function(id){$(id).disabled=true;});$('backup-recovery').hidden=false;$('backup-recovery').onclick=function(){options.downloadRecovery(e.previousBackup);};}}
+  catch(e){message('backup-status',e.message||'导入未完成。');if(e.recoveryRequired){message('backup-status',e.message+' 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。');['backup-file','backup-export','backup-confirm'].forEach(function(id){$(id).disabled=true;});$('backup-recovery').hidden=false;$('backup-recovery').onclick=async function(){try{await options.downloadRecovery(e.previousBackup);}catch(error){message('backup-status',error.message||'恢复日志保存未完成。');}};}}
   finally{busy=false;if(!options.locked())$('backup-replace').disabled=!pending||!$('backup-confirm').checked;}
  });
  return {refreshCurrent:refreshCurrent,render:render};

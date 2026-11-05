@@ -1,0 +1,80 @@
+Nine Realms — parallel Rust / Tauri desktop shell (product version stays 1.2.0)
+
+This is a separate installation: product "Nine Realms Tauri", identifier
+com.sakauma.ninerealms.tauri, executable nine-realms-tauri. It does not replace
+Electron, use its user-data directory, or automatically read/import its saves.
+The window title and the shared offline game stay the same.
+
+Build prerequisites
+Use a current stable Rust/Cargo, Python 3.11+, and Tauri CLI 2.12.4.
+Official CLI installation: cargo install tauri-cli --version 2.12.4 --locked
+Windows requires Microsoft C++ Build Tools (Desktop development with C++), the
+Windows SDK and WebView2. Linux native builds require Tauri's WebKitGTK 4.1 / GTK3
+development dependencies and a GUI session for interactive testing.
+The configured direct Tauri dependency versions are pinned in Cargo.toml.
+Cargo.lock must be generated and retained when the registry becomes accessible;
+this checkout cannot claim a resolved/locked dependency graph until then.
+
+Commands from the repository root
+  python3 scripts/tauri.py doctor
+  python3 scripts/tauri.py check
+  python3 scripts/tauri.py test-rust
+  python3 scripts/tauri.py native
+  python3 scripts/tauri.py dev
+  python3 scripts/tauri.py windows
+  python3 scripts/tauri.py windows --offline-webview2
+On Windows use the installed Python 3 launcher (for example python or py -3)
+instead of python3. The wrapper supplies the detected Python path to Tauri's
+frontend build hook. It preserves the inherited proxies and Cargo settings.
+It does not install tools, change network policies or invoke an alternate mirror.
+For a manual build with cargo tauri, ensure python3 is on PATH for the build hook.
+
+Native Windows builds are preferred for Windows release validation. Linux/macOS
+Windows NSIS cross-builds require the MSVC Rust target, cargo-xwin, LLVM/LLD,
+llvm-rc, NSIS and Windows SDK files; cross-building does not prove Windows runs.
+The wrapper uses cargo-xwin on non-Windows hosts. MSI building needs Windows.
+Reports and logs go under artifacts/tauri; target output is under
+.build-cache/tauri-target. Compile, installer, installation, native running and
+native interaction fields remain distinct. The wrapper never declares installation
+or native interaction verified just because a compiler or bundler returned zero.
+
+WebView2 and offline use
+Default: downloadBootstrapper. The game assets are embedded and offline, but an
+installation without WebView2 needs internet to install that runtime.
+--offline-webview2 merges tauri.offline.conf.json to use offlineInstaller. The
+result includes the WebView2 installer so installation can work without internet.
+This is different from building with no network: Rust crates, bundler tools and
+the runtime installer must first be downloaded/cached on the build machine.
+Neither installer size is claimed until an actual artifact is built and measured.
+No fixed WebView2 runtime or updater has been configured.
+
+Save migration (explicit and reversible)
+1. In the old Electron/browser app, use Data backup to export a complete JSON.
+   Keep that original file and the old app's profile; do not uninstall first.
+2. Launch Nine Realms Tauri. Its new profile is separate. If it already has any
+   progress, export its complete backup to a different file before replacement.
+3. Choose the old JSON in Data backup. Validation and preview do not write data.
+   Cancel/close keeps Tauri's current progress. Import happens only after the
+   existing confirmation checkbox and replace button; it reloads the same entry.
+4. Check the resumed board, notes, draft, branches, history/checkpoints, favorites
+   and other progress. The old Electron/browser profile remains untouched.
+5. To reverse, re-import the retained Tauri backup into Tauri; do not point it at
+   Electron's raw profile files. Profiles are never merged automatically.
+
+Native integration and testing
+The two local main-window commands are save_json and copy_text only. Saving has
+JSON/size/name validation and a native save dialog; cancel returns false and does
+not write a file. An adjacent temporary file is flushed before atomic persistence.
+Clipboard access is write-only. No arbitrary read/write path, shell command or
+remote window is exposed. Browser/Electron keep web downloads and clipboard
+fallbacks. File imports still use the existing file chooser, validator and explicit
+replacement flow. The strict CSP allows Blob Workers and local IPC, not remote
+resources. Navigation accepts only the entry document, including reload/hash/query;
+popups, browser downloads and permission requests are denied.
+
+Run npm test and NINE_REALMS_NO_FILE_NAVIGATION=1 npm run test:browser.
+Chromium UI/CSP/bridge simulations are frontend tests, not native Tauri tests.
+Before release, also run Rust tests, build and inspect the Windows NSIS package,
+then install/launch/relaunch on Windows, exercise native menu shortcuts, save/cancel,
+clipboard, import/restore, Blob Workers, audio, WebGL, offline launch and uninstall.
+Test an existing WebView2 installation and a clean/offline runtime installation.

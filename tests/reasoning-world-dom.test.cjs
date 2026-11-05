@@ -1,5 +1,6 @@
 /* Optional jsdom integration of live app code; not a rendering test. */
 'use strict';
+const {enableDormantDOM}=require('./dormant-tools-fixture.cjs');
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const {JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
 const E=require('../src/engine.js'),V=require('../src/voyage.js'),T=require('../src/training.js'),D=require('../src/drafts.js'),B=require('../src/backup.js');
@@ -17,6 +18,8 @@ async function fixture({mode='classic',voyageId,progress=fresh(),nearDone=false}
  }});
  live.add(dom);const w=dom.window,d=w.document,$=id=>d.getElementById(id),saved=()=>JSON.parse(w.localStorage.getItem('nine-realms.sudoku.v1')).game,stored=()=>JSON.parse(w.localStorage.getItem('nine-realms.voyage.v1'));
  await tick();assert.deepEqual(errors,[]);assert.equal(saved().sessionId,initial.game.sessionId,'restore fixture');if(saved().paused)$('resume-btn').click();
+ // Advanced-feature tests deliberately opt into dormant code, not shipped UI.
+ enableDormantDOM(w);
  return {w,d,$,p,blank,saved,stored,downloads,close(){assert.deepEqual(errors,[]);dom.window.close();live.delete(dom);}};
 }
 (async()=>{

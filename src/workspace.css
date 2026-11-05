@@ -1,0 +1,224 @@
+/* One workspace for every mode: a centered board and contextual input dock.
+   Variant geometry remains native. Colors continue to use theme tokens. */
+.rules-short{display:none}
+.appearance-panel{white-space:normal;overflow-x:hidden}
+.appearance-panel :is(p,fieldset,.reading-setting){min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.appearance-panel .theme-preview{overflow:hidden}
+.topbar{min-height:64px;border-bottom:0}
+.brand-mark{border-radius:11px;box-shadow:0 6px 18px -12px var(--accent)}
+.brand-word{font-size:21px;letter-spacing:2px;gap:10px}
+.brand-word>span{font-size:10px;letter-spacing:.18em}
+.topbar-right>.fx-toggle,.appearance-settings>summary{border-radius:12px;font-size:12px}
+.icon{stroke-width:1.65}
+
+body[data-workspace=unified]{
+ --workspace-board:min(560px,calc(100dvh - 326px),calc(100vw - 48px));
+ --workspace-dock:600px;
+ --workspace-edge:color-mix(in srgb,var(--text) 13%,transparent);
+ --workspace-surface:linear-gradient(145deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--panel-soft) 84%,transparent));
+ --workspace-shadow:inset 0 1px 0 color-mix(in srgb,white 18%,transparent),0 14px 44px -28px var(--shadow);
+}
+body[data-workspace=unified] .app-shell{width:min(1040px,calc(100% - 48px))}
+body[data-workspace=unified] main{padding-top:12px}
+body[data-workspace=unified] .game-toolbar{width:min(100%,var(--workspace-dock));margin-inline:auto;gap:8px;grid-template-columns:minmax(0,1fr) auto auto}
+body[data-workspace=unified] .game-toolbar :where(.mode-picker-open,.glass-select-trigger,.new-game-btn,#rules-open){border-radius:12px;font-size:13px;background:color-mix(in srgb,var(--panel) 70%,transparent);border-color:var(--workspace-edge);box-shadow:none}
+body[data-workspace=unified] .game-toolbar .mode-picker-open{padding:8px 12px}
+body[data-workspace=unified] .mode-picker-open>strong{font-size:13px;font-weight:600;letter-spacing:.01em}
+body[data-workspace=unified] #catalog-count{display:none}
+body[data-workspace=unified] .game-toolbar .new-game-btn{min-width:96px;background:var(--accent);color:var(--accent-text);border-color:transparent}
+body[data-workspace=unified] .game-toolbar .new-game-btn:hover:not(:disabled){background:var(--accent-strong)}
+body[data-workspace=unified] .game-toolbar .glass-select-trigger{min-width:86px}
+body[data-workspace=unified] #rules-open{font-size:12px}
+body[data-workspace=unified] .session-strip{width:min(100%,var(--workspace-dock));margin:6px auto 12px}
+body[data-workspace=unified] .normal-status{min-height:32px;gap:12px}
+body[data-workspace=unified] .stats{gap:14px}
+body[data-workspace=unified] .stat{gap:6px}
+body[data-workspace=unified] .stat strong{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:16px;font-weight:400;letter-spacing:0}
+body[data-workspace=unified] .stat-label{font-size:11px}
+body[data-workspace=unified] .time-stat .icon-btn{width:44px;height:44px;min-height:44px;padding:13px;border:0;background:transparent}
+body[data-workspace=unified] .time-stat .icon{width:15px;height:15px}
+body[data-workspace=unified] .unlimited{display:none}
+body[data-workspace=unified] .energy-hud{gap:10px;margin-left:auto;opacity:.8}
+body[data-workspace=unified] .energy-stat>span{font-size:10px}
+body[data-workspace=unified] .energy-stat>strong{font-size:13px}
+body[data-workspace=unified] .board-bottomline{gap:8px;margin-left:8px}
+body[data-workspace=unified] .progress-track{width:44px}
+body[data-workspace=unified] #progress-count{font-size:10px}
+body[data-workspace=unified] .game-layout{width:min(100%,var(--workspace-dock));margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;justify-items:center;align-items:start}
+body[data-workspace=unified] .game-layout>.board-section{order:1;grid-column:1;width:max(300px,var(--workspace-board));max-width:100%;justify-self:center}
+/* Retain the original camera and theme glass; only workspace geometry changes. */
+body[data-workspace=unified] .board-stage{width:100%;perspective:1500px}
+body[data-workspace=unified] .board-card{padding:10px;border-radius:20px;border:1px solid var(--glass-edge);background:var(--glass-surface);box-shadow:var(--glass-panel-shadow);backdrop-filter:blur(24px) saturate(125%);-webkit-backdrop-filter:blur(24px) saturate(125%)}
+body[data-workspace=unified] .board{border:1px solid var(--grid-strong);border-radius:5px;overflow:hidden;isolation:isolate}
+body[data-workspace=unified] .cell{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:32px;font-weight:400;font-variant-numeric:tabular-nums;line-height:1;background-color:var(--cell-bg)}
+body[data-workspace=unified] .cell.given{font-weight:400;color:var(--text)}
+body[data-workspace=unified] .cell .value{letter-spacing:-.025em}
+body[data-workspace=unified] .cell .notes{inset:2px;font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:11px;line-height:1;font-weight:400;color:color-mix(in srgb,var(--text) 78%,var(--cell-bg))}
+body[data-workspace=unified] .cell.related{background-color:color-mix(in srgb,var(--related) 72%,var(--cell-bg))}
+body[data-workspace=unified] .cell.same-value{background-color:var(--same)}
+body[data-workspace=unified] .cell.selected{background-color:var(--selected)}
+body[data-workspace=unified] .cell.selected::after{inset:2px;border:2px solid var(--accent);border-radius:4px}
+body[data-workspace=unified] .cell.conflict{color:var(--error);background-color:var(--error-bg)}
+body[data-workspace=unified] .cell.hint-focus{background-color:color-mix(in srgb,var(--accent) 16%,var(--cell-bg))}
+body[data-workspace=unified] .cell.branch-cell:not(.conflict){background-color:var(--branch-tint)}
+body[data-workspace=unified] .cell.batch-selected{background-color:var(--selected)}
+body[data-workspace=unified] .cell.fogged{background-color:var(--panel-soft)}
+body[data-workspace=unified] .game-layout>.control-panel{order:2;grid-column:1;width:100%;align-self:start;padding:10px;border:1px solid var(--workspace-edge);border-radius:20px;background:var(--workspace-surface);box-shadow:var(--workspace-shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+body[data-workspace=unified] #play-controls{height:auto;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px 6px}
+body[data-workspace=unified] .pad-heading{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body[data-workspace=unified] .number-pad{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:52px;gap:6px;flex:none}
+body[data-workspace=unified] .number-key{grid-column:auto;min-width:0;min-height:52px;height:52px;padding:4px;gap:2px;border:1px solid var(--workspace-edge);border-radius:12px;background:color-mix(in srgb,var(--cell-bg) 86%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,white 9%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
+body[data-workspace=unified] .number-key:hover:not(:disabled){background:var(--related);border-color:var(--accent)}
+body[data-workspace=unified] .key-value{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:25px;font-weight:400;line-height:1}
+body[data-workspace=unified] .remaining{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:9px;opacity:.85}
+body[data-workspace=unified] .tools-grid{display:contents}
+body[data-workspace=unified] .history-tools{grid-column:span 2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+body[data-workspace=unified] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){min-width:0;min-height:44px;height:44px;margin:0;padding:5px 3px;gap:4px;justify-content:center;font-size:12px;font-weight:500;border:1px solid transparent;border-radius:11px;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+body[data-workspace=unified] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle):hover:not(:disabled){background:var(--related);border-color:var(--workspace-edge)}
+body[data-workspace=unified] .control-panel :is(.tool-btn,.draft-toggle)[aria-pressed=true],body[data-workspace=unified] .control-panel .draft-toggle[aria-expanded=true]{background:var(--related);border-color:color-mix(in srgb,var(--accent) 45%,transparent);color:var(--accent)}
+body[data-workspace=unified] .control-panel .icon{width:16px;height:16px}
+body[data-workspace=unified] .auto-notes-btn>.icon,body[data-workspace=unified] :is(.auto-notes-btn,.draft-toggle)>small{display:none}
+body[data-workspace=unified] .reasoning-workspace{display:contents}
+body[data-workspace=unified] .reasoning-workspace>.status-box{order:4;grid-column:1;width:100%;margin:0;padding:0 4px;border:0;min-height:0}
+body[data-workspace=unified] .status-box p{font-size:11px;line-height:1.6}
+.batch-drawer>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;cursor:pointer;font-size:12px;color:var(--text)}
+.batch-drawer .batch-tools{border-top:0;padding:4px 0}
+body[data-workspace=unified] .hint-panel{padding:10px 12px;border:1px solid var(--workspace-edge);border-radius:18px;background:var(--workspace-surface);box-shadow:var(--workspace-shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+body[data-workspace=unified] .hint-panel{order:2;grid-column:1;width:100%}
+body[data-workspace=unified] .hint-panel h3{font-size:15px;margin:2px 0 6px}
+body[data-workspace=unified] .hint-panel p{font-size:13px;line-height:1.65}
+body[data-workspace=unified] .hint-topline{min-height:32px}
+body[data-workspace=unified] #hint-close{height:44px;min-height:44px;width:44px;padding:12px;background:transparent;border:0}
+body[data-workspace=unified] .hint-actions{margin-top:8px}
+body[data-workspace=unified] .hint-actions>button{min-height:44px;border-radius:10px}
+body[data-workspace=unified] .scene-drawer,body[data-workspace=unified] .discovery-cards,body[data-workspace=unified] footer{width:min(100%,var(--workspace-dock));margin-inline:auto}
+body[data-workspace=unified] .scene-drawer{margin-top:20px}
+body[data-workspace=unified] .discovery-cards{margin-top:14px}
+body[data-workspace=unified] .zen-panel{min-height:32px;padding:0;border:0;gap:12px}
+body[data-workspace=unified] .zen-heading h2{font-size:12px}
+body[data-workspace=unified] .zen-heading>span{font-size:11px}
+body[data-workspace=unified] .zen-action{min-height:32px;padding:5px 8px;font-size:11px}
+body[data-workspace=unified][data-text-size=large]{--workspace-board:min(560px,calc(100dvh - 336px),calc(100vw - 48px))}
+body[data-workspace=unified][data-text-size=large] .cell{font-size:36px}
+body[data-workspace=unified][data-text-size=large] .cell .notes{font-size:12px}
+body[data-workspace=unified][data-text-size=large] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){font-size:13px}
+body[data-workspace=unified][data-text-size=large] .status-box p{font-size:14px}
+@media(min-width:761px) and (max-height:800px){
+ body[data-workspace=unified] .cell{font-size:27px}
+ body[data-workspace=unified][data-text-size=large] .cell{font-size:30px}
+ body[data-workspace=unified] .cell .notes{font-size:10.5px}
+ body[data-workspace=unified][data-text-size=large] .cell .notes{font-size:11.5px}
+}
+@media(max-width:760px){
+ .topbar{flex-wrap:nowrap;min-height:56px;padding:0;gap:8px}
+ .brand{gap:7px}.brand-mark{padding:7px;gap:2px;border-radius:9px}.brand-mark i{width:3px;height:3px}.brand-mark{grid-template-columns:repeat(3,3px)}
+ .brand-word{font-size:18px;letter-spacing:.04em}
+ .topbar-right{flex:0 1 auto;justify-content:flex-end;gap:3px}
+ .topbar-right>.fx-toggle,.appearance-settings>summary{width:44px;min-width:44px;height:44px;min-height:44px;padding:10px;border:0;border-radius:12px;gap:0;background:transparent}
+ .topbar-right>.fx-toggle>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .topbar-right>.fx-toggle>.icon,#zen-toggle>.icon,.personal-open>.icon,.appearance-settings>summary>.icon{display:block;width:19px;height:19px}
+ .appearance-settings>summary{font-size:0}
+ .appearance-panel{right:0;top:calc(100% + 6px);width:min(420px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 76px);padding:14px;border-radius:18px}
+ body[data-workspace=unified]{--workspace-board:calc(100vw - 24px);--workspace-dock:600px}
+ body[data-workspace=unified] .app-shell{width:min(600px,calc(100% - 24px))}
+ body[data-workspace=unified] main{padding-top:8px}
+ body[data-workspace=unified] .game-toolbar{grid-template-columns:minmax(0,1fr) 82px 44px 44px;grid-template-areas:none;gap:6px;align-items:center}
+ body[data-workspace=unified] .mode-control{grid-area:auto;grid-column:1;min-width:0}
+ body[data-workspace=unified] .game-actions{display:contents}
+ body[data-workspace=unified] .difficulty-wrap{grid-column:2;min-width:0}
+ body[data-workspace=unified] .game-toolbar .glass-select{width:100%;min-width:0}
+ body[data-workspace=unified] .game-toolbar .glass-select-trigger{min-width:0;padding:8px;font-size:12px;gap:4px}
+ body[data-workspace=unified] .game-toolbar .new-game-btn{grid-column:3;min-width:44px;width:44px;padding:10px}
+ body[data-workspace=unified] .new-game-btn>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ body[data-workspace=unified] .new-game-btn>.icon{width:18px;height:18px}
+ body[data-workspace=unified] .game-toolbar .mode-picker-open{padding:8px 9px;gap:5px}
+ body[data-workspace=unified] .mode-picker-open>strong{font-size:12px;letter-spacing:0}
+ body[data-workspace=unified] .mode-picker-open>.icon:first-child{width:16px;height:16px}
+ body[data-workspace=unified] .mode-picker-arrow{display:none}
+ body[data-workspace=unified] .game-toolbar>#rules-open{grid-area:auto;grid-column:4;width:44px;min-width:44px;padding:6px;font-size:12px}
+ body[data-workspace=unified] #rules-open>.rules-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ body[data-workspace=unified] .rules-short{display:inline}
+ body[data-workspace=unified] #rules-open>.icon{display:none}
+ body[data-workspace=unified] .session-strip{margin:6px auto 8px}
+ body[data-workspace=unified] .normal-status{min-height:32px;gap:8px}
+ body[data-workspace=unified] .stat strong{font-size:15px}
+ body[data-workspace=unified] .stat-label{font-size:10px}
+ body[data-workspace=unified] .energy-hud{opacity:.65}
+ body[data-workspace=unified] .game-layout{gap:10px}
+ body[data-workspace=unified] .board-card{padding:8px;border-radius:17px}
+ body[data-workspace=unified] .board{border-radius:5px}
+ body[data-workspace=unified] .cell{font-size:26px}
+ body[data-workspace=unified] .cell .notes{font-size:10.5px;inset:1.5px;color:color-mix(in srgb,var(--text) 83%,var(--cell-bg))}
+ body[data-workspace=unified] .cell.selected::after{inset:1px;border-radius:3px}
+ body[data-workspace=unified] .game-layout>.control-panel{padding:9px;border-radius:17px}
+ body[data-workspace=unified] #play-controls{grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+ body[data-workspace=unified] .number-pad{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(2,44px);gap:6px}
+ body[data-workspace=unified] .number-key{grid-column:span 2;min-height:44px;height:44px;padding:3px;border-radius:10px;gap:1px}
+ body[data-workspace=unified] .number-key:nth-child(6){grid-column:2/span 2}
+ body[data-workspace=unified] .key-value{font-size:23px}
+ body[data-workspace=unified] .remaining{font-size:9px}
+ body[data-workspace=unified] .history-tools{grid-column:span 4;gap:6px}
+ body[data-workspace=unified] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){grid-column:span 2;min-height:44px;height:44px;padding:3px 2px;font-size:10.5px;flex-direction:column;gap:2px;border-radius:10px}
+ body[data-workspace=unified] .history-tools .tool-btn{grid-column:auto}
+ body[data-workspace=unified] .control-panel #check-btn{grid-column:2/span 2}
+ body[data-workspace=unified] .control-panel .icon{width:16px;height:16px}
+ body[data-workspace=unified] .auto-notes-btn>.icon{display:block}
+ body[data-workspace=unified] .batch-drawer>summary{font-size:11px}
+ body[data-workspace=unified][data-text-size=large]{--workspace-board:calc(100vw - 24px)}
+ body[data-workspace=unified][data-text-size=large] .cell{font-size:29px}
+ body[data-workspace=unified][data-text-size=large] .cell .notes{font-size:11.5px}
+ body[data-workspace=unified][data-text-size=large] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){font-size:12px}
+ body[data-workspace=unified][data-text-size=large] .game-toolbar :is(.mode-picker-open,.glass-select-trigger,#rules-open){font-size:13px}
+ body[data-workspace=unified][data-text-size=large] .mode-picker-open>strong{font-size:13px}
+ body[data-workspace=unified][data-text-size=large] .hint-panel p,body[data-workspace=unified][data-text-size=large] #lens-status{font-size:14px}
+}
+@media(max-width:350px){
+ .topbar-right{gap:0}.brand-word{font-size:16px}.brand{gap:5px}.brand-mark{padding:5px}
+ body[data-workspace=unified] .game-toolbar{grid-template-columns:minmax(0,1fr) 70px 44px 44px;gap:4px}
+ body[data-workspace=unified] .mode-picker-open>.icon:first-child{display:none}
+ body[data-workspace=unified] .cell{font-size:24px}
+ body[data-workspace=unified] .cell .notes{font-size:10px}
+}
+@media(hover:hover) and (pointer:fine){body[data-workspace=unified] .cell:hover:not(:disabled):not(.selected):not(.conflict){background-color:color-mix(in srgb,var(--related) 78%,var(--cell-bg))}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){body[data-workspace=unified] .board-card{background:var(--panel)}}
+@media(forced-colors:active){
+ body[data-workspace=unified] :is(.number-key,.tool-btn,.auto-notes-btn,.draft-toggle){border-color:ButtonText}
+ body[data-workspace=unified] .cell .notes{color:CanvasText}
+ body[data-workspace=unified] .cell.selected::after{border-color:Highlight}
+}
+
+/* Everyday actions only. Optional actions live in the separate More Tools region. */
+body[data-workspace=unified]:not([data-desktop=on]) #play-controls{grid-template-columns:repeat(6,minmax(0,1fr))}
+body[data-workspace=unified]:not([data-desktop=on]) .history-tools{grid-column:span 2}
+body[data-workspace=unified]:not([data-desktop=on]) #play-controls>.tool-btn,body[data-workspace=unified]:not([data-desktop=on]) #play-controls>.tools-grid>.tool-btn{grid-column:span 1}
+@media(max-width:760px){body[data-workspace=unified]:not([data-desktop=on]) #play-controls>.tool-btn,body[data-workspace=unified]:not([data-desktop=on]) #play-controls>.tools-grid>.tool-btn{font-size:10.5px}}
+
+/* Geometry exceptions follow the shared shell. Outside clues need their own
+   gutters; linked boards keep transparent gaps and their native cell borders.
+   Never assign --board-dimension here: the live board owns 9 / 15 / 21. */
+body[data-workspace=unified][data-outside-clues=true]{--outside-clue-gutter:32px}
+body[data-workspace=unified][data-outside-clues=true] .board-card{padding:var(--outside-clue-gutter)}
+body[data-workspace=unified][data-outside-clues=true]:not([data-desktop=on]) .board-grid-shell{container-type:inline-size}
+body[data-workspace=unified][data-multi=true]{
+ --multi-board-padding:12px;
+ --multi-overview-board:min(max(300px,var(--workspace-board)),var(--workspace-dock),calc(100vw - 24px));
+}
+body[data-workspace=unified][data-multi=true] .control-panel{position:static;top:auto}
+body[data-workspace=unified][data-multi=true] .board-card{padding:var(--multi-board-padding)}
+body[data-workspace=unified][data-multi=true] .board{border:0;border-radius:0;background:transparent;overflow:visible}
+body[data-workspace=unified][data-multi=true][data-multi-view=overview] .board-grid-shell{container-type:inline-size}
+body[data-workspace=unified] #multigrid-tools{width:min(100%,var(--workspace-dock));max-width:100%;min-width:0;margin:0 auto 12px;padding:12px 14px;gap:10px 20px;border:1px solid var(--workspace-edge);border-radius:12px;background:var(--workspace-surface);box-shadow:var(--workspace-shadow)}
+body[data-workspace=unified] #multigrid-tools>div{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+body[data-workspace=unified] #multigrid-tools label{flex:0 1 auto;min-width:0;max-width:100%;gap:8px}
+body[data-workspace=unified] #multigrid-tools label>.glass-select{flex:1;min-width:0;max-width:100%;margin-left:0}
+body[data-workspace=unified] #multigrid-tools :is(select,.glass-select-trigger){min-width:0;max-width:100%;min-height:44px}
+body[data-workspace=unified] #multi-selected-label{min-width:0;margin:0;overflow-wrap:anywhere}
+@media(max-width:760px){
+ body[data-workspace=unified][data-multi=true]{--multi-board-padding:8px}
+ body[data-workspace=unified] #multigrid-tools{padding:10px 12px;margin-bottom:10px}
+ body[data-workspace=unified] #multigrid-tools label{flex:1 1 240px;justify-content:space-between}
+}
+/* Tablets keep the full gutter: two-digit horizontal SVG labels extend farther
+   than their text height. Only phone-sized boards use compact clue margins. */
+@media(max-width:480px){body[data-workspace=unified][data-outside-clues=true]{--outside-clue-gutter:24px}}
+@media(max-width:400px){body[data-workspace=unified][data-outside-clues=true]{--outside-clue-gutter:21px}}

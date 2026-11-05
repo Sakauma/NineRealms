@@ -3,11 +3,18 @@
   "use strict";
 
   var Engine = window.SudokuEngine;
+  var Desktop = window.NineRealmsDesktop;
+  var Logic = window.NineRealmsLogic;
+  var Branches = window.NineRealmsBranches;
+  var Edits = window.NineRealmsEdits;
+  var TechniqueGuides = window.NineRealmsTechniqueGuides;
+  var Custom = window.NineRealmsCustom, customUi = null;
+  var customImportClient = Custom ? Custom.createClient() : null, challengeImportEpoch = 0, sharingPlain = false;
   var Backup = window.NineRealmsBackup;
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.1.0";
+  var APP_VERSION = "1.2.0";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -15,7 +22,7 @@
       document.getElementById("backup-status").textContent = recoveryError.message+" 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。";
       ["backup-close", "backup-export", "backup-file", "backup-confirm", "backup-replace"].forEach(function(id){document.getElementById(id).disabled=true;});
       var recoveryButton=document.getElementById("backup-recovery");recoveryButton.hidden=false;
-      recoveryButton.onclick=function(){downloadPlayerFile(recoveryError.previousBackup,"Nine-Realms-recovery-log.json");};
+      recoveryButton.onclick=async function(){try{await downloadPlayerFile(recoveryError.previousBackup,"Nine-Realms-recovery-log.json");}catch(error){document.getElementById("backup-status").textContent=error.message||"恢复日志保存未完成。";}};
       recoveryDialog.addEventListener("cancel",function(event){event.preventDefault();});
       if(recoveryDialog.showModal)recoveryDialog.showModal();else recoveryDialog.setAttribute("open","");
       return;
@@ -68,14 +75,14 @@
   var boardElement = $("board");
   var numberPad = $("number-pad");
 
-  if (!Engine || !Daily || !Voyage || !Atmosphere || !window.SudokuHints || !boardElement || !numberPad) {
+  if (!Engine || !Logic || !Branches || !Edits || !Custom || !TechniqueGuides || !Daily || !Voyage || !Atmosphere || !window.SudokuHints || !boardElement || !numberPad) {
     var failure = $("status-message");
     if (failure) failure.textContent = "游戏资源未完整加载，请重新打开完整的游戏文件。";
     return;
   }
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var preferences = { theme: "nebula", fx: true, errorCheck: true, fog: false, sound: false, focus: false, zen: false, zenMotion: true, intensity: "cinematic", textSize: "normal", lineContrast: "standard", colorAssist: false, handedness: "right" };
+  var preferences = { theme: "nebula", fx: true, errorCheck: true, logicMode: false, customDraft: "", fog: false, sound: false, focus: false, zen: false, zenMotion: true, intensity: "cinematic", textSize: "normal", lineContrast: "standard", colorAssist: false, handedness: "right" };
   var game = null;
   var currentContext = null;
   var catalogCategory = "全部";
@@ -83,8 +90,6 @@
   var numberKeys = [];
   var runningSince = null;
   var noteMode = false;
-  var hintCell = -1;
-  var hintTimeout = null;
   var checkedReveal = false;
   var checkTimeout = null;
   var toastTimeout = null;
@@ -93,8 +98,13 @@
   var particleFrame = null;
   var storageFailed = false;
   var importingChallenge = false;
+  var batchSelection = new Set(), batchSelecting = false;
+  var lensDigit = 0, batchDigit = 1, lensSource = "notes", lensKey = "", lensResult = null;
 
   function gameContext() { return currentContext || { mode: "classic", clues: {} }; }
+  function inBranch() { return Boolean(game && Branches.active(game.branch)); }
+  function ruleOnly() { return Boolean(game && (game.logicMode || inBranch())); }
+  function checkedContext() { return ruleOnly() ? Logic.scope(gameContext()).context : gameContext(); }
 
   function modeInfo(mode) {
     return Engine.getModes().find(function (entry) { return entry.id === mode; });
@@ -175,17 +185,7 @@
       noteMode: Boolean(snapshot.noteMode) };
   }
 
-  function restoreBranch(source, givens, clues) {
-    if (!source || !validSnapshot(source, givens, clues) ||
-        !Number.isInteger(source.mistakes) || source.mistakes < 0 ||
-        !Array.isArray(source.history)) return null;
-    var branch = copySnapshot(source);
-    branch.mistakes = source.mistakes;
-    branch.history = source.history.slice(-80).filter(function (item) {
-      return validSnapshot(item, givens, clues);
-    }).map(copySnapshot);
-    return branch;
-  }
+  function restoreBranch(source, givens, clues) { return Branches.validate(source, givens, clues); }
 
   function restore(provided, keepPreferences) {
     try {
@@ -199,6 +199,8 @@
       nextPreferences.theme = THEMES.indexOf(prefs.theme) >= 0 ? prefs.theme : "nebula";
       nextPreferences.fx = typeof prefs.fx === "boolean" ? prefs.fx : true;
       nextPreferences.errorCheck = typeof prefs.errorCheck === "boolean" ? prefs.errorCheck : true;
+      nextPreferences.logicMode = prefs.logicMode === true;
+      nextPreferences.customDraft = typeof prefs.customDraft === "string" && prefs.customDraft.length <= 2048 ? prefs.customDraft : "";
       nextPreferences.fog = prefs.fog === true;
       nextPreferences.sound = prefs.sound === true;
       nextPreferences.focus = prefs.focus === true;
@@ -226,17 +228,23 @@
           !Number.isInteger(source.mistakes) || source.mistakes < 0 ||
           !Number.isInteger(source.hints) || source.hints < 0) return false;
       // A saved answer must belong to this puzzle, not just be another complete grid.
-      var trustedSolution = Engine.solve(source.givens, restoredContext);
+      if (source.custom !== undefined && typeof source.custom !== "boolean" || source.custom && (mode !== "classic" || !Logic.scope(restoredContext).complete)) return false;
+      var trustedSolution = source.custom ? Engine.analyzeSolutions(source.givens, restoredContext, {limit:1,maxNodes:250000,timeLimitMs:750}).solution : Engine.solve(source.givens, restoredContext);
       if (!trustedSolution || !trustedSolution.every(function (v, i) { return v === source.solution[i]; })) return false;
+      if (source.logicMode !== undefined && typeof source.logicMode !== "boolean") return false;
       var branch = restoreBranch(source.branch, source.givens, clues);
-      var completed = !branch && source.board.every(function (value, i) { return value === source.solution[i]; });
+      if (!Branches.matches(branch, source)) return false;
+      var completed = !Branches.active(branch) && !(source.practice && !source.completed) && (source.logicMode ? Logic.complete(source.board, restoredContext) : source.board.every(function (value, i) { return value === source.solution[i]; }));
       // Older saves were always live. Keep their time, but wait for an explicit resume.
       var recordedProgress = source.elapsedMs > 0 || source.hints > 0 || source.mistakes > 0 ||
         source.board.some(function (value, i) { return value !== source.givens[i]; }) ||
         source.notes.some(function (mask) { return mask !== 0; });
-      var started = completed || saved.version < 3 || source.started === true || recordedProgress || Boolean(branch);
+      var started = completed || source.started === true || !(source.practice && source.started === false) && (saved.version < 3 || recordedProgress || Boolean(branch));
       cancelPuzzleGeneration();
       game = {
+        custom: source.custom === true,
+        practice: History ? History.practiceInfo(source.practice) : source.practice || null,
+        logicMode: source.logicMode === true,
         generation: generationInfo(source.generation, { mode: mode, clues: clues, givens: source.givens }),
         sessionId: validSessionId(source.sessionId) ? source.sessionId : newSessionId(),
         createdAt: Number.isFinite(source.createdAt) && source.createdAt > 0 ? source.createdAt : Date.now(),
@@ -252,7 +260,8 @@
         draft: Drafts.validate(source.draft, restoredSize, clues),
         history: Array.isArray(source.history) ? source.history.filter(function (item) {
           return validSnapshot(item, source.givens, clues);
-        }).slice(-80) : [],
+        }).slice(-80).map(copySnapshot) : [],
+        redo: Array.isArray(source.redo) ? source.redo.filter(function (item) { return validSnapshot(item, source.givens, clues); }).slice(-80).map(copySnapshot) : [],
         selected: Number.isInteger(source.selected) && source.selected >= 0 && source.selected < restoredSize
           ? source.selected : source.givens.indexOf(0),
         mistakes: source.mistakes,
@@ -268,6 +277,7 @@
         fogSeen: Array.isArray(source.fogSeen) && source.fogSeen.length === restoredSize &&
           source.fogSeen.every(function (value) { return typeof value === "boolean"; }) ? source.fogSeen.slice() : initialFog(restoredContext)
       };
+      batchSelection.clear(); batchSelecting = false;
       preferences = nextPreferences;
       currentContext = restoredContext;
       runningSince = null;
@@ -314,6 +324,7 @@
   function save(action) {
     if (!game || storageTransition) return false;
     try {
+      Branches.sync(game, noteMode);
       var snapshot = Object.assign({}, game, { elapsedMs: Math.floor(currentElapsed()), noteMode: noteMode });
       var envelope = { version: SAVE_VERSION, preferences: preferences, game: snapshot };
       if (History) {
@@ -373,8 +384,8 @@
   }
 
   function conflicts() {
-    var result = new Set(Engine.getConflicts(game.board, gameContext()));
-    if (!game.branch) game.board.forEach(function (value, i) {
+    var result = new Set(ruleOnly() ? Logic.conflicts(game.board, gameContext()) : Engine.getConflicts(game.board, gameContext()));
+    if (!ruleOnly()) game.board.forEach(function (value, i) {
       if (value && !game.givens[i] && value !== game.solution[i]) result.add(i);
     });
     return result;
@@ -408,7 +419,7 @@
       notes.setAttribute("aria-hidden", "true");
       for (var n = 1; n <= 9; n++) notes.appendChild(document.createElement("span"));
       button.append(value, notes);
-      button.addEventListener("click", function (event) { selectCell(Number(event.currentTarget.dataset.index), false); });
+      button.addEventListener("click", function (event) { selectCell(Number(event.currentTarget.dataset.index), false, event.ctrlKey || event.metaKey || batchSelecting); });
       fragment.appendChild(button);
       cells.push(button);
     });
@@ -470,7 +481,7 @@
       boardLayout.cells.filter(function (cell) { return cell.boards.length > 1; }).length + " 格共享";
   }
 
-  function moveOnLayout(dx, dy) {
+  function moveOnLayout(dx, dy, extend) {
     var position = boardLayout.cells[game.selected];
     var focused = activeBoardId === "all" ? null : boardLayout.boards.find(function (b) { return b.id === activeBoardId; });
     var origin = focused ? position.boards.find(function (b) { return b.id === focused.id; }) : position;
@@ -483,7 +494,7 @@
         var local = focused ? cell.boards.find(function (b) { return b.id === focused.id; }) : cell;
         return local && local.row === row && local.col === col;
       });
-      if (target >= 0) { selectCell(target, true); return; }
+      if (target >= 0) { selectCell(target, true, extend); return; }
     }
   }
 
@@ -571,15 +582,15 @@
     });
     var select = $("difficulty");
     if (select) {
-      if (select.dataset.mode !== game.mode) {
+      if (select.dataset.mode !== game.mode + ":" + Boolean(game.custom)) {
         select.replaceChildren();
         Engine.getDifficulties(game.mode).forEach(function (entry) {
           var option = document.createElement("option");
           option.value = entry.id;
-          option.textContent = entry.label;
+          option.textContent = game.custom && entry.id === game.difficulty ? "自建" : entry.label;
           select.appendChild(option);
         });
-        select.dataset.mode = game.mode;
+        select.dataset.mode = game.mode + ":" + Boolean(game.custom);
       }
       select.value = game.difficulty;
       if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
@@ -589,7 +600,7 @@
     if ($("catalog-count")) $("catalog-count").textContent = MODES.length + " 种玩法";
     if ($("puzzle-bank-status")) {
       var available = PUZZLE_CATALOG.filter(function (p) { return p.mode === game.mode && p.difficulty === game.difficulty; }).length;
-      $("puzzle-bank-status").textContent = game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + "密度档" :
+      $("puzzle-bank-status").textContent = game.custom ? "自建经典题 · " + game.givens.filter(Boolean).length + " 个给定数 · 已验证唯一解" : game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + "密度档" :
         difficulty.label + "原题库 · " + available + " 题" + (game.difficulty === "master" ? "" : " · 新游戏可离线生成");
       $("puzzle-bank-status").title = game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
         "原题库轮换保留。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
@@ -622,9 +633,10 @@
       activeBoardId = boardLayout.cells[game.selected].boards[0].id;
       applyBoardView();
     }
+    batchSelection.forEach(function (i) { if (game.board[i] || game.givens[i]) batchSelection.delete(i); });
     renderModeControls();
     renderEnergy();
-    if (pendingHint && pendingHint.signature !== hintSignature()) pendingHint = null;
+    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
     var selectedValue = game.board[game.selected];
     var errors = automaticErrors() || checkedReveal ? conflicts() : new Set();
     var waitingToStart = !game.started;
@@ -632,6 +644,10 @@
     var filled = 0;
     var editableTotal = 0;
     var solved = 0;
+    // Bulb interiors are opaque clue material, independent of selection/draft tint.
+    var arrowBulbCells = new Set((game.clues && game.clues.lines || []).filter(function (line) {
+      return line.type === "arrow" && Array.isArray(line.cells) && line.cells.length;
+    }).map(function (line) { return line.cells[0]; }));
     cells.forEach(function (button, i) {
       var value = game.board[i];
       var fogged = game.fog && !game.fogSeen[i] && !game.completed;
@@ -639,7 +655,7 @@
       if (value) filled++;
       if (!game.givens[i]) {
         editableTotal++;
-        if (game.branch ? Boolean(value) : value === game.solution[i]) solved++;
+        if (ruleOnly() ? Boolean(value) : value === game.solution[i]) solved++;
       }
       (button._variantDecorations || []).forEach(function (name) { button.classList.remove(name); });
       var decorations = Engine.getCellDecorations(i, gameContext());
@@ -651,17 +667,17 @@
       button.classList.toggle("variant-peer", specialPeer);
       button.classList.toggle("knight-target", game.mode === "knight" && specialPeer);
       button.classList.toggle("given", !fogged && Boolean(game.givens[i]));
+      button.classList.toggle("arrow-bulb-cell", !fogged && arrowBulbCells.has(i));
       button.classList.toggle("filled", !fogged && Boolean(value) && !game.givens[i]);
       button.classList.toggle("selected", i === game.selected);
       button.classList.toggle("related", i !== game.selected && sameUnit(i, game.selected));
       button.classList.toggle("same-value", !fogged && Boolean(selectedValue) && value === selectedValue && i !== game.selected);
       button.classList.toggle("conflict", !fogged && errors.has(i));
-      button.classList.toggle("hint-cell", i === hintCell || Boolean(pendingHint && pendingHint.step.index === i));
-      button.classList.toggle("hint-focus", Boolean(pendingHint && pendingHint.step.focusCells.indexOf(i) >= 0));
-      button.classList.toggle("hint-elimination", Boolean(pendingHint && pendingHint.step.kind === "elimination" && pendingHint.step.eliminations.some(function (change) { return change.index === i; })));
-      button.classList.toggle("branch-cell", Boolean(game.branch) &&
-        (value !== game.branch.board[i] || game.notes[i] !== game.branch.notes[i]));
-      button.setAttribute("aria-selected", String(i === game.selected));
+      button.classList.toggle("hint-cell", Boolean(pendingHint && pendingHint.index === i));
+      button.classList.toggle("branch-cell", inBranch() &&
+        (value !== Branches.base(game).board[i] || game.notes[i] !== Branches.base(game).notes[i]));
+      button.classList.toggle("batch-selected", batchSelection.has(i));
+      button.setAttribute("aria-selected", String(batchSelecting || batchSelection.size ? batchSelection.has(i) : i === game.selected));
       button.setAttribute("aria-readonly", String(!fogged && Boolean(game.givens[i])));
       button.setAttribute("aria-invalid", String(!fogged && errors.has(i)));
       button.tabIndex = i === game.selected && !blocked ? 0 : -1;
@@ -675,7 +691,7 @@
       });
       button.setAttribute("aria-label", cellLocation(i) + "，" + (value ? "数字 " + value : (notes.length ? "候选 " + notes.join("、") : "空格")) +
         (game.givens[i] ? "，题目给定" : "") + (specialPeer ? "，与选中格共享特殊约束" : "") +
-        (errors.has(i) ? (game.branch ? "，规则冲突" : "，数字有误") : ""));
+        (errors.has(i) ? (ruleOnly() ? "，规则冲突" : "，数字有误") : ""));
       if (!isMulti() && !fogged && window.SudokuVariantView && window.SudokuVariantView.getCellLabel) {
         var clueLabel = window.SudokuVariantView.getCellLabel(i, gameContext());
         if (clueLabel) button.setAttribute("aria-label", button.getAttribute("aria-label") + "，" + clueLabel);
@@ -685,16 +701,16 @@
     numberKeys.forEach(function (button, index) {
       var value = index + 1;
       var count = game.board.filter(function (n) { return n === value; }).length;
-      var remaining = Math.max(0, game.solution.filter(function (n) { return n === value; }).length - count);
-      button.querySelector(".remaining").textContent = remaining ? String(remaining) : "✓";
-      button.classList.toggle("exhausted", remaining === 0);
-      button.setAttribute("aria-label", "填入 " + value + "，还可填写 " + remaining + " 个");
+      var remaining = Math.max(0, (ruleOnly() ? (isMulti() ? count : 9) : game.solution.filter(function (n) { return n === value; }).length) - count);
+      button.querySelector(".remaining").textContent = ruleOnly() && isMulti() ? String(count) : remaining ? String(remaining) : "✓";
+      button.classList.toggle("exhausted", !(ruleOnly() && isMulti()) && remaining === 0);
+      button.setAttribute("aria-label", "填入 " + value + (ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
       button.disabled = blocked;
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
     if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("timer")) $("timer").textContent = formatTime(currentElapsed());
-    if ($("mistakes")) $("mistakes").textContent = String(game.mistakes).padStart(2, "0");
+    if ($("mistakes")) $("mistakes").textContent = ruleOnly() ? "—" : String(game.mistakes).padStart(2, "0");
     if ($("progress-count")) $("progress-count").textContent = solved + " / " + editableTotal;
     if ($("progress-fill")) $("progress-fill").style.width = (editableTotal ? solved / editableTotal * 100 : 100) + "%";
     if ($("notes-btn")) {
@@ -703,37 +719,56 @@
       $("notes-btn").disabled = blocked;
     }
     if ($("notes-state")) $("notes-state").textContent = noteMode ? "笔记模式" : "数字模式";
-    if ($("undo-btn")) $("undo-btn").disabled = blocked || game.history.length === 0;
+    if ($("undo-btn")) $("undo-btn").disabled = generatingPuzzle || waitingToStart || game.paused || game.history.length === 0;
+    if ($("redo-btn")) $("redo-btn").disabled = generatingPuzzle || waitingToStart || game.paused || !game.redo.length;
     if ($("erase-btn")) $("erase-btn").disabled = blocked || Boolean(game.givens[game.selected]) ||
       (!game.board[game.selected] && !game.notes[game.selected]);
     if ($("hint-btn")) {
-      $("hint-btn").disabled = blocked || Boolean(game.branch);
-      $("hint-btn").title = game.branch ? "假设中暂不揭晓答案；采纳或撤回后可使用提示" : "获取当前玩法的解题提示";
+      $("hint-btn").disabled = blocked || ruleOnly();
+      $("hint-btn").title = inBranch() ? "假设中不揭晓答案；返回主盘后可使用提示" :
+        game.logicMode ? "纯逻辑模式不揭晓答案；关闭纯逻辑模式后可使用提示" : "显示选中空格的答案，不自动填入";
     }
     if ($("check-btn")) $("check-btn").disabled = blocked;
     if ($("auto-notes-btn")) $("auto-notes-btn").disabled = blocked;
     if ($("branch-btn")) {
-      $("branch-btn").disabled = blocked || Boolean(game.branch);
-      $("branch-btn").setAttribute("aria-pressed", String(Boolean(game.branch)));
+      $("branch-btn").disabled = blocked; $("branch-btn").setAttribute("aria-pressed", String(inBranch()));
     }
     if ($("branch-banner")) $("branch-banner").hidden = !game.branch;
-    if ($("branch-rollback")) $("branch-rollback").disabled = blocked;
-    if ($("branch-commit")) $("branch-commit").disabled = blocked;
-    if ($("branch-summary") && game.branch) {
-      var changes = game.board.reduce(function (count, value, i) {
-        return count + (value !== game.branch.board[i] || game.notes[i] !== game.branch.notes[i] ? 1 : 0);
-      }, 0);
-      $("branch-summary").textContent = "假设中 · 已改动 " + changes + " 格。仅检查规则冲突，暂不计失误。";
+    if ($("branch-rollback")) $("branch-rollback").disabled = blocked || !inBranch();
+    if ($("branch-commit")) $("branch-commit").disabled = blocked || !inBranch();
+    if ($("branch-new")) $("branch-new").disabled = blocked;
+    if ($("branch-switch")) {
+      var choices = Branches.choices(game), currentBranch = game.branch && game.branch.version === 2 ? game.branch.activeId : inBranch() ? "b1" : null;
+      var choiceKey = JSON.stringify(choices);
+      if ($("branch-switch").dataset.choices !== choiceKey) {
+        $("branch-switch").dataset.choices = choiceKey; $("branch-switch").replaceChildren();
+        var mainOption = document.createElement("option"); mainOption.value = ""; mainOption.textContent = "主盘"; $("branch-switch").appendChild(mainOption);
+        choices.forEach(function (entry) { var option = document.createElement("option"); option.value = entry.id; option.textContent = entry.label + " · 第 " + entry.depth + " 层"; $("branch-switch").appendChild(option); });
+      }
+      $("branch-switch").value = currentBranch || ""; $("branch-switch").disabled = blocked;
+      if ($("branch-title")) $("branch-title").textContent = inBranch() ? (choices.find(function (entry) { return entry.id === currentBranch; }) || { label: "假设" }).label + " 进行中" : "主盘";
+      if ($("branch-summary")) {
+        var changes = inBranch() ? game.board.reduce(function (count, value, i) { var base = Branches.base(game); return count + (value !== base.board[i] || game.notes[i] !== base.notes[i] ? 1 : 0); }, 0) : 0;
+        $("branch-summary").textContent = inBranch() ? "已改动 " + changes + " 格 · 仅查规则 · 主盘已隔离" : "已保留 " + choices.length + " 个假设，可随时切换";
+      }
     }
-    document.body.dataset.branch = game.branch ? "on" : "off";
+    document.body.dataset.branch = inBranch() ? "on" : "off";
     $("fog-toggle").setAttribute("aria-pressed", String(game.fog));
     $("fog-banner").hidden = !game.fog;
     $("fog-clear").disabled = blocked || game.fogSeen.every(Boolean);
     $("fog-progress").textContent = "已点亮 " + (game.completed ? game.board.length : game.fogSeen.filter(Boolean).length) + " / " + game.board.length;
     $("voyage-game-badge").hidden = !game.voyageId;
     $("voyage-game-badge").textContent = game.voyageId ? "远征 · " + chapterInfo(game.voyageId).title : "";
+    if ($("custom-badge")) $("custom-badge").hidden = !game.custom;
+    if ($("practice-badge")) { $("practice-badge").hidden = !game.practice; $("practice-badge").textContent = game.practice ? (game.practice.wasAssumption ? "假设卡点复练" : "独立复练") + " · 原第 " + game.practice.absoluteStep + " 步" : ""; }
     $("daily-game-badge").hidden = !game.dailyDate;
     $("daily-game-badge").textContent = game.dailyDate ? "每日一境 · " + game.dailyDate.slice(5).replace("-", "/") : "";
+    if ($("logic-toggle")) $("logic-toggle").setAttribute("aria-pressed", String(game.logicMode));
+    if ($("logic-badge")) $("logic-badge").hidden = !game.logicMode;
+    if ($("logic-scope")) $("logic-scope").textContent = Logic.scope(gameContext()).message;
+    document.body.dataset.logic = game.logicMode ? "on" : "off";
+    if ($("error-toggle")) $("error-toggle").title = ruleOnly() ? "切换规则冲突即时标记" : "切换错误数字即时标红";
+    renderLens();
     renderHint();
     if (draftUi) draftUi.render();
     if ($("pause-btn")) {
@@ -758,19 +793,77 @@
     if ($("pause-title")) $("pause-title").textContent = waitingToStart ? "准备好，开启这一境。" : "暂停一下，也很好。";
     if ($("pause-description")) $("pause-description").textContent = preferences.zen ?
       (waitingToStart ? "准备好了，就从一个空格开始。不必着急。" : "棋局已为你保留，准备好后再继续。") :
-      waitingToStart ? modeInfo(game.mode).label + " · " + difficultyInfo(game.mode, game.difficulty).label +
+      waitingToStart ? modeInfo(game.mode).label + " · " + (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) +
         "。点击开始后，棋盘与计时一起开启。" : "进度已经保存，点击继续后再恢复计时。";
     document.body.dataset.gameState = game.completed ? "completed" : waitingToStart ? "ready" : game.paused ? "paused" : "playing";
     if ($("multi-selected-label") && isMulti()) $("multi-selected-label").textContent = cellLocation(game.selected);
+    boardElement.setAttribute("aria-multiselectable", String(batchSelecting || batchSelection.size > 0));
     boardElement.setAttribute("aria-label", modeInfo(game.mode).label + "棋盘，已填 " + filled + " 格，共 " + game.board.length + " 格");
   }
 
-  function canInteract() {
-    return game && game.started && !generatingPuzzle && !storageTransition && !game.paused && !game.completed && !dialogIsOpen();
+  function advancedToolsEnabled() { return document.body.dataset.advancedTools !== "off"; }
+
+  function renderLens() {
+    // These are session-only view modes, not saved notes or draft data. Without
+    // their controls, they must not invisibly filter cells or intercept digits.
+    if (!advancedToolsEnabled()) { lensDigit = 0; batchSelecting = false; batchSelection.clear(); }
+    var holder = $("candidate-lens");
+    if (!holder) return;
+    var active = lensDigit > 0 && game.started && !game.paused && !game.completed, result = null;
+    holder.dataset.activeDigit = String(lensDigit);
+    if (active) {
+      var key = JSON.stringify([game.mode, game.clues, game.board, lensSource, lensDigit, lensSource === "notes" ? game.notes : null]);
+      if (key !== lensKey) { lensKey = key; lensResult = Logic.lens(game.board, game.notes, lensDigit, lensSource, gameContext()); }
+      result = lensResult;
+      $("lens-status").textContent = (lensSource === "notes" ? "玩家笔记（可自行增删）" : "规则推算（局部可能，未证明可解）") + " · " + lensDigit + " · " + result.indices.length + " 格" +
+        (lensSource === "rules" && !result.scope.complete ? "。" + result.scope.message : "");
+    } else {
+      var sourceMessage = lensSource === "notes" ? "玩家笔记（可自行增删）" : "规则推算（局部可能，未证明可解）";
+      var scope = lensSource === "rules" ? Logic.scope(gameContext()) : null;
+      $("lens-status").textContent = sourceMessage + " · " + (lensDigit ? "开始或继续棋局后查看候选。" : "点击数字筛选，再点一次取消。") +
+        (scope && !scope.complete ? " " + scope.message : "");
+    }
+    var hits = new Set(result ? result.indices : []);
+    cells.forEach(function (cell, index) {
+      var hit = hits.has(index) && !(game.fog && !game.fogSeen[index]);
+      cell.classList.toggle("lens-note", hit && lensSource === "notes");
+      cell.classList.toggle("lens-rule", hit && lensSource === "rules");
+      cell.querySelectorAll(".notes span").forEach(function (span, n) { span.classList.toggle("lens-digit", hit && lensSource === "notes" && n + 1 === lensDigit); });
+      if (hit) cell.setAttribute("aria-label", cell.getAttribute("aria-label") + (lensSource === "notes" ? "；玩家笔记含 " : "；规则推算可含 ") + lensDigit);
+    });
+    $("lens-notes").setAttribute("aria-pressed", String(lensSource === "notes"));
+    $("lens-rules").setAttribute("aria-pressed", String(lensSource === "rules"));
+    $("batch-toggle").setAttribute("aria-pressed", String(batchSelecting));
+    var batchVisible = batchSelecting || batchSelection.size > 0;
+    $("batch-panel").hidden = !batchVisible;
+    $("batch-toggle").setAttribute("aria-expanded", String(batchVisible));
+    $("batch-digit").value = String(batchDigit);
+    $("batch-digit").disabled = !canInteract();
+    $("batch-count").textContent = "已选 " + batchSelection.size + " 格";
+    $("batch-add").textContent = "加入 " + batchDigit; $("batch-remove").textContent = "移除 " + batchDigit;
+    ["batch-toggle", "batch-all", "batch-selection-clear", "batch-add", "batch-remove", "batch-clear", "batch-rules"].forEach(function (id) {
+      $(id).disabled = !canInteract() || (["batch-add", "batch-remove", "batch-clear", "batch-rules"].indexOf(id) >= 0 && !batchSelection.size);
+    });
+    // Cancelling selection is safe even while paused or before any cells are selected.
+    $("batch-selection-clear").disabled = !batchVisible;
+    $("lens-digits").querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", String(Number(b.dataset.digit) === lensDigit)); });
+    if (typeof window !== "undefined" && window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
+    if (typeof window !== "undefined" && window.NineRealmsWorkspace) window.NineRealmsWorkspace.refreshTools();
   }
 
-  function selectCell(index, moveFocus) {
+  function canTravelEdit() {
+    return game && game.started && !generatingPuzzle && !storageTransition && !game.paused && !dialogIsOpen();
+  }
+  function canInteract() { return canTravelEdit() && !game.completed; }
+
+  function selectCell(index, moveFocus, extend) {
     if (!canInteract() || index < 0 || index >= game.board.length) return;
+    if (extend && advancedToolsEnabled()) {
+      if (extend === "extend" && !game.board[game.selected] && !game.givens[game.selected]) batchSelection.add(game.selected);
+      if (!game.board[index] && !game.givens[index]) {
+        if (extend !== "extend" && batchSelection.has(index)) batchSelection.delete(index); else batchSelection.add(index);
+      }
+    }
     game.selected = index;
     revealFog(index);
     render();
@@ -778,15 +871,16 @@
     save();
   }
 
-  function remember() {
-    game.history.push({
-      board: game.board.slice(),
-      notes: game.notes.slice(),
-      draft: Drafts.clone(game.draft, game.board.length, game.clues),
-      selected: game.selected,
-      noteMode: noteMode
-    });
-    if (game.history.length > 80) game.history.shift();
+  function remember() { Edits.push(game, noteMode); }
+
+  function batchNotes(operation, mask) {
+    if (!canInteract() || !batchSelection.size) return;
+    var count = Edits.noteBatch(game, Array.from(batchSelection), mask === undefined ? 1 << (batchDigit - 1) : mask, operation, noteMode,
+      operation === "rules" ? Logic.masks(game.board, gameContext()) : undefined);
+    if (!count) { toast("所选格的笔记无需改变。"); return; }
+    noteMode = true; pendingHint = null;
+    setStatus("已批量修改 " + count + " 格候选，一次撤销或重做可恢复整组。");
+    render(); save("批量候选 · " + operation);
   }
 
   function flash(index) {
@@ -808,6 +902,7 @@
 
   function enterNumber(value, fromHint) {
     if (!canInteract() || !Number.isInteger(value) || value < 1 || value > 9) return;
+    if (!fromHint && batchSelection.size && (noteMode || batchSelecting)) { batchNotes("toggle", 1 << (value - 1)); return; }
     var index = game.selected;
     if (game.givens[index]) {
       toast("这是题目给定的数字，请选择一个空格。");
@@ -827,11 +922,11 @@
       game.board[index] = value;
       game.notes[index] = 0;
       clearPeerNotes(index, value);
-      if (!game.branch && value !== game.solution[index] && !fromHint) {
+      if (!ruleOnly() && value !== game.solution[index] && !fromHint) {
         game.mistakes++;
         setStatus(automaticErrors() ? "这个数字与答案不符，可以撤销后再想一想。" : "已填入数字。");
       } else if (!fromHint) {
-        setStatus(game.branch ? "已记录假设。这次试填仅检查规则冲突，可继续推理或撤回。" : preferences.zen ? "已填入数字。" : "保持节奏，答案就在这些细节里。");
+        setStatus(ruleOnly() ? "已填入数字，仅检查规则冲突。" : preferences.zen ? "已填入数字。" : "保持节奏，答案就在这些细节里。");
       }
       recordEnergy(index, value, fromHint);
       flash(index);
@@ -843,102 +938,81 @@
 
   function erase() {
     if (!canInteract()) return;
+    if (batchSelection.size && (noteMode || batchSelecting)) { batchNotes("clear", 0); return; }
     var index = game.selected;
     if (game.givens[index] || (!game.board[index] && !game.notes[index])) return;
     remember();
     game.board[index] = 0;
     game.notes[index] = 0;
-    if (!game.branch) game.energy.combo = 0;
+    if (!inBranch()) game.energy.combo = 0;
     setStatus("已擦除当前格。");
     render();
     save("擦除");
   }
 
-  function undo() {
-    if (!canInteract() || !game.history.length) return;
-    if (!game.branch) game.energy.combo = 0;
-    var previous = game.history.pop();
-    game.board = previous.board.slice();
-    game.notes = previous.notes.slice();
-    game.draft = Drafts.clone(previous.draft, game.board.length, game.clues);
-    if (Number.isInteger(previous.selected) && previous.selected >= 0 && previous.selected < game.board.length) {
-      game.selected = previous.selected;
-    }
-    if (typeof previous.noteMode === "boolean") noteMode = previous.noteMode;
+  function travelEdit(forward) {
+    if (!canTravelEdit()) return;
+    var wasCompleted = game.completed;
+    var result = forward ? Edits.redo(game, noteMode) : Edits.undo(game, noteMode);
+    if (!result) return;
+    noteMode = result.noteMode;
+    game.completed = false;
+    if (wasCompleted) { stopCelebration(); resumeClock(); }
+    if (!inBranch()) game.energy.combo = 0;
     clearTransientMarks();
-    setStatus(game.branch ? "已撤销一次试填，检查点仍然保留。" : preferences.zen ? "已撤销上一步，慢慢推敲就好。" : "已撤销上一步，累计失误数保持不变。");
-    render();
-    save("撤销");
+    setStatus((forward ? "已重做" : "已撤销") + "上一步，数字、候选与草稿一并恢复。");
+    render(); if (forward) checkCompletion(); save(forward ? "重做" : "撤销");
   }
+  function undo() { travelEdit(false); }
+  function redo() { travelEdit(true); }
 
   function clearTransientMarks() {
     pendingHint = null;
+    batchSelection.clear(); batchSelecting = false;
     clearPulse();
-    clearTimeout(hintTimeout);
     clearTimeout(checkTimeout);
-    hintCell = -1;
     checkedReveal = false;
   }
 
+  function branchAction(action, label) {
+    if (!canInteract()) return;
+    try {
+      noteMode = action(); game.energy.combo = 0; clearTransientMarks();
+      setStatus(label); render(); save(label);
+    } catch (error) { toast(error.message); }
+  }
+
   function beginBranch() {
-    if (!canInteract() || game.branch) return;
-    game.energy.combo = 0;
-    game.branch = {
-      board: game.board.slice(), notes: game.notes.slice(), draft: Drafts.clone(game.draft, game.board.length, game.clues), selected: game.selected,
-      noteMode: noteMode, history: game.history.map(copySnapshot), mistakes: game.mistakes
-    };
-    game.history = [];
-    clearTransientMarks();
-    setStatus("已建立检查点。试填会用异色标记，仅检查规则冲突；随时可以撤回。");
-    render();
-    save("建立假设");
+    branchAction(function () { return Branches.begin(game, noteMode); }, "已建立独立假设，可切换到主盘或其他分支。");
   }
 
   function rollbackBranch() {
-    if (!canInteract() || !game.branch) return;
-    var checkpoint = game.branch;
-    game.board = checkpoint.board.slice();
-    game.notes = checkpoint.notes.slice();
-    game.draft = Drafts.clone(checkpoint.draft, game.board.length, game.clues);
-    game.selected = checkpoint.selected;
-    game.history = checkpoint.history.map(copySnapshot);
-    game.mistakes = checkpoint.mistakes;
-    noteMode = checkpoint.noteMode;
-    game.branch = null;
-    clearTransientMarks();
-    setStatus(preferences.zen ? "已回到检查点，试填数字和笔记均已恢复。" : "已回到检查点，试填数字和笔记均已恢复；累计用时保留。");
-    render();
-    save("回退假设");
+    if (!inBranch()) return;
+    branchAction(function () { return Branches.discard(game, noteMode); }, "已丢弃当前假设及其子分支，恢复上层棋盘。");
   }
 
   function commitBranch() {
-    if (!canInteract() || !game.branch) return;
-    var checkpoint = game.branch;
-    var changed = !Drafts.equal(game.draft, checkpoint.draft, game.board.length) || game.board.some(function (value, i) {
-      return value !== checkpoint.board[i] || game.notes[i] !== checkpoint.notes[i];
-    });
-    var newErrors = game.board.reduce(function (count, value, i) {
-      return count + (!game.givens[i] && value && value !== checkpoint.board[i] && value !== game.solution[i] ? 1 : 0);
-    }, 0);
-    game.history = checkpoint.history.map(copySnapshot);
-    if (changed) game.history.push(copySnapshot(checkpoint));
-    game.history = game.history.slice(-80);
-    game.mistakes = checkpoint.mistakes + newErrors;
-    game.branch = null;
-    game.board.forEach(function (value, i) { if (value) game.energy.claimed[i] = true; });
-    game.energy.combo = 0;
-    settleUnits(false);
-    clearTransientMarks();
-    setStatus(newErrors && !preferences.zen ? "已采纳这组试填，其中 " + newErrors + " 个新增数字与答案不符；可整组撤销。" :
-      "已采纳这组试填，恢复正式填写；撤销一次即可回到检查点。");
-    render();
-    checkCompletion();
-    save("采纳假设");
+    if (!canInteract() || !inBranch()) return;
+    try {
+      var adopted = Branches.adopt(game, noteMode); noteMode = adopted.noteMode;
+      var newErrors = adopted.main && !game.logicMode ? game.board.reduce(function (count, value, i) {
+        return count + (!game.givens[i] && value && value !== adopted.before.board[i] && value !== game.solution[i] ? 1 : 0);
+      }, 0) : 0;
+      game.mistakes += newErrors;
+      if (adopted.main) {
+        game.board.forEach(function (value, i) { if (value) game.energy.claimed[i] = true; });
+        if (!game.logicMode) settleUnits(false);
+      }
+      game.energy.combo = 0; clearTransientMarks();
+      setStatus(newErrors ? "已采纳到主盘，新增 " + newErrors + " 个答案核对失误；可整组撤销。" : "已采纳到上层，修改可整组撤销。其他分支仍保留。");
+      render(); checkCompletion(); save("采纳假设");
+    } catch (error) { toast(error.message); }
   }
 
   function toggleNotes() {
     if (!canInteract()) return;
     noteMode = !noteMode;
+    if (!noteMode) { batchSelecting = false; batchSelection.clear(); }
     setStatus(noteMode ? "笔记模式已开启 · 记录可能的数字，按 N 可随时切换。" : "笔记模式已关闭 · 现在会填入正式数字。");
     render();
     save();
@@ -946,14 +1020,14 @@
 
   function autoNotes() {
     if (!canInteract()) return;
-    if (game.branch ? conflicts().size > 0 : game.board.some(function (value, index) { return value && value !== game.solution[index]; })) {
-      setStatus(game.branch ? "先解决当前规则冲突，再生成候选笔记；可点击检查定位。" : "先修正已有的错误数字，再生成候选笔记；可用「检查」或「灵感提示」定位。");
-      toast(game.branch ? "当前存在规则冲突，请先检查。" : "当前有错误数字，请先检查。");
+    if (ruleOnly() ? conflicts().size > 0 : game.board.some(function (value, index) { return value && value !== game.solution[index]; })) {
+      setStatus(ruleOnly() ? "先解决当前规则冲突，再生成候选笔记；可点击检查定位。" : "先修正已有的错误数字，再生成候选笔记；可用「检查」或「灵感提示」定位。");
+      toast(ruleOnly() ? "当前存在规则冲突，请先检查。" : "当前有错误数字，请先检查。");
       return;
     }
     var next = game.board.map(function (value, index) {
       if (value) return 0;
-      return Engine.candidates(game.board, index, gameContext()).reduce(function (mask, digit) {
+      return Engine.candidates(game.board, index, checkedContext()).reduce(function (mask, digit) {
         return mask | (1 << (digit - 1));
       }, 0);
     });
@@ -970,6 +1044,7 @@
 
 
   function completedUnitIndices() {
+    if (ruleOnly()) return [];
     return Engine.getUnits(gameContext()).reduce(function (result, unit, index) {
       if (unit.cells.every(function (cell) { return game.board[cell] === game.solution[cell]; })) result.push(index);
       return result;
@@ -984,7 +1059,7 @@
     var combo = valid ? integer(source.combo, game.board.length) : 0;
     return {
       points: valid ? integer(source.points, 50000) : 0,
-      combo: game.branch ? 0 : combo,
+      combo: inBranch() ? 0 : combo,
       best: valid ? Math.max(combo, integer(source.best, game.board.length)) : 0,
       claimed: valid ? source.claimed.map(function (v, i) { return v || Boolean(game.givens[i]); }) :
         game.board.map(function (value) { return Boolean(value); }),
@@ -995,12 +1070,12 @@
   }
 
   function renderEnergy() {
-    var muted = preferences.zen || Boolean(game.branch) || !preferences.errorCheck;
+    var muted = preferences.zen || ruleOnly() || !preferences.errorCheck;
     $("energy-hud").dataset.muted = String(muted);
     $("energy-points").textContent = muted ? "—" : String(game.energy.points);
     $("energy-combo").textContent = muted ? "—" : String(game.energy.combo);
     $("energy-best").textContent = muted ? "—" : String(game.energy.best);
-    $("energy-message").textContent = game.branch ? "假设中暂停奖励，安心试填" :
+    $("energy-message").textContent = game.logicMode ? "纯逻辑模式暂停答案奖励" : inBranch() ? "假设中暂停奖励，安心试填" :
       !preferences.errorCheck ? "开启纠错后可获得星能反馈" :
       game.energy.combo >= 5 ? "星能共振 · 每格首次落子才奖励" :
       "首次正确落子积攒星能 · 撤销不重复奖励";
@@ -1042,7 +1117,7 @@
 
   function recordEnergy(index, value, fromHint) {
     // Never compare trial entries to the solution: the checkpoint is a safe workspace.
-    if (game.branch) return;
+    if (ruleOnly()) return;
     var energy = game.energy;
     if (fromHint || !preferences.errorCheck) {
       energy.combo = 0;
@@ -1376,94 +1451,121 @@
     }
   }
 
+  function renderTechniqueGuide() {
+    var guide = TechniqueGuides.get(game.mode), list = $("technique-guide-tips");
+    list.replaceChildren();
+    $("technique-guide").hidden = !guide;
+    $("technique-guide").open = false;
+    if (guide) guide.tips.forEach(function (tip) {
+      var item = document.createElement("li"); item.textContent = tip; list.appendChild(item);
+    });
+  }
+
   function renderLogicRating() {
-    var target = $("logic-rating"), context = gameContext(), givens = game.givens.slice();
-    var key = JSON.stringify(["classic-logic-v1", context, givens]);
-    target.textContent = "技巧 · 分析中";
+    var target = $("logic-rating"), panel = $("logic-rating-panel"), context = gameContext(), givens = game.givens.slice();
+    var key = JSON.stringify(["puzzle-logic-v2", context, givens]);
+    panel.hidden = true; target.textContent = ""; target.removeAttribute("title");
     setTimeout(function () {
-      if (!game || key !== JSON.stringify(["classic-logic-v1", gameContext(), game.givens])) return;
+      if (!game || key !== JSON.stringify(["puzzle-logic-v2", gameContext(), game.givens])) return;
       var result = ratingCache.get(key);
       if (!result) {
-        result = window.SudokuHints.rateClassic(givens, context);
+        try { result = window.SudokuHints.ratePuzzle(givens, context); } catch (error) { return; }
+        if (!result || !result.solved || result.status !== "rated") return;
         if (ratingCache.size >= 64) ratingCache.delete(ratingCache.keys().next().value);
         ratingCache.set(key, result);
       }
       var labels = { "naked-single": "唯一候选", "hidden-single": "唯一位置", "locked-candidate": "锁定候选", "naked-pair": "显性数对", "hidden-pair": "隐性数对" };
-      target.textContent = "技巧 · " + (result.solved ? (result.steps === 0 ? "无需推理" : labels[result.highestTechnique] || "已评级") : result.status === "unsupported" ? "暂不支持" : "未评级");
+      var label = result.steps === 0 ? "无需推理" : labels[result.highestTechnique];
+      if (!label) return;
+      target.textContent = "本题评级 · " + label;
+      target.title = result.explanation || "依据原始题面的完整逻辑推演；不代表所选难度档。";
+      panel.hidden = false;
     }, 0);
   }
 
   function hintSignature() {
-    return game.puzzleId + ":" + game.board.join("") + ":" + game.mode + ":" + JSON.stringify(game.clues) + ":" + game.notes.join(",");
+    // Check the mode before reading any answer data. A revealed answer must not
+    // survive a selection, puzzle, solution or gameplay-mode change.
+    if (!game || ruleOnly()) return null;
+    return JSON.stringify([game.puzzleId, game.selected, game.mode, game.clues,
+      game.board, game.givens, game.solution]);
+  }
+
+  function selectedHintResult() {
+    if (!game || ruleOnly()) return { message: "当前模式不揭晓答案。" };
+    var unavailable = { message: "当前题目的答案无法验证，暂不能显示提示。" };
+    try {
+      var context = gameContext(), size = Engine.getLayout(context).cellCount;
+      var index = game.selected;
+      if (!Number.isInteger(index) || index < 0 || index >= size) {
+        return { message: "请先点选棋盘上的一个空格，再查看提示。" };
+      }
+      if (!isBoard(game.board, false, size) || !isBoard(game.givens, false, size) ||
+          !isBoard(game.solution, true, size)) return unavailable;
+      // Read every slot as well as checking shape: sparse or corrupt saved data
+      // must never turn an unverified value into an answer.
+      for (var i = 0; i < size; i++) {
+        if (!Number.isInteger(game.board[i]) || !Number.isInteger(game.givens[i]) ||
+            !Number.isInteger(game.solution[i])) return unavailable;
+      }
+      if (!respectsGivens(game.board, game.givens) ||
+          !respectsGivens(game.solution, game.givens) ||
+          !Engine.validateComplete(game.solution, context)) return unavailable;
+      if (game.givens[index]) return { message: "这一格是题目给定数字，请选择一个空格。" };
+      if (game.board[index]) return { message: "这一格已有数字，请选择空格；若要查看这一格，请先清空它。" };
+      return { index: index, value: game.solution[index], hasMistakes: game.board.some(function (value, cell) {
+        return value && !game.givens[cell] && value !== game.solution[cell];
+      }) };
+    } catch (error) {
+      return unavailable;
+    }
   }
 
   function renderHint() {
     var panel = $("hint-panel");
-    panel.hidden = !pendingHint || !game.started || game.paused || game.completed || Boolean(game.branch);
-    if (panel.hidden) return;
-    var hint = pendingHint.step;
-    var stage = pendingHint.stage;
-    var elimination = hint.kind === "elimination";
-    $("hint-stage").textContent = ["01 / 03 · 观察", "02 / 03 · 推理", elimination ? "03 / 03 · 排除" : "03 / 03 · 答案"][stage];
-    $("hint-title").textContent = hint.title;
-    $("hint-text").textContent = [hint.observe, hint.explanation, hint.answer][stage];
-    $("hint-next").hidden = stage === 2;
-    $("hint-next").textContent = stage === 0 ? "看看推理" : elimination ? "查看候选变化" : "查看答案";
-    $("hint-apply").hidden = stage !== 2;
-    $("hint-apply").textContent = elimination ? "同步推理候选（可撤销）" : "填入这一格";
+    if (!panel) return;
+    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
+    panel.hidden = !pendingHint;
+    // Clear the actual text too, so stale answers do not remain in the hidden
+    // panel after pausing, switching modes, changing cells or closing it.
+    var location = pendingHint ? cellLocation(pendingHint.index) : "";
+    // One board coordinate identifies even a shared cell. Keep every membership
+    // in the accessible label without turning the bounded result into a paragraph.
+    var compact = location.split(" / ")[0].replace(/（重叠格）/g, "");
+    compact = /^第/.test(compact) ? compact.replace(/\s+/g, "") :
+      compact.replace(/第\s*(\d+)\s*行第\s*(\d+)\s*列/g, "$1行$2列");
+    $("hint-title").textContent = location ? "提示 · " + compact : "";
+    $("hint-title").title = location;
+    $("hint-title").setAttribute("aria-label", location ? "提示，" + location + "的答案" : "提示");
+    $("hint-value").textContent = pendingHint ? String(pendingHint.value) : "";
+    $("hint-value").setAttribute("aria-label", pendingHint ? "答案 " + pendingHint.value : "答案");
+    $("hint-text").textContent = pendingHint && pendingHint.hasMistakes ? "另有已填错误" : "";
   }
 
   function requestHint() {
-    if (!canInteract() || game.branch) return;
-    if (!pendingHint || pendingHint.signature !== hintSignature()) {
-      var hint = window.SudokuHints.getStep(game.board.slice(), game.givens.slice(), game.solution.slice(), gameContext(), game.notes.slice());
-      if (!hint || !Number.isInteger(hint.index) || hint.index < 0 || hint.index >= game.board.length ||
-          game.givens[hint.index] || (hint.kind === "elimination" ?
-          !Array.isArray(hint.candidateMasks) || hint.candidateMasks.length !== game.board.length ||
-          !hint.candidateMasks.every(function (mask, index) { return Number.isInteger(mask) && mask >= 0 && mask <= 511 &&
-            (game.board[index] ? mask === 0 : Boolean(mask & (1 << (game.solution[index] - 1)))); }) :
-          hint.value !== game.solution[hint.index])) {
-        toast("当前没有可用提示。");
-        return;
-      }
-      pendingHint = { step: hint, stage: 0, signature: hintSignature() };
+    if (!canInteract() || ruleOnly()) {
+      pendingHint = null;
+      renderHint();
+      return;
+    }
+    var hint = selectedHintResult();
+    if (hint.message) {
+      pendingHint = null;
+      renderHint();
+      setStatus(hint.message);
+      toast(hint.message);
+      return;
+    }
+    var signature = hintSignature(), fresh = !pendingHint || pendingHint.signature !== signature;
+    if (fresh) {
+      pendingHint = { index: hint.index, value: hint.value, hasMistakes: hint.hasMistakes, signature: signature };
       game.hints++;
       game.energy.combo = 0;
-      game.selected = hint.index;
-      hint.focusCells.forEach(function (index) { game.fogSeen[index] = true; });
-      revealFog(hint.index);
     }
-    setStatus("先观察高亮区域。提示不会自动落子，随时可以收起后自己推理。");
     render();
-    save("查看提示");
-    $("hint-panel").scrollIntoView({ block: "nearest", behavior: "instant" });
-  }
-
-  function advanceHint() {
-    if (!canInteract() || game.branch || !pendingHint || pendingHint.signature !== hintSignature()) return;
-    pendingHint.stage = Math.min(2, pendingHint.stage + 1);
-    renderHint();
-  }
-
-  function applyHint() {
-    if (!canInteract() || game.branch || !pendingHint || pendingHint.stage !== 2 ||
-        pendingHint.signature !== hintSignature()) return;
-    var hint = pendingHint.step;
-    pendingHint = null;
-    game.selected = hint.index;
-    if (hint.kind === "elimination") {
-      remember();
-      game.notes = hint.candidateMasks.slice(); noteMode = true;
-      setStatus("已同步这一步经过证明的全盘候选（会替换手写笔记），未填入数字；可撤销或在历史中回看。");
-      render(); save("技巧排除 · " + hint.title); return;
-    }
-    enterNumber(hint.value, true);
-    hintCell = hint.index;
-    clearTimeout(hintTimeout);
-    hintTimeout = setTimeout(function () { hintCell = -1; render(); }, 3500);
-    if (!game.completed) setStatus(hint.answer);
-    render();
-    save();
+    if (fresh) save("查看答案提示");
+    if (window.NineRealmsWorkspace) window.NineRealmsWorkspace.revealHint();
+    else $("hint-panel").scrollIntoView({ block: "nearest", behavior: "instant" });
   }
 
   function initialFog(context) {
@@ -1501,18 +1603,18 @@
 
   function checkBoard() {
     if (!canInteract()) return;
-    if (game.branch) {
+    if (ruleOnly()) {
       var ruleErrors = conflicts();
       var stuck = [];
       for (var i = 0; i < game.board.length; i++) {
-        if (!game.board[i] && Engine.candidates(game.board, i, gameContext()).length === 0) stuck.push(i);
+        if (!game.board[i] && Engine.candidates(game.board, i, checkedContext()).length === 0) stuck.push(i);
       }
       checkedReveal = true;
       clearTimeout(checkTimeout);
       checkTimeout = setTimeout(function () { checkedReveal = false; render(); }, 6000);
       setStatus(ruleErrors.size || stuck.length ?
-        "假设检查：" + ruleErrors.size + " 格存在规则冲突，" + stuck.length + " 个空格已无候选。可撤回检查点重新推理。" :
-        "当前未发现重复或无候选格。这不代表假设已证实，可以继续推理。");
+        "规则检查：" + ruleErrors.size + " 格存在规则冲突，" + stuck.length + " 个空格已无候选。可撤回检查点重新推理。" :
+        "当前未发现重复或无候选格。这不代表已证明正确。" + (game.logicMode ? " " + Logic.scope(gameContext()).message : ""));
       render();
       return;
     }
@@ -1609,9 +1711,9 @@
     }
     if (History) History.close();
     if (hasProgress()) {
-      var accepted = await confirmAction(restart ? "重新挑战这道题？" : "继续这段历史？",
-        "当前棋局会保存在历史中。" + (restart ? "将从原题开始一局新的挑战。" : "将恢复所选棋局，点击继续后才恢复计时。"),
-        restart ? "重新挑战" : "恢复棋局");
+      var accepted = await confirmAction(snapshot.game.practice ? "开启独立复练？" : restart ? "重新挑战这道题？" : "继续这段历史？",
+        "当前棋局会保存在历史中。" + (snapshot.game.practice ? "将载入这份独立复练，原局不会被覆盖。" : restart ? "将从原题开始一局新的挑战。" : "将恢复所选棋局，点击继续后才恢复计时。"),
+        snapshot.game.practice ? "准备复练" : restart ? "重新挑战" : "恢复棋局");
       if (!accepted) return false;
     }
     suspendClock();
@@ -1621,9 +1723,10 @@
       if (!modeInfo(source.mode) || !difficultyInfo(source.mode, source.difficulty)) throw new Error("Unavailable historical mode");
       if (restart) {
         installPuzzle({ id: source.puzzleId, givens: source.givens, solution: source.solution, clues: source.clues,
-          dailyDate: source.dailyDate, voyageId: source.voyageId, sourceId: source.sourceId, generation: source.generation }, source.difficulty, source.mode);
+          dailyDate: source.dailyDate, voyageId: source.voyageId, sourceId: source.sourceId, generation: source.generation, custom: source.custom }, source.difficulty, source.mode);
       } else {
         if (!restore(snapshot, true)) throw new Error("Invalid historical game");
+        if (source.practice) historyOrigin = "new";
         clearTransientMarks();
         stopCelebration();
         renderPreferences();
@@ -1634,7 +1737,7 @@
       if (!voyageStorageBlocked && game.voyageId && Voyage.matchesPuzzle(game.voyageId, game.givens, game.mode, game.difficulty, game.clues)) {
         voyageProgress = Voyage.retainCurrent(voyageProgress, game.voyageId); saveVoyage(); renderVoyage();
       }
-      setStatus(restart ? "原题已准备好，这是一次新的挑战；点击开始后计时。" :
+      setStatus(source.practice ? (game.started ? "独立复练已恢复，点击继续后计时。" : "独立复练已准备好，保留原卡点数字与候选；点击开始后计时。") : restart ? "原题已准备好，这是一次新的挑战；点击开始后计时。" :
         game.completed ? "这局已经完成。可以查看历史回放，或重新挑战原题。" :
         game.started ? "历史棋局已恢复。点击继续，接着上次的位置。" : "历史棋局已恢复，等你点击开始。");
       save();
@@ -1656,7 +1759,7 @@
   }
 
   function hasProgress() {
-    return !game.completed && (game.started || Boolean(game.branch) || game.board.some(function (n, i) { return n !== game.givens[i]; }) ||
+    return !game.completed && (game.started || inBranch() || game.board.some(function (n, i) { return n !== game.givens[i]; }) ||
       game.notes.some(function (mask) { return mask !== 0; }));
   }
 
@@ -1672,6 +1775,8 @@
     if (game) save();
     historyOrigin = 'new';
     game = {
+      custom: puzzle.custom === true,
+      logicMode: preferences.logicMode,
       generation: generationInfo(puzzle.generation, { mode: mode, clues: clues, givens: puzzle.givens }),
       sessionId: newSessionId(),
       createdAt: Date.now(),
@@ -1686,6 +1791,7 @@
       notes: Array(puzzle.givens.length).fill(0),
       draft: Drafts.empty(puzzle.givens.length),
       history: [],
+      redo: [],
       selected: Math.max(0, puzzle.givens.indexOf(0)),
       mistakes: 0,
       hints: 0,
@@ -1699,15 +1805,14 @@
       fog: preferences.fog,
       fogSeen: initialFog(nextContext)
     };
+    batchSelection.clear(); batchSelecting = false;
     currentContext = nextContext;
     game.energy = restoreEnergy(null);
     clearPulse();
     revealFog(game.selected);
     pendingHint = null;
     noteMode = false;
-    hintCell = -1;
     checkedReveal = false;
-    clearTimeout(hintTimeout);
     clearTimeout(checkTimeout);
     render();
     renderDaily();
@@ -1783,14 +1888,15 @@
       toast("挑战码资源未完整加载，请重新打开完整游戏文件。");
       return;
     }
-    var sharing = kind === "share";
+    var sharing = kind === "share"; sharingPlain = false;
+    if ($("challenge-plain")) { $("challenge-plain").hidden = game.mode !== "classic"; $("challenge-plain").textContent = "切换 81 格文本"; }
     challengeError("");
     if ($("challenge-export-panel")) $("challenge-export-panel").hidden = !sharing;
     if ($("challenge-import-panel")) $("challenge-import-panel").hidden = sharing;
     if ($("challenge-title")) $("challenge-title").textContent = sharing ? "分享同一境" : "接收同题挑战";
     if ($("challenge-description")) $("challenge-description").textContent = sharing ?
       "这段代码只包含原始题目、规则线索、玩法与难度，不包含答案、进度或用时。朋友输入即可打开同一盘。" :
-      "粘贴朋友的挑战码。验证通过后再确认是否替换当前棋局，新局仍等待点击开始。";
+      "粘贴挑战码或 81 格经典题面（0 或 . 为空格）；只加载已验证唯一解的题目。";
     if (sharing) {
       try {
         if ($("challenge-output")) $("challenge-output").value = window.SudokuChallenge.create({
@@ -1814,16 +1920,16 @@
     if (!output || !output.value) return;
     var code = output.value;
     try {
-      if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("Clipboard unavailable");
-      await navigator.clipboard.writeText(code);
+      if (Desktop) await Desktop.copyText(code);
+      else { if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("Clipboard unavailable"); await navigator.clipboard.writeText(code); }
       challengeError("");
-      toast("挑战码已复制，可以发送给朋友。");
+      toast("分享文本已复制，可以发送给朋友。");
     } catch (error) {
       if ($("challenge-dialog") && $("challenge-dialog").open) {
         output.focus();
         output.select();
         output.setSelectionRange(0, output.value.length);
-        challengeError("已选中挑战码，请按 Ctrl+C 复制；手机可长按复制。");
+        challengeError("已选中分享文本，请按 Ctrl/⌘ C 复制；手机可长按复制。");
       }
     }
   }
@@ -1833,16 +1939,26 @@
     importingChallenge = true;
     if ($("challenge-import")) $("challenge-import").disabled = true;
     challengeError("");
-    var puzzle;
+    var puzzle, request = ++challengeImportEpoch;
     try {
-      puzzle = window.SudokuChallenge.decode($("challenge-input") ? $("challenge-input").value : "");
+      var input = $("challenge-input") ? $("challenge-input").value : "";
+      if (/^\s*NR[12]-/i.test(input)) puzzle = window.SudokuChallenge.decode(input);
+      else {
+        var givens = Custom.parse(input); challengeError("正在离线验证经典题面……");
+        var proof = await customImportClient.run(givens);
+        if (request !== challengeImportEpoch || !$("challenge-dialog").open) return;
+        if (proof.status !== "unique" || !proof.playable) throw new Error(proof.message);
+        puzzle = Custom.puzzle(givens, proof);
+      }
     } catch (error) {
-      challengeError(error.message || "挑战码无效，请检查后重试。");
+      if (request !== challengeImportEpoch) return;
+      challengeError(error.message || "题面文本无效，请检查后重试。");
       importingChallenge = false;
       if ($("challenge-import")) $("challenge-import").disabled = false;
       return;
     }
     try {
+      if (request !== challengeImportEpoch || storageTransition) return;
       closeDialog($("challenge-dialog"));
       if (game && hasProgress()) {
         var accepted = await confirmNewGame(puzzle.difficulty, puzzle.mode, false);
@@ -1853,7 +1969,7 @@
         }
       }
       installPuzzle(puzzle, puzzle.difficulty, puzzle.mode);
-      setStatus("同题挑战已准备好：" + modeInfo(puzzle.mode).label + " · " +
+      setStatus(puzzle.custom ? "导入的经典题面已验证唯一解，点击开始后计时。" : "同题挑战已准备好：" + modeInfo(puzzle.mode).label + " · " +
         difficultyInfo(puzzle.mode, puzzle.difficulty).label + "。点击开始后计时。");
       save();
     } catch (error) {
@@ -1866,8 +1982,8 @@
   }
 
   function checkCompletion() {
-    if (game.branch || game.completed || !game.board.every(function (value, index) { return value === game.solution[index]; }) ||
-        !Engine.validateComplete(game.board, gameContext())) return;
+    if (inBranch() || game.completed || !(game.logicMode ? Logic.complete(game.board, gameContext()) :
+        game.board.every(function (value, index) { return value === game.solution[index]; }) && Engine.validateComplete(game.board, gameContext()))) return;
     suspendClock();
     game.completed = true;
     game.paused = false;
@@ -1887,9 +2003,9 @@
     setStatus(game.board.length + " 格，恰到好处。恭喜完成" + modeInfo(game.mode).label + "！");
     var summary = $("completion-dialog") && $("completion-dialog").querySelector("p");
     if (summary) summary.textContent = modeInfo(game.mode).label + " · " +
-      difficultyInfo(game.mode, game.difficulty).label + "，每一个数字都找到了自己的位置。";
+      (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) + "，每一个数字都找到了自己的位置。";
     if ($("completion-time")) $("completion-time").textContent = formatTime(game.elapsedMs);
-    if ($("completion-mistakes")) $("completion-mistakes").textContent = String(game.mistakes);
+    if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode ? "—" : String(game.mistakes);
     showDialog($("completion-dialog"));
     celebrate();
     save("完成");
@@ -2099,23 +2215,53 @@
   });
   bind("fog-toggle", "click", toggleFog);
   bind("fog-clear", "click", clearFog);
-  bind("hint-next", "click", advanceHint);
-  bind("hint-apply", "click", applyHint);
   bind("hint-close", "click", function () { pendingHint = null; render(); });
   bind("daily-btn", "click", openDaily);
   bind("daily-start", "click", startDaily);
   bind("daily-close", "click", function () { closeDialog($("daily-dialog")); });
   bind("daily-dialog", "close", function () { resumeClock(); save(); });
+  function toggleLensDigit(value) {
+    if (!Number.isInteger(value) || value < 1 || value > 9) return;
+    lensDigit = lensDigit === value ? 0 : value;
+    if (lensDigit) batchDigit = lensDigit;
+    render();
+  }
+  for (var lensNumber = 1; lensNumber <= 9; lensNumber++) {
+    var lensButton = document.createElement("button"); lensButton.type = "button";
+    lensButton.textContent = String(lensNumber); lensButton.dataset.digit = String(lensNumber);
+    lensButton.setAttribute("aria-label", "筛选候选 " + lensNumber + "，再次点击取消"); lensButton.setAttribute("aria-pressed", String(lensNumber === lensDigit));
+    lensButton.addEventListener("click", function (event) { toggleLensDigit(Number(event.currentTarget.dataset.digit)); });
+    $("lens-digits").appendChild(lensButton);
+  }
+  bind("batch-toggle", "click", function () { if (!canInteract()) return; batchSelecting = !batchSelecting; if (batchSelecting) noteMode = true; render(); });
+  bind("batch-all", "click", function () { if (!canInteract()) return; game.board.forEach(function (v, i) { if (!v && !game.givens[i]) batchSelection.add(i); }); render(); });
+  bind("batch-selection-clear", "click", function () { batchSelection.clear(); batchSelecting = false; render(); });
+  ["add", "remove", "clear", "rules"].forEach(function (operation) { bind("batch-" + operation, "click", function () { batchNotes(operation); }); });
+  bind("batch-digit", "change", function () { var value = Number($("batch-digit").value); if (Number.isInteger(value) && value >= 1 && value <= 9) { batchDigit = value; render(); } });
+  bind("lens-notes", "click", function () { lensSource = "notes"; render(); });
+  bind("lens-rules", "click", function () { lensSource = "rules"; render(); });
+  bind("logic-toggle", "click", function () {
+    if (!game || storageTransition || generatingPuzzle) return;
+    game.logicMode = !game.logicMode; preferences.logicMode = game.logicMode;
+    game.energy.combo = 0; clearTransientMarks();
+    setStatus(game.logicMode ? "纯逻辑模式 · " + Logic.scope(gameContext()).message : "已恢复普通模式，填写与检查会核对本题答案。");
+    render(); save("切换检查模式");
+  });
+  bind("branch-new", "click", beginBranch);
+  bind("branch-switch", "change", function () { var target = $("branch-switch").value || null; branchAction(function () { return Branches.switchTo(game, target, noteMode); }, target ? "已切换假设，主盘保持独立。" : "已返回主盘，其他假设仍保留。"); });
   bind("branch-btn", "click", beginBranch);
   bind("branch-rollback", "click", rollbackBranch);
   bind("branch-commit", "click", commitBranch);
   bind("share-btn", "click", function () { openChallenge("share"); });
   bind("import-btn", "click", function () { openChallenge("import"); });
   bind("challenge-close", "click", function () { closeDialog($("challenge-dialog")); });
-  bind("challenge-dialog", "close", function () { resumeClock(); save(); });
+  bind("challenge-dialog", "close", function () { challengeImportEpoch++; customImportClient.cancel(); importingChallenge = false; $("challenge-import").disabled = false; resumeClock(); save(); });
   bind("challenge-copy", "click", copyChallenge);
   bind("challenge-import", "click", importChallenge);
-  bind("challenge-input", "input", function () { challengeError(""); });
+  bind("challenge-input", "input", function () { challengeImportEpoch++; customImportClient.cancel(); importingChallenge = false; $("challenge-import").disabled = false; challengeError(""); });
+  bind("challenge-plain", "click", function () { if (game.mode !== "classic") return; sharingPlain = !sharingPlain; $("challenge-output").value = sharingPlain ? Custom.toText(game.givens) : window.SudokuChallenge.create(game); $("challenge-plain").textContent = sharingPlain ? "切换挑战码" : "切换 81 格文本"; });
+  bind("custom-open", "click", function () { if (customUi) customUi.open(); });
+  bind("custom-personal-open", "click", function () { closeDialog($("personal-dialog")); if (customUi) customUi.open(); });
   bind("new-game", "click", function () { newGame(game.difficulty, false); });
   bind("difficulty", "change", function (event) { newGame(event.target.value, false); });
   bind("mode-picker-open", "click", function () {
@@ -2141,6 +2287,7 @@
     if (!game || dialogIsOpen()) return;
     $("rules-title").textContent = modeInfo(game.mode).label;
     $("rules-description").textContent = modeInfo(game.mode).description;
+    renderTechniqueGuide();
     renderLogicRating();
     showDialog($("rules-dialog")); save();
   });
@@ -2165,6 +2312,7 @@
   bind("auto-notes-btn", "click", autoNotes);
   bind("erase-btn", "click", erase);
   bind("undo-btn", "click", undo);
+  bind("redo-btn", "click", redo);
   bind("hint-btn", "click", requestHint);
   bind("check-btn", "click", checkBoard);
   bind("confirm-accept", "click", function () { resolveConfirm(true); });
@@ -2203,7 +2351,7 @@
     clearPulse();
     renderPreferences();
     render();
-    toast(preferences.errorCheck ? "即时错误提示已开启。" : "即时错误提示已关闭，可随时点击检查。");
+    toast(ruleOnly() ? (preferences.errorCheck ? "规则冲突即时标记已开启。" : "规则冲突即时标记已关闭。") : preferences.errorCheck ? "即时错误提示已开启。" : "即时错误提示已关闭，可随时点击检查。");
     save();
   });
   bind("board-stage", "pointermove", function (event) {
@@ -2235,13 +2383,22 @@
       return;
     }
     var target = event.target;
-    if (!canInteract() || (target && (target.isContentEditable ||
+    if (!canTravelEdit() || (target && (target.isContentEditable ||
         /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)))) return;
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+    if ((event.ctrlKey || event.metaKey) && ["z", "y"].indexOf(event.key.toLowerCase()) >= 0) {
       event.preventDefault();
-      undo();
+      if (event.key.toLowerCase() === "y" || event.shiftKey) redo(); else undo();
       return;
     }
+    if (!canInteract()) return;
+    if (event.key === "Escape" && pendingHint) {
+      event.preventDefault();
+      pendingHint = null;
+      render();
+      $("hint-btn").focus({ preventScroll: true });
+      return;
+    }
+    if (event.key === "Escape" && (batchSelection.size || batchSelecting)) { event.preventDefault(); batchSelection.clear(); batchSelecting = false; render(); return; }
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (/^[1-9]$/.test(event.key)) {
       event.preventDefault();
@@ -2261,7 +2418,7 @@
     var direction = { ArrowUp: [0,-1], ArrowDown: [0,1], ArrowLeft: [-1,0], ArrowRight: [1,0] }[event.key];
     if (!direction) return;
     event.preventDefault();
-    moveOnLayout(direction[0], direction[1]);
+    moveOnLayout(direction[0], direction[1], event.shiftKey ? "extend" : false);
   });
 
   window.addEventListener("storage", function(event) {
@@ -2311,11 +2468,13 @@
     clearTransientMarks(); render(); save();
   });
 
-  function downloadPlayerFile(value, filename) {
+  async function downloadPlayerFile(value, filename) {
     var text = typeof value === "string" ? value : JSON.stringify(value);
+    if (Desktop && Desktop.isTauri()) return Desktop.saveJSON(text, filename);
     var url = URL.createObjectURL(new Blob([text], { type: "application/json;charset=utf-8" }));
     var link = document.createElement("a"); link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();
     setTimeout(function(){URL.revokeObjectURL(url);},30000);
+    return true;
   }
 
   function favoriteSession(record, unfinished) {
@@ -2376,6 +2535,19 @@
     }
   }
 
+  if (window.NineRealmsCustomUI) customUi = window.NineRealmsCustomUI({
+    current: function () { return game; }, blocked: function () { return storageTransition || generatingPuzzle || dialogIsOpen(); },
+    readDraft: function () { return preferences.customDraft; }, writeDraft: function (text) { preferences.customDraft = text; save(); },
+    open: function (dialog) { showDialog(dialog); save(); }, close: closeDialog, afterClose: function () { resumeClock(); save(); },
+    savePuzzle: favoriteStore ? function (puzzle) { favoriteStore.add(puzzle, { later: true }); if (personalUi) personalUi.refreshCurrent(); } : null,
+    play: async function (puzzle) {
+      closeDialog($("custom-dialog"));
+      if (hasProgress() && !await confirmAction("开始这道自建题？", "当前棋局会留在历史中；自建题已通过唯一解校验，点击开始后计时。", "准备自建题")) { showDialog($("custom-dialog")); return false; }
+      if (storageTransition) return false;
+      installPuzzle(puzzle, puzzle.difficulty, "classic"); setStatus("自建经典题已验证唯一解，点击开始后计时。"); save(); if (History) History.flush(); return true;
+    }
+  });
+
   if (window.NineRealmsTrainingUI) trainingUi = window.NineRealmsTrainingUI({
     progress: function () { return Voyage.practiceProgress(voyageProgress); },
     blocked: function () { return storageTransition || voyageStorageBlocked; },
@@ -2388,7 +2560,7 @@
     blocked: function () { return !canInteract(); },
     change: function (next, label) { if (!canInteract()) return; if (Drafts.equal(next, game.draft, game.board.length)) return;
       remember(); game.draft = Drafts.validate(next, game.board.length, game.clues); render(); save(label); },
-    message: setStatus, undo: undo
+    message: setStatus, undo: undo, redo: redo
   });
 
   bind("checkpoints-open", "click", function () { if (storageTransition || !History) return; save(); History.flush(); History.openCheckpoints(); });
@@ -2399,6 +2571,7 @@
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { render(); resumeClock(); save(); },
     onFavorite: function(snapshot){if(!favoriteStore||!snapshot)throw new Error("收藏暂不可用");favoriteStore.add(snapshot.game,{sessionId:snapshot.game.sessionId,completed:snapshot.game.completed});toast("已收藏这道题，打开“我的题目”即可查看。");if(personalUi)personalUi.refreshCurrent();},
+    onPractice: function (snapshot) { return openHistorical(snapshot, false); },
     onResume: function (snapshot) { return openHistorical(snapshot, false); },
     onReplayNew: function (snapshot) { return openHistorical(snapshot, true); },
     toast: toast
@@ -2410,15 +2583,15 @@
     open:showDialog,close:closeDialog,save:save,afterClose:function(){resumeClock();save();},
     resumeAvailable:function(record){return Boolean(favoriteSession(record,true));},play:playFavorite,
     history:function(record){var snapshot=favoriteSession(record,false);closeDialog($("personal-dialog"));if(History)History.open(snapshot&&snapshot.game.sessionId);},
-    maxBackupBytes:Backup.limits.maxBytes,
-    exportBackup:async function(){var backup=await preparePlayerBackup();downloadPlayerFile(backup,"Nine-Realms-backup-"+new Date().toISOString().slice(0,10)+".json");},
+    maxBackupBytes:Backup.limits.maxBytes,nativeSave:function(){return Boolean(Desktop&&Desktop.isTauri());},
+    exportBackup:async function(){var backup=await preparePlayerBackup();return await downloadPlayerFile(backup,"Nine-Realms-backup-"+new Date().toISOString().slice(0,10)+".json");},
     prepareBackup:async function(text){
       var validated=await Backup.validateAsync(text),p=Backup.preview(validated);
       return {validated:validated,summary:"备份时间："+new Date(p.createdAt).toLocaleString()+" · 版本 "+p.appVersion+
         "\n"+(p.currentGame?"当前棋局："+modeInfo(p.currentGame.mode).label+" · "+p.currentGame.filled+" / "+p.currentGame.total+" 格":"没有当前棋局")+
         "\n历史 "+p.historyCount+" 局 / "+p.historySteps+" 步 · 收藏 "+p.favoritesCount+" 题"+
         "\n彩蛋 "+p.secretsCount+" 项 · 每日 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
-    },commitBackup:commitPlayerBackup,downloadRecovery:function(value){downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
+    },commitBackup:commitPlayerBackup,downloadRecovery:function(value){return downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
   });
 
   buildCatalog();
@@ -2435,7 +2608,7 @@
       game.started ? "棋局已为你保留，点击继续，慢慢来。" : "棋局已准备好，等你开始。") :
       game.completed ? "上一局已完成，随时可以开启新的挑战。" :
       !game.started ? "已恢复准备中的棋局，点击开始游戏后计时。" :
-      "已恢复" + modeInfo(game.mode).label + (game.branch ? "的假设分支，检查点仍然保留；点击继续后计时。" : "进度，点击继续后再恢复计时。"));
+      "已恢复" + modeInfo(game.mode).label + (inBranch() ? "的假设分支，检查点仍然保留；点击继续后计时。" : "进度，点击继续后再恢复计时。"));
     save();
   } else {
     newGame("easy", true);

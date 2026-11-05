@@ -1,0 +1,7 @@
+{
+  "identifier": "desktop",
+  "description": "Only the bundled main window may save JSON via a user-selected path or write text to the clipboard.",
+  "local": true,
+  "windows": ["main"],
+  "permissions": ["allow-save-json", "allow-copy-text"]
+}

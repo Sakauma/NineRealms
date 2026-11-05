@@ -8,6 +8,11 @@ function integer(x,f,max){return Number.isInteger(x)&&x>=0&&x<=max?x:f;}
 function stamp(x,f){if(typeof x==="string")x=Date.parse(x);return Number.isFinite(x)&&x>0&&x<1e15?x:f;}
 function createSessionId(){var r="";try{var b=new Uint32Array(2);root.crypto.getRandomValues(b);r=b[0].toString(36)+b[1].toString(36);}catch(e){r=Math.random().toString(36).slice(2,14);}return "nr-"+Date.now().toString(36)+"-"+r;}
 function numbers(a,n,max,min){return Array.isArray(a)&&a.length===n&&a.every(function(v){return Number.isInteger(v)&&v>=(min||0)&&v<=max;});}
+function practiceInfo(value){
+ if(value===undefined||value===null)return null;
+ if(typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==4||Object.keys(value).some(function(k){return ['version','sourceSessionId','absoluteStep','wasAssumption'].indexOf(k)<0;})||value.version!==1||typeof value.sourceSessionId!=='string'||!/^[a-zA-Z0-9_-]{1,96}$/.test(value.sourceSessionId)||!Number.isInteger(value.absoluteStep)||value.absoluteStep<0||value.absoluteStep>1000003000||typeof value.wasAssumption!=='boolean')throw new TypeError('复练来源格式无效。');
+ return copy(value);
+}
 function cleanSnapshot(x,Engine){
  if(!x||typeof x!=="object"||!x.game||typeof x.game!=="object")return null;
  var g=x.game,n=Array.isArray(g.givens)?g.givens.length:0;
@@ -22,17 +27,17 @@ function cleanSnapshot(x,Engine){
    if(Engine.getLayout&&Engine.getLayout(g.mode).cellCount!==n)return null;
    Engine.normalizeClues(g.mode,g.clues);
  }catch(e){return null;}}
- try{if(g.draft!==undefined)Drafts.validate(g.draft,n,g.clues||{});var out=copy(x);out.game.selected=integer(g.selected,0,n-1);out.game.noteMode=Boolean(g.noteMode);out.game.completed=Boolean(g.completed);return out;}catch(e){return null;}
+ try{practiceInfo(g.practice);if(g.logicMode!==undefined&&typeof g.logicMode!=="boolean")return null;if(g.draft!==undefined)Drafts.validate(g.draft,n,g.clues||{});var out=copy(x);out.game.selected=integer(g.selected,0,n-1);out.game.noteMode=Boolean(g.noteMode);out.game.completed=Boolean(g.completed);return out;}catch(e){return null;}
 }
-function stateOf(s){var g=s.game;var out={board:g.board.slice(),notes:g.notes.slice(),selected:g.selected||0,noteMode:Boolean(g.noteMode),branch:Boolean(g.branch),elapsedMs:Math.floor(g.elapsedMs),mistakes:g.mistakes,hints:g.hints,completed:Boolean(g.completed)};if(g.draft!==undefined)out.draft=Drafts.validate(g.draft,g.board.length,g.clues||{});return out;}
+function stateOf(s){var g=s.game;var out={board:g.board.slice(),notes:g.notes.slice(),selected:g.selected||0,noteMode:Boolean(g.noteMode),branchId:null,branchLabel:g.branch?"假设":"主盘",branch:Boolean(g.branch&&(g.branch.version!==2||g.branch.activeId!==null)),elapsedMs:Math.floor(g.elapsedMs),mistakes:g.mistakes,hints:g.hints,completed:Boolean(g.completed)};if(g.branch&&g.branch.version===2){out.branchId=g.branch.activeId;var node=g.branch.nodes.find(function(n){return n.id===g.branch.activeId;});out.branchLabel=node?node.label:"主盘";}if(g.logicMode!==undefined)out.logicMode=Boolean(g.logicMode);if(g.draft!==undefined)out.draft=Drafts.validate(g.draft,g.board.length,g.clues||{});return out;}
 function validDraft(value,n,clues){try{if(value!==undefined)Drafts.validate(value,n,clues);return true;}catch(e){return false;}}
-function validFrame(f,g,clues){return f&&validDraft(f.draft,g.length,clues)&&numbers(f.board,g.length,9)&&numbers(f.notes,g.length,511)&&g.every(function(v,i){return !v||v===f.board[i];})&&f.notes.every(function(v,i){return !f.board[i]||!v;})&&Number.isFinite(f.elapsedMs)&&f.elapsedMs>=0&&f.elapsedMs<=1e12&&Number.isInteger(f.mistakes)&&f.mistakes>=0&&Number.isInteger(f.hints)&&f.hints>=0;}
-function sameState(a,b){return Drafts.equal(a.draft,b.draft,a.board.length)&&a.branch===b.branch&&a.completed===b.completed&&a.mistakes===b.mistakes&&a.hints===b.hints&&a.board.every(function(v,i){return v===b.board[i]&&a.notes[i]===b.notes[i];});}
-function applyStep(f,s){if(s.draft!==undefined)f.draft=copy(s.draft);s.changes.forEach(function(c){f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});["selected","noteMode","branch","elapsedMs","mistakes","hints","completed"].forEach(function(k){f[k]=s[k];});return f;}
+function validFrame(f,g,clues){return f&&(f.logicMode===undefined||typeof f.logicMode==='boolean')&&validDraft(f.draft,g.length,clues)&&numbers(f.board,g.length,9)&&numbers(f.notes,g.length,511)&&g.every(function(v,i){return !v||v===f.board[i];})&&f.notes.every(function(v,i){return !f.board[i]||!v;})&&Number.isFinite(f.elapsedMs)&&f.elapsedMs>=0&&f.elapsedMs<=1e12&&Number.isInteger(f.mistakes)&&f.mistakes>=0&&Number.isInteger(f.hints)&&f.hints>=0;}
+function sameState(a,b){return Drafts.equal(a.draft,b.draft,a.board.length)&&(a.branchId||null)===(b.branchId||null)&&Boolean(a.logicMode)===Boolean(b.logicMode)&&a.branch===b.branch&&a.completed===b.completed&&a.mistakes===b.mistakes&&a.hints===b.hints&&a.board.every(function(v,i){return v===b.board[i]&&a.notes[i]===b.notes[i];});}
+function applyStep(f,s){if(s.branchId!==undefined){f.branchId=s.branchId;f.branchLabel=s.branchLabel;}if(s.logicMode!==undefined)f.logicMode=s.logicMode;if(s.draft!==undefined)f.draft=copy(s.draft);s.changes.forEach(function(c){f.board[c[0]]=c[1];f.notes[c[0]]=c[2];});["selected","noteMode","branch","elapsedMs","mistakes","hints","completed"].forEach(function(k){f[k]=s[k];});return f;}
 function makeStep(a,b,label){
  var changes=[];b.board.forEach(function(v,i){if(v!==a.board[i]||b.notes[i]!==a.notes[i])changes.push([i,v,b.notes[i]]);});
  var draftChanged=!Drafts.equal(a.draft,b.draft,b.board.length);
- if(!draftChanged&&!changes.length&&a.branch===b.branch&&a.hints===b.hints&&a.mistakes===b.mistakes&&a.completed===b.completed)return null;
+ if(!draftChanged&&!changes.length&&(a.branchId||null)===(b.branchId||null)&&Boolean(a.logicMode)===Boolean(b.logicMode)&&a.branch===b.branch&&a.hints===b.hints&&a.mistakes===b.mistakes&&a.completed===b.completed)return null;
  var title=typeof label==="string"?label.trim().slice(0,60):"";
  if(!title){
    if(draftChanged&&!changes.length)title="修改推理草稿";
@@ -42,10 +47,10 @@ function makeStep(a,b,label){
    else if(changes.length===1&&a.board[changes[0][0]]!==b.board[changes[0][0]])title=changes[0][1]?"填入数字":"擦除数字";
    else title=changes.every(function(c){return a.board[c[0]]===c[1];})?"修改候选笔记":"修改棋盘";
  }
- var result={action:title,changes:changes,selected:b.selected,noteMode:b.noteMode,branch:b.branch,elapsedMs:b.elapsedMs,mistakes:b.mistakes,hints:b.hints,completed:b.completed};if(draftChanged)result.draft=Drafts.validate(b.draft,b.board.length);return result;
+ var result={action:title,changes:changes,selected:b.selected,noteMode:b.noteMode,branch:b.branch,elapsedMs:b.elapsedMs,mistakes:b.mistakes,hints:b.hints,completed:b.completed};if(b.branchId!==undefined){result.branchId=b.branchId;result.branchLabel=b.branchLabel;}if(b.logicMode!==undefined)result.logicMode=b.logicMode;if(draftChanged)result.draft=Drafts.validate(b.draft,b.board.length);return result;
 }
 function validStep(s,n,g,clues){
- if(!s||!validDraft(s.draft,n,clues)||typeof s.action!=="string"||s.action.length>60||!Array.isArray(s.changes)||s.changes.length>n||
+ if(!s||(s.logicMode!==undefined&&typeof s.logicMode!=='boolean')||!validDraft(s.draft,n,clues)||typeof s.action!=="string"||s.action.length>60||!Array.isArray(s.changes)||s.changes.length>n||
  !Number.isFinite(s.elapsedMs)||s.elapsedMs<0||s.elapsedMs>1e12||!Number.isInteger(s.selected)||s.selected<0||s.selected>=n||
  !Number.isInteger(s.mistakes)||s.mistakes<0||!Number.isInteger(s.hints)||s.hints<0||
  typeof s.branch!=="boolean"||typeof s.completed!=="boolean"||typeof s.noteMode!=="boolean")return false;
@@ -63,7 +68,7 @@ function createStore(options){
  function raw(id){return records.find(function(r){return r.sessionId===id;});}
  function last(r){var f=copy(r.base);r.steps.forEach(function(s){applyStep(f,s);});return f;}
  function trim(r,n){r.steps.slice(0,n).forEach(function(s){applyStep(r.base,s);});r.steps.splice(0,n);r.droppedSteps+=n;}
- function eviction(){return records.filter(function(r){return r.sessionId!==currentId;}).sort(function(a,b){return Number(b.snapshot.game.completed)-Number(a.snapshot.game.completed)||a.updatedAt-b.updatedAt;});}
+ function eviction(){var current=raw(currentId),source=current&&current.snapshot.game.practice&&current.snapshot.game.practice.sourceSessionId;return records.filter(function(r){return r.sessionId!==currentId&&r.sessionId!==source;}).sort(function(a,b){return Number(b.snapshot.game.completed)-Number(a.snapshot.game.completed)||a.updatedAt-b.updatedAt;});}
  function envelope(){return {version:1,currentId:currentId,removedRecords:removed,records:records};}
  function enforce(){
    records.forEach(function(r){if(r.steps.length>limits.steps)trim(r,r.steps.length-limits.steps);});
@@ -122,6 +127,20 @@ function createStore(options){
    if(index&&r.steps[index-1].draft!==undefined){var nextDraft=Drafts.validate(f.draft,f.board.length),changed=new Set(f.changed);nextDraft.colors.forEach(function(v,i){if(v!==priorDraft.colors[i]||nextDraft.marks[i]!==priorDraft.marks[i])changed.add(i);});if(JSON.stringify(priorDraft.links)!==JSON.stringify(nextDraft.links))priorDraft.links.concat(nextDraft.links).forEach(function(l){changed.add(l.a);changed.add(l.b);});if(JSON.stringify(priorDraft.cages)!==JSON.stringify(nextDraft.cages)){var cages=r.snapshot.game.clues&&r.snapshot.game.clues.cages||[];priorDraft.cages.concat(nextDraft.cages).forEach(function(c){if(cages[c.index])cages[c.index].cells.forEach(function(i){changed.add(i);});});}f.changed=Array.from(changed);}
    return f;
  }
+ function practiceAt(id,absoluteStep){
+   var record=raw(id);
+   if(!record)throw new Error("原局已被历史保留策略移除，无法创建该卡点副本。");
+   if(!Number.isInteger(absoluteStep)||absoluteStep<record.droppedSteps||absoluteStep>record.droppedSteps+record.steps.length)
+     throw new Error("这个卡点的原步骤已清理，无法准确复练；原局最新进度仍可继续。");
+   var frame=frameAt(id,absoluteStep-record.droppedSteps),snapshot=copy(record.snapshot),g=snapshot.game;
+   g.sessionId=createSessionId();g.createdAt=now();g.board=frame.board.slice();g.notes=frame.notes.slice();
+   g.draft=Drafts.clone(frame.draft,g.board.length,g.clues);g.selected=frame.selected;g.noteMode=frame.noteMode;
+   g.history=[];g.redo=[];g.branch=null;g.elapsedMs=0;g.hints=0;g.mistakes=0;
+   g.started=false;g.paused=false;g.completed=false;g.dailyDate=null;g.voyageId=null;delete g.energy;
+   g.logicMode=Boolean(frame.logicMode||frame.branch);
+   g.practice={version:1,sourceSessionId:id,absoluteStep:absoluteStep,wasAssumption:Boolean(frame.branch)};
+   return snapshot;
+ }
  function summarize(id){
    var r=raw(id);if(!r)return null;var frame=copy(r.base),events=[],counts={hints:0,mistakes:0,notes:0,drafts:0,undo:0,branches:0,completion:0};
    r.steps.forEach(function(step,index){var kinds=[];
@@ -130,7 +149,7 @@ function createStore(options){
      if(step.changes.some(function(c){return frame.notes[c[0]]!==c[2];})){counts.notes++;kinds.push('notes');}
      if(step.draft!==undefined&&!Drafts.equal(frame.draft,step.draft,frame.board.length)){counts.drafts++;kinds.push('draft');}
      if(/撤销|undo/i.test(step.action)){counts.undo++;kinds.push('undo');}
-     if(frame.branch!==step.branch){counts.branches++;kinds.push('branch');}
+     if(frame.branch!==step.branch||(frame.branchId||null)!==(step.branchId||null)){counts.branches++;kinds.push('branch');}
      if(!frame.completed&&step.completed){counts.completion++;kinds.push('completion');}
      if(kinds.length)events.push({stepIndex:index+1,absoluteStep:r.droppedSteps+index+1,action:step.action,kinds:kinds,elapsedMs:step.elapsedMs});
      applyStep(frame,step);
@@ -154,7 +173,7 @@ function createStore(options){
    if(!storage||typeof storage.setItem!=="function"){warn("浏览器未允许保存历史，本次仍可查看回放；关闭窗口后这些新记录可能丢失。");return false;}
    try{var text=enforce();if(text.length*2>limits.bytes)throw new Error("History snapshot exceeds storage budget");storage.setItem(KEY,text);dirty=false;persistenceFailed=false;return true;}catch(e){warn("历史记录暂时无法保存到本机，本次仍可回放；当前棋局继续单独保存。");return false;}
  }
- return {capture:capture,flush:flush,summarize:summarize,checkpoints:checkpointList,markCheckpoint:markCheckpoint,removeCheckpoint:removeCheckpoint,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
+ return {capture:capture,flush:flush,practiceAt:practiceAt,summarize:summarize,checkpoints:checkpointList,markCheckpoint:markCheckpoint,removeCheckpoint:removeCheckpoint,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
 }
 function getStore(){
  if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
@@ -197,7 +216,7 @@ function init(options){
  var playback=el("div","history-playback"),previous=btn("history-prev","← 上一步","secondary-btn"),play=btn("history-play","播放","secondary-btn"),next=btn("history-next","下一步 →","secondary-btn");
  playback.append(previous,play,next);
  var replayNote=el("p","history-replay-note");replayNote.id="history-replay-note";
- var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");var favorite=btn("history-favorite","收藏题目","secondary-btn");favorite.disabled=typeof hooks.onFavorite!=="function";actions.append(resume,restart,favorite);
+ var actions=el("div","history-actions"),resume=btn("history-resume","继续这一局","primary-btn"),restart=btn("history-restart","重新挑战","secondary-btn");var favorite=btn("history-favorite","收藏题目","secondary-btn");favorite.disabled=typeof hooks.onFavorite!=="function";var practice=btn("history-practice","从此步独立复练","secondary-btn");practice.disabled=typeof hooks.onPractice!=="function";actions.append(resume,restart,favorite,practice);
  var review=el("details","history-review"),reviewTitle=el("summary","","本局复盘 · 已记录事件"),reviewSummary=el("p","history-review-summary"),reviewEvents=el("div","history-review-events"),draftSummary=el("p","history-draft-summary");review.id="history-review";review.append(reviewTitle,reviewSummary,reviewEvents);
  detail.append(detailHead,recordMeta,viewport,diagramHint,draftSummary,actionLine,slider,playback,replayNote,review,actions);main.append(sidebar,detail);
  var retention=el("p","history-retention");retention.id="history-retention";
@@ -213,7 +232,7 @@ function init(options){
  function resyncAnchor(saved){
    if(!saved)return true;var fresh=getStore().get(saved.id);select(saved.id);
    if(!fresh||saved.absolute<fresh.droppedSteps||saved.absolute>fresh.droppedSteps+fresh.steps.length){
-     checkpointMarkFrame.disabled=true;checkpointStatus.textContent+=' 原回放步骤已被容量清理，请重新选择一个保留步骤后再标记。';return false;
+     checkpointMarkFrame.disabled=true;practice.disabled=true;checkpointStatus.textContent+=' 原回放步骤已被容量清理，请重新选择一个保留步骤后再标记。';return false;
    }
    frameIndex=saved.absolute-fresh.droppedSteps;renderFrame();return true;
  }
@@ -224,10 +243,19 @@ function init(options){
    if(!items.length){checkpointRows.appendChild(el('p','checkpoint-empty','暂时没有符合条件的卡点。自动条目来自保留的真实日志；也可以主动标记当前局或回放步骤。'));return;}
    items.slice(0,checkpointLimit).forEach(function(point){var row=el('article','checkpoint-row');row.dataset.checkpointKey=point.sessionId+':'+point.id;var label=el('strong','',modeName(point.mode)+' · '+(point.kind==='manual'?'我的标记':'日志线索')),text=el('p','',point.label),meta=el('small','',point.available?'原记录第 '+point.absoluteStep+' 步':'原记录第 '+point.absoluteStep+' 步已清理，不能精确回看');
      var actions=el('div','checkpoint-actions'),view=btn('',point.available?'回看这一刻':'原步骤已清理','secondary-btn'),resumePoint=btn('',point.completed?'重新挑战':'继续最新进度','secondary-btn');view.disabled=!point.available;view.addEventListener('click',function(){flush();var fresh=getStore().get(point.sessionId);if(!fresh||point.absoluteStep<fresh.droppedSteps||point.absoluteStep>fresh.droppedSteps+fresh.steps.length){checkpointStatus.textContent='原步骤已清理，不能精确回看。';renderCheckpoints();return;}open(point.sessionId,point.absoluteStep-fresh.droppedSteps);slider.focus();});resumePoint.disabled=typeof(point.completed?hooks.onReplayNew:hooks.onResume)!=='function';resumePoint.addEventListener('click',function(){selectedId=point.sessionId;restore(point.completed?hooks.onReplayNew:hooks.onResume);});actions.append(view,resumePoint);
+     var practicePoint=btn('','独立复练','secondary-btn');practicePoint.disabled=!point.available||typeof hooks.onPractice!=='function';practicePoint.title='保留当时的数字、候选与草稿，另开副本';practicePoint.addEventListener('click',function(){practiceFrame(point.sessionId,point.absoluteStep);});actions.appendChild(practicePoint);
      if(point.kind==='manual'){var remove=btn('','取消标记','secondary-btn');remove.addEventListener('click',function(){if(persistenceSuspended)return;var saved=anchor(),ok=getStore().removeCheckpoint(point.sessionId,point.id);checkpointStatus.textContent=ok?'已取消标记，棋局和回放不受影响。':'标记已在本次会话取消，但本机保存暂不可用。';resyncAnchor(saved);renderCheckpoints();checkpointMarkCurrent.focus();});actions.appendChild(remove);}
      row.append(label,text,meta,actions);checkpointRows.appendChild(row);
    });
  }
+ async function practiceFrame(id,absoluteStep){
+   if(persistenceSuspended||typeof hooks.onPractice!=='function')return;
+   stop();flush();practice.disabled=true;
+   try{var snapshot=getStore().practiceAt(id,absoluteStep);await hooks.onPractice(snapshot);}
+   catch(error){checkpointStatus.textContent=error.message;if(hooks.toast)hooks.toast(error.message);}
+   finally{practice.disabled=false;if(dialog.open)refreshList(false);}
+ }
+ practice.addEventListener('click',function(){if(selectedRecord)practiceFrame(selectedId,selectedRecord.droppedSteps+frameIndex);});
  function markPoint(id,index){try{if(persistenceSuspended)throw new Error('数据恢复期间暂不能修改卡点。');checkpointPanel.open=true;var saved=anchor(),result=getStore().markCheckpoint(id,index,checkpointLabel.value);checkpointLabel.value='';checkpointStatus.textContent=result.persisted?'已保存卡点，可从列表精确回看。':'已标记本次会话，但本机保存暂不可用；请勿依赖关闭后的保留。';resyncAnchor(saved);renderCheckpoints();}catch(error){checkpointStatus.textContent=error.message;}}
  checkpointMarkCurrent.addEventListener('click',function(){var id=getStore().status().currentId,r=getStore().get(id);if(r)markPoint(id,r.steps.length);});
  checkpointMarkFrame.addEventListener('click',function(){if(selectedId)markPoint(selectedId,frameIndex);});
@@ -256,6 +284,7 @@ function init(options){
    if(!selectedRecord)return;var g=selectedRecord.snapshot.game;previewContext={mode:g.mode,clues:g.clues};
    previewLayout=hooks.Engine.getLayout?hooks.Engine.getLayout(previewContext):fallbackLayout(g.board.length);
    var multi=previewLayout.cellCount>81,regions=g.clues&&g.clues.regions;
+   var arrowBulbCells=new Set((g.clues&&g.clues.lines||[]).filter(function(line){return line.type==="arrow"&&Array.isArray(line.cells)&&line.cells.length;}).map(function(line){return line.cells[0];}));
    stage.dataset.multi=String(multi);viewport.classList.remove("has-outside");stage.style.setProperty("--history-columns",previewLayout.columns);
    stage.style.aspectRatio=previewLayout.columns+" / "+previewLayout.rows;board.replaceChildren();frameCells=[];
    board.style.gridTemplateColumns="repeat("+previewLayout.columns+",minmax(0,1fr))";board.style.gridTemplateRows="repeat("+previewLayout.rows+",minmax(0,1fr))";
@@ -264,6 +293,7 @@ function init(options){
      var cell=el("div","history-cell"),value=el("span","history-value"),notes=el("span","history-notes");
      cell.dataset.index=String(i);cell.style.gridRow=String(loc.row+1);cell.style.gridColumn=String(loc.col+1);cell.setAttribute("role","gridcell");cell.setAttribute("aria-rowindex",String(loc.row+1));cell.setAttribute("aria-colindex",String(loc.col+1));cell.setAttribute("aria-readonly","true");
      if(g.givens[i])cell.classList.add("given");if(loc.boards&&loc.boards.length>1)cell.classList.add("shared");
+     if(!multi&&arrowBulbCells.has(i))cell.classList.add("arrow-bulb-cell");
      var top=loc.row%3===0,left=loc.col%3===0,right=loc.col%3===2,bottom=loc.row%3===2;
      if(g.mode==="jigsaw"&&Array.isArray(regions)){top=loc.row===0||regions[i-9]!==regions[i];bottom=loc.row===8||regions[i+9]!==regions[i];left=loc.col===0||regions[i-1]!==regions[i];right=loc.col===8||regions[i+1]!==regions[i];}
      if(top)cell.classList.add("edge-top");if(left)cell.classList.add("edge-left");if(right)cell.classList.add("edge-right");if(bottom)cell.classList.add("edge-bottom");
@@ -297,7 +327,7 @@ function init(options){
    board.setAttribute("aria-label",modeName(g.mode)+"回放，第 "+frameIndex+" 步，共 "+f.totalSteps+" 步");
    slider.max=String(f.totalSteps);slider.value=String(frameIndex);slider.disabled=f.totalSteps===0;slider.setAttribute("aria-valuetext","第 "+frameIndex+" 步，共 "+f.totalSteps+" 步，"+f.action);
    previous.disabled=frameIndex<=0;next.disabled=frameIndex>=f.totalSteps;play.disabled=f.totalSteps===0;
-   actionLabel.textContent=frameIndex+" / "+f.totalSteps+" · "+f.action+(f.branch?" · 假设中":"");stepTime.textContent="累计用时 "+timeLabel(f.elapsedMs);
+   actionLabel.textContent=frameIndex+" / "+f.totalSteps+" · "+f.action+(f.branch?" · "+(f.branchLabel||"假设中"):"")+(f.logicMode?" · 纯逻辑":"");stepTime.textContent="累计用时 "+timeLabel(f.elapsedMs);
    var note=selectedRecord.origin==="legacy"?"从本次更新后的操作开始回放；更早的步骤没有记录。":"按当时的真实操作回放，不改变当前棋局或成绩。";
    if(selectedRecord.droppedSteps)note="较早的 "+selectedRecord.droppedSteps+" 步已清理；以下从保留起点回放最近 "+f.totalSteps+" 步。";
    if(selectedRecord.replayRecovered)note="这局较早的回放数据无法读取，已保留可继续的棋局，并从该状态重新记录。";
@@ -318,7 +348,7 @@ function init(options){
    }
  }
  function select(id){
-   stop();checkpointMarkFrame.disabled=false;selectedRecord=getStore().get(id);selectedId=selectedRecord?id:null;detail.hidden=!selectedRecord;if(!selectedRecord)return;
+   stop();checkpointMarkFrame.disabled=false;practice.disabled=typeof hooks.onPractice!=="function";selectedRecord=getStore().get(id);selectedId=selectedRecord?id:null;detail.hidden=!selectedRecord;if(!selectedRecord)return;
    var g=selectedRecord.snapshot.game,summary=getStore().getRecords().find(function(r){return r.sessionId===id;});
    recordTitle.textContent=modeName(g.mode)+" · "+difficultyName(g.mode,g.difficulty);recordState.textContent=g.completed?"已完成":g.started?"未完成":"待开始";
    recordMeta.textContent=dateLabel(selectedRecord.createdAt)+" 开始 · 用时 "+timeLabel(g.elapsedMs)+" · 提示 "+g.hints+" · 失误 "+g.mistakes;
@@ -328,7 +358,7 @@ function init(options){
    reviewEvents.replaceChildren();report.events.slice(-200).forEach(function(event){var jump=btn('',event.stepIndex+' · '+event.action,'history-review-jump');jump.dataset.stepIndex=String(event.stepIndex);jump.addEventListener('click',function(){moveTo(event.stepIndex);});reviewEvents.appendChild(jump);});
    frameIndex=selectedRecord.steps.length;drawPreview();renderFrame();refreshList(false);
  }
- function moveTo(index){stop();checkpointMarkFrame.disabled=false;frameIndex=index;renderFrame();}
+ function moveTo(index){stop();checkpointMarkFrame.disabled=false;practice.disabled=typeof hooks.onPractice!=="function";frameIndex=index;renderFrame();}
  previous.addEventListener("click",function(){moveTo(frameIndex-1);});next.addEventListener("click",function(){moveTo(frameIndex+1);});slider.addEventListener("input",function(){moveTo(Number(slider.value));});
  play.setAttribute("aria-pressed","false");
  play.addEventListener("click",function(){
@@ -352,6 +382,6 @@ function init(options){
  resume.addEventListener("click",function(){restore(hooks.onResume);});restart.addEventListener("click",function(){restore(hooks.onReplayNew);});
  ui={dialog:dialog,open:open,close:close,refreshList:refreshList,anchor:anchor,resyncAnchor:resyncAnchor};return api;
 }
-var api={KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},summarize:function(id){return getStore().summarize(id);},checkpoints:function(filter){return getStore().checkpoints(filter);},markCheckpoint:function(id,index,label){if(persistenceSuspended)throw new Error("数据恢复期间暂不能修改卡点。");var saved=ui&&ui.dialog.open?ui.anchor():null,result=getStore().markCheckpoint(id,index,label);if(ui&&ui.dialog.open){ui.resyncAnchor(saved);ui.refreshList(false);}return result;},markCurrent:function(label){var state=getStore().status(),record=getStore().get(state.currentId);if(!record)throw new Error("当前棋局还没有可保留的历史记录。");return api.markCheckpoint(record.sessionId,record.steps.length,label);},openCheckpoints:function(){if(ui){ui.open();if(!ui.dialog.open)return;var panel=root.document.getElementById('checkpoint-panel');if(panel){panel.open=true;panel.scrollIntoView({block:'nearest'});}var button=root.document.getElementById('checkpoint-mark-current');if(button)button.focus();}},suspendPersistence:suspendPersistence,open:function(id,stepIndex){if(ui)ui.open(id,stepIndex);},close:function(){if(ui)ui.close();}};
+var api={practiceInfo:practiceInfo,KEY:KEY,limits:copy(LIMITS),createStore:createStore,createSessionId:createSessionId,init:init,capture:capture,flush:flush,exportData:function(){return getStore().exportData();},getRecords:function(){return getStore().getRecords();},getSnapshot:function(id){return getStore().getSnapshot(id);},practiceAt:function(id,absoluteStep){if(persistenceSuspended)throw new Error("数据恢复期间暂不能创建复练。");return getStore().practiceAt(id,absoluteStep);},summarize:function(id){return getStore().summarize(id);},checkpoints:function(filter){return getStore().checkpoints(filter);},markCheckpoint:function(id,index,label){if(persistenceSuspended)throw new Error("数据恢复期间暂不能修改卡点。");var saved=ui&&ui.dialog.open?ui.anchor():null,result=getStore().markCheckpoint(id,index,label);if(ui&&ui.dialog.open){ui.resyncAnchor(saved);ui.refreshList(false);}return result;},markCurrent:function(label){var state=getStore().status(),record=getStore().get(state.currentId);if(!record)throw new Error("当前棋局还没有可保留的历史记录。");return api.markCheckpoint(record.sessionId,record.steps.length,label);},openCheckpoints:function(){if(ui){ui.open();if(!ui.dialog.open)return;var panel=root.document.getElementById('checkpoint-panel');if(panel){panel.open=true;panel.scrollIntoView({block:'nearest'});}var button=root.document.getElementById('checkpoint-mark-current');if(button)button.focus();}},suspendPersistence:suspendPersistence,open:function(id,stepIndex){if(ui)ui.open(id,stepIndex);},close:function(){if(ui)ui.close();}};
 return api;
 });

@@ -13,3 +13,5 @@ __pycache__/
 
 /evidence/
 /data/sudoku-exchange/validated-bank.json
+/src-tauri/target/
+/src-tauri/gen/

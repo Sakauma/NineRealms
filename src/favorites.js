@@ -32,10 +32,13 @@
     function board(value, min) { return Array.isArray(value) && value.length === count && value.every(function (n) { return Number.isInteger(n) && n >= min && n <= 9; }); }
     if (!board(input.givens, 0) || !board(input.solution, 1) || !Engine.validateComplete(input.solution, context) ||
         !input.givens.every(function (v, i) { return !v || v === input.solution[i]; })) fail("INVALID_FAVORITE_PUZZLE");
-    var proof = Engine.analyzeSolutions(input.givens, context, { limit: 2, maxNodes: 200000, timeLimitMs: 200 });
+    if (input.custom !== undefined && typeof input.custom !== "boolean" || input.custom && (input.mode !== "classic" || Object.keys(clues).some(function(k){return k !== "version" && clues[k].length;}))) fail("INVALID_CUSTOM_RULES");
+    var proof = Engine.analyzeSolutions(input.givens, context, { limit: 2, maxNodes: 250000, timeLimitMs: input.custom ? 750 : 200 });
     if (proof.exhausted) fail("FAVORITE_VALIDATION_BUDGET");
     if (proof.count !== 1 || !proof.solution || proof.solution.some(function (v, i) { return v !== input.solution[i]; })) fail("FAVORITE_NOT_UNIQUE");
-    return { version: VERSION, mode: input.mode, difficulty: input.difficulty, givens: input.givens.slice(), solution: input.solution.slice(), clues: copy(clues) };
+    var frozen = { version: VERSION, mode: input.mode, difficulty: input.difficulty, givens: input.givens.slice(), solution: input.solution.slice(), clues: copy(clues) };
+    if (input.custom) frozen.custom = true;
+    return frozen;
   }
   function validateEnvelope(value) {
     keys(value, ["version", "records"]);
@@ -51,7 +54,7 @@
           typeof record.later !== "boolean" || typeof record.completed !== "boolean" ||
           !Array.isArray(record.sessionIds) || record.sessionIds.length > LIMITS.sessions ||
           !record.sessionIds.every(sessionId) || new Set(record.sessionIds).size !== record.sessionIds.length) fail("INVALID_FAVORITE_RECORD");
-      keys(record.puzzle, ["version", "mode", "difficulty", "givens", "solution", "clues"]);
+      keys(record.puzzle, ["version", "mode", "difficulty", "givens", "solution", "clues", "custom"]);
       if (record.puzzle.version !== VERSION) fail("UNSUPPORTED_FAVORITE_PUZZLE_VERSION");
       var puzzle = freezePuzzle(record.puzzle);
       if (Date.now() - started > 8000) fail("FAVORITES_VALIDATION_TIMEOUT");

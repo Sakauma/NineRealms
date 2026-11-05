@@ -1,0 +1,240 @@
+{
+  "description": "Captured before overlay styling changes. Digests pin exact clue documents, legends, cell descriptions and outside/jigsaw metadata for every published nonclassic puzzle plus one empty-clue classic.",
+  "modes": [
+    {
+      "mode": "classic",
+      "count": 1,
+      "clueHash": "2b5cc34c4f6ec14f06173da351fff7d11eef8626d2069d59da0ae711736c33ad",
+      "semanticHash": "58585e3cf5043fa8ff413746cf0c3da8855e5578d872eeb9b3f7837509cb7518",
+      "legend": ""
+    },
+    {
+      "mode": "diagonal",
+      "count": 60,
+      "clueHash": "3e236c237d3404d433169b5c0a83cea334dc8074b57475ddcb8bc9cdde8044b7",
+      "semanticHash": "5abb77d0110bca84059f898d364eae3724a5d45fbe306570b197053f11df6ead",
+      "legend": ""
+    },
+    {
+      "mode": "hyper",
+      "count": 60,
+      "clueHash": "144bc3415f9f8c606e94dbdf3de660c87dd8c9e13dfb8315e93a84a067caa136",
+      "semanticHash": "ca804268bc6b4a666a071c896c7a5bc5e79c257394d9603488420d193c421e04",
+      "legend": ""
+    },
+    {
+      "mode": "knight",
+      "count": 60,
+      "clueHash": "e67d3f5d5e232ae00cf00dab268900589db31c02c502c67a3a050faac27344f8",
+      "semanticHash": "02e7361eb6f3a89ce6ef4f9dd64c4da56ab6457472d660996e7c769bd4d6d3ed",
+      "legend": ""
+    },
+    {
+      "mode": "twin",
+      "count": 36,
+      "clueHash": "47b4b985b7da7f375044dd5dc983813bd19e78e3d7ce93178e8bea8197593c60",
+      "semanticHash": "81fd0fce21ac7d9e18dda412d6b02de49fa9ede4ebd498098d01eb1b8ac46dca",
+      "legend": ""
+    },
+    {
+      "mode": "samurai",
+      "count": 36,
+      "clueHash": "5068d8020759d97f3ba1b646595b52416de4d0f276f84c5460bcba70fa1d2850",
+      "semanticHash": "9d867b6090e17236e408912acd762279f9d3c872d085c094bf682b918ba85492",
+      "legend": ""
+    },
+    {
+      "mode": "king",
+      "count": 36,
+      "clueHash": "4ffdfcb8cfee58c56b29e349615a1452881abf34ddf0c3089a8e9a935a1ced8c",
+      "semanticHash": "e9b3851f5cb002346335f29d0275c4694200656af6662dc3abd6369e62d5426b",
+      "legend": ""
+    },
+    {
+      "mode": "nonconsecutive",
+      "count": 36,
+      "clueHash": "a069f8a38b8c1638982822237720900d3e9d8718424f9ce8a3ff6fde209d2c96",
+      "semanticHash": "62337936661ff2e59042aa205ca9e948af5b1f3916ae6612befdc40af1f8e325",
+      "legend": ""
+    },
+    {
+      "mode": "miracle",
+      "count": 36,
+      "clueHash": "e2454fba8299629afcfc744685484f77b174100492b4d98a0c18780b49cd858b",
+      "semanticHash": "88c61628ed63c28f922ac32da06d998a9028a048f0b221b569b1de04c12ae539",
+      "legend": ""
+    },
+    {
+      "mode": "disjoint",
+      "count": 36,
+      "clueHash": "d529a52bb3a13cb0799322d02ec64b0eca1406cd9df5636babeab6e6550d7fad",
+      "semanticHash": "4d3344a3cb6980cf3fab09dfbc5069027c679b319a3b3df30d59977770cd32de",
+      "legend": ""
+    },
+    {
+      "mode": "jigsaw",
+      "count": 36,
+      "clueHash": "987d21bcd42601bee6f6057b213e257d6d1d52dd637d434f960e6e5b7934c121",
+      "semanticHash": "2f149af79b3d69ed49e08a44fdbe50db2b2fc1cae25d0fa2cffa2545640be249",
+      "legend": "粗线围成不规则宫"
+    },
+    {
+      "mode": "odd-even",
+      "count": 36,
+      "clueHash": "f7f495487e0f303fcec0c70cff580e6387e8a4757aa2a6e68539bb5bb0c3bdd0",
+      "semanticHash": "2a116576a50114a29a6ed197473d88dafc313277eff0fdd6f4d8d91dafacc0c6",
+      "legend": "圆形奇数 / 方形偶数"
+    },
+    {
+      "mode": "killer",
+      "count": 36,
+      "clueHash": "55a39e71651ad54dbbcf4fe61c01dc6fda5eb453b529af76f221f5ba4bf2ccaa",
+      "semanticHash": "4135710005aba9d6bc5d26c2dcfe61ecdf14fa16973af5b0f9e1c6a7ae9444e7",
+      "legend": "笼角数字为笼内总和"
+    },
+    {
+      "mode": "thermo",
+      "count": 36,
+      "clueHash": "3bb4741a414f58e6980ae9bdd3edf27e38c27dde5c5bde4d78157486fd011107",
+      "semanticHash": "87ad806f46282ab4b7bec15f5f3774d1c73246fb17d841b7f5487c41a1a901f1",
+      "legend": "温度计"
+    },
+    {
+      "mode": "thermo-killer",
+      "count": 3,
+      "clueHash": "adde7a89e514d6ea1a11567a161b474c49b3207acfe1c426195c511c55f0afbc",
+      "semanticHash": "5734b31a9048696041628225164f3661704fe6f43bfb516672fb0691d5c819ec",
+      "legend": "笼角数字为笼内总和 · 温笼合流：温度计递增与笼内不重复求和同时成立 · 温度计"
+    },
+    {
+      "mode": "arrow",
+      "count": 36,
+      "clueHash": "bac6626d1a616fe27199bc49f6763f6b5eff0a43426e9a4dc06a3c98836dd03b",
+      "semanticHash": "3f8844b3d64c16f528822e65a2263bd73d7f15cf02f8fdf52a4790d308bbc8fa",
+      "legend": "箭头 · 颜色仅辅助追踪；交叉处不连接；同心圈共用同一数字，各箭杆分别求和"
+    },
+    {
+      "mode": "kropki",
+      "count": 36,
+      "clueHash": "d5c7d3acf80748ee8d0e69ffe9a8a1c7082f07894b2582880bf94a306573cc13",
+      "semanticHash": "1ae5a65a0d216b3e13564de9a39531a27e0fc392fa7746e7ecb7b87c3a240bb1",
+      "legend": "白点差 1 / 黑点比 2"
+    },
+    {
+      "mode": "xv",
+      "count": 36,
+      "clueHash": "9b6170a39a73cb50aeb60e97e165e38bbbe7ab2e6cf5c648cd78baf06b545371",
+      "semanticHash": "9698ca437f30b97a21bcc04430ef2799a8b998a68c5fb4b1f99c1a5eb406a7f1",
+      "legend": "X 和为 10 / V 和为 5"
+    },
+    {
+      "mode": "greater",
+      "count": 36,
+      "clueHash": "656095a15c135ba3942b5abc938122ddecbe25ab2aff8a656491df101616b3bf",
+      "semanticHash": "ced1178854ad3ab331bc270c85b18000e59bf5bddf6aec39bf09cfec0f432b74",
+      "legend": "不等号开口朝较大数字"
+    },
+    {
+      "mode": "renban",
+      "count": 36,
+      "clueHash": "59b860ee90c49aa5e0aa1da7c0287bb50bae351a56f4225a525be1c217f291bd",
+      "semanticHash": "bfdaf03c23645b25556e543faa0e8e08402ea509c407cae887cf6792dd5574fc",
+      "legend": "连续线"
+    },
+    {
+      "mode": "whispers",
+      "count": 36,
+      "clueHash": "8ab62e8a0f06ae3144b09d8ede6f9dad34734459c4f427f0ec2fe7720298c498",
+      "semanticHash": "0c7e7273bc2c0441660ea8ee69d7da340735350b0c91e873a661db2502d49475",
+      "legend": "低语线"
+    },
+    {
+      "mode": "palindrome",
+      "count": 36,
+      "clueHash": "5158c9dbed10bdba920f28898a329fac79af5fb9165c0f7744c80fd02db6bd04",
+      "semanticHash": "286b5b744c3aa59bc5a6691fc4042daf6701a6b8493b7a5d707c274aa19f9bd5",
+      "legend": "回文线"
+    },
+    {
+      "mode": "between",
+      "count": 36,
+      "clueHash": "ae38e7929c5b632c15d5299ebfd9d4f57f08c0846ee21ae6fe8b49a6220d02e5",
+      "semanticHash": "d8f9c28fd3acffae7f7afb2e9af998c545daf4092ccd92976f8872d2c710d996",
+      "legend": "之间线"
+    },
+    {
+      "mode": "lockout",
+      "count": 36,
+      "clueHash": "dad8c7ba2e4720832725976f88425efa7989bcca58e758da3fcf116d517f403a",
+      "semanticHash": "822fa63dc528175ec7b742ed47f605f4a3a56b827535d3447bc8c701eb5a0159",
+      "legend": "锁定线"
+    },
+    {
+      "mode": "entropic",
+      "count": 36,
+      "clueHash": "067d2a87463bd0bcb588d2afa6b827ceae665acb25684161ff357eccd56cdd92",
+      "semanticHash": "3e4453ac6218a6b65dfed731db466777b9c041fa2eac4e95b7186565a265ea84",
+      "legend": "熵线"
+    },
+    {
+      "mode": "modular",
+      "count": 36,
+      "clueHash": "be3fe4936c7485490fb007bb7823568b4b75f546c82f658e68a0f39303f32246",
+      "semanticHash": "3d79e9cad2fe83dc82f10c23462faf25e240d9b77806f33d8a8dc0cfe2da03be",
+      "legend": "模三线"
+    },
+    {
+      "mode": "region-sum",
+      "count": 36,
+      "clueHash": "2bee2bce57233e226626a3199dd8e63576613a4c9b37da3f8e7e31c40b8754a0",
+      "semanticHash": "ceda6b74df23481c46b900e4bd4279406c90e35b1cd8eefa51172b4bce1ebf5a",
+      "legend": "区域和线"
+    },
+    {
+      "mode": "sandwich",
+      "count": 36,
+      "clueHash": "bbfb94cf37fa9571166aa595f8edff9cc83601cf5dbf7654d6a6dc667a406d37",
+      "semanticHash": "c6c8f587317441c6c2a95cc340f60f3976ced681a7da026364c1a650cd340cd4",
+      "legend": "外围夹心和值"
+    },
+    {
+      "mode": "skyscraper",
+      "count": 36,
+      "clueHash": "497211188211b7d913785c38692f7859a39809e10f231127efb8e05a674bc9f5",
+      "semanticHash": "ebe8f571603562c33aba0132d7fc9afeb1895090805e8b105a2d3bd9cec27f85",
+      "legend": "外围楼高数量"
+    },
+    {
+      "mode": "xsum",
+      "count": 36,
+      "clueHash": "3c2ac8ae026fda07ec15371a5ecc6b103c8468ccab866dad1abfc41c41fa9d52",
+      "semanticHash": "1fc1b70c1183d97a875efe9bce0d2cc1b988dded9fd911a502bf2ad4a0a9a7ce",
+      "legend": "外围 X 和"
+    },
+    {
+      "mode": "littlekiller",
+      "count": 36,
+      "clueHash": "ab8b39238ffc005d6582a215be608424bf1f88fdfca7c9d74ca7ea235c420cb7",
+      "semanticHash": "e64903fadc2429ac2ddca88ab529108faf8b0f3d2cb68aaaa06a1ce09717b6e3",
+      "legend": "外围斜线和值"
+    },
+    {
+      "mode": "clone",
+      "count": 36,
+      "clueHash": "94851349f807eee62e7468f247102bb598d37b6305072bbb5045dfc0610b6942",
+      "semanticHash": "8e0954a1fb0d56fa083f2dac50894da9045b8737a6b1fb99fb8f0a04b631cbe5",
+      "legend": "同字母区域对应数字相同"
+    },
+    {
+      "mode": "quadruple",
+      "count": 36,
+      "clueHash": "89ed03afe8125727f6dc0f1a7d92915ed32c58a0d0558e4b9c5cb9570411777d",
+      "semanticHash": "b1f8ea9bac8d136cf91ecd36b034ea6c701ea01e7f675897459bbd44fe2becb8",
+      "legend": "交点圆内数字必须出现于周围四格"
+    }
+  ],
+  "arrowLayouts": {
+    "count": 36,
+    "hash": "294fee48eac8613ce7fba9ed6265529bdc14f8f1014c87ce28d18a353bc98e1f"
+  }
+}

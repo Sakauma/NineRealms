@@ -1,0 +1,5785 @@
+{
+  "description": "Exact normalized SVG trees from Frosted Clues source before arrow crossing repair; all clues without arrows. IDs/local URL references alone are normalized.",
+  "rows": [
+    {
+      "id": "E01",
+      "mode": "classic",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-E1",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-E2",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-E3",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-M1",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-M2",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-M3",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-H1",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-H2",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "D-H3",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-E1",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-E2",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-E3",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-M1",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-M2",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-M3",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-H1",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-H2",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "H-H3",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-E1",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-E2",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-E3",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-M1",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-M2",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-M3",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-H1",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-H2",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "K-H3",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-04",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-05",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-06",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-07",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-08",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-09",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-10",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-11",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-12",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-13",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-14",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-15",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-16",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-17",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-18",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-19",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-easy-20",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-04",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-05",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-06",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-07",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-08",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-09",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-10",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-11",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-12",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-13",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-14",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-15",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-16",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-17",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-18",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-19",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-medium-20",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-04",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-05",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-06",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-07",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-08",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-09",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-10",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-11",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-12",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-13",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-14",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-15",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-16",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-17",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-18",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-19",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-diagonal-hard-20",
+      "mode": "diagonal",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-04",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-05",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-06",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-07",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-08",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-09",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-10",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-11",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-12",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-13",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-14",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-15",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-16",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-17",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-18",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-19",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-easy-20",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-04",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-05",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-06",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-07",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-08",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-09",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-10",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-11",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-12",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-13",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-14",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-15",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-16",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-17",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-18",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-19",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-medium-20",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-04",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-05",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-06",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-07",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-08",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-09",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-10",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-11",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-12",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-13",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-14",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-15",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-16",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-17",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-18",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-19",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-hyper-hard-20",
+      "mode": "hyper",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-04",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-05",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-06",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-07",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-08",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-09",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-10",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-11",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-12",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-13",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-14",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-15",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-16",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-17",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-18",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-19",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-easy-20",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-04",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-05",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-06",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-07",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-08",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-09",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-10",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-11",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-12",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-13",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-14",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-15",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-16",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-17",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-18",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-19",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-medium-20",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-04",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-05",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-06",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-07",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-08",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-09",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-10",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-11",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-12",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-13",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-14",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-15",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-16",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-17",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-18",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-19",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "B31-knight-hard-20",
+      "mode": "knight",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-1",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-2",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-1",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-2",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-1",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-2",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-1",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-2",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-1",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-2",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-1",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-2",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-1",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-2",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-1",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-2",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-1",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-2",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-1",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-2",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-1",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-2",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-1",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-2",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-jigsaw-easy-1",
+      "mode": "jigsaw",
+      "hash": "0ace9f20cb0fce2669b302700df9a503f4b711be881989b89bb43f6447b7fbd6"
+    },
+    {
+      "id": "V-jigsaw-easy-2",
+      "mode": "jigsaw",
+      "hash": "ba44912221ed6c34c6bf634e73d0a27d0c80efaa55046858c6261380a31dc2e6"
+    },
+    {
+      "id": "V-jigsaw-medium-1",
+      "mode": "jigsaw",
+      "hash": "0ace9f20cb0fce2669b302700df9a503f4b711be881989b89bb43f6447b7fbd6"
+    },
+    {
+      "id": "V-jigsaw-medium-2",
+      "mode": "jigsaw",
+      "hash": "ba44912221ed6c34c6bf634e73d0a27d0c80efaa55046858c6261380a31dc2e6"
+    },
+    {
+      "id": "V-jigsaw-hard-1",
+      "mode": "jigsaw",
+      "hash": "0ace9f20cb0fce2669b302700df9a503f4b711be881989b89bb43f6447b7fbd6"
+    },
+    {
+      "id": "V-jigsaw-hard-2",
+      "mode": "jigsaw",
+      "hash": "ba44912221ed6c34c6bf634e73d0a27d0c80efaa55046858c6261380a31dc2e6"
+    },
+    {
+      "id": "V-odd-even-easy-1",
+      "mode": "odd-even",
+      "hash": "8fd68c0aea32aebe4087d4e3e9ec4a79add1f6651c53c4021c1e150496df4219"
+    },
+    {
+      "id": "V-odd-even-easy-2",
+      "mode": "odd-even",
+      "hash": "4f903fc760cbf420321602753fca35ab2c7a9748fc337ee821f7408915699b41"
+    },
+    {
+      "id": "V-odd-even-medium-1",
+      "mode": "odd-even",
+      "hash": "8fd68c0aea32aebe4087d4e3e9ec4a79add1f6651c53c4021c1e150496df4219"
+    },
+    {
+      "id": "V-odd-even-medium-2",
+      "mode": "odd-even",
+      "hash": "4f903fc760cbf420321602753fca35ab2c7a9748fc337ee821f7408915699b41"
+    },
+    {
+      "id": "V-odd-even-hard-1",
+      "mode": "odd-even",
+      "hash": "8fd68c0aea32aebe4087d4e3e9ec4a79add1f6651c53c4021c1e150496df4219"
+    },
+    {
+      "id": "V-odd-even-hard-2",
+      "mode": "odd-even",
+      "hash": "4f903fc760cbf420321602753fca35ab2c7a9748fc337ee821f7408915699b41"
+    },
+    {
+      "id": "V-killer-easy-1",
+      "mode": "killer",
+      "hash": "20e9fd8e2cb91fb2e61fea7dad71db38324904312ceeb0850009916d21bea95f"
+    },
+    {
+      "id": "V-killer-easy-2",
+      "mode": "killer",
+      "hash": "fc31007a3c38c11798ba50b6e432e7a62e7f1cb4db291e604c31c45de0005fb2"
+    },
+    {
+      "id": "V-killer-medium-1",
+      "mode": "killer",
+      "hash": "20e9fd8e2cb91fb2e61fea7dad71db38324904312ceeb0850009916d21bea95f"
+    },
+    {
+      "id": "V-killer-medium-2",
+      "mode": "killer",
+      "hash": "fc31007a3c38c11798ba50b6e432e7a62e7f1cb4db291e604c31c45de0005fb2"
+    },
+    {
+      "id": "V-killer-hard-1",
+      "mode": "killer",
+      "hash": "20e9fd8e2cb91fb2e61fea7dad71db38324904312ceeb0850009916d21bea95f"
+    },
+    {
+      "id": "V-killer-hard-2",
+      "mode": "killer",
+      "hash": "fc31007a3c38c11798ba50b6e432e7a62e7f1cb4db291e604c31c45de0005fb2"
+    },
+    {
+      "id": "V-thermo-easy-1",
+      "mode": "thermo",
+      "hash": "20ab317032d9eaa913000452193d10ca5004040e92913a964a904e86680cc7c3"
+    },
+    {
+      "id": "V-thermo-easy-2",
+      "mode": "thermo",
+      "hash": "ac0ab899bd83522b2f94c0ac4d072487354ee67a886e6853219c8a2724ca8ac0"
+    },
+    {
+      "id": "V-thermo-medium-1",
+      "mode": "thermo",
+      "hash": "20ab317032d9eaa913000452193d10ca5004040e92913a964a904e86680cc7c3"
+    },
+    {
+      "id": "V-thermo-medium-2",
+      "mode": "thermo",
+      "hash": "ac0ab899bd83522b2f94c0ac4d072487354ee67a886e6853219c8a2724ca8ac0"
+    },
+    {
+      "id": "V-thermo-hard-1",
+      "mode": "thermo",
+      "hash": "20ab317032d9eaa913000452193d10ca5004040e92913a964a904e86680cc7c3"
+    },
+    {
+      "id": "V-thermo-hard-2",
+      "mode": "thermo",
+      "hash": "ac0ab899bd83522b2f94c0ac4d072487354ee67a886e6853219c8a2724ca8ac0"
+    },
+    {
+      "id": "V-kropki-easy-1",
+      "mode": "kropki",
+      "hash": "9b1d2945f9cd69727bdc8e5fdedc1f3582ee92616e6b0c5a4a619de683694bcc"
+    },
+    {
+      "id": "V-kropki-easy-2",
+      "mode": "kropki",
+      "hash": "b50e27003530a602b85d0540406bd9ef6e1e504c282a81d54e7473fbb9d14726"
+    },
+    {
+      "id": "V-kropki-medium-1",
+      "mode": "kropki",
+      "hash": "9b1d2945f9cd69727bdc8e5fdedc1f3582ee92616e6b0c5a4a619de683694bcc"
+    },
+    {
+      "id": "V-kropki-medium-2",
+      "mode": "kropki",
+      "hash": "b50e27003530a602b85d0540406bd9ef6e1e504c282a81d54e7473fbb9d14726"
+    },
+    {
+      "id": "V-kropki-hard-1",
+      "mode": "kropki",
+      "hash": "9b1d2945f9cd69727bdc8e5fdedc1f3582ee92616e6b0c5a4a619de683694bcc"
+    },
+    {
+      "id": "V-kropki-hard-2",
+      "mode": "kropki",
+      "hash": "b50e27003530a602b85d0540406bd9ef6e1e504c282a81d54e7473fbb9d14726"
+    },
+    {
+      "id": "V-xv-easy-1",
+      "mode": "xv",
+      "hash": "435fed5d12700692e504d1426111fa2a21a308edc27e172f1460aa8ef60f4d4f"
+    },
+    {
+      "id": "V-xv-easy-2",
+      "mode": "xv",
+      "hash": "5d9029005f1db013353592f75cec69b2ad502fdfb49386c2012896f2bb8fcf5b"
+    },
+    {
+      "id": "V-xv-medium-1",
+      "mode": "xv",
+      "hash": "435fed5d12700692e504d1426111fa2a21a308edc27e172f1460aa8ef60f4d4f"
+    },
+    {
+      "id": "V-xv-medium-2",
+      "mode": "xv",
+      "hash": "5d9029005f1db013353592f75cec69b2ad502fdfb49386c2012896f2bb8fcf5b"
+    },
+    {
+      "id": "V-xv-hard-1",
+      "mode": "xv",
+      "hash": "435fed5d12700692e504d1426111fa2a21a308edc27e172f1460aa8ef60f4d4f"
+    },
+    {
+      "id": "V-xv-hard-2",
+      "mode": "xv",
+      "hash": "5d9029005f1db013353592f75cec69b2ad502fdfb49386c2012896f2bb8fcf5b"
+    },
+    {
+      "id": "V-greater-easy-1",
+      "mode": "greater",
+      "hash": "4ab356d16035f94e2849597148ff3fa59f8aa7ad5eade5de046542496b4765af"
+    },
+    {
+      "id": "V-greater-easy-2",
+      "mode": "greater",
+      "hash": "4ecd512664aaed79f51ac45b0492609022bda8069a48799c38f5004cea2d6d28"
+    },
+    {
+      "id": "V-greater-medium-1",
+      "mode": "greater",
+      "hash": "4ab356d16035f94e2849597148ff3fa59f8aa7ad5eade5de046542496b4765af"
+    },
+    {
+      "id": "V-greater-medium-2",
+      "mode": "greater",
+      "hash": "4ecd512664aaed79f51ac45b0492609022bda8069a48799c38f5004cea2d6d28"
+    },
+    {
+      "id": "V-greater-hard-1",
+      "mode": "greater",
+      "hash": "4ab356d16035f94e2849597148ff3fa59f8aa7ad5eade5de046542496b4765af"
+    },
+    {
+      "id": "V-greater-hard-2",
+      "mode": "greater",
+      "hash": "4ecd512664aaed79f51ac45b0492609022bda8069a48799c38f5004cea2d6d28"
+    },
+    {
+      "id": "V-renban-easy-1",
+      "mode": "renban",
+      "hash": "ebe271452cdd3f3ed39bf061a26a0b53d793023111f80ca8ae80c1fdcc6eaa8e"
+    },
+    {
+      "id": "V-renban-easy-2",
+      "mode": "renban",
+      "hash": "250a2a3804060b910871e6c777970ef27d06ba09295a93682996c7fbf8913a66"
+    },
+    {
+      "id": "V-renban-medium-1",
+      "mode": "renban",
+      "hash": "ebe271452cdd3f3ed39bf061a26a0b53d793023111f80ca8ae80c1fdcc6eaa8e"
+    },
+    {
+      "id": "V-renban-medium-2",
+      "mode": "renban",
+      "hash": "250a2a3804060b910871e6c777970ef27d06ba09295a93682996c7fbf8913a66"
+    },
+    {
+      "id": "V-renban-hard-1",
+      "mode": "renban",
+      "hash": "ebe271452cdd3f3ed39bf061a26a0b53d793023111f80ca8ae80c1fdcc6eaa8e"
+    },
+    {
+      "id": "V-renban-hard-2",
+      "mode": "renban",
+      "hash": "250a2a3804060b910871e6c777970ef27d06ba09295a93682996c7fbf8913a66"
+    },
+    {
+      "id": "V-whispers-easy-1",
+      "mode": "whispers",
+      "hash": "a4643d28e7ccf83302023ab55afc13517eb4a86a31028bfb8f9cfa39e1190dce"
+    },
+    {
+      "id": "V-whispers-easy-2",
+      "mode": "whispers",
+      "hash": "b240c685df8b88c3361a09c29723440760fa60dc36e8da1e80d2a25ee39867b4"
+    },
+    {
+      "id": "V-whispers-medium-1",
+      "mode": "whispers",
+      "hash": "a4643d28e7ccf83302023ab55afc13517eb4a86a31028bfb8f9cfa39e1190dce"
+    },
+    {
+      "id": "V-whispers-medium-2",
+      "mode": "whispers",
+      "hash": "b240c685df8b88c3361a09c29723440760fa60dc36e8da1e80d2a25ee39867b4"
+    },
+    {
+      "id": "V-whispers-hard-1",
+      "mode": "whispers",
+      "hash": "a4643d28e7ccf83302023ab55afc13517eb4a86a31028bfb8f9cfa39e1190dce"
+    },
+    {
+      "id": "V-whispers-hard-2",
+      "mode": "whispers",
+      "hash": "b240c685df8b88c3361a09c29723440760fa60dc36e8da1e80d2a25ee39867b4"
+    },
+    {
+      "id": "V-palindrome-easy-1",
+      "mode": "palindrome",
+      "hash": "3d15165a9bc4cc056cbada73124b55cf52962803866d151bcc20612aec4a31ac"
+    },
+    {
+      "id": "V-palindrome-easy-2",
+      "mode": "palindrome",
+      "hash": "55f55d3da2b1de67871d908c12f5005e5a76c608f8934747cc88efcfe96799be"
+    },
+    {
+      "id": "V-palindrome-medium-1",
+      "mode": "palindrome",
+      "hash": "3d15165a9bc4cc056cbada73124b55cf52962803866d151bcc20612aec4a31ac"
+    },
+    {
+      "id": "V-palindrome-medium-2",
+      "mode": "palindrome",
+      "hash": "55f55d3da2b1de67871d908c12f5005e5a76c608f8934747cc88efcfe96799be"
+    },
+    {
+      "id": "V-palindrome-hard-1",
+      "mode": "palindrome",
+      "hash": "3d15165a9bc4cc056cbada73124b55cf52962803866d151bcc20612aec4a31ac"
+    },
+    {
+      "id": "V-palindrome-hard-2",
+      "mode": "palindrome",
+      "hash": "55f55d3da2b1de67871d908c12f5005e5a76c608f8934747cc88efcfe96799be"
+    },
+    {
+      "id": "V-between-easy-1",
+      "mode": "between",
+      "hash": "8b697ed4e0f419d5b77a836aae6f84d6a1c98b88ae3182023a8f99b3f32c8dea"
+    },
+    {
+      "id": "V-between-easy-2",
+      "mode": "between",
+      "hash": "12d26e23e376a47fbbe802fa14741f81a0730ad61d588effd55e179619903395"
+    },
+    {
+      "id": "V-between-medium-1",
+      "mode": "between",
+      "hash": "8b697ed4e0f419d5b77a836aae6f84d6a1c98b88ae3182023a8f99b3f32c8dea"
+    },
+    {
+      "id": "V-between-medium-2",
+      "mode": "between",
+      "hash": "12d26e23e376a47fbbe802fa14741f81a0730ad61d588effd55e179619903395"
+    },
+    {
+      "id": "V-between-hard-1",
+      "mode": "between",
+      "hash": "8b697ed4e0f419d5b77a836aae6f84d6a1c98b88ae3182023a8f99b3f32c8dea"
+    },
+    {
+      "id": "V-between-hard-2",
+      "mode": "between",
+      "hash": "12d26e23e376a47fbbe802fa14741f81a0730ad61d588effd55e179619903395"
+    },
+    {
+      "id": "V-lockout-easy-1",
+      "mode": "lockout",
+      "hash": "b3ed7291d191444f2a3380a1da9fe9c6f7b6c5a8a5a6de47ea89e4f01e5a2f6d"
+    },
+    {
+      "id": "V-lockout-easy-2",
+      "mode": "lockout",
+      "hash": "55f0b8ff32c54d3416f2229f1897485c9c4391adcc1f6029f3421e91c7b75225"
+    },
+    {
+      "id": "V-lockout-medium-1",
+      "mode": "lockout",
+      "hash": "b3ed7291d191444f2a3380a1da9fe9c6f7b6c5a8a5a6de47ea89e4f01e5a2f6d"
+    },
+    {
+      "id": "V-lockout-medium-2",
+      "mode": "lockout",
+      "hash": "55f0b8ff32c54d3416f2229f1897485c9c4391adcc1f6029f3421e91c7b75225"
+    },
+    {
+      "id": "V-lockout-hard-1",
+      "mode": "lockout",
+      "hash": "b3ed7291d191444f2a3380a1da9fe9c6f7b6c5a8a5a6de47ea89e4f01e5a2f6d"
+    },
+    {
+      "id": "V-lockout-hard-2",
+      "mode": "lockout",
+      "hash": "55f0b8ff32c54d3416f2229f1897485c9c4391adcc1f6029f3421e91c7b75225"
+    },
+    {
+      "id": "V-entropic-easy-1",
+      "mode": "entropic",
+      "hash": "12e7d5b9d91029cfaf3ff187f9fa038777e8c8556e9903ed43d20cb3134ea77d"
+    },
+    {
+      "id": "V-entropic-easy-2",
+      "mode": "entropic",
+      "hash": "585593a332ffa6944556dc3e997be71301c01f58d0bbd09660d094a14bf01247"
+    },
+    {
+      "id": "V-entropic-medium-1",
+      "mode": "entropic",
+      "hash": "12e7d5b9d91029cfaf3ff187f9fa038777e8c8556e9903ed43d20cb3134ea77d"
+    },
+    {
+      "id": "V-entropic-medium-2",
+      "mode": "entropic",
+      "hash": "585593a332ffa6944556dc3e997be71301c01f58d0bbd09660d094a14bf01247"
+    },
+    {
+      "id": "V-entropic-hard-1",
+      "mode": "entropic",
+      "hash": "12e7d5b9d91029cfaf3ff187f9fa038777e8c8556e9903ed43d20cb3134ea77d"
+    },
+    {
+      "id": "V-entropic-hard-2",
+      "mode": "entropic",
+      "hash": "585593a332ffa6944556dc3e997be71301c01f58d0bbd09660d094a14bf01247"
+    },
+    {
+      "id": "V-modular-easy-1",
+      "mode": "modular",
+      "hash": "226336ec770e87a26e7ca545e016c81573725dd22be83e035fed21fc5f88d3a3"
+    },
+    {
+      "id": "V-modular-easy-2",
+      "mode": "modular",
+      "hash": "e854c14715ead82e88ad2dc73c367c06da6b1c2a5fcdf8b9d4973a689b751a79"
+    },
+    {
+      "id": "V-modular-medium-1",
+      "mode": "modular",
+      "hash": "226336ec770e87a26e7ca545e016c81573725dd22be83e035fed21fc5f88d3a3"
+    },
+    {
+      "id": "V-modular-medium-2",
+      "mode": "modular",
+      "hash": "e854c14715ead82e88ad2dc73c367c06da6b1c2a5fcdf8b9d4973a689b751a79"
+    },
+    {
+      "id": "V-modular-hard-1",
+      "mode": "modular",
+      "hash": "226336ec770e87a26e7ca545e016c81573725dd22be83e035fed21fc5f88d3a3"
+    },
+    {
+      "id": "V-modular-hard-2",
+      "mode": "modular",
+      "hash": "e854c14715ead82e88ad2dc73c367c06da6b1c2a5fcdf8b9d4973a689b751a79"
+    },
+    {
+      "id": "V-region-sum-easy-1",
+      "mode": "region-sum",
+      "hash": "03b63e7b1f44b654381c2ea515867011f179ba30b30e19a319e9c7c7d5ec3bbf"
+    },
+    {
+      "id": "V-region-sum-easy-2",
+      "mode": "region-sum",
+      "hash": "cd2ddcbfc024eb98ca428509d9544bcd56472bfd131b542006dc1c0d28055591"
+    },
+    {
+      "id": "V-region-sum-medium-1",
+      "mode": "region-sum",
+      "hash": "03b63e7b1f44b654381c2ea515867011f179ba30b30e19a319e9c7c7d5ec3bbf"
+    },
+    {
+      "id": "V-region-sum-medium-2",
+      "mode": "region-sum",
+      "hash": "cd2ddcbfc024eb98ca428509d9544bcd56472bfd131b542006dc1c0d28055591"
+    },
+    {
+      "id": "V-region-sum-hard-1",
+      "mode": "region-sum",
+      "hash": "03b63e7b1f44b654381c2ea515867011f179ba30b30e19a319e9c7c7d5ec3bbf"
+    },
+    {
+      "id": "V-region-sum-hard-2",
+      "mode": "region-sum",
+      "hash": "cd2ddcbfc024eb98ca428509d9544bcd56472bfd131b542006dc1c0d28055591"
+    },
+    {
+      "id": "V-sandwich-easy-1",
+      "mode": "sandwich",
+      "hash": "26e74ae1459c4f0adb2dea4bcf38bba70a5dbaf8dd96139246c2d676e6050168"
+    },
+    {
+      "id": "V-sandwich-easy-2",
+      "mode": "sandwich",
+      "hash": "9a1bae77c550df64cfc79f7dcf0dfbb12e224142782f396ca04e123500b486c2"
+    },
+    {
+      "id": "V-sandwich-medium-1",
+      "mode": "sandwich",
+      "hash": "26e74ae1459c4f0adb2dea4bcf38bba70a5dbaf8dd96139246c2d676e6050168"
+    },
+    {
+      "id": "V-sandwich-medium-2",
+      "mode": "sandwich",
+      "hash": "9a1bae77c550df64cfc79f7dcf0dfbb12e224142782f396ca04e123500b486c2"
+    },
+    {
+      "id": "V-sandwich-hard-1",
+      "mode": "sandwich",
+      "hash": "26e74ae1459c4f0adb2dea4bcf38bba70a5dbaf8dd96139246c2d676e6050168"
+    },
+    {
+      "id": "V-sandwich-hard-2",
+      "mode": "sandwich",
+      "hash": "9a1bae77c550df64cfc79f7dcf0dfbb12e224142782f396ca04e123500b486c2"
+    },
+    {
+      "id": "V-skyscraper-easy-1",
+      "mode": "skyscraper",
+      "hash": "58f306c98d8333ab5bcaa6144cd53addf058c9b3aae5e53832e647e1b259500d"
+    },
+    {
+      "id": "V-skyscraper-easy-2",
+      "mode": "skyscraper",
+      "hash": "f7754a5773e868dfc981527998d1a066e887223de57823ef4d6f62c8125e0008"
+    },
+    {
+      "id": "V-skyscraper-medium-1",
+      "mode": "skyscraper",
+      "hash": "58f306c98d8333ab5bcaa6144cd53addf058c9b3aae5e53832e647e1b259500d"
+    },
+    {
+      "id": "V-skyscraper-medium-2",
+      "mode": "skyscraper",
+      "hash": "f7754a5773e868dfc981527998d1a066e887223de57823ef4d6f62c8125e0008"
+    },
+    {
+      "id": "V-skyscraper-hard-1",
+      "mode": "skyscraper",
+      "hash": "58f306c98d8333ab5bcaa6144cd53addf058c9b3aae5e53832e647e1b259500d"
+    },
+    {
+      "id": "V-skyscraper-hard-2",
+      "mode": "skyscraper",
+      "hash": "f7754a5773e868dfc981527998d1a066e887223de57823ef4d6f62c8125e0008"
+    },
+    {
+      "id": "V-xsum-easy-1",
+      "mode": "xsum",
+      "hash": "3fb0dec31aeca79c86f46a543977cad25d2265cb88b224303035ca342c2975ac"
+    },
+    {
+      "id": "V-xsum-easy-2",
+      "mode": "xsum",
+      "hash": "7e958aa4ffada880d7f49847f84e78bcdb5062ce4624358994e7faef87109502"
+    },
+    {
+      "id": "V-xsum-medium-1",
+      "mode": "xsum",
+      "hash": "3fb0dec31aeca79c86f46a543977cad25d2265cb88b224303035ca342c2975ac"
+    },
+    {
+      "id": "V-xsum-medium-2",
+      "mode": "xsum",
+      "hash": "7e958aa4ffada880d7f49847f84e78bcdb5062ce4624358994e7faef87109502"
+    },
+    {
+      "id": "V-xsum-hard-1",
+      "mode": "xsum",
+      "hash": "3fb0dec31aeca79c86f46a543977cad25d2265cb88b224303035ca342c2975ac"
+    },
+    {
+      "id": "V-xsum-hard-2",
+      "mode": "xsum",
+      "hash": "7e958aa4ffada880d7f49847f84e78bcdb5062ce4624358994e7faef87109502"
+    },
+    {
+      "id": "V-littlekiller-easy-1",
+      "mode": "littlekiller",
+      "hash": "f2f6e71d3fb26bd23eea096ecffebf43a593a08b978736b9064cf4c7201980c5"
+    },
+    {
+      "id": "V-littlekiller-easy-2",
+      "mode": "littlekiller",
+      "hash": "5894e482fbe738bb699ed58bb9b315f5bff7ae34cf21ff48f8e0b1ac14a7268d"
+    },
+    {
+      "id": "V-littlekiller-medium-1",
+      "mode": "littlekiller",
+      "hash": "f2f6e71d3fb26bd23eea096ecffebf43a593a08b978736b9064cf4c7201980c5"
+    },
+    {
+      "id": "V-littlekiller-medium-2",
+      "mode": "littlekiller",
+      "hash": "5894e482fbe738bb699ed58bb9b315f5bff7ae34cf21ff48f8e0b1ac14a7268d"
+    },
+    {
+      "id": "V-littlekiller-hard-1",
+      "mode": "littlekiller",
+      "hash": "f2f6e71d3fb26bd23eea096ecffebf43a593a08b978736b9064cf4c7201980c5"
+    },
+    {
+      "id": "V-littlekiller-hard-2",
+      "mode": "littlekiller",
+      "hash": "5894e482fbe738bb699ed58bb9b315f5bff7ae34cf21ff48f8e0b1ac14a7268d"
+    },
+    {
+      "id": "V-clone-easy-1",
+      "mode": "clone",
+      "hash": "893db05535b89e6a44785099ab9a5679b7e0cc8752963926b6d4f10ed939ca1d"
+    },
+    {
+      "id": "V-clone-easy-2",
+      "mode": "clone",
+      "hash": "0f72e027d47cef618371ef1d804bc4ae5aa269381b1c9b910464b1ba75dcef4f"
+    },
+    {
+      "id": "V-clone-medium-1",
+      "mode": "clone",
+      "hash": "893db05535b89e6a44785099ab9a5679b7e0cc8752963926b6d4f10ed939ca1d"
+    },
+    {
+      "id": "V-clone-medium-2",
+      "mode": "clone",
+      "hash": "0f72e027d47cef618371ef1d804bc4ae5aa269381b1c9b910464b1ba75dcef4f"
+    },
+    {
+      "id": "V-clone-hard-1",
+      "mode": "clone",
+      "hash": "893db05535b89e6a44785099ab9a5679b7e0cc8752963926b6d4f10ed939ca1d"
+    },
+    {
+      "id": "V-clone-hard-2",
+      "mode": "clone",
+      "hash": "0f72e027d47cef618371ef1d804bc4ae5aa269381b1c9b910464b1ba75dcef4f"
+    },
+    {
+      "id": "V-quadruple-easy-1",
+      "mode": "quadruple",
+      "hash": "877740bb2581c7bdc3f7027a963d6605e838cc401da3efc65197fe2a602203a9"
+    },
+    {
+      "id": "V-quadruple-easy-2",
+      "mode": "quadruple",
+      "hash": "d32a3f8e6e713da97baa1aaa81dbd7b7d3d4331b3ec167b04b2c11b86c079144"
+    },
+    {
+      "id": "V-quadruple-medium-1",
+      "mode": "quadruple",
+      "hash": "877740bb2581c7bdc3f7027a963d6605e838cc401da3efc65197fe2a602203a9"
+    },
+    {
+      "id": "V-quadruple-medium-2",
+      "mode": "quadruple",
+      "hash": "d32a3f8e6e713da97baa1aaa81dbd7b7d3d4331b3ec167b04b2c11b86c079144"
+    },
+    {
+      "id": "V-quadruple-hard-1",
+      "mode": "quadruple",
+      "hash": "877740bb2581c7bdc3f7027a963d6605e838cc401da3efc65197fe2a602203a9"
+    },
+    {
+      "id": "V-quadruple-hard-2",
+      "mode": "quadruple",
+      "hash": "d32a3f8e6e713da97baa1aaa81dbd7b7d3d4331b3ec167b04b2c11b86c079144"
+    },
+    {
+      "id": "V-killer-easy-3",
+      "mode": "killer",
+      "hash": "259d4abc2901e25b86ff7e1753ca32f4980026f5576d682a299cd1c47e8765f1"
+    },
+    {
+      "id": "V-killer-medium-3",
+      "mode": "killer",
+      "hash": "259d4abc2901e25b86ff7e1753ca32f4980026f5576d682a299cd1c47e8765f1"
+    },
+    {
+      "id": "V-killer-hard-3",
+      "mode": "killer",
+      "hash": "259d4abc2901e25b86ff7e1753ca32f4980026f5576d682a299cd1c47e8765f1"
+    },
+    {
+      "id": "V-king-easy-3",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-3",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-3",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-4",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-4",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-4",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-5",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-5",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-5",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-6",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-6",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-6",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-7",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-7",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-7",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-8",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-8",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-8",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-9",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-9",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-9",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-10",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-10",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-10",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-11",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-11",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-11",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-easy-12",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-medium-12",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-king-hard-12",
+      "mode": "king",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-3",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-3",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-3",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-4",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-4",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-4",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-5",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-5",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-5",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-6",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-6",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-6",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-7",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-7",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-7",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-8",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-8",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-8",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-9",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-9",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-9",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-10",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-10",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-10",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-11",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-11",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-11",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-easy-12",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-medium-12",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-nonconsecutive-hard-12",
+      "mode": "nonconsecutive",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-3",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-3",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-3",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-4",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-4",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-4",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-5",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-5",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-5",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-6",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-6",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-6",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-7",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-7",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-7",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-8",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-8",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-8",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-9",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-9",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-9",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-10",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-10",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-10",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-11",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-11",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-11",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-easy-12",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-medium-12",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-miracle-hard-12",
+      "mode": "miracle",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-3",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-3",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-3",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-4",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-4",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-4",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-5",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-5",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-5",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-6",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-6",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-6",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-7",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-7",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-7",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-8",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-8",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-8",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-9",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-9",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-9",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-10",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-10",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-10",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-11",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-11",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-11",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-easy-12",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-medium-12",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-disjoint-hard-12",
+      "mode": "disjoint",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "V-jigsaw-easy-3",
+      "mode": "jigsaw",
+      "hash": "03bfc5142d5a68378795fdf6c8a12fde626fad7723f360b7f4d464fced53e966"
+    },
+    {
+      "id": "V-jigsaw-medium-3",
+      "mode": "jigsaw",
+      "hash": "03bfc5142d5a68378795fdf6c8a12fde626fad7723f360b7f4d464fced53e966"
+    },
+    {
+      "id": "V-jigsaw-hard-3",
+      "mode": "jigsaw",
+      "hash": "03bfc5142d5a68378795fdf6c8a12fde626fad7723f360b7f4d464fced53e966"
+    },
+    {
+      "id": "V-jigsaw-easy-4",
+      "mode": "jigsaw",
+      "hash": "45871da29bcade2aa6d129ce11390d6e7d8fe705633af903019d8d1149209a10"
+    },
+    {
+      "id": "V-jigsaw-medium-4",
+      "mode": "jigsaw",
+      "hash": "45871da29bcade2aa6d129ce11390d6e7d8fe705633af903019d8d1149209a10"
+    },
+    {
+      "id": "V-jigsaw-hard-4",
+      "mode": "jigsaw",
+      "hash": "45871da29bcade2aa6d129ce11390d6e7d8fe705633af903019d8d1149209a10"
+    },
+    {
+      "id": "V-jigsaw-easy-5",
+      "mode": "jigsaw",
+      "hash": "3ab12a1f224a77adc7b879b1a801eb7cfabe691aeeff8517642a2725e2e13d6c"
+    },
+    {
+      "id": "V-jigsaw-medium-5",
+      "mode": "jigsaw",
+      "hash": "3ab12a1f224a77adc7b879b1a801eb7cfabe691aeeff8517642a2725e2e13d6c"
+    },
+    {
+      "id": "V-jigsaw-hard-5",
+      "mode": "jigsaw",
+      "hash": "3ab12a1f224a77adc7b879b1a801eb7cfabe691aeeff8517642a2725e2e13d6c"
+    },
+    {
+      "id": "V-jigsaw-easy-6",
+      "mode": "jigsaw",
+      "hash": "6dd63b5dd645df2fc262269757d49080c68d49f869dfd662970a77848098e26c"
+    },
+    {
+      "id": "V-jigsaw-medium-6",
+      "mode": "jigsaw",
+      "hash": "6dd63b5dd645df2fc262269757d49080c68d49f869dfd662970a77848098e26c"
+    },
+    {
+      "id": "V-jigsaw-hard-6",
+      "mode": "jigsaw",
+      "hash": "6dd63b5dd645df2fc262269757d49080c68d49f869dfd662970a77848098e26c"
+    },
+    {
+      "id": "V-jigsaw-easy-7",
+      "mode": "jigsaw",
+      "hash": "2f5b8f16763aa28a42aeada261d84ab7fafb84ac9d3bd1c013c3aa61b4fd1cec"
+    },
+    {
+      "id": "V-jigsaw-medium-7",
+      "mode": "jigsaw",
+      "hash": "2f5b8f16763aa28a42aeada261d84ab7fafb84ac9d3bd1c013c3aa61b4fd1cec"
+    },
+    {
+      "id": "V-jigsaw-hard-7",
+      "mode": "jigsaw",
+      "hash": "2f5b8f16763aa28a42aeada261d84ab7fafb84ac9d3bd1c013c3aa61b4fd1cec"
+    },
+    {
+      "id": "V-jigsaw-easy-8",
+      "mode": "jigsaw",
+      "hash": "eca03e8bd3f4f65da303f9c543165e14592134df99c7443055bc5c8ee6260419"
+    },
+    {
+      "id": "V-jigsaw-medium-8",
+      "mode": "jigsaw",
+      "hash": "eca03e8bd3f4f65da303f9c543165e14592134df99c7443055bc5c8ee6260419"
+    },
+    {
+      "id": "V-jigsaw-hard-8",
+      "mode": "jigsaw",
+      "hash": "eca03e8bd3f4f65da303f9c543165e14592134df99c7443055bc5c8ee6260419"
+    },
+    {
+      "id": "V-jigsaw-easy-9",
+      "mode": "jigsaw",
+      "hash": "691270e0c9896287b36153d3ecf87136cb26556d1efe3d4c74380547a1c0e553"
+    },
+    {
+      "id": "V-jigsaw-medium-9",
+      "mode": "jigsaw",
+      "hash": "691270e0c9896287b36153d3ecf87136cb26556d1efe3d4c74380547a1c0e553"
+    },
+    {
+      "id": "V-jigsaw-hard-9",
+      "mode": "jigsaw",
+      "hash": "691270e0c9896287b36153d3ecf87136cb26556d1efe3d4c74380547a1c0e553"
+    },
+    {
+      "id": "V-jigsaw-easy-10",
+      "mode": "jigsaw",
+      "hash": "87cc652c2c472a13804e841f01a1ac73c90e08e82b0e849b896f603ce0ecec3e"
+    },
+    {
+      "id": "V-jigsaw-medium-10",
+      "mode": "jigsaw",
+      "hash": "87cc652c2c472a13804e841f01a1ac73c90e08e82b0e849b896f603ce0ecec3e"
+    },
+    {
+      "id": "V-jigsaw-hard-10",
+      "mode": "jigsaw",
+      "hash": "87cc652c2c472a13804e841f01a1ac73c90e08e82b0e849b896f603ce0ecec3e"
+    },
+    {
+      "id": "V-jigsaw-easy-11",
+      "mode": "jigsaw",
+      "hash": "73b9dc1cefbba2bc4ea9a6a7a8c8e8f4dd0089734c7c579a239fa2260413239e"
+    },
+    {
+      "id": "V-jigsaw-medium-11",
+      "mode": "jigsaw",
+      "hash": "73b9dc1cefbba2bc4ea9a6a7a8c8e8f4dd0089734c7c579a239fa2260413239e"
+    },
+    {
+      "id": "V-jigsaw-hard-11",
+      "mode": "jigsaw",
+      "hash": "73b9dc1cefbba2bc4ea9a6a7a8c8e8f4dd0089734c7c579a239fa2260413239e"
+    },
+    {
+      "id": "V-jigsaw-easy-12",
+      "mode": "jigsaw",
+      "hash": "b85975d05ebb674afc380dda2bb19df0bbc0a180de8e507cdac9f7d23cdead5d"
+    },
+    {
+      "id": "V-jigsaw-medium-12",
+      "mode": "jigsaw",
+      "hash": "b85975d05ebb674afc380dda2bb19df0bbc0a180de8e507cdac9f7d23cdead5d"
+    },
+    {
+      "id": "V-jigsaw-hard-12",
+      "mode": "jigsaw",
+      "hash": "b85975d05ebb674afc380dda2bb19df0bbc0a180de8e507cdac9f7d23cdead5d"
+    },
+    {
+      "id": "V-odd-even-easy-3",
+      "mode": "odd-even",
+      "hash": "4f698031fb93aedd51d764674d01a000b54e16c992958b1021ad6daf7fcc4835"
+    },
+    {
+      "id": "V-odd-even-medium-3",
+      "mode": "odd-even",
+      "hash": "4f698031fb93aedd51d764674d01a000b54e16c992958b1021ad6daf7fcc4835"
+    },
+    {
+      "id": "V-odd-even-hard-3",
+      "mode": "odd-even",
+      "hash": "4f698031fb93aedd51d764674d01a000b54e16c992958b1021ad6daf7fcc4835"
+    },
+    {
+      "id": "V-odd-even-easy-4",
+      "mode": "odd-even",
+      "hash": "fc000bf1478070867524a42b58b1042a1afbbad12e9306e25fd56f8c0a8f09b6"
+    },
+    {
+      "id": "V-odd-even-medium-4",
+      "mode": "odd-even",
+      "hash": "fc000bf1478070867524a42b58b1042a1afbbad12e9306e25fd56f8c0a8f09b6"
+    },
+    {
+      "id": "V-odd-even-hard-4",
+      "mode": "odd-even",
+      "hash": "fc000bf1478070867524a42b58b1042a1afbbad12e9306e25fd56f8c0a8f09b6"
+    },
+    {
+      "id": "V-odd-even-easy-5",
+      "mode": "odd-even",
+      "hash": "03c281c61439a5aba39e16e1e926535e284c4738a7a17667b2d667b00efc6318"
+    },
+    {
+      "id": "V-odd-even-medium-5",
+      "mode": "odd-even",
+      "hash": "03c281c61439a5aba39e16e1e926535e284c4738a7a17667b2d667b00efc6318"
+    },
+    {
+      "id": "V-odd-even-hard-5",
+      "mode": "odd-even",
+      "hash": "03c281c61439a5aba39e16e1e926535e284c4738a7a17667b2d667b00efc6318"
+    },
+    {
+      "id": "V-odd-even-easy-6",
+      "mode": "odd-even",
+      "hash": "73b3f99d81963350b8d178c01e064e814a5780b4dd207816da3d4d629227d133"
+    },
+    {
+      "id": "V-odd-even-medium-6",
+      "mode": "odd-even",
+      "hash": "73b3f99d81963350b8d178c01e064e814a5780b4dd207816da3d4d629227d133"
+    },
+    {
+      "id": "V-odd-even-hard-6",
+      "mode": "odd-even",
+      "hash": "73b3f99d81963350b8d178c01e064e814a5780b4dd207816da3d4d629227d133"
+    },
+    {
+      "id": "V-odd-even-easy-7",
+      "mode": "odd-even",
+      "hash": "83a2cde91b5d328c048400a21ff9d80a7e695cf45b66e153f70ca23bdf7d4e44"
+    },
+    {
+      "id": "V-odd-even-medium-7",
+      "mode": "odd-even",
+      "hash": "83a2cde91b5d328c048400a21ff9d80a7e695cf45b66e153f70ca23bdf7d4e44"
+    },
+    {
+      "id": "V-odd-even-hard-7",
+      "mode": "odd-even",
+      "hash": "83a2cde91b5d328c048400a21ff9d80a7e695cf45b66e153f70ca23bdf7d4e44"
+    },
+    {
+      "id": "V-odd-even-easy-8",
+      "mode": "odd-even",
+      "hash": "9d822761114c1391c2fee32e60389d80dc6bc0843c9442f536e9e5b046a9d6f8"
+    },
+    {
+      "id": "V-odd-even-medium-8",
+      "mode": "odd-even",
+      "hash": "9d822761114c1391c2fee32e60389d80dc6bc0843c9442f536e9e5b046a9d6f8"
+    },
+    {
+      "id": "V-odd-even-hard-8",
+      "mode": "odd-even",
+      "hash": "9d822761114c1391c2fee32e60389d80dc6bc0843c9442f536e9e5b046a9d6f8"
+    },
+    {
+      "id": "V-odd-even-easy-9",
+      "mode": "odd-even",
+      "hash": "a38b3e8d9509b6ef79c3f337513510a4bfba4a353bba73aadb4fd511cce297c0"
+    },
+    {
+      "id": "V-odd-even-medium-9",
+      "mode": "odd-even",
+      "hash": "a38b3e8d9509b6ef79c3f337513510a4bfba4a353bba73aadb4fd511cce297c0"
+    },
+    {
+      "id": "V-odd-even-hard-9",
+      "mode": "odd-even",
+      "hash": "a38b3e8d9509b6ef79c3f337513510a4bfba4a353bba73aadb4fd511cce297c0"
+    },
+    {
+      "id": "V-odd-even-easy-10",
+      "mode": "odd-even",
+      "hash": "b7503d69d198174a42061f906e8b08017cc21c849efeca9cefd450a532d64d66"
+    },
+    {
+      "id": "V-odd-even-medium-10",
+      "mode": "odd-even",
+      "hash": "b7503d69d198174a42061f906e8b08017cc21c849efeca9cefd450a532d64d66"
+    },
+    {
+      "id": "V-odd-even-hard-10",
+      "mode": "odd-even",
+      "hash": "b7503d69d198174a42061f906e8b08017cc21c849efeca9cefd450a532d64d66"
+    },
+    {
+      "id": "V-odd-even-easy-11",
+      "mode": "odd-even",
+      "hash": "89803da8de5779b2ea5dad6013d3fee5b5c86f8ccca04342701155f856b81d50"
+    },
+    {
+      "id": "V-odd-even-medium-11",
+      "mode": "odd-even",
+      "hash": "89803da8de5779b2ea5dad6013d3fee5b5c86f8ccca04342701155f856b81d50"
+    },
+    {
+      "id": "V-odd-even-hard-11",
+      "mode": "odd-even",
+      "hash": "89803da8de5779b2ea5dad6013d3fee5b5c86f8ccca04342701155f856b81d50"
+    },
+    {
+      "id": "V-odd-even-easy-12",
+      "mode": "odd-even",
+      "hash": "45e346ba36dc81ba160413b4b85c7a6e0d9223fef9c1fbbe109be8e7130350b5"
+    },
+    {
+      "id": "V-odd-even-medium-12",
+      "mode": "odd-even",
+      "hash": "45e346ba36dc81ba160413b4b85c7a6e0d9223fef9c1fbbe109be8e7130350b5"
+    },
+    {
+      "id": "V-odd-even-hard-12",
+      "mode": "odd-even",
+      "hash": "45e346ba36dc81ba160413b4b85c7a6e0d9223fef9c1fbbe109be8e7130350b5"
+    },
+    {
+      "id": "V-killer-easy-4",
+      "mode": "killer",
+      "hash": "5ea937c5796bb4eb22f0e6a8d7a98f9e40369b65b9cf02eaf16ce6c2e4919bfb"
+    },
+    {
+      "id": "V-killer-medium-4",
+      "mode": "killer",
+      "hash": "5ea937c5796bb4eb22f0e6a8d7a98f9e40369b65b9cf02eaf16ce6c2e4919bfb"
+    },
+    {
+      "id": "V-killer-hard-4",
+      "mode": "killer",
+      "hash": "5ea937c5796bb4eb22f0e6a8d7a98f9e40369b65b9cf02eaf16ce6c2e4919bfb"
+    },
+    {
+      "id": "V-killer-easy-5",
+      "mode": "killer",
+      "hash": "d13e47ebd51816d9b46581110c661586a6f37ddf20d2b82467e9c218020c4ffa"
+    },
+    {
+      "id": "V-killer-medium-5",
+      "mode": "killer",
+      "hash": "d13e47ebd51816d9b46581110c661586a6f37ddf20d2b82467e9c218020c4ffa"
+    },
+    {
+      "id": "V-killer-hard-5",
+      "mode": "killer",
+      "hash": "d13e47ebd51816d9b46581110c661586a6f37ddf20d2b82467e9c218020c4ffa"
+    },
+    {
+      "id": "V-killer-easy-6",
+      "mode": "killer",
+      "hash": "b8105abb3a9501d80238e87d715afac2fdb29a79bcf12c34b6a603c44372100a"
+    },
+    {
+      "id": "V-killer-medium-6",
+      "mode": "killer",
+      "hash": "b8105abb3a9501d80238e87d715afac2fdb29a79bcf12c34b6a603c44372100a"
+    },
+    {
+      "id": "V-killer-hard-6",
+      "mode": "killer",
+      "hash": "b8105abb3a9501d80238e87d715afac2fdb29a79bcf12c34b6a603c44372100a"
+    },
+    {
+      "id": "V-killer-easy-7",
+      "mode": "killer",
+      "hash": "c381df52d221abb36ed257ad32f8bc0ce59039de28463cf6cfea6bc267c51abc"
+    },
+    {
+      "id": "V-killer-medium-7",
+      "mode": "killer",
+      "hash": "c381df52d221abb36ed257ad32f8bc0ce59039de28463cf6cfea6bc267c51abc"
+    },
+    {
+      "id": "V-killer-hard-7",
+      "mode": "killer",
+      "hash": "c381df52d221abb36ed257ad32f8bc0ce59039de28463cf6cfea6bc267c51abc"
+    },
+    {
+      "id": "V-killer-easy-8",
+      "mode": "killer",
+      "hash": "2155858c3ccab4a76d127bfd11b99a912db5686ef83a899eb0220c7eb17fd4cc"
+    },
+    {
+      "id": "V-killer-medium-8",
+      "mode": "killer",
+      "hash": "2155858c3ccab4a76d127bfd11b99a912db5686ef83a899eb0220c7eb17fd4cc"
+    },
+    {
+      "id": "V-killer-hard-8",
+      "mode": "killer",
+      "hash": "2155858c3ccab4a76d127bfd11b99a912db5686ef83a899eb0220c7eb17fd4cc"
+    },
+    {
+      "id": "V-killer-easy-9",
+      "mode": "killer",
+      "hash": "24accbf793b956e1de9cb4a54fd8090bdc0e8c903e01aeb900060d91d3f1cf80"
+    },
+    {
+      "id": "V-killer-medium-9",
+      "mode": "killer",
+      "hash": "24accbf793b956e1de9cb4a54fd8090bdc0e8c903e01aeb900060d91d3f1cf80"
+    },
+    {
+      "id": "V-killer-hard-9",
+      "mode": "killer",
+      "hash": "24accbf793b956e1de9cb4a54fd8090bdc0e8c903e01aeb900060d91d3f1cf80"
+    },
+    {
+      "id": "V-killer-easy-10",
+      "mode": "killer",
+      "hash": "687e024af40d08fb5903cca9223de88b9ed19970a585a76ac9cd0e9b41ff626d"
+    },
+    {
+      "id": "V-killer-medium-10",
+      "mode": "killer",
+      "hash": "687e024af40d08fb5903cca9223de88b9ed19970a585a76ac9cd0e9b41ff626d"
+    },
+    {
+      "id": "V-killer-hard-10",
+      "mode": "killer",
+      "hash": "687e024af40d08fb5903cca9223de88b9ed19970a585a76ac9cd0e9b41ff626d"
+    },
+    {
+      "id": "V-killer-easy-11",
+      "mode": "killer",
+      "hash": "cf6a860ad43e6c0648fac96526bc739f803f3c143da53bee7944c84893ea0f35"
+    },
+    {
+      "id": "V-killer-medium-11",
+      "mode": "killer",
+      "hash": "cf6a860ad43e6c0648fac96526bc739f803f3c143da53bee7944c84893ea0f35"
+    },
+    {
+      "id": "V-killer-hard-11",
+      "mode": "killer",
+      "hash": "cf6a860ad43e6c0648fac96526bc739f803f3c143da53bee7944c84893ea0f35"
+    },
+    {
+      "id": "V-killer-easy-12",
+      "mode": "killer",
+      "hash": "2a8c4ce709e9e5131eb8204f13e1524903b71dd553114df0bee0e76ce3acb169"
+    },
+    {
+      "id": "V-killer-medium-12",
+      "mode": "killer",
+      "hash": "2a8c4ce709e9e5131eb8204f13e1524903b71dd553114df0bee0e76ce3acb169"
+    },
+    {
+      "id": "V-killer-hard-12",
+      "mode": "killer",
+      "hash": "2a8c4ce709e9e5131eb8204f13e1524903b71dd553114df0bee0e76ce3acb169"
+    },
+    {
+      "id": "V-thermo-easy-3",
+      "mode": "thermo",
+      "hash": "2b9fe8136449daf319dcbfa2999b08c1f4ae9c8b8bf6ead42aa46adf69665fed"
+    },
+    {
+      "id": "V-thermo-medium-3",
+      "mode": "thermo",
+      "hash": "2b9fe8136449daf319dcbfa2999b08c1f4ae9c8b8bf6ead42aa46adf69665fed"
+    },
+    {
+      "id": "V-thermo-hard-3",
+      "mode": "thermo",
+      "hash": "2b9fe8136449daf319dcbfa2999b08c1f4ae9c8b8bf6ead42aa46adf69665fed"
+    },
+    {
+      "id": "V-thermo-easy-4",
+      "mode": "thermo",
+      "hash": "947aa2ef5d0131e3851bb938683bb37058ad3ba6522fccf60d9ded9c754aa94e"
+    },
+    {
+      "id": "V-thermo-medium-4",
+      "mode": "thermo",
+      "hash": "947aa2ef5d0131e3851bb938683bb37058ad3ba6522fccf60d9ded9c754aa94e"
+    },
+    {
+      "id": "V-thermo-hard-4",
+      "mode": "thermo",
+      "hash": "947aa2ef5d0131e3851bb938683bb37058ad3ba6522fccf60d9ded9c754aa94e"
+    },
+    {
+      "id": "V-thermo-easy-5",
+      "mode": "thermo",
+      "hash": "e68be8713f5abcb9bb68848c0261f101c21edf0363855b9b2da310461b960a4c"
+    },
+    {
+      "id": "V-thermo-medium-5",
+      "mode": "thermo",
+      "hash": "e68be8713f5abcb9bb68848c0261f101c21edf0363855b9b2da310461b960a4c"
+    },
+    {
+      "id": "V-thermo-hard-5",
+      "mode": "thermo",
+      "hash": "e68be8713f5abcb9bb68848c0261f101c21edf0363855b9b2da310461b960a4c"
+    },
+    {
+      "id": "V-thermo-easy-6",
+      "mode": "thermo",
+      "hash": "fe7f177959b0d54b7da8ed1e6b0b20ebe73c7dfd062a9065db4feb068b2b1dc1"
+    },
+    {
+      "id": "V-thermo-medium-6",
+      "mode": "thermo",
+      "hash": "fe7f177959b0d54b7da8ed1e6b0b20ebe73c7dfd062a9065db4feb068b2b1dc1"
+    },
+    {
+      "id": "V-thermo-hard-6",
+      "mode": "thermo",
+      "hash": "fe7f177959b0d54b7da8ed1e6b0b20ebe73c7dfd062a9065db4feb068b2b1dc1"
+    },
+    {
+      "id": "V-thermo-easy-7",
+      "mode": "thermo",
+      "hash": "47d75c07865cfdeff166ecbec1f9f5659c6f24328950770d3e4acc993b60b802"
+    },
+    {
+      "id": "V-thermo-medium-7",
+      "mode": "thermo",
+      "hash": "47d75c07865cfdeff166ecbec1f9f5659c6f24328950770d3e4acc993b60b802"
+    },
+    {
+      "id": "V-thermo-hard-7",
+      "mode": "thermo",
+      "hash": "47d75c07865cfdeff166ecbec1f9f5659c6f24328950770d3e4acc993b60b802"
+    },
+    {
+      "id": "V-thermo-easy-8",
+      "mode": "thermo",
+      "hash": "65566c8415ee3692586a569ce4862fbd9f54dc61ccd470880b4beee72c2bffcd"
+    },
+    {
+      "id": "V-thermo-medium-8",
+      "mode": "thermo",
+      "hash": "65566c8415ee3692586a569ce4862fbd9f54dc61ccd470880b4beee72c2bffcd"
+    },
+    {
+      "id": "V-thermo-hard-8",
+      "mode": "thermo",
+      "hash": "65566c8415ee3692586a569ce4862fbd9f54dc61ccd470880b4beee72c2bffcd"
+    },
+    {
+      "id": "V-thermo-easy-9",
+      "mode": "thermo",
+      "hash": "d5b8ca79d07342e1151c23db57924ed6343944c0a4d33c5e97a116ebbf35f8a5"
+    },
+    {
+      "id": "V-thermo-medium-9",
+      "mode": "thermo",
+      "hash": "d5b8ca79d07342e1151c23db57924ed6343944c0a4d33c5e97a116ebbf35f8a5"
+    },
+    {
+      "id": "V-thermo-hard-9",
+      "mode": "thermo",
+      "hash": "d5b8ca79d07342e1151c23db57924ed6343944c0a4d33c5e97a116ebbf35f8a5"
+    },
+    {
+      "id": "V-thermo-easy-10",
+      "mode": "thermo",
+      "hash": "225d1a208b852ca6c51f594e867465f36393fde2393ab689a263b83b789104e7"
+    },
+    {
+      "id": "V-thermo-medium-10",
+      "mode": "thermo",
+      "hash": "225d1a208b852ca6c51f594e867465f36393fde2393ab689a263b83b789104e7"
+    },
+    {
+      "id": "V-thermo-hard-10",
+      "mode": "thermo",
+      "hash": "225d1a208b852ca6c51f594e867465f36393fde2393ab689a263b83b789104e7"
+    },
+    {
+      "id": "V-thermo-easy-11",
+      "mode": "thermo",
+      "hash": "f0151b5e80e07a2c99703e54715b097eb23d94a13ff6aa05605388147eaf3a5e"
+    },
+    {
+      "id": "V-thermo-medium-11",
+      "mode": "thermo",
+      "hash": "f0151b5e80e07a2c99703e54715b097eb23d94a13ff6aa05605388147eaf3a5e"
+    },
+    {
+      "id": "V-thermo-hard-11",
+      "mode": "thermo",
+      "hash": "f0151b5e80e07a2c99703e54715b097eb23d94a13ff6aa05605388147eaf3a5e"
+    },
+    {
+      "id": "V-thermo-easy-12",
+      "mode": "thermo",
+      "hash": "cff4262ef8f4d92ee7d40f90491721b00991b023ce5db4793ed5408305ad221b"
+    },
+    {
+      "id": "V-thermo-medium-12",
+      "mode": "thermo",
+      "hash": "cff4262ef8f4d92ee7d40f90491721b00991b023ce5db4793ed5408305ad221b"
+    },
+    {
+      "id": "V-thermo-hard-12",
+      "mode": "thermo",
+      "hash": "cff4262ef8f4d92ee7d40f90491721b00991b023ce5db4793ed5408305ad221b"
+    },
+    {
+      "id": "V-kropki-easy-3",
+      "mode": "kropki",
+      "hash": "42e2e817c5804878523be906d6bb9f3e5a5779ff76ffa78185cb980522c99fc1"
+    },
+    {
+      "id": "V-kropki-medium-3",
+      "mode": "kropki",
+      "hash": "42e2e817c5804878523be906d6bb9f3e5a5779ff76ffa78185cb980522c99fc1"
+    },
+    {
+      "id": "V-kropki-hard-3",
+      "mode": "kropki",
+      "hash": "42e2e817c5804878523be906d6bb9f3e5a5779ff76ffa78185cb980522c99fc1"
+    },
+    {
+      "id": "V-kropki-easy-4",
+      "mode": "kropki",
+      "hash": "a8395daee09ed3ff07d5f228f94765e3521e81dfbecd25323099c853f4adb443"
+    },
+    {
+      "id": "V-kropki-medium-4",
+      "mode": "kropki",
+      "hash": "a8395daee09ed3ff07d5f228f94765e3521e81dfbecd25323099c853f4adb443"
+    },
+    {
+      "id": "V-kropki-hard-4",
+      "mode": "kropki",
+      "hash": "a8395daee09ed3ff07d5f228f94765e3521e81dfbecd25323099c853f4adb443"
+    },
+    {
+      "id": "V-kropki-easy-5",
+      "mode": "kropki",
+      "hash": "1597fd85c9d565bb3078dd56037acc802a7896d5f1b47bc62a338091a64d9d02"
+    },
+    {
+      "id": "V-kropki-medium-5",
+      "mode": "kropki",
+      "hash": "1597fd85c9d565bb3078dd56037acc802a7896d5f1b47bc62a338091a64d9d02"
+    },
+    {
+      "id": "V-kropki-hard-5",
+      "mode": "kropki",
+      "hash": "1597fd85c9d565bb3078dd56037acc802a7896d5f1b47bc62a338091a64d9d02"
+    },
+    {
+      "id": "V-kropki-easy-6",
+      "mode": "kropki",
+      "hash": "42971e5bd4e71037a1f04bd0dbaeb96186702b6e5a8e5bb152c251c430227283"
+    },
+    {
+      "id": "V-kropki-medium-6",
+      "mode": "kropki",
+      "hash": "42971e5bd4e71037a1f04bd0dbaeb96186702b6e5a8e5bb152c251c430227283"
+    },
+    {
+      "id": "V-kropki-hard-6",
+      "mode": "kropki",
+      "hash": "42971e5bd4e71037a1f04bd0dbaeb96186702b6e5a8e5bb152c251c430227283"
+    },
+    {
+      "id": "V-kropki-easy-7",
+      "mode": "kropki",
+      "hash": "1d3303b0622820d2f9206e012a7c8b9eb66d37924484899cd2dab925cb1a97b3"
+    },
+    {
+      "id": "V-kropki-medium-7",
+      "mode": "kropki",
+      "hash": "1d3303b0622820d2f9206e012a7c8b9eb66d37924484899cd2dab925cb1a97b3"
+    },
+    {
+      "id": "V-kropki-hard-7",
+      "mode": "kropki",
+      "hash": "1d3303b0622820d2f9206e012a7c8b9eb66d37924484899cd2dab925cb1a97b3"
+    },
+    {
+      "id": "V-kropki-easy-8",
+      "mode": "kropki",
+      "hash": "47964209badff2edd42c69469b82fd19c9cabd5a8a5c224d570e65dacab2a8df"
+    },
+    {
+      "id": "V-kropki-medium-8",
+      "mode": "kropki",
+      "hash": "47964209badff2edd42c69469b82fd19c9cabd5a8a5c224d570e65dacab2a8df"
+    },
+    {
+      "id": "V-kropki-hard-8",
+      "mode": "kropki",
+      "hash": "47964209badff2edd42c69469b82fd19c9cabd5a8a5c224d570e65dacab2a8df"
+    },
+    {
+      "id": "V-kropki-easy-9",
+      "mode": "kropki",
+      "hash": "0ca24d2d40e4a1bdc1e7f3dae478c75170d73e84597c2c2043666307f399808a"
+    },
+    {
+      "id": "V-kropki-medium-9",
+      "mode": "kropki",
+      "hash": "0ca24d2d40e4a1bdc1e7f3dae478c75170d73e84597c2c2043666307f399808a"
+    },
+    {
+      "id": "V-kropki-hard-9",
+      "mode": "kropki",
+      "hash": "0ca24d2d40e4a1bdc1e7f3dae478c75170d73e84597c2c2043666307f399808a"
+    },
+    {
+      "id": "V-kropki-easy-10",
+      "mode": "kropki",
+      "hash": "aa26a779b6abbbb8e7229d5ac7dbb2934ba5b7ba391e660d34f6b7dc870bd516"
+    },
+    {
+      "id": "V-kropki-medium-10",
+      "mode": "kropki",
+      "hash": "aa26a779b6abbbb8e7229d5ac7dbb2934ba5b7ba391e660d34f6b7dc870bd516"
+    },
+    {
+      "id": "V-kropki-hard-10",
+      "mode": "kropki",
+      "hash": "aa26a779b6abbbb8e7229d5ac7dbb2934ba5b7ba391e660d34f6b7dc870bd516"
+    },
+    {
+      "id": "V-kropki-easy-11",
+      "mode": "kropki",
+      "hash": "0ea0b939370494bdaf3205a7c52a3ccebccd1a3443075365327c71647e9558c7"
+    },
+    {
+      "id": "V-kropki-medium-11",
+      "mode": "kropki",
+      "hash": "0ea0b939370494bdaf3205a7c52a3ccebccd1a3443075365327c71647e9558c7"
+    },
+    {
+      "id": "V-kropki-hard-11",
+      "mode": "kropki",
+      "hash": "0ea0b939370494bdaf3205a7c52a3ccebccd1a3443075365327c71647e9558c7"
+    },
+    {
+      "id": "V-kropki-easy-12",
+      "mode": "kropki",
+      "hash": "aff98e86a485fd166bcf13592872f9511f3a50342a5c4755052ddd39dd3265eb"
+    },
+    {
+      "id": "V-kropki-medium-12",
+      "mode": "kropki",
+      "hash": "aff98e86a485fd166bcf13592872f9511f3a50342a5c4755052ddd39dd3265eb"
+    },
+    {
+      "id": "V-kropki-hard-12",
+      "mode": "kropki",
+      "hash": "aff98e86a485fd166bcf13592872f9511f3a50342a5c4755052ddd39dd3265eb"
+    },
+    {
+      "id": "V-xv-easy-3",
+      "mode": "xv",
+      "hash": "3106c88ccebb65a74edee8ca93b16731f1bceba83600cd0b31a56da692aaf9db"
+    },
+    {
+      "id": "V-xv-medium-3",
+      "mode": "xv",
+      "hash": "3106c88ccebb65a74edee8ca93b16731f1bceba83600cd0b31a56da692aaf9db"
+    },
+    {
+      "id": "V-xv-hard-3",
+      "mode": "xv",
+      "hash": "3106c88ccebb65a74edee8ca93b16731f1bceba83600cd0b31a56da692aaf9db"
+    },
+    {
+      "id": "V-xv-easy-4",
+      "mode": "xv",
+      "hash": "4fdd320a6b07c42e82d508ecc0118d0f6900762943b64a26133a969d84d1c6ad"
+    },
+    {
+      "id": "V-xv-medium-4",
+      "mode": "xv",
+      "hash": "4fdd320a6b07c42e82d508ecc0118d0f6900762943b64a26133a969d84d1c6ad"
+    },
+    {
+      "id": "V-xv-hard-4",
+      "mode": "xv",
+      "hash": "4fdd320a6b07c42e82d508ecc0118d0f6900762943b64a26133a969d84d1c6ad"
+    },
+    {
+      "id": "V-xv-easy-5",
+      "mode": "xv",
+      "hash": "fea24dd67c81ebcf399e1abd54b7b4b3cbe17c74672c8c9bb20b85f31e158596"
+    },
+    {
+      "id": "V-xv-medium-5",
+      "mode": "xv",
+      "hash": "fea24dd67c81ebcf399e1abd54b7b4b3cbe17c74672c8c9bb20b85f31e158596"
+    },
+    {
+      "id": "V-xv-hard-5",
+      "mode": "xv",
+      "hash": "fea24dd67c81ebcf399e1abd54b7b4b3cbe17c74672c8c9bb20b85f31e158596"
+    },
+    {
+      "id": "V-xv-easy-6",
+      "mode": "xv",
+      "hash": "aeeeffca841cf9f407ff42af53744eeb29a6c37f6c7a182035363649192cdd7f"
+    },
+    {
+      "id": "V-xv-medium-6",
+      "mode": "xv",
+      "hash": "aeeeffca841cf9f407ff42af53744eeb29a6c37f6c7a182035363649192cdd7f"
+    },
+    {
+      "id": "V-xv-hard-6",
+      "mode": "xv",
+      "hash": "aeeeffca841cf9f407ff42af53744eeb29a6c37f6c7a182035363649192cdd7f"
+    },
+    {
+      "id": "V-xv-easy-7",
+      "mode": "xv",
+      "hash": "a9ce19b8732da270638f891313c3a0f14312ec7e3caa53a759fb08a3007d6d89"
+    },
+    {
+      "id": "V-xv-medium-7",
+      "mode": "xv",
+      "hash": "a9ce19b8732da270638f891313c3a0f14312ec7e3caa53a759fb08a3007d6d89"
+    },
+    {
+      "id": "V-xv-hard-7",
+      "mode": "xv",
+      "hash": "a9ce19b8732da270638f891313c3a0f14312ec7e3caa53a759fb08a3007d6d89"
+    },
+    {
+      "id": "V-xv-easy-8",
+      "mode": "xv",
+      "hash": "8dde087a8068452efd08104d7f260c28c8307af11391c28af0f8d6f0db11d8a5"
+    },
+    {
+      "id": "V-xv-medium-8",
+      "mode": "xv",
+      "hash": "8dde087a8068452efd08104d7f260c28c8307af11391c28af0f8d6f0db11d8a5"
+    },
+    {
+      "id": "V-xv-hard-8",
+      "mode": "xv",
+      "hash": "8dde087a8068452efd08104d7f260c28c8307af11391c28af0f8d6f0db11d8a5"
+    },
+    {
+      "id": "V-xv-easy-9",
+      "mode": "xv",
+      "hash": "a6b4e310543365233aba9c51dc80893d02a9a8a6b16f5649ca3c802d13ffc5c0"
+    },
+    {
+      "id": "V-xv-medium-9",
+      "mode": "xv",
+      "hash": "a6b4e310543365233aba9c51dc80893d02a9a8a6b16f5649ca3c802d13ffc5c0"
+    },
+    {
+      "id": "V-xv-hard-9",
+      "mode": "xv",
+      "hash": "a6b4e310543365233aba9c51dc80893d02a9a8a6b16f5649ca3c802d13ffc5c0"
+    },
+    {
+      "id": "V-xv-easy-10",
+      "mode": "xv",
+      "hash": "035404ec47644b2f3b98ad6722b258291c732f309d281bd67f8cd4fe2cae6462"
+    },
+    {
+      "id": "V-xv-medium-10",
+      "mode": "xv",
+      "hash": "035404ec47644b2f3b98ad6722b258291c732f309d281bd67f8cd4fe2cae6462"
+    },
+    {
+      "id": "V-xv-hard-10",
+      "mode": "xv",
+      "hash": "035404ec47644b2f3b98ad6722b258291c732f309d281bd67f8cd4fe2cae6462"
+    },
+    {
+      "id": "V-xv-easy-11",
+      "mode": "xv",
+      "hash": "546334e3a6ddf54336f5fdf61738b99373fb3cf00ecf65a33e73e238f16b46bd"
+    },
+    {
+      "id": "V-xv-medium-11",
+      "mode": "xv",
+      "hash": "546334e3a6ddf54336f5fdf61738b99373fb3cf00ecf65a33e73e238f16b46bd"
+    },
+    {
+      "id": "V-xv-hard-11",
+      "mode": "xv",
+      "hash": "546334e3a6ddf54336f5fdf61738b99373fb3cf00ecf65a33e73e238f16b46bd"
+    },
+    {
+      "id": "V-xv-easy-12",
+      "mode": "xv",
+      "hash": "e8f091affed18721398e02b28c7d3ed11ce0585f709f57d265d46c62397eabf8"
+    },
+    {
+      "id": "V-xv-medium-12",
+      "mode": "xv",
+      "hash": "e8f091affed18721398e02b28c7d3ed11ce0585f709f57d265d46c62397eabf8"
+    },
+    {
+      "id": "V-xv-hard-12",
+      "mode": "xv",
+      "hash": "e8f091affed18721398e02b28c7d3ed11ce0585f709f57d265d46c62397eabf8"
+    },
+    {
+      "id": "V-greater-easy-3",
+      "mode": "greater",
+      "hash": "664e1d90ce2e19452d75557ccca9e4c7bf14eb1ca1c80b7d3e5dae5fa93ff65c"
+    },
+    {
+      "id": "V-greater-medium-3",
+      "mode": "greater",
+      "hash": "664e1d90ce2e19452d75557ccca9e4c7bf14eb1ca1c80b7d3e5dae5fa93ff65c"
+    },
+    {
+      "id": "V-greater-hard-3",
+      "mode": "greater",
+      "hash": "664e1d90ce2e19452d75557ccca9e4c7bf14eb1ca1c80b7d3e5dae5fa93ff65c"
+    },
+    {
+      "id": "V-greater-easy-4",
+      "mode": "greater",
+      "hash": "d4c36b4ebec52ec8ec6079401f1a91756421a63164cdd39ad29b08fe5a29278d"
+    },
+    {
+      "id": "V-greater-medium-4",
+      "mode": "greater",
+      "hash": "d4c36b4ebec52ec8ec6079401f1a91756421a63164cdd39ad29b08fe5a29278d"
+    },
+    {
+      "id": "V-greater-hard-4",
+      "mode": "greater",
+      "hash": "d4c36b4ebec52ec8ec6079401f1a91756421a63164cdd39ad29b08fe5a29278d"
+    },
+    {
+      "id": "V-greater-easy-5",
+      "mode": "greater",
+      "hash": "b8e484a3e7e016e8fcf12e43cc98dfaf5050a18eac03578889fb1e4a8b3516c2"
+    },
+    {
+      "id": "V-greater-medium-5",
+      "mode": "greater",
+      "hash": "b8e484a3e7e016e8fcf12e43cc98dfaf5050a18eac03578889fb1e4a8b3516c2"
+    },
+    {
+      "id": "V-greater-hard-5",
+      "mode": "greater",
+      "hash": "b8e484a3e7e016e8fcf12e43cc98dfaf5050a18eac03578889fb1e4a8b3516c2"
+    },
+    {
+      "id": "V-greater-easy-6",
+      "mode": "greater",
+      "hash": "3a3f7fbffa0697d8d72070bdcc81bf547b68c92dde3bb6d308af1f9b5c1cf2d1"
+    },
+    {
+      "id": "V-greater-medium-6",
+      "mode": "greater",
+      "hash": "3a3f7fbffa0697d8d72070bdcc81bf547b68c92dde3bb6d308af1f9b5c1cf2d1"
+    },
+    {
+      "id": "V-greater-hard-6",
+      "mode": "greater",
+      "hash": "3a3f7fbffa0697d8d72070bdcc81bf547b68c92dde3bb6d308af1f9b5c1cf2d1"
+    },
+    {
+      "id": "V-greater-easy-7",
+      "mode": "greater",
+      "hash": "ef275a135907bc6ec22aef2d7c20f4e3f5992c56a86919164514a7d252e57cf2"
+    },
+    {
+      "id": "V-greater-medium-7",
+      "mode": "greater",
+      "hash": "ef275a135907bc6ec22aef2d7c20f4e3f5992c56a86919164514a7d252e57cf2"
+    },
+    {
+      "id": "V-greater-hard-7",
+      "mode": "greater",
+      "hash": "ef275a135907bc6ec22aef2d7c20f4e3f5992c56a86919164514a7d252e57cf2"
+    },
+    {
+      "id": "V-greater-easy-8",
+      "mode": "greater",
+      "hash": "b8fdccd0fd46558337b536251d8a4c8ed2fac1b8ab6a77e89c1bbf04cb49de68"
+    },
+    {
+      "id": "V-greater-medium-8",
+      "mode": "greater",
+      "hash": "b8fdccd0fd46558337b536251d8a4c8ed2fac1b8ab6a77e89c1bbf04cb49de68"
+    },
+    {
+      "id": "V-greater-hard-8",
+      "mode": "greater",
+      "hash": "b8fdccd0fd46558337b536251d8a4c8ed2fac1b8ab6a77e89c1bbf04cb49de68"
+    },
+    {
+      "id": "V-greater-easy-9",
+      "mode": "greater",
+      "hash": "fee343b8c2fb15eaa8cc89648f0a131999184d72085fd2b092aeec50bcce45d4"
+    },
+    {
+      "id": "V-greater-medium-9",
+      "mode": "greater",
+      "hash": "fee343b8c2fb15eaa8cc89648f0a131999184d72085fd2b092aeec50bcce45d4"
+    },
+    {
+      "id": "V-greater-hard-9",
+      "mode": "greater",
+      "hash": "fee343b8c2fb15eaa8cc89648f0a131999184d72085fd2b092aeec50bcce45d4"
+    },
+    {
+      "id": "V-greater-easy-10",
+      "mode": "greater",
+      "hash": "564fae60a3d42c0e6940c866a64f62d8e63d68fa5a572d93aef8d7b584d10f1e"
+    },
+    {
+      "id": "V-greater-medium-10",
+      "mode": "greater",
+      "hash": "564fae60a3d42c0e6940c866a64f62d8e63d68fa5a572d93aef8d7b584d10f1e"
+    },
+    {
+      "id": "V-greater-hard-10",
+      "mode": "greater",
+      "hash": "564fae60a3d42c0e6940c866a64f62d8e63d68fa5a572d93aef8d7b584d10f1e"
+    },
+    {
+      "id": "V-greater-easy-11",
+      "mode": "greater",
+      "hash": "f85caa9b8f22af1e3ae8d4cbfcdfb70377f5d6bb1acc56d5c87ebd674d663763"
+    },
+    {
+      "id": "V-greater-medium-11",
+      "mode": "greater",
+      "hash": "f85caa9b8f22af1e3ae8d4cbfcdfb70377f5d6bb1acc56d5c87ebd674d663763"
+    },
+    {
+      "id": "V-greater-hard-11",
+      "mode": "greater",
+      "hash": "f85caa9b8f22af1e3ae8d4cbfcdfb70377f5d6bb1acc56d5c87ebd674d663763"
+    },
+    {
+      "id": "V-greater-easy-12",
+      "mode": "greater",
+      "hash": "9a7ad8c376f6add398af827e3bda3431cbc0bef7fa3fd1f7377102f39fe75a27"
+    },
+    {
+      "id": "V-greater-medium-12",
+      "mode": "greater",
+      "hash": "9a7ad8c376f6add398af827e3bda3431cbc0bef7fa3fd1f7377102f39fe75a27"
+    },
+    {
+      "id": "V-greater-hard-12",
+      "mode": "greater",
+      "hash": "9a7ad8c376f6add398af827e3bda3431cbc0bef7fa3fd1f7377102f39fe75a27"
+    },
+    {
+      "id": "V-renban-easy-3",
+      "mode": "renban",
+      "hash": "370ea9b13405f27ea90f3d74f093319bd50290602fa43fd86843c6f1c251e447"
+    },
+    {
+      "id": "V-renban-medium-3",
+      "mode": "renban",
+      "hash": "370ea9b13405f27ea90f3d74f093319bd50290602fa43fd86843c6f1c251e447"
+    },
+    {
+      "id": "V-renban-hard-3",
+      "mode": "renban",
+      "hash": "370ea9b13405f27ea90f3d74f093319bd50290602fa43fd86843c6f1c251e447"
+    },
+    {
+      "id": "V-renban-easy-4",
+      "mode": "renban",
+      "hash": "fea29e031853aa2297e9a03620dac077d047627f08d85633768d922af610e9e3"
+    },
+    {
+      "id": "V-renban-medium-4",
+      "mode": "renban",
+      "hash": "fea29e031853aa2297e9a03620dac077d047627f08d85633768d922af610e9e3"
+    },
+    {
+      "id": "V-renban-hard-4",
+      "mode": "renban",
+      "hash": "fea29e031853aa2297e9a03620dac077d047627f08d85633768d922af610e9e3"
+    },
+    {
+      "id": "V-renban-easy-5",
+      "mode": "renban",
+      "hash": "a972f6dba8f14dd82146fe8123d0f694f914d3e42430bd8f9e89d0d0ccad3252"
+    },
+    {
+      "id": "V-renban-medium-5",
+      "mode": "renban",
+      "hash": "a972f6dba8f14dd82146fe8123d0f694f914d3e42430bd8f9e89d0d0ccad3252"
+    },
+    {
+      "id": "V-renban-hard-5",
+      "mode": "renban",
+      "hash": "a972f6dba8f14dd82146fe8123d0f694f914d3e42430bd8f9e89d0d0ccad3252"
+    },
+    {
+      "id": "V-renban-easy-6",
+      "mode": "renban",
+      "hash": "b9290e91f70facb1cb2099c5e88f8cec300670f94e61f6d545a70a41996e2081"
+    },
+    {
+      "id": "V-renban-medium-6",
+      "mode": "renban",
+      "hash": "b9290e91f70facb1cb2099c5e88f8cec300670f94e61f6d545a70a41996e2081"
+    },
+    {
+      "id": "V-renban-hard-6",
+      "mode": "renban",
+      "hash": "b9290e91f70facb1cb2099c5e88f8cec300670f94e61f6d545a70a41996e2081"
+    },
+    {
+      "id": "V-renban-easy-7",
+      "mode": "renban",
+      "hash": "88eb5daaf9cf1c18cf5e5c87a1809d231675fa0f22fdea49a496f4a7961867b6"
+    },
+    {
+      "id": "V-renban-medium-7",
+      "mode": "renban",
+      "hash": "88eb5daaf9cf1c18cf5e5c87a1809d231675fa0f22fdea49a496f4a7961867b6"
+    },
+    {
+      "id": "V-renban-hard-7",
+      "mode": "renban",
+      "hash": "88eb5daaf9cf1c18cf5e5c87a1809d231675fa0f22fdea49a496f4a7961867b6"
+    },
+    {
+      "id": "V-renban-easy-8",
+      "mode": "renban",
+      "hash": "e9a442f97078bddfac9cfb6c54650c8fd6bc96b180c3cff4460de0c843645498"
+    },
+    {
+      "id": "V-renban-medium-8",
+      "mode": "renban",
+      "hash": "e9a442f97078bddfac9cfb6c54650c8fd6bc96b180c3cff4460de0c843645498"
+    },
+    {
+      "id": "V-renban-hard-8",
+      "mode": "renban",
+      "hash": "e9a442f97078bddfac9cfb6c54650c8fd6bc96b180c3cff4460de0c843645498"
+    },
+    {
+      "id": "V-renban-easy-9",
+      "mode": "renban",
+      "hash": "e56bdbb9fded66dd4c59b90862df9bb8d05152255b64a618bcfe31fa6a6082df"
+    },
+    {
+      "id": "V-renban-medium-9",
+      "mode": "renban",
+      "hash": "e56bdbb9fded66dd4c59b90862df9bb8d05152255b64a618bcfe31fa6a6082df"
+    },
+    {
+      "id": "V-renban-hard-9",
+      "mode": "renban",
+      "hash": "e56bdbb9fded66dd4c59b90862df9bb8d05152255b64a618bcfe31fa6a6082df"
+    },
+    {
+      "id": "V-renban-easy-10",
+      "mode": "renban",
+      "hash": "4e62a6b0086294e911a8dbb73a241d96e498610f7a819dafaafed04e75bce123"
+    },
+    {
+      "id": "V-renban-medium-10",
+      "mode": "renban",
+      "hash": "4e62a6b0086294e911a8dbb73a241d96e498610f7a819dafaafed04e75bce123"
+    },
+    {
+      "id": "V-renban-hard-10",
+      "mode": "renban",
+      "hash": "4e62a6b0086294e911a8dbb73a241d96e498610f7a819dafaafed04e75bce123"
+    },
+    {
+      "id": "V-renban-easy-11",
+      "mode": "renban",
+      "hash": "d017f32432d2df3f6a795f5607627d5f48528a93b82782e495bec1310117775a"
+    },
+    {
+      "id": "V-renban-medium-11",
+      "mode": "renban",
+      "hash": "d017f32432d2df3f6a795f5607627d5f48528a93b82782e495bec1310117775a"
+    },
+    {
+      "id": "V-renban-hard-11",
+      "mode": "renban",
+      "hash": "d017f32432d2df3f6a795f5607627d5f48528a93b82782e495bec1310117775a"
+    },
+    {
+      "id": "V-renban-easy-12",
+      "mode": "renban",
+      "hash": "ee63cb82fc571b6b011da27bb75d79800275634abe0639ba126a09f97b890cda"
+    },
+    {
+      "id": "V-renban-medium-12",
+      "mode": "renban",
+      "hash": "ee63cb82fc571b6b011da27bb75d79800275634abe0639ba126a09f97b890cda"
+    },
+    {
+      "id": "V-renban-hard-12",
+      "mode": "renban",
+      "hash": "ee63cb82fc571b6b011da27bb75d79800275634abe0639ba126a09f97b890cda"
+    },
+    {
+      "id": "V-whispers-easy-3",
+      "mode": "whispers",
+      "hash": "aeb03178cc8dbf9b66160a73a4eb70733ec157e7c6ce9e99f81b7a15c92f4df3"
+    },
+    {
+      "id": "V-whispers-medium-3",
+      "mode": "whispers",
+      "hash": "aeb03178cc8dbf9b66160a73a4eb70733ec157e7c6ce9e99f81b7a15c92f4df3"
+    },
+    {
+      "id": "V-whispers-hard-3",
+      "mode": "whispers",
+      "hash": "aeb03178cc8dbf9b66160a73a4eb70733ec157e7c6ce9e99f81b7a15c92f4df3"
+    },
+    {
+      "id": "V-whispers-easy-4",
+      "mode": "whispers",
+      "hash": "831227d215529e4a45d6636994aab08518ac5675059fb1074d188b828f97aca2"
+    },
+    {
+      "id": "V-whispers-medium-4",
+      "mode": "whispers",
+      "hash": "831227d215529e4a45d6636994aab08518ac5675059fb1074d188b828f97aca2"
+    },
+    {
+      "id": "V-whispers-hard-4",
+      "mode": "whispers",
+      "hash": "831227d215529e4a45d6636994aab08518ac5675059fb1074d188b828f97aca2"
+    },
+    {
+      "id": "V-whispers-easy-5",
+      "mode": "whispers",
+      "hash": "950e28756e188709ebcf8531e90bf05a2ac34810a1a7920384c816aa2b6050d7"
+    },
+    {
+      "id": "V-whispers-medium-5",
+      "mode": "whispers",
+      "hash": "950e28756e188709ebcf8531e90bf05a2ac34810a1a7920384c816aa2b6050d7"
+    },
+    {
+      "id": "V-whispers-hard-5",
+      "mode": "whispers",
+      "hash": "950e28756e188709ebcf8531e90bf05a2ac34810a1a7920384c816aa2b6050d7"
+    },
+    {
+      "id": "V-whispers-easy-6",
+      "mode": "whispers",
+      "hash": "446ab861924e5b56b77979af983b8644059e36d36b6920fc371d3d39a27c3d2f"
+    },
+    {
+      "id": "V-whispers-medium-6",
+      "mode": "whispers",
+      "hash": "446ab861924e5b56b77979af983b8644059e36d36b6920fc371d3d39a27c3d2f"
+    },
+    {
+      "id": "V-whispers-hard-6",
+      "mode": "whispers",
+      "hash": "446ab861924e5b56b77979af983b8644059e36d36b6920fc371d3d39a27c3d2f"
+    },
+    {
+      "id": "V-whispers-easy-7",
+      "mode": "whispers",
+      "hash": "2feb457eb50ac3cba944fd6e1d7f16f24542e295940ffc00cd2f8ebd640880fe"
+    },
+    {
+      "id": "V-whispers-medium-7",
+      "mode": "whispers",
+      "hash": "2feb457eb50ac3cba944fd6e1d7f16f24542e295940ffc00cd2f8ebd640880fe"
+    },
+    {
+      "id": "V-whispers-hard-7",
+      "mode": "whispers",
+      "hash": "2feb457eb50ac3cba944fd6e1d7f16f24542e295940ffc00cd2f8ebd640880fe"
+    },
+    {
+      "id": "V-whispers-easy-8",
+      "mode": "whispers",
+      "hash": "8852aff3f3e889a657e883776a7357c8e37c71985223b84976a7d80e1b8c06fc"
+    },
+    {
+      "id": "V-whispers-medium-8",
+      "mode": "whispers",
+      "hash": "8852aff3f3e889a657e883776a7357c8e37c71985223b84976a7d80e1b8c06fc"
+    },
+    {
+      "id": "V-whispers-hard-8",
+      "mode": "whispers",
+      "hash": "8852aff3f3e889a657e883776a7357c8e37c71985223b84976a7d80e1b8c06fc"
+    },
+    {
+      "id": "V-whispers-easy-9",
+      "mode": "whispers",
+      "hash": "b09a5da400a2c225da050b9f62a3b9240aa1117754e94f9eddf1a97d8a85165d"
+    },
+    {
+      "id": "V-whispers-medium-9",
+      "mode": "whispers",
+      "hash": "b09a5da400a2c225da050b9f62a3b9240aa1117754e94f9eddf1a97d8a85165d"
+    },
+    {
+      "id": "V-whispers-hard-9",
+      "mode": "whispers",
+      "hash": "b09a5da400a2c225da050b9f62a3b9240aa1117754e94f9eddf1a97d8a85165d"
+    },
+    {
+      "id": "V-whispers-easy-10",
+      "mode": "whispers",
+      "hash": "0f48dca12428ef7040909cf3f06bc6e9d02a96b70584659c7c1fc8e963526528"
+    },
+    {
+      "id": "V-whispers-medium-10",
+      "mode": "whispers",
+      "hash": "0f48dca12428ef7040909cf3f06bc6e9d02a96b70584659c7c1fc8e963526528"
+    },
+    {
+      "id": "V-whispers-hard-10",
+      "mode": "whispers",
+      "hash": "0f48dca12428ef7040909cf3f06bc6e9d02a96b70584659c7c1fc8e963526528"
+    },
+    {
+      "id": "V-whispers-easy-11",
+      "mode": "whispers",
+      "hash": "a75b234f3dafd721d2cd17e705d380ef0401b24073429ecf0e36d0117b1bc37c"
+    },
+    {
+      "id": "V-whispers-medium-11",
+      "mode": "whispers",
+      "hash": "a75b234f3dafd721d2cd17e705d380ef0401b24073429ecf0e36d0117b1bc37c"
+    },
+    {
+      "id": "V-whispers-hard-11",
+      "mode": "whispers",
+      "hash": "a75b234f3dafd721d2cd17e705d380ef0401b24073429ecf0e36d0117b1bc37c"
+    },
+    {
+      "id": "V-whispers-easy-12",
+      "mode": "whispers",
+      "hash": "c65339f201b67da4faaf07223e1f07b0909337453c4cd0f856511d5409a0d6ed"
+    },
+    {
+      "id": "V-whispers-medium-12",
+      "mode": "whispers",
+      "hash": "c65339f201b67da4faaf07223e1f07b0909337453c4cd0f856511d5409a0d6ed"
+    },
+    {
+      "id": "V-whispers-hard-12",
+      "mode": "whispers",
+      "hash": "c65339f201b67da4faaf07223e1f07b0909337453c4cd0f856511d5409a0d6ed"
+    },
+    {
+      "id": "V-palindrome-easy-3",
+      "mode": "palindrome",
+      "hash": "d04f9476f80e3c2877ed17af6c538f3aee27e4e12f61ecee894a6b4c45cb1d03"
+    },
+    {
+      "id": "V-palindrome-medium-3",
+      "mode": "palindrome",
+      "hash": "d04f9476f80e3c2877ed17af6c538f3aee27e4e12f61ecee894a6b4c45cb1d03"
+    },
+    {
+      "id": "V-palindrome-hard-3",
+      "mode": "palindrome",
+      "hash": "d04f9476f80e3c2877ed17af6c538f3aee27e4e12f61ecee894a6b4c45cb1d03"
+    },
+    {
+      "id": "V-palindrome-easy-4",
+      "mode": "palindrome",
+      "hash": "5a2ea17895fd427c176d7433a59a9cb58e8aa36125faf856bc13e5e284a98e94"
+    },
+    {
+      "id": "V-palindrome-medium-4",
+      "mode": "palindrome",
+      "hash": "5a2ea17895fd427c176d7433a59a9cb58e8aa36125faf856bc13e5e284a98e94"
+    },
+    {
+      "id": "V-palindrome-hard-4",
+      "mode": "palindrome",
+      "hash": "5a2ea17895fd427c176d7433a59a9cb58e8aa36125faf856bc13e5e284a98e94"
+    },
+    {
+      "id": "V-palindrome-easy-5",
+      "mode": "palindrome",
+      "hash": "aafbeb53b02d251fc365a56430aa011087c3b39999fefc9734f80d86d448d683"
+    },
+    {
+      "id": "V-palindrome-medium-5",
+      "mode": "palindrome",
+      "hash": "aafbeb53b02d251fc365a56430aa011087c3b39999fefc9734f80d86d448d683"
+    },
+    {
+      "id": "V-palindrome-hard-5",
+      "mode": "palindrome",
+      "hash": "aafbeb53b02d251fc365a56430aa011087c3b39999fefc9734f80d86d448d683"
+    },
+    {
+      "id": "V-palindrome-easy-6",
+      "mode": "palindrome",
+      "hash": "82ff8741e54678389f70b916c7181f26e3a56613422b7d9da9b6b227c8e94a9e"
+    },
+    {
+      "id": "V-palindrome-medium-6",
+      "mode": "palindrome",
+      "hash": "82ff8741e54678389f70b916c7181f26e3a56613422b7d9da9b6b227c8e94a9e"
+    },
+    {
+      "id": "V-palindrome-hard-6",
+      "mode": "palindrome",
+      "hash": "82ff8741e54678389f70b916c7181f26e3a56613422b7d9da9b6b227c8e94a9e"
+    },
+    {
+      "id": "V-palindrome-easy-7",
+      "mode": "palindrome",
+      "hash": "823d2c8bc0a2270868bb38801eb545ba1164ae5dcd139b935b95f23104291ed6"
+    },
+    {
+      "id": "V-palindrome-medium-7",
+      "mode": "palindrome",
+      "hash": "823d2c8bc0a2270868bb38801eb545ba1164ae5dcd139b935b95f23104291ed6"
+    },
+    {
+      "id": "V-palindrome-hard-7",
+      "mode": "palindrome",
+      "hash": "823d2c8bc0a2270868bb38801eb545ba1164ae5dcd139b935b95f23104291ed6"
+    },
+    {
+      "id": "V-palindrome-easy-8",
+      "mode": "palindrome",
+      "hash": "7ae9047836aa2e9af3684622ed8b8954c620268a63ddf8c29f0f29b970078820"
+    },
+    {
+      "id": "V-palindrome-medium-8",
+      "mode": "palindrome",
+      "hash": "7ae9047836aa2e9af3684622ed8b8954c620268a63ddf8c29f0f29b970078820"
+    },
+    {
+      "id": "V-palindrome-hard-8",
+      "mode": "palindrome",
+      "hash": "7ae9047836aa2e9af3684622ed8b8954c620268a63ddf8c29f0f29b970078820"
+    },
+    {
+      "id": "V-palindrome-easy-9",
+      "mode": "palindrome",
+      "hash": "be725b28ed023db81fb506fb94595984e8c698bc6e17738be928b5f36151bf8c"
+    },
+    {
+      "id": "V-palindrome-medium-9",
+      "mode": "palindrome",
+      "hash": "be725b28ed023db81fb506fb94595984e8c698bc6e17738be928b5f36151bf8c"
+    },
+    {
+      "id": "V-palindrome-hard-9",
+      "mode": "palindrome",
+      "hash": "be725b28ed023db81fb506fb94595984e8c698bc6e17738be928b5f36151bf8c"
+    },
+    {
+      "id": "V-palindrome-easy-10",
+      "mode": "palindrome",
+      "hash": "1d7e883ce3879cd111390e8e5aca14a65d9ab269704a4156e75ee0210751d2aa"
+    },
+    {
+      "id": "V-palindrome-medium-10",
+      "mode": "palindrome",
+      "hash": "1d7e883ce3879cd111390e8e5aca14a65d9ab269704a4156e75ee0210751d2aa"
+    },
+    {
+      "id": "V-palindrome-hard-10",
+      "mode": "palindrome",
+      "hash": "1d7e883ce3879cd111390e8e5aca14a65d9ab269704a4156e75ee0210751d2aa"
+    },
+    {
+      "id": "V-palindrome-easy-11",
+      "mode": "palindrome",
+      "hash": "b7c170dbcd33eaffd0dc3529f147a3735bcd832b1e37dfd5ed1286747ac5998a"
+    },
+    {
+      "id": "V-palindrome-medium-11",
+      "mode": "palindrome",
+      "hash": "b7c170dbcd33eaffd0dc3529f147a3735bcd832b1e37dfd5ed1286747ac5998a"
+    },
+    {
+      "id": "V-palindrome-hard-11",
+      "mode": "palindrome",
+      "hash": "b7c170dbcd33eaffd0dc3529f147a3735bcd832b1e37dfd5ed1286747ac5998a"
+    },
+    {
+      "id": "V-palindrome-easy-12",
+      "mode": "palindrome",
+      "hash": "55913c30ffc65862c764ece9cf2d7ae55c7b8ddaa9f830883e4d36d657f07fb9"
+    },
+    {
+      "id": "V-palindrome-medium-12",
+      "mode": "palindrome",
+      "hash": "55913c30ffc65862c764ece9cf2d7ae55c7b8ddaa9f830883e4d36d657f07fb9"
+    },
+    {
+      "id": "V-palindrome-hard-12",
+      "mode": "palindrome",
+      "hash": "55913c30ffc65862c764ece9cf2d7ae55c7b8ddaa9f830883e4d36d657f07fb9"
+    },
+    {
+      "id": "V-between-easy-3",
+      "mode": "between",
+      "hash": "9e951f1f900af5831982e4c1a62baaad049afa9b56e917a74ba9b6093cf0551a"
+    },
+    {
+      "id": "V-between-medium-3",
+      "mode": "between",
+      "hash": "9e951f1f900af5831982e4c1a62baaad049afa9b56e917a74ba9b6093cf0551a"
+    },
+    {
+      "id": "V-between-hard-3",
+      "mode": "between",
+      "hash": "9e951f1f900af5831982e4c1a62baaad049afa9b56e917a74ba9b6093cf0551a"
+    },
+    {
+      "id": "V-between-easy-4",
+      "mode": "between",
+      "hash": "7e76a9545112004b82a3894da611990909e19aa9b76e0dadbdc22aac9be32153"
+    },
+    {
+      "id": "V-between-medium-4",
+      "mode": "between",
+      "hash": "7e76a9545112004b82a3894da611990909e19aa9b76e0dadbdc22aac9be32153"
+    },
+    {
+      "id": "V-between-hard-4",
+      "mode": "between",
+      "hash": "7e76a9545112004b82a3894da611990909e19aa9b76e0dadbdc22aac9be32153"
+    },
+    {
+      "id": "V-between-easy-5",
+      "mode": "between",
+      "hash": "71a27e7ea179f2634a2d1472b96fff4e4c838deb9f9e41e2e290c3a9e12a2d46"
+    },
+    {
+      "id": "V-between-medium-5",
+      "mode": "between",
+      "hash": "71a27e7ea179f2634a2d1472b96fff4e4c838deb9f9e41e2e290c3a9e12a2d46"
+    },
+    {
+      "id": "V-between-hard-5",
+      "mode": "between",
+      "hash": "71a27e7ea179f2634a2d1472b96fff4e4c838deb9f9e41e2e290c3a9e12a2d46"
+    },
+    {
+      "id": "V-between-easy-6",
+      "mode": "between",
+      "hash": "7ae4652bd3d268a7f0dee45dc07193670211ffa955ef7e509d49c588c02ae189"
+    },
+    {
+      "id": "V-between-medium-6",
+      "mode": "between",
+      "hash": "7ae4652bd3d268a7f0dee45dc07193670211ffa955ef7e509d49c588c02ae189"
+    },
+    {
+      "id": "V-between-hard-6",
+      "mode": "between",
+      "hash": "7ae4652bd3d268a7f0dee45dc07193670211ffa955ef7e509d49c588c02ae189"
+    },
+    {
+      "id": "V-between-easy-7",
+      "mode": "between",
+      "hash": "abfe22d5dc959604ad3f90a976a1d4bc681fd241f315bca22b328f308908ec30"
+    },
+    {
+      "id": "V-between-medium-7",
+      "mode": "between",
+      "hash": "abfe22d5dc959604ad3f90a976a1d4bc681fd241f315bca22b328f308908ec30"
+    },
+    {
+      "id": "V-between-hard-7",
+      "mode": "between",
+      "hash": "abfe22d5dc959604ad3f90a976a1d4bc681fd241f315bca22b328f308908ec30"
+    },
+    {
+      "id": "V-between-easy-8",
+      "mode": "between",
+      "hash": "aa9877fe92c3d313e0529d795fca64424b43cec9e4977a200e76657b3ff38e6a"
+    },
+    {
+      "id": "V-between-medium-8",
+      "mode": "between",
+      "hash": "aa9877fe92c3d313e0529d795fca64424b43cec9e4977a200e76657b3ff38e6a"
+    },
+    {
+      "id": "V-between-hard-8",
+      "mode": "between",
+      "hash": "aa9877fe92c3d313e0529d795fca64424b43cec9e4977a200e76657b3ff38e6a"
+    },
+    {
+      "id": "V-between-easy-9",
+      "mode": "between",
+      "hash": "8c5b062d803a1585b1a7b3c6016b575649644d04bd04680b4f0302a7e7c13caf"
+    },
+    {
+      "id": "V-between-medium-9",
+      "mode": "between",
+      "hash": "8c5b062d803a1585b1a7b3c6016b575649644d04bd04680b4f0302a7e7c13caf"
+    },
+    {
+      "id": "V-between-hard-9",
+      "mode": "between",
+      "hash": "8c5b062d803a1585b1a7b3c6016b575649644d04bd04680b4f0302a7e7c13caf"
+    },
+    {
+      "id": "V-between-easy-10",
+      "mode": "between",
+      "hash": "8dab8f9d9a21f921782bddd9ad2084e26e4c8f87a1d0ddd4f5e748ec18e47046"
+    },
+    {
+      "id": "V-between-medium-10",
+      "mode": "between",
+      "hash": "8dab8f9d9a21f921782bddd9ad2084e26e4c8f87a1d0ddd4f5e748ec18e47046"
+    },
+    {
+      "id": "V-between-hard-10",
+      "mode": "between",
+      "hash": "8dab8f9d9a21f921782bddd9ad2084e26e4c8f87a1d0ddd4f5e748ec18e47046"
+    },
+    {
+      "id": "V-between-easy-11",
+      "mode": "between",
+      "hash": "c49b91d39b9407568fcc4f34bc6fa02e606584bdee201f108ec2c7dbe94cf09b"
+    },
+    {
+      "id": "V-between-medium-11",
+      "mode": "between",
+      "hash": "c49b91d39b9407568fcc4f34bc6fa02e606584bdee201f108ec2c7dbe94cf09b"
+    },
+    {
+      "id": "V-between-hard-11",
+      "mode": "between",
+      "hash": "c49b91d39b9407568fcc4f34bc6fa02e606584bdee201f108ec2c7dbe94cf09b"
+    },
+    {
+      "id": "V-between-easy-12",
+      "mode": "between",
+      "hash": "f3b1968f5f689dcf95bcb969f8382ab10169448290ec7f01e5e7f372f9617702"
+    },
+    {
+      "id": "V-between-medium-12",
+      "mode": "between",
+      "hash": "f3b1968f5f689dcf95bcb969f8382ab10169448290ec7f01e5e7f372f9617702"
+    },
+    {
+      "id": "V-between-hard-12",
+      "mode": "between",
+      "hash": "f3b1968f5f689dcf95bcb969f8382ab10169448290ec7f01e5e7f372f9617702"
+    },
+    {
+      "id": "V-lockout-easy-3",
+      "mode": "lockout",
+      "hash": "8a27fcfbca41115f9d7c0ef5e72f9c822a7c76cbeeb95de0964196c20e5fa641"
+    },
+    {
+      "id": "V-lockout-medium-3",
+      "mode": "lockout",
+      "hash": "8a27fcfbca41115f9d7c0ef5e72f9c822a7c76cbeeb95de0964196c20e5fa641"
+    },
+    {
+      "id": "V-lockout-hard-3",
+      "mode": "lockout",
+      "hash": "8a27fcfbca41115f9d7c0ef5e72f9c822a7c76cbeeb95de0964196c20e5fa641"
+    },
+    {
+      "id": "V-lockout-easy-4",
+      "mode": "lockout",
+      "hash": "53fed84f92ecb2c6fa405b6ed1aa40fe99651dcd15ff9bd182fb4b4bbd10b2d3"
+    },
+    {
+      "id": "V-lockout-medium-4",
+      "mode": "lockout",
+      "hash": "53fed84f92ecb2c6fa405b6ed1aa40fe99651dcd15ff9bd182fb4b4bbd10b2d3"
+    },
+    {
+      "id": "V-lockout-hard-4",
+      "mode": "lockout",
+      "hash": "53fed84f92ecb2c6fa405b6ed1aa40fe99651dcd15ff9bd182fb4b4bbd10b2d3"
+    },
+    {
+      "id": "V-lockout-easy-5",
+      "mode": "lockout",
+      "hash": "ea8714c3d21ae8d22ca89720eb7f30e3f628792c024c03ab20e082d451127132"
+    },
+    {
+      "id": "V-lockout-medium-5",
+      "mode": "lockout",
+      "hash": "ea8714c3d21ae8d22ca89720eb7f30e3f628792c024c03ab20e082d451127132"
+    },
+    {
+      "id": "V-lockout-hard-5",
+      "mode": "lockout",
+      "hash": "ea8714c3d21ae8d22ca89720eb7f30e3f628792c024c03ab20e082d451127132"
+    },
+    {
+      "id": "V-lockout-easy-6",
+      "mode": "lockout",
+      "hash": "ed90fa227dbc86e51f729533cef0f44749fd8c01690dc84f50d5b11a6ec36e6c"
+    },
+    {
+      "id": "V-lockout-medium-6",
+      "mode": "lockout",
+      "hash": "ed90fa227dbc86e51f729533cef0f44749fd8c01690dc84f50d5b11a6ec36e6c"
+    },
+    {
+      "id": "V-lockout-hard-6",
+      "mode": "lockout",
+      "hash": "ed90fa227dbc86e51f729533cef0f44749fd8c01690dc84f50d5b11a6ec36e6c"
+    },
+    {
+      "id": "V-lockout-easy-7",
+      "mode": "lockout",
+      "hash": "9f75b7723723b92ec825aec4d15b030f70c8c6991c840963919cdeca7a6d51ca"
+    },
+    {
+      "id": "V-lockout-medium-7",
+      "mode": "lockout",
+      "hash": "9f75b7723723b92ec825aec4d15b030f70c8c6991c840963919cdeca7a6d51ca"
+    },
+    {
+      "id": "V-lockout-hard-7",
+      "mode": "lockout",
+      "hash": "9f75b7723723b92ec825aec4d15b030f70c8c6991c840963919cdeca7a6d51ca"
+    },
+    {
+      "id": "V-lockout-easy-8",
+      "mode": "lockout",
+      "hash": "969afbdf172618119951331ddf02c456c886b6fe5c9f14cd1e329520e811544a"
+    },
+    {
+      "id": "V-lockout-medium-8",
+      "mode": "lockout",
+      "hash": "969afbdf172618119951331ddf02c456c886b6fe5c9f14cd1e329520e811544a"
+    },
+    {
+      "id": "V-lockout-hard-8",
+      "mode": "lockout",
+      "hash": "969afbdf172618119951331ddf02c456c886b6fe5c9f14cd1e329520e811544a"
+    },
+    {
+      "id": "V-lockout-easy-9",
+      "mode": "lockout",
+      "hash": "bd33e4db31855e3159531f7137b41ccab6777fc50cefbc27d837c74c0be53327"
+    },
+    {
+      "id": "V-lockout-medium-9",
+      "mode": "lockout",
+      "hash": "bd33e4db31855e3159531f7137b41ccab6777fc50cefbc27d837c74c0be53327"
+    },
+    {
+      "id": "V-lockout-hard-9",
+      "mode": "lockout",
+      "hash": "bd33e4db31855e3159531f7137b41ccab6777fc50cefbc27d837c74c0be53327"
+    },
+    {
+      "id": "V-lockout-easy-10",
+      "mode": "lockout",
+      "hash": "2d6f2a48b00adaba737a7b7926bdc825179983e8f7e93010ea489390dcb8665c"
+    },
+    {
+      "id": "V-lockout-medium-10",
+      "mode": "lockout",
+      "hash": "2d6f2a48b00adaba737a7b7926bdc825179983e8f7e93010ea489390dcb8665c"
+    },
+    {
+      "id": "V-lockout-hard-10",
+      "mode": "lockout",
+      "hash": "2d6f2a48b00adaba737a7b7926bdc825179983e8f7e93010ea489390dcb8665c"
+    },
+    {
+      "id": "V-lockout-easy-11",
+      "mode": "lockout",
+      "hash": "7dd9c8a56661ed6d83eae22f7c8162056ccec7d4fefb7872b2ec5fcde1dbb88e"
+    },
+    {
+      "id": "V-lockout-medium-11",
+      "mode": "lockout",
+      "hash": "7dd9c8a56661ed6d83eae22f7c8162056ccec7d4fefb7872b2ec5fcde1dbb88e"
+    },
+    {
+      "id": "V-lockout-hard-11",
+      "mode": "lockout",
+      "hash": "7dd9c8a56661ed6d83eae22f7c8162056ccec7d4fefb7872b2ec5fcde1dbb88e"
+    },
+    {
+      "id": "V-lockout-easy-12",
+      "mode": "lockout",
+      "hash": "5520862034a9fd919e736b1d56a9012e684aa28027a775295214c41b4bec4919"
+    },
+    {
+      "id": "V-lockout-medium-12",
+      "mode": "lockout",
+      "hash": "5520862034a9fd919e736b1d56a9012e684aa28027a775295214c41b4bec4919"
+    },
+    {
+      "id": "V-lockout-hard-12",
+      "mode": "lockout",
+      "hash": "5520862034a9fd919e736b1d56a9012e684aa28027a775295214c41b4bec4919"
+    },
+    {
+      "id": "V-entropic-easy-3",
+      "mode": "entropic",
+      "hash": "902bbe7e0e6d4bd583870dc66b767c5c4c00884f8b92255a178defa782e4a034"
+    },
+    {
+      "id": "V-entropic-medium-3",
+      "mode": "entropic",
+      "hash": "902bbe7e0e6d4bd583870dc66b767c5c4c00884f8b92255a178defa782e4a034"
+    },
+    {
+      "id": "V-entropic-hard-3",
+      "mode": "entropic",
+      "hash": "902bbe7e0e6d4bd583870dc66b767c5c4c00884f8b92255a178defa782e4a034"
+    },
+    {
+      "id": "V-entropic-easy-4",
+      "mode": "entropic",
+      "hash": "331586969b8c13c34f47f3595fa47684d50ec230aa201aa68b1de38e83473136"
+    },
+    {
+      "id": "V-entropic-medium-4",
+      "mode": "entropic",
+      "hash": "331586969b8c13c34f47f3595fa47684d50ec230aa201aa68b1de38e83473136"
+    },
+    {
+      "id": "V-entropic-hard-4",
+      "mode": "entropic",
+      "hash": "331586969b8c13c34f47f3595fa47684d50ec230aa201aa68b1de38e83473136"
+    },
+    {
+      "id": "V-entropic-easy-5",
+      "mode": "entropic",
+      "hash": "41596b5c37de8032de19882998c61894f9c387dfd3bb57ee4986927752c1739b"
+    },
+    {
+      "id": "V-entropic-medium-5",
+      "mode": "entropic",
+      "hash": "41596b5c37de8032de19882998c61894f9c387dfd3bb57ee4986927752c1739b"
+    },
+    {
+      "id": "V-entropic-hard-5",
+      "mode": "entropic",
+      "hash": "41596b5c37de8032de19882998c61894f9c387dfd3bb57ee4986927752c1739b"
+    },
+    {
+      "id": "V-entropic-easy-6",
+      "mode": "entropic",
+      "hash": "2699f3070d6f2086f6c5f4e1579415a1e4368a24f418993dd423d1cf46db0642"
+    },
+    {
+      "id": "V-entropic-medium-6",
+      "mode": "entropic",
+      "hash": "2699f3070d6f2086f6c5f4e1579415a1e4368a24f418993dd423d1cf46db0642"
+    },
+    {
+      "id": "V-entropic-hard-6",
+      "mode": "entropic",
+      "hash": "2699f3070d6f2086f6c5f4e1579415a1e4368a24f418993dd423d1cf46db0642"
+    },
+    {
+      "id": "V-entropic-easy-7",
+      "mode": "entropic",
+      "hash": "0340393447f4e3722614f1d96b392f7c43ad76d93a7bcf24af17b155396a7574"
+    },
+    {
+      "id": "V-entropic-medium-7",
+      "mode": "entropic",
+      "hash": "0340393447f4e3722614f1d96b392f7c43ad76d93a7bcf24af17b155396a7574"
+    },
+    {
+      "id": "V-entropic-hard-7",
+      "mode": "entropic",
+      "hash": "0340393447f4e3722614f1d96b392f7c43ad76d93a7bcf24af17b155396a7574"
+    },
+    {
+      "id": "V-entropic-easy-8",
+      "mode": "entropic",
+      "hash": "735597a2acc93232ee08502d605f35aa33768c3d8daa48df08ac7a7ca732ce37"
+    },
+    {
+      "id": "V-entropic-medium-8",
+      "mode": "entropic",
+      "hash": "735597a2acc93232ee08502d605f35aa33768c3d8daa48df08ac7a7ca732ce37"
+    },
+    {
+      "id": "V-entropic-hard-8",
+      "mode": "entropic",
+      "hash": "735597a2acc93232ee08502d605f35aa33768c3d8daa48df08ac7a7ca732ce37"
+    },
+    {
+      "id": "V-entropic-easy-9",
+      "mode": "entropic",
+      "hash": "c15c420c345d4e225abe0fba334507508bc58ede735fb9fb4116338cf66f7499"
+    },
+    {
+      "id": "V-entropic-medium-9",
+      "mode": "entropic",
+      "hash": "c15c420c345d4e225abe0fba334507508bc58ede735fb9fb4116338cf66f7499"
+    },
+    {
+      "id": "V-entropic-hard-9",
+      "mode": "entropic",
+      "hash": "c15c420c345d4e225abe0fba334507508bc58ede735fb9fb4116338cf66f7499"
+    },
+    {
+      "id": "V-entropic-easy-10",
+      "mode": "entropic",
+      "hash": "cb758dbdf762820f995ba09f3fd544891c63ec32ee19fbe572d5bf073b4875f7"
+    },
+    {
+      "id": "V-entropic-medium-10",
+      "mode": "entropic",
+      "hash": "cb758dbdf762820f995ba09f3fd544891c63ec32ee19fbe572d5bf073b4875f7"
+    },
+    {
+      "id": "V-entropic-hard-10",
+      "mode": "entropic",
+      "hash": "cb758dbdf762820f995ba09f3fd544891c63ec32ee19fbe572d5bf073b4875f7"
+    },
+    {
+      "id": "V-entropic-easy-11",
+      "mode": "entropic",
+      "hash": "7f0b7d8fa3997c1af5e524079f43a6dccd076668406bf6001b60fea32d52e2cd"
+    },
+    {
+      "id": "V-entropic-medium-11",
+      "mode": "entropic",
+      "hash": "7f0b7d8fa3997c1af5e524079f43a6dccd076668406bf6001b60fea32d52e2cd"
+    },
+    {
+      "id": "V-entropic-hard-11",
+      "mode": "entropic",
+      "hash": "7f0b7d8fa3997c1af5e524079f43a6dccd076668406bf6001b60fea32d52e2cd"
+    },
+    {
+      "id": "V-entropic-easy-12",
+      "mode": "entropic",
+      "hash": "9e702992df9b18558f51f551998075cced7bf747b369b34b7919340b7ebc6c6a"
+    },
+    {
+      "id": "V-entropic-medium-12",
+      "mode": "entropic",
+      "hash": "9e702992df9b18558f51f551998075cced7bf747b369b34b7919340b7ebc6c6a"
+    },
+    {
+      "id": "V-entropic-hard-12",
+      "mode": "entropic",
+      "hash": "9e702992df9b18558f51f551998075cced7bf747b369b34b7919340b7ebc6c6a"
+    },
+    {
+      "id": "V-modular-easy-3",
+      "mode": "modular",
+      "hash": "b35152417bdadfbf124fb2bce950a4b1285204349b023c5f408a5448dd642602"
+    },
+    {
+      "id": "V-modular-medium-3",
+      "mode": "modular",
+      "hash": "b35152417bdadfbf124fb2bce950a4b1285204349b023c5f408a5448dd642602"
+    },
+    {
+      "id": "V-modular-hard-3",
+      "mode": "modular",
+      "hash": "b35152417bdadfbf124fb2bce950a4b1285204349b023c5f408a5448dd642602"
+    },
+    {
+      "id": "V-modular-easy-4",
+      "mode": "modular",
+      "hash": "b4da6a853b431c3e9ffb6f40997aad31e2f8e9d2c182c4521a2d9e16165ff654"
+    },
+    {
+      "id": "V-modular-medium-4",
+      "mode": "modular",
+      "hash": "b4da6a853b431c3e9ffb6f40997aad31e2f8e9d2c182c4521a2d9e16165ff654"
+    },
+    {
+      "id": "V-modular-hard-4",
+      "mode": "modular",
+      "hash": "b4da6a853b431c3e9ffb6f40997aad31e2f8e9d2c182c4521a2d9e16165ff654"
+    },
+    {
+      "id": "V-modular-easy-5",
+      "mode": "modular",
+      "hash": "12f05c00f1f747136a00514f3be45cee5257136bf40f8ede9d2ecdd1dbd4294b"
+    },
+    {
+      "id": "V-modular-medium-5",
+      "mode": "modular",
+      "hash": "12f05c00f1f747136a00514f3be45cee5257136bf40f8ede9d2ecdd1dbd4294b"
+    },
+    {
+      "id": "V-modular-hard-5",
+      "mode": "modular",
+      "hash": "12f05c00f1f747136a00514f3be45cee5257136bf40f8ede9d2ecdd1dbd4294b"
+    },
+    {
+      "id": "V-modular-easy-6",
+      "mode": "modular",
+      "hash": "5997ad85b6a2024538f4a8281d468356f9806ffff680f281ffa83d74b3c84372"
+    },
+    {
+      "id": "V-modular-medium-6",
+      "mode": "modular",
+      "hash": "5997ad85b6a2024538f4a8281d468356f9806ffff680f281ffa83d74b3c84372"
+    },
+    {
+      "id": "V-modular-hard-6",
+      "mode": "modular",
+      "hash": "5997ad85b6a2024538f4a8281d468356f9806ffff680f281ffa83d74b3c84372"
+    },
+    {
+      "id": "V-modular-easy-7",
+      "mode": "modular",
+      "hash": "25625a89d5ef5ae34fced749685346419c41a4162f288a40213fc5b790a6a3a7"
+    },
+    {
+      "id": "V-modular-medium-7",
+      "mode": "modular",
+      "hash": "25625a89d5ef5ae34fced749685346419c41a4162f288a40213fc5b790a6a3a7"
+    },
+    {
+      "id": "V-modular-hard-7",
+      "mode": "modular",
+      "hash": "25625a89d5ef5ae34fced749685346419c41a4162f288a40213fc5b790a6a3a7"
+    },
+    {
+      "id": "V-modular-easy-8",
+      "mode": "modular",
+      "hash": "5a7af271e2cc81b1ff9439a9a05fbdd676f2680a65f9cdb2358abaf5650cb303"
+    },
+    {
+      "id": "V-modular-medium-8",
+      "mode": "modular",
+      "hash": "5a7af271e2cc81b1ff9439a9a05fbdd676f2680a65f9cdb2358abaf5650cb303"
+    },
+    {
+      "id": "V-modular-hard-8",
+      "mode": "modular",
+      "hash": "5a7af271e2cc81b1ff9439a9a05fbdd676f2680a65f9cdb2358abaf5650cb303"
+    },
+    {
+      "id": "V-modular-easy-9",
+      "mode": "modular",
+      "hash": "c472bf345d8f31519bc9fc7cd891c65c4203e76d7673633a0c94594a5e18bdbd"
+    },
+    {
+      "id": "V-modular-medium-9",
+      "mode": "modular",
+      "hash": "c472bf345d8f31519bc9fc7cd891c65c4203e76d7673633a0c94594a5e18bdbd"
+    },
+    {
+      "id": "V-modular-hard-9",
+      "mode": "modular",
+      "hash": "c472bf345d8f31519bc9fc7cd891c65c4203e76d7673633a0c94594a5e18bdbd"
+    },
+    {
+      "id": "V-modular-easy-10",
+      "mode": "modular",
+      "hash": "d0cc1b2ea1f04652dd01129b64b7bc01a9fbc6ac8e4fdbfeb2bc83ba8784b172"
+    },
+    {
+      "id": "V-modular-medium-10",
+      "mode": "modular",
+      "hash": "d0cc1b2ea1f04652dd01129b64b7bc01a9fbc6ac8e4fdbfeb2bc83ba8784b172"
+    },
+    {
+      "id": "V-modular-hard-10",
+      "mode": "modular",
+      "hash": "d0cc1b2ea1f04652dd01129b64b7bc01a9fbc6ac8e4fdbfeb2bc83ba8784b172"
+    },
+    {
+      "id": "V-modular-easy-11",
+      "mode": "modular",
+      "hash": "6c1a25d26b5c2de79e500955c8d8d6ef5ad3f5201d43b30f8da6e2d91ab1702c"
+    },
+    {
+      "id": "V-modular-medium-11",
+      "mode": "modular",
+      "hash": "6c1a25d26b5c2de79e500955c8d8d6ef5ad3f5201d43b30f8da6e2d91ab1702c"
+    },
+    {
+      "id": "V-modular-hard-11",
+      "mode": "modular",
+      "hash": "6c1a25d26b5c2de79e500955c8d8d6ef5ad3f5201d43b30f8da6e2d91ab1702c"
+    },
+    {
+      "id": "V-modular-easy-12",
+      "mode": "modular",
+      "hash": "20162a5263e67ca3ef193a2f8f35c0f6ddf5556d324d435f5b960f624376b58b"
+    },
+    {
+      "id": "V-modular-medium-12",
+      "mode": "modular",
+      "hash": "20162a5263e67ca3ef193a2f8f35c0f6ddf5556d324d435f5b960f624376b58b"
+    },
+    {
+      "id": "V-modular-hard-12",
+      "mode": "modular",
+      "hash": "20162a5263e67ca3ef193a2f8f35c0f6ddf5556d324d435f5b960f624376b58b"
+    },
+    {
+      "id": "V-region-sum-easy-3",
+      "mode": "region-sum",
+      "hash": "e4453a715f89f8c28af9decd1a22d46856294f9f76f03c25c299b0cf9c3192ea"
+    },
+    {
+      "id": "V-region-sum-medium-3",
+      "mode": "region-sum",
+      "hash": "e4453a715f89f8c28af9decd1a22d46856294f9f76f03c25c299b0cf9c3192ea"
+    },
+    {
+      "id": "V-region-sum-hard-3",
+      "mode": "region-sum",
+      "hash": "e4453a715f89f8c28af9decd1a22d46856294f9f76f03c25c299b0cf9c3192ea"
+    },
+    {
+      "id": "V-region-sum-easy-4",
+      "mode": "region-sum",
+      "hash": "5fc0ac88aa582e76e354b173e14d46396689ac3ec8666234b8cc03284a8c0922"
+    },
+    {
+      "id": "V-region-sum-medium-4",
+      "mode": "region-sum",
+      "hash": "5fc0ac88aa582e76e354b173e14d46396689ac3ec8666234b8cc03284a8c0922"
+    },
+    {
+      "id": "V-region-sum-hard-4",
+      "mode": "region-sum",
+      "hash": "5fc0ac88aa582e76e354b173e14d46396689ac3ec8666234b8cc03284a8c0922"
+    },
+    {
+      "id": "V-region-sum-easy-5",
+      "mode": "region-sum",
+      "hash": "29afdbaaf9bde548f0251e0b291fa9dfc17166c996a999c97eb60b36c338d0e1"
+    },
+    {
+      "id": "V-region-sum-medium-5",
+      "mode": "region-sum",
+      "hash": "29afdbaaf9bde548f0251e0b291fa9dfc17166c996a999c97eb60b36c338d0e1"
+    },
+    {
+      "id": "V-region-sum-hard-5",
+      "mode": "region-sum",
+      "hash": "29afdbaaf9bde548f0251e0b291fa9dfc17166c996a999c97eb60b36c338d0e1"
+    },
+    {
+      "id": "V-region-sum-easy-6",
+      "mode": "region-sum",
+      "hash": "4147525692fc5356969f848aad51bf5044407f34dbd28eda191fdf953e946913"
+    },
+    {
+      "id": "V-region-sum-medium-6",
+      "mode": "region-sum",
+      "hash": "4147525692fc5356969f848aad51bf5044407f34dbd28eda191fdf953e946913"
+    },
+    {
+      "id": "V-region-sum-hard-6",
+      "mode": "region-sum",
+      "hash": "4147525692fc5356969f848aad51bf5044407f34dbd28eda191fdf953e946913"
+    },
+    {
+      "id": "V-region-sum-easy-7",
+      "mode": "region-sum",
+      "hash": "db076349fd38aae0d7d4943b92ae9c020ca3ded86df4406d624c62947f447728"
+    },
+    {
+      "id": "V-region-sum-medium-7",
+      "mode": "region-sum",
+      "hash": "db076349fd38aae0d7d4943b92ae9c020ca3ded86df4406d624c62947f447728"
+    },
+    {
+      "id": "V-region-sum-hard-7",
+      "mode": "region-sum",
+      "hash": "db076349fd38aae0d7d4943b92ae9c020ca3ded86df4406d624c62947f447728"
+    },
+    {
+      "id": "V-region-sum-easy-8",
+      "mode": "region-sum",
+      "hash": "9fdc9c8871a8ab2e0334b8f1dd02b7b50f50927b472e5ad7f58b6cf31d82b25d"
+    },
+    {
+      "id": "V-region-sum-medium-8",
+      "mode": "region-sum",
+      "hash": "9fdc9c8871a8ab2e0334b8f1dd02b7b50f50927b472e5ad7f58b6cf31d82b25d"
+    },
+    {
+      "id": "V-region-sum-hard-8",
+      "mode": "region-sum",
+      "hash": "9fdc9c8871a8ab2e0334b8f1dd02b7b50f50927b472e5ad7f58b6cf31d82b25d"
+    },
+    {
+      "id": "V-region-sum-easy-9",
+      "mode": "region-sum",
+      "hash": "ca469dc7bb8ec346470fdbeda7c3efe0f539b270c89fe47f152f0eab0774c399"
+    },
+    {
+      "id": "V-region-sum-medium-9",
+      "mode": "region-sum",
+      "hash": "ca469dc7bb8ec346470fdbeda7c3efe0f539b270c89fe47f152f0eab0774c399"
+    },
+    {
+      "id": "V-region-sum-hard-9",
+      "mode": "region-sum",
+      "hash": "ca469dc7bb8ec346470fdbeda7c3efe0f539b270c89fe47f152f0eab0774c399"
+    },
+    {
+      "id": "V-region-sum-easy-10",
+      "mode": "region-sum",
+      "hash": "0b70f7868b8e67626e2edd55b1db740b3272e14c2d78ee81090d9aa0fa49adc6"
+    },
+    {
+      "id": "V-region-sum-medium-10",
+      "mode": "region-sum",
+      "hash": "0b70f7868b8e67626e2edd55b1db740b3272e14c2d78ee81090d9aa0fa49adc6"
+    },
+    {
+      "id": "V-region-sum-hard-10",
+      "mode": "region-sum",
+      "hash": "0b70f7868b8e67626e2edd55b1db740b3272e14c2d78ee81090d9aa0fa49adc6"
+    },
+    {
+      "id": "V-region-sum-easy-11",
+      "mode": "region-sum",
+      "hash": "dfe50f47778474d0bd104ae88b0df521d28302cd0c37eb765392f4e01c31d95b"
+    },
+    {
+      "id": "V-region-sum-medium-11",
+      "mode": "region-sum",
+      "hash": "dfe50f47778474d0bd104ae88b0df521d28302cd0c37eb765392f4e01c31d95b"
+    },
+    {
+      "id": "V-region-sum-hard-11",
+      "mode": "region-sum",
+      "hash": "dfe50f47778474d0bd104ae88b0df521d28302cd0c37eb765392f4e01c31d95b"
+    },
+    {
+      "id": "V-region-sum-easy-12",
+      "mode": "region-sum",
+      "hash": "a6e2876600fc120a4d9c6a8700b242ac0fd43330dbacda84ee0f4f3b58201de0"
+    },
+    {
+      "id": "V-region-sum-medium-12",
+      "mode": "region-sum",
+      "hash": "a6e2876600fc120a4d9c6a8700b242ac0fd43330dbacda84ee0f4f3b58201de0"
+    },
+    {
+      "id": "V-region-sum-hard-12",
+      "mode": "region-sum",
+      "hash": "a6e2876600fc120a4d9c6a8700b242ac0fd43330dbacda84ee0f4f3b58201de0"
+    },
+    {
+      "id": "V-sandwich-easy-3",
+      "mode": "sandwich",
+      "hash": "536b778cfa051e732054d517a123e9bf56c68d576157d5a3528946b546072122"
+    },
+    {
+      "id": "V-sandwich-medium-3",
+      "mode": "sandwich",
+      "hash": "536b778cfa051e732054d517a123e9bf56c68d576157d5a3528946b546072122"
+    },
+    {
+      "id": "V-sandwich-hard-3",
+      "mode": "sandwich",
+      "hash": "536b778cfa051e732054d517a123e9bf56c68d576157d5a3528946b546072122"
+    },
+    {
+      "id": "V-sandwich-easy-4",
+      "mode": "sandwich",
+      "hash": "9dd57d035c7631b54581b850b792d150e398fc0bc85a7332f0c87e2c858415bf"
+    },
+    {
+      "id": "V-sandwich-medium-4",
+      "mode": "sandwich",
+      "hash": "9dd57d035c7631b54581b850b792d150e398fc0bc85a7332f0c87e2c858415bf"
+    },
+    {
+      "id": "V-sandwich-hard-4",
+      "mode": "sandwich",
+      "hash": "9dd57d035c7631b54581b850b792d150e398fc0bc85a7332f0c87e2c858415bf"
+    },
+    {
+      "id": "V-sandwich-easy-5",
+      "mode": "sandwich",
+      "hash": "d5f809c3648b7bd8c1c43fe9dfc0c772b17394c96560f0c55f850abfbf5e0c00"
+    },
+    {
+      "id": "V-sandwich-medium-5",
+      "mode": "sandwich",
+      "hash": "d5f809c3648b7bd8c1c43fe9dfc0c772b17394c96560f0c55f850abfbf5e0c00"
+    },
+    {
+      "id": "V-sandwich-hard-5",
+      "mode": "sandwich",
+      "hash": "d5f809c3648b7bd8c1c43fe9dfc0c772b17394c96560f0c55f850abfbf5e0c00"
+    },
+    {
+      "id": "V-sandwich-easy-6",
+      "mode": "sandwich",
+      "hash": "749975d0fc1e6f32d1bae642fc3f31f535e3f13ab4b3f1d3c48b02d7b51deeea"
+    },
+    {
+      "id": "V-sandwich-medium-6",
+      "mode": "sandwich",
+      "hash": "749975d0fc1e6f32d1bae642fc3f31f535e3f13ab4b3f1d3c48b02d7b51deeea"
+    },
+    {
+      "id": "V-sandwich-hard-6",
+      "mode": "sandwich",
+      "hash": "749975d0fc1e6f32d1bae642fc3f31f535e3f13ab4b3f1d3c48b02d7b51deeea"
+    },
+    {
+      "id": "V-sandwich-easy-7",
+      "mode": "sandwich",
+      "hash": "429b0f87160f03332d55e0b838cd85b8d9f1752288ae17bd9c17f1aa9466a421"
+    },
+    {
+      "id": "V-sandwich-medium-7",
+      "mode": "sandwich",
+      "hash": "429b0f87160f03332d55e0b838cd85b8d9f1752288ae17bd9c17f1aa9466a421"
+    },
+    {
+      "id": "V-sandwich-hard-7",
+      "mode": "sandwich",
+      "hash": "429b0f87160f03332d55e0b838cd85b8d9f1752288ae17bd9c17f1aa9466a421"
+    },
+    {
+      "id": "V-sandwich-easy-8",
+      "mode": "sandwich",
+      "hash": "7953b093675d67fba9819a7c2121662335a55333555eba5b6d0ee5eb75850960"
+    },
+    {
+      "id": "V-sandwich-medium-8",
+      "mode": "sandwich",
+      "hash": "7953b093675d67fba9819a7c2121662335a55333555eba5b6d0ee5eb75850960"
+    },
+    {
+      "id": "V-sandwich-hard-8",
+      "mode": "sandwich",
+      "hash": "7953b093675d67fba9819a7c2121662335a55333555eba5b6d0ee5eb75850960"
+    },
+    {
+      "id": "V-sandwich-easy-9",
+      "mode": "sandwich",
+      "hash": "0517db8afca8b0750b5544288b1d0d594e3f0f8de3401fcddfc4666d141929db"
+    },
+    {
+      "id": "V-sandwich-medium-9",
+      "mode": "sandwich",
+      "hash": "0517db8afca8b0750b5544288b1d0d594e3f0f8de3401fcddfc4666d141929db"
+    },
+    {
+      "id": "V-sandwich-hard-9",
+      "mode": "sandwich",
+      "hash": "0517db8afca8b0750b5544288b1d0d594e3f0f8de3401fcddfc4666d141929db"
+    },
+    {
+      "id": "V-sandwich-easy-10",
+      "mode": "sandwich",
+      "hash": "c20c07c06fc0a59f4a1d6b8274ecd9ae8f5b311577d26668df983d894b0659c1"
+    },
+    {
+      "id": "V-sandwich-medium-10",
+      "mode": "sandwich",
+      "hash": "c20c07c06fc0a59f4a1d6b8274ecd9ae8f5b311577d26668df983d894b0659c1"
+    },
+    {
+      "id": "V-sandwich-hard-10",
+      "mode": "sandwich",
+      "hash": "c20c07c06fc0a59f4a1d6b8274ecd9ae8f5b311577d26668df983d894b0659c1"
+    },
+    {
+      "id": "V-sandwich-easy-11",
+      "mode": "sandwich",
+      "hash": "21949bf86a4e850cd48eb915f9e9279940c7b93e368289cec6cb1d76c4b1090f"
+    },
+    {
+      "id": "V-sandwich-medium-11",
+      "mode": "sandwich",
+      "hash": "21949bf86a4e850cd48eb915f9e9279940c7b93e368289cec6cb1d76c4b1090f"
+    },
+    {
+      "id": "V-sandwich-hard-11",
+      "mode": "sandwich",
+      "hash": "21949bf86a4e850cd48eb915f9e9279940c7b93e368289cec6cb1d76c4b1090f"
+    },
+    {
+      "id": "V-sandwich-easy-12",
+      "mode": "sandwich",
+      "hash": "93b64340a49563aace9100adc55f8ceda9e8b5ff1c9f2e63034e0dd5b77d1a88"
+    },
+    {
+      "id": "V-sandwich-medium-12",
+      "mode": "sandwich",
+      "hash": "93b64340a49563aace9100adc55f8ceda9e8b5ff1c9f2e63034e0dd5b77d1a88"
+    },
+    {
+      "id": "V-sandwich-hard-12",
+      "mode": "sandwich",
+      "hash": "93b64340a49563aace9100adc55f8ceda9e8b5ff1c9f2e63034e0dd5b77d1a88"
+    },
+    {
+      "id": "V-skyscraper-easy-3",
+      "mode": "skyscraper",
+      "hash": "b5f98411f0751c5646b796c27442dae95e94380e44f5d67d24c4a7b62dfa6399"
+    },
+    {
+      "id": "V-skyscraper-medium-3",
+      "mode": "skyscraper",
+      "hash": "b5f98411f0751c5646b796c27442dae95e94380e44f5d67d24c4a7b62dfa6399"
+    },
+    {
+      "id": "V-skyscraper-hard-3",
+      "mode": "skyscraper",
+      "hash": "b5f98411f0751c5646b796c27442dae95e94380e44f5d67d24c4a7b62dfa6399"
+    },
+    {
+      "id": "V-skyscraper-easy-4",
+      "mode": "skyscraper",
+      "hash": "5be8b8075c738b06064baddc8959ff09c21c067e7a8e2476181ec26b03a93ae1"
+    },
+    {
+      "id": "V-skyscraper-medium-4",
+      "mode": "skyscraper",
+      "hash": "5be8b8075c738b06064baddc8959ff09c21c067e7a8e2476181ec26b03a93ae1"
+    },
+    {
+      "id": "V-skyscraper-hard-4",
+      "mode": "skyscraper",
+      "hash": "5be8b8075c738b06064baddc8959ff09c21c067e7a8e2476181ec26b03a93ae1"
+    },
+    {
+      "id": "V-skyscraper-easy-5",
+      "mode": "skyscraper",
+      "hash": "a254132e2c77bf1c06ce00f15131f5a784f622bdcfcfbf6603eb89160338703b"
+    },
+    {
+      "id": "V-skyscraper-medium-5",
+      "mode": "skyscraper",
+      "hash": "a254132e2c77bf1c06ce00f15131f5a784f622bdcfcfbf6603eb89160338703b"
+    },
+    {
+      "id": "V-skyscraper-hard-5",
+      "mode": "skyscraper",
+      "hash": "a254132e2c77bf1c06ce00f15131f5a784f622bdcfcfbf6603eb89160338703b"
+    },
+    {
+      "id": "V-skyscraper-easy-6",
+      "mode": "skyscraper",
+      "hash": "0221f1013e55195afe7b95f76e0356620f8e6fe0289d34fffa302c7f48f23fe4"
+    },
+    {
+      "id": "V-skyscraper-medium-6",
+      "mode": "skyscraper",
+      "hash": "0221f1013e55195afe7b95f76e0356620f8e6fe0289d34fffa302c7f48f23fe4"
+    },
+    {
+      "id": "V-skyscraper-hard-6",
+      "mode": "skyscraper",
+      "hash": "0221f1013e55195afe7b95f76e0356620f8e6fe0289d34fffa302c7f48f23fe4"
+    },
+    {
+      "id": "V-skyscraper-easy-7",
+      "mode": "skyscraper",
+      "hash": "9a1cb5713cdd0910456900157b6c226bebecc200566faad58fc92aeff2addf09"
+    },
+    {
+      "id": "V-skyscraper-medium-7",
+      "mode": "skyscraper",
+      "hash": "9a1cb5713cdd0910456900157b6c226bebecc200566faad58fc92aeff2addf09"
+    },
+    {
+      "id": "V-skyscraper-hard-7",
+      "mode": "skyscraper",
+      "hash": "9a1cb5713cdd0910456900157b6c226bebecc200566faad58fc92aeff2addf09"
+    },
+    {
+      "id": "V-skyscraper-easy-8",
+      "mode": "skyscraper",
+      "hash": "a59ab22b0c08dae811fffbfbdba2cc0860d984664e59508e3140d646c412d9d7"
+    },
+    {
+      "id": "V-skyscraper-medium-8",
+      "mode": "skyscraper",
+      "hash": "a59ab22b0c08dae811fffbfbdba2cc0860d984664e59508e3140d646c412d9d7"
+    },
+    {
+      "id": "V-skyscraper-hard-8",
+      "mode": "skyscraper",
+      "hash": "a59ab22b0c08dae811fffbfbdba2cc0860d984664e59508e3140d646c412d9d7"
+    },
+    {
+      "id": "V-skyscraper-easy-9",
+      "mode": "skyscraper",
+      "hash": "fc22f3ac83389cb26d4c3061b10b718e5b9046415e06cbfc8f8355a9d107a6ce"
+    },
+    {
+      "id": "V-skyscraper-medium-9",
+      "mode": "skyscraper",
+      "hash": "fc22f3ac83389cb26d4c3061b10b718e5b9046415e06cbfc8f8355a9d107a6ce"
+    },
+    {
+      "id": "V-skyscraper-hard-9",
+      "mode": "skyscraper",
+      "hash": "fc22f3ac83389cb26d4c3061b10b718e5b9046415e06cbfc8f8355a9d107a6ce"
+    },
+    {
+      "id": "V-skyscraper-easy-10",
+      "mode": "skyscraper",
+      "hash": "1ecc36c5d3fcfce1da00e4d71be0bb49565b82fb701f8810feb0124ccc26b8ab"
+    },
+    {
+      "id": "V-skyscraper-medium-10",
+      "mode": "skyscraper",
+      "hash": "1ecc36c5d3fcfce1da00e4d71be0bb49565b82fb701f8810feb0124ccc26b8ab"
+    },
+    {
+      "id": "V-skyscraper-hard-10",
+      "mode": "skyscraper",
+      "hash": "1ecc36c5d3fcfce1da00e4d71be0bb49565b82fb701f8810feb0124ccc26b8ab"
+    },
+    {
+      "id": "V-skyscraper-easy-11",
+      "mode": "skyscraper",
+      "hash": "0785da7583b56de34276bed4ce8065b5829d8fe3b47e3bdea933e2b568251b41"
+    },
+    {
+      "id": "V-skyscraper-medium-11",
+      "mode": "skyscraper",
+      "hash": "0785da7583b56de34276bed4ce8065b5829d8fe3b47e3bdea933e2b568251b41"
+    },
+    {
+      "id": "V-skyscraper-hard-11",
+      "mode": "skyscraper",
+      "hash": "0785da7583b56de34276bed4ce8065b5829d8fe3b47e3bdea933e2b568251b41"
+    },
+    {
+      "id": "V-skyscraper-easy-12",
+      "mode": "skyscraper",
+      "hash": "dc78bc7e456e22b5310facff17dd653dba2b00048fe927d0163ece801608fbc2"
+    },
+    {
+      "id": "V-skyscraper-medium-12",
+      "mode": "skyscraper",
+      "hash": "dc78bc7e456e22b5310facff17dd653dba2b00048fe927d0163ece801608fbc2"
+    },
+    {
+      "id": "V-skyscraper-hard-12",
+      "mode": "skyscraper",
+      "hash": "dc78bc7e456e22b5310facff17dd653dba2b00048fe927d0163ece801608fbc2"
+    },
+    {
+      "id": "V-xsum-easy-3",
+      "mode": "xsum",
+      "hash": "2121164bc4ee2962a10a77cd4525220f852621869ea2d028fa1a39ca63b58a31"
+    },
+    {
+      "id": "V-xsum-medium-3",
+      "mode": "xsum",
+      "hash": "2121164bc4ee2962a10a77cd4525220f852621869ea2d028fa1a39ca63b58a31"
+    },
+    {
+      "id": "V-xsum-hard-3",
+      "mode": "xsum",
+      "hash": "2121164bc4ee2962a10a77cd4525220f852621869ea2d028fa1a39ca63b58a31"
+    },
+    {
+      "id": "V-xsum-easy-4",
+      "mode": "xsum",
+      "hash": "b24e55abf44674a61f76f1161f16344e041a14cc53431bb54d65d55c4eb82398"
+    },
+    {
+      "id": "V-xsum-medium-4",
+      "mode": "xsum",
+      "hash": "b24e55abf44674a61f76f1161f16344e041a14cc53431bb54d65d55c4eb82398"
+    },
+    {
+      "id": "V-xsum-hard-4",
+      "mode": "xsum",
+      "hash": "b24e55abf44674a61f76f1161f16344e041a14cc53431bb54d65d55c4eb82398"
+    },
+    {
+      "id": "V-xsum-easy-5",
+      "mode": "xsum",
+      "hash": "61247fae0417049e110ddf439e09ef957f3cf182e19cc28dfcc62e7011b97d4a"
+    },
+    {
+      "id": "V-xsum-medium-5",
+      "mode": "xsum",
+      "hash": "61247fae0417049e110ddf439e09ef957f3cf182e19cc28dfcc62e7011b97d4a"
+    },
+    {
+      "id": "V-xsum-hard-5",
+      "mode": "xsum",
+      "hash": "61247fae0417049e110ddf439e09ef957f3cf182e19cc28dfcc62e7011b97d4a"
+    },
+    {
+      "id": "V-xsum-easy-6",
+      "mode": "xsum",
+      "hash": "76a50e74a761248e3d3fc0077dd429a7f97c660d9ef59b14b27d687ba93fe93f"
+    },
+    {
+      "id": "V-xsum-medium-6",
+      "mode": "xsum",
+      "hash": "76a50e74a761248e3d3fc0077dd429a7f97c660d9ef59b14b27d687ba93fe93f"
+    },
+    {
+      "id": "V-xsum-hard-6",
+      "mode": "xsum",
+      "hash": "76a50e74a761248e3d3fc0077dd429a7f97c660d9ef59b14b27d687ba93fe93f"
+    },
+    {
+      "id": "V-xsum-easy-7",
+      "mode": "xsum",
+      "hash": "c6d7d48c2d2e5eec8762d5a2ae8c62d43daee3051c4ca1b078f6c03b5d314234"
+    },
+    {
+      "id": "V-xsum-medium-7",
+      "mode": "xsum",
+      "hash": "c6d7d48c2d2e5eec8762d5a2ae8c62d43daee3051c4ca1b078f6c03b5d314234"
+    },
+    {
+      "id": "V-xsum-hard-7",
+      "mode": "xsum",
+      "hash": "c6d7d48c2d2e5eec8762d5a2ae8c62d43daee3051c4ca1b078f6c03b5d314234"
+    },
+    {
+      "id": "V-xsum-easy-8",
+      "mode": "xsum",
+      "hash": "84f3ae804f33c6a6381a4aab37c60826965989aac97b541d1062a5247aa8e97a"
+    },
+    {
+      "id": "V-xsum-medium-8",
+      "mode": "xsum",
+      "hash": "84f3ae804f33c6a6381a4aab37c60826965989aac97b541d1062a5247aa8e97a"
+    },
+    {
+      "id": "V-xsum-hard-8",
+      "mode": "xsum",
+      "hash": "84f3ae804f33c6a6381a4aab37c60826965989aac97b541d1062a5247aa8e97a"
+    },
+    {
+      "id": "V-xsum-easy-9",
+      "mode": "xsum",
+      "hash": "5f6256f53fd8e72c4b6f66d7fd361fc6ebe86a7cd4e1312c763f5706af39b9eb"
+    },
+    {
+      "id": "V-xsum-medium-9",
+      "mode": "xsum",
+      "hash": "5f6256f53fd8e72c4b6f66d7fd361fc6ebe86a7cd4e1312c763f5706af39b9eb"
+    },
+    {
+      "id": "V-xsum-hard-9",
+      "mode": "xsum",
+      "hash": "5f6256f53fd8e72c4b6f66d7fd361fc6ebe86a7cd4e1312c763f5706af39b9eb"
+    },
+    {
+      "id": "V-xsum-easy-10",
+      "mode": "xsum",
+      "hash": "c90f4afefc03b77e1ec28db4d37be8f55f69c4e7ca044397465ad984d57ab0ac"
+    },
+    {
+      "id": "V-xsum-medium-10",
+      "mode": "xsum",
+      "hash": "c90f4afefc03b77e1ec28db4d37be8f55f69c4e7ca044397465ad984d57ab0ac"
+    },
+    {
+      "id": "V-xsum-hard-10",
+      "mode": "xsum",
+      "hash": "c90f4afefc03b77e1ec28db4d37be8f55f69c4e7ca044397465ad984d57ab0ac"
+    },
+    {
+      "id": "V-xsum-easy-11",
+      "mode": "xsum",
+      "hash": "d67f7742ffebb8b4c51b9806056c28a36cd6e49cd56e2b910af54d0bf1516755"
+    },
+    {
+      "id": "V-xsum-medium-11",
+      "mode": "xsum",
+      "hash": "d67f7742ffebb8b4c51b9806056c28a36cd6e49cd56e2b910af54d0bf1516755"
+    },
+    {
+      "id": "V-xsum-hard-11",
+      "mode": "xsum",
+      "hash": "d67f7742ffebb8b4c51b9806056c28a36cd6e49cd56e2b910af54d0bf1516755"
+    },
+    {
+      "id": "V-xsum-easy-12",
+      "mode": "xsum",
+      "hash": "118279c73d91da4f009650099c0d7ce7f719109de21f0dcce0f2ba413a1e645d"
+    },
+    {
+      "id": "V-xsum-medium-12",
+      "mode": "xsum",
+      "hash": "118279c73d91da4f009650099c0d7ce7f719109de21f0dcce0f2ba413a1e645d"
+    },
+    {
+      "id": "V-xsum-hard-12",
+      "mode": "xsum",
+      "hash": "118279c73d91da4f009650099c0d7ce7f719109de21f0dcce0f2ba413a1e645d"
+    },
+    {
+      "id": "V-littlekiller-easy-3",
+      "mode": "littlekiller",
+      "hash": "f884390a6274287380a5fa940ef7f1abcf829b82b5f97ac809be82799d810620"
+    },
+    {
+      "id": "V-littlekiller-medium-3",
+      "mode": "littlekiller",
+      "hash": "f884390a6274287380a5fa940ef7f1abcf829b82b5f97ac809be82799d810620"
+    },
+    {
+      "id": "V-littlekiller-hard-3",
+      "mode": "littlekiller",
+      "hash": "f884390a6274287380a5fa940ef7f1abcf829b82b5f97ac809be82799d810620"
+    },
+    {
+      "id": "V-littlekiller-easy-4",
+      "mode": "littlekiller",
+      "hash": "f78da96ea0c049d99c36d63018552bfae3809b55f2b39b97e2a904bbade306a8"
+    },
+    {
+      "id": "V-littlekiller-medium-4",
+      "mode": "littlekiller",
+      "hash": "f78da96ea0c049d99c36d63018552bfae3809b55f2b39b97e2a904bbade306a8"
+    },
+    {
+      "id": "V-littlekiller-hard-4",
+      "mode": "littlekiller",
+      "hash": "f78da96ea0c049d99c36d63018552bfae3809b55f2b39b97e2a904bbade306a8"
+    },
+    {
+      "id": "V-littlekiller-easy-5",
+      "mode": "littlekiller",
+      "hash": "08bb41568a846caff7980656be1abca12b12f86038cd3f7c937354756fbfe9de"
+    },
+    {
+      "id": "V-littlekiller-medium-5",
+      "mode": "littlekiller",
+      "hash": "08bb41568a846caff7980656be1abca12b12f86038cd3f7c937354756fbfe9de"
+    },
+    {
+      "id": "V-littlekiller-hard-5",
+      "mode": "littlekiller",
+      "hash": "08bb41568a846caff7980656be1abca12b12f86038cd3f7c937354756fbfe9de"
+    },
+    {
+      "id": "V-littlekiller-easy-6",
+      "mode": "littlekiller",
+      "hash": "a0a22d8642be22d210b5b64a560206881f52b9aae15f00a90b6008b32bb58a46"
+    },
+    {
+      "id": "V-littlekiller-medium-6",
+      "mode": "littlekiller",
+      "hash": "a0a22d8642be22d210b5b64a560206881f52b9aae15f00a90b6008b32bb58a46"
+    },
+    {
+      "id": "V-littlekiller-hard-6",
+      "mode": "littlekiller",
+      "hash": "a0a22d8642be22d210b5b64a560206881f52b9aae15f00a90b6008b32bb58a46"
+    },
+    {
+      "id": "V-littlekiller-easy-7",
+      "mode": "littlekiller",
+      "hash": "ec214ca19cb18e07176721fb61e42c9e77886a3b99dfbb0f41e12cd95b6cefe5"
+    },
+    {
+      "id": "V-littlekiller-medium-7",
+      "mode": "littlekiller",
+      "hash": "ec214ca19cb18e07176721fb61e42c9e77886a3b99dfbb0f41e12cd95b6cefe5"
+    },
+    {
+      "id": "V-littlekiller-hard-7",
+      "mode": "littlekiller",
+      "hash": "ec214ca19cb18e07176721fb61e42c9e77886a3b99dfbb0f41e12cd95b6cefe5"
+    },
+    {
+      "id": "V-littlekiller-easy-8",
+      "mode": "littlekiller",
+      "hash": "d773611d980679f3043f209b0eedab8796a6b0e7db1aa52d19d9897192a23ede"
+    },
+    {
+      "id": "V-littlekiller-medium-8",
+      "mode": "littlekiller",
+      "hash": "d773611d980679f3043f209b0eedab8796a6b0e7db1aa52d19d9897192a23ede"
+    },
+    {
+      "id": "V-littlekiller-hard-8",
+      "mode": "littlekiller",
+      "hash": "d773611d980679f3043f209b0eedab8796a6b0e7db1aa52d19d9897192a23ede"
+    },
+    {
+      "id": "V-littlekiller-easy-9",
+      "mode": "littlekiller",
+      "hash": "eb80f2103a8eab5029e2b06db89daeba2365b0b2ae0c31f2b6002debbad090e1"
+    },
+    {
+      "id": "V-littlekiller-medium-9",
+      "mode": "littlekiller",
+      "hash": "eb80f2103a8eab5029e2b06db89daeba2365b0b2ae0c31f2b6002debbad090e1"
+    },
+    {
+      "id": "V-littlekiller-hard-9",
+      "mode": "littlekiller",
+      "hash": "eb80f2103a8eab5029e2b06db89daeba2365b0b2ae0c31f2b6002debbad090e1"
+    },
+    {
+      "id": "V-littlekiller-easy-10",
+      "mode": "littlekiller",
+      "hash": "b93611190acf70c933a29fcc57fd4c9c2c515cd01d0e2c4caf2440855da964ff"
+    },
+    {
+      "id": "V-littlekiller-medium-10",
+      "mode": "littlekiller",
+      "hash": "b93611190acf70c933a29fcc57fd4c9c2c515cd01d0e2c4caf2440855da964ff"
+    },
+    {
+      "id": "V-littlekiller-hard-10",
+      "mode": "littlekiller",
+      "hash": "b93611190acf70c933a29fcc57fd4c9c2c515cd01d0e2c4caf2440855da964ff"
+    },
+    {
+      "id": "V-littlekiller-easy-11",
+      "mode": "littlekiller",
+      "hash": "7fdc590193f7b58acb745f479a4e961e2830aa0631f0e60c75b72a279c31dfbe"
+    },
+    {
+      "id": "V-littlekiller-medium-11",
+      "mode": "littlekiller",
+      "hash": "7fdc590193f7b58acb745f479a4e961e2830aa0631f0e60c75b72a279c31dfbe"
+    },
+    {
+      "id": "V-littlekiller-hard-11",
+      "mode": "littlekiller",
+      "hash": "7fdc590193f7b58acb745f479a4e961e2830aa0631f0e60c75b72a279c31dfbe"
+    },
+    {
+      "id": "V-littlekiller-easy-12",
+      "mode": "littlekiller",
+      "hash": "1ae1402ba64d3020dbb15e9ee40c97e9750eec6e4b69e89df7f6ff70d6c2bd45"
+    },
+    {
+      "id": "V-littlekiller-medium-12",
+      "mode": "littlekiller",
+      "hash": "1ae1402ba64d3020dbb15e9ee40c97e9750eec6e4b69e89df7f6ff70d6c2bd45"
+    },
+    {
+      "id": "V-littlekiller-hard-12",
+      "mode": "littlekiller",
+      "hash": "1ae1402ba64d3020dbb15e9ee40c97e9750eec6e4b69e89df7f6ff70d6c2bd45"
+    },
+    {
+      "id": "V-clone-easy-3",
+      "mode": "clone",
+      "hash": "c084cbc03d3886f5c4fb0185f81567727693823b4f947e1e28f871568fc49543"
+    },
+    {
+      "id": "V-clone-medium-3",
+      "mode": "clone",
+      "hash": "c084cbc03d3886f5c4fb0185f81567727693823b4f947e1e28f871568fc49543"
+    },
+    {
+      "id": "V-clone-hard-3",
+      "mode": "clone",
+      "hash": "c084cbc03d3886f5c4fb0185f81567727693823b4f947e1e28f871568fc49543"
+    },
+    {
+      "id": "V-clone-easy-4",
+      "mode": "clone",
+      "hash": "ed5b4374feb0fe1c644a1ae549ec4fe3c9563f9e4dd0904399df81d7c7e23369"
+    },
+    {
+      "id": "V-clone-medium-4",
+      "mode": "clone",
+      "hash": "ed5b4374feb0fe1c644a1ae549ec4fe3c9563f9e4dd0904399df81d7c7e23369"
+    },
+    {
+      "id": "V-clone-hard-4",
+      "mode": "clone",
+      "hash": "ed5b4374feb0fe1c644a1ae549ec4fe3c9563f9e4dd0904399df81d7c7e23369"
+    },
+    {
+      "id": "V-clone-easy-5",
+      "mode": "clone",
+      "hash": "0c04e17be061fda727457af38d3b21592a60df8274dcb61b0644fda7aa411b81"
+    },
+    {
+      "id": "V-clone-medium-5",
+      "mode": "clone",
+      "hash": "0c04e17be061fda727457af38d3b21592a60df8274dcb61b0644fda7aa411b81"
+    },
+    {
+      "id": "V-clone-hard-5",
+      "mode": "clone",
+      "hash": "0c04e17be061fda727457af38d3b21592a60df8274dcb61b0644fda7aa411b81"
+    },
+    {
+      "id": "V-clone-easy-6",
+      "mode": "clone",
+      "hash": "c288b615db84e33abfa403da6a098679c178125e786eaea59ecade0b5bd47165"
+    },
+    {
+      "id": "V-clone-medium-6",
+      "mode": "clone",
+      "hash": "c288b615db84e33abfa403da6a098679c178125e786eaea59ecade0b5bd47165"
+    },
+    {
+      "id": "V-clone-hard-6",
+      "mode": "clone",
+      "hash": "c288b615db84e33abfa403da6a098679c178125e786eaea59ecade0b5bd47165"
+    },
+    {
+      "id": "V-clone-easy-7",
+      "mode": "clone",
+      "hash": "f4c885136cea11502a746010be81d866d3ce73390b9b8ce3995bad02f595eac5"
+    },
+    {
+      "id": "V-clone-medium-7",
+      "mode": "clone",
+      "hash": "f4c885136cea11502a746010be81d866d3ce73390b9b8ce3995bad02f595eac5"
+    },
+    {
+      "id": "V-clone-hard-7",
+      "mode": "clone",
+      "hash": "f4c885136cea11502a746010be81d866d3ce73390b9b8ce3995bad02f595eac5"
+    },
+    {
+      "id": "V-clone-easy-8",
+      "mode": "clone",
+      "hash": "1f7765c369dcb25a77b3b889363dc7f2a5bc67d2a959d6f08770c67a4d2c8082"
+    },
+    {
+      "id": "V-clone-medium-8",
+      "mode": "clone",
+      "hash": "1f7765c369dcb25a77b3b889363dc7f2a5bc67d2a959d6f08770c67a4d2c8082"
+    },
+    {
+      "id": "V-clone-hard-8",
+      "mode": "clone",
+      "hash": "1f7765c369dcb25a77b3b889363dc7f2a5bc67d2a959d6f08770c67a4d2c8082"
+    },
+    {
+      "id": "V-clone-easy-9",
+      "mode": "clone",
+      "hash": "eb4b6ff732f28ca6dbd1bf4cc9694b18001b86c16e4dc594400644e5f80af7cb"
+    },
+    {
+      "id": "V-clone-medium-9",
+      "mode": "clone",
+      "hash": "eb4b6ff732f28ca6dbd1bf4cc9694b18001b86c16e4dc594400644e5f80af7cb"
+    },
+    {
+      "id": "V-clone-hard-9",
+      "mode": "clone",
+      "hash": "eb4b6ff732f28ca6dbd1bf4cc9694b18001b86c16e4dc594400644e5f80af7cb"
+    },
+    {
+      "id": "V-clone-easy-10",
+      "mode": "clone",
+      "hash": "eeba21c2aa80d686405207c85670e13595bc38eb7d7ae862e4d7c2e4414b259c"
+    },
+    {
+      "id": "V-clone-medium-10",
+      "mode": "clone",
+      "hash": "eeba21c2aa80d686405207c85670e13595bc38eb7d7ae862e4d7c2e4414b259c"
+    },
+    {
+      "id": "V-clone-hard-10",
+      "mode": "clone",
+      "hash": "eeba21c2aa80d686405207c85670e13595bc38eb7d7ae862e4d7c2e4414b259c"
+    },
+    {
+      "id": "V-clone-easy-11",
+      "mode": "clone",
+      "hash": "2d9e10e8165e09ff4de7fce78e2d09a5372c2ee2a81c2e6d1f427e5e01981a86"
+    },
+    {
+      "id": "V-clone-medium-11",
+      "mode": "clone",
+      "hash": "2d9e10e8165e09ff4de7fce78e2d09a5372c2ee2a81c2e6d1f427e5e01981a86"
+    },
+    {
+      "id": "V-clone-hard-11",
+      "mode": "clone",
+      "hash": "2d9e10e8165e09ff4de7fce78e2d09a5372c2ee2a81c2e6d1f427e5e01981a86"
+    },
+    {
+      "id": "V-clone-easy-12",
+      "mode": "clone",
+      "hash": "ae74c31c9b62a277c93f270a9080e4f29825379d8cac6809965672aef01f4f37"
+    },
+    {
+      "id": "V-clone-medium-12",
+      "mode": "clone",
+      "hash": "ae74c31c9b62a277c93f270a9080e4f29825379d8cac6809965672aef01f4f37"
+    },
+    {
+      "id": "V-clone-hard-12",
+      "mode": "clone",
+      "hash": "ae74c31c9b62a277c93f270a9080e4f29825379d8cac6809965672aef01f4f37"
+    },
+    {
+      "id": "V-quadruple-easy-3",
+      "mode": "quadruple",
+      "hash": "704b28bcc0f04354c833f59e379ea8b3833612e084576667ac20eec3fb64df9d"
+    },
+    {
+      "id": "V-quadruple-medium-3",
+      "mode": "quadruple",
+      "hash": "704b28bcc0f04354c833f59e379ea8b3833612e084576667ac20eec3fb64df9d"
+    },
+    {
+      "id": "V-quadruple-hard-3",
+      "mode": "quadruple",
+      "hash": "704b28bcc0f04354c833f59e379ea8b3833612e084576667ac20eec3fb64df9d"
+    },
+    {
+      "id": "V-quadruple-easy-4",
+      "mode": "quadruple",
+      "hash": "c601367613ab0bcc38ed076b2c0337ef08e751b20cff0972ae798878838d6649"
+    },
+    {
+      "id": "V-quadruple-medium-4",
+      "mode": "quadruple",
+      "hash": "c601367613ab0bcc38ed076b2c0337ef08e751b20cff0972ae798878838d6649"
+    },
+    {
+      "id": "V-quadruple-hard-4",
+      "mode": "quadruple",
+      "hash": "c601367613ab0bcc38ed076b2c0337ef08e751b20cff0972ae798878838d6649"
+    },
+    {
+      "id": "V-quadruple-easy-5",
+      "mode": "quadruple",
+      "hash": "3a84c22de41e2e0491a3c8b93e82896e03425d0abee8fd5da1d2d6f3854fead2"
+    },
+    {
+      "id": "V-quadruple-medium-5",
+      "mode": "quadruple",
+      "hash": "3a84c22de41e2e0491a3c8b93e82896e03425d0abee8fd5da1d2d6f3854fead2"
+    },
+    {
+      "id": "V-quadruple-hard-5",
+      "mode": "quadruple",
+      "hash": "3a84c22de41e2e0491a3c8b93e82896e03425d0abee8fd5da1d2d6f3854fead2"
+    },
+    {
+      "id": "V-quadruple-easy-6",
+      "mode": "quadruple",
+      "hash": "c9c2dc7971e640d4cfa1920f6c3904062bd7c8893a3aa356059242f40bffc3fe"
+    },
+    {
+      "id": "V-quadruple-medium-6",
+      "mode": "quadruple",
+      "hash": "c9c2dc7971e640d4cfa1920f6c3904062bd7c8893a3aa356059242f40bffc3fe"
+    },
+    {
+      "id": "V-quadruple-hard-6",
+      "mode": "quadruple",
+      "hash": "c9c2dc7971e640d4cfa1920f6c3904062bd7c8893a3aa356059242f40bffc3fe"
+    },
+    {
+      "id": "V-quadruple-easy-7",
+      "mode": "quadruple",
+      "hash": "572a6a8d5a61dfce3555e8d817dca460f4be14a89386a273db36eec73e5e7df5"
+    },
+    {
+      "id": "V-quadruple-medium-7",
+      "mode": "quadruple",
+      "hash": "572a6a8d5a61dfce3555e8d817dca460f4be14a89386a273db36eec73e5e7df5"
+    },
+    {
+      "id": "V-quadruple-hard-7",
+      "mode": "quadruple",
+      "hash": "572a6a8d5a61dfce3555e8d817dca460f4be14a89386a273db36eec73e5e7df5"
+    },
+    {
+      "id": "V-quadruple-easy-8",
+      "mode": "quadruple",
+      "hash": "664b5729fc5411e3e327615a9c43064a910fe7babfdf514b035ec66b72d2b2f9"
+    },
+    {
+      "id": "V-quadruple-medium-8",
+      "mode": "quadruple",
+      "hash": "664b5729fc5411e3e327615a9c43064a910fe7babfdf514b035ec66b72d2b2f9"
+    },
+    {
+      "id": "V-quadruple-hard-8",
+      "mode": "quadruple",
+      "hash": "664b5729fc5411e3e327615a9c43064a910fe7babfdf514b035ec66b72d2b2f9"
+    },
+    {
+      "id": "V-quadruple-easy-9",
+      "mode": "quadruple",
+      "hash": "dd28df83273ba3eb14a219ddecc0531902e3e31bdbfdb78c80ca3dbb34fae326"
+    },
+    {
+      "id": "V-quadruple-medium-9",
+      "mode": "quadruple",
+      "hash": "dd28df83273ba3eb14a219ddecc0531902e3e31bdbfdb78c80ca3dbb34fae326"
+    },
+    {
+      "id": "V-quadruple-hard-9",
+      "mode": "quadruple",
+      "hash": "dd28df83273ba3eb14a219ddecc0531902e3e31bdbfdb78c80ca3dbb34fae326"
+    },
+    {
+      "id": "V-quadruple-easy-10",
+      "mode": "quadruple",
+      "hash": "6850fd85e219d69466f52fc488294d3b85fd0c624f45ee67f6e7e40c6028339c"
+    },
+    {
+      "id": "V-quadruple-medium-10",
+      "mode": "quadruple",
+      "hash": "6850fd85e219d69466f52fc488294d3b85fd0c624f45ee67f6e7e40c6028339c"
+    },
+    {
+      "id": "V-quadruple-hard-10",
+      "mode": "quadruple",
+      "hash": "6850fd85e219d69466f52fc488294d3b85fd0c624f45ee67f6e7e40c6028339c"
+    },
+    {
+      "id": "V-quadruple-easy-11",
+      "mode": "quadruple",
+      "hash": "b92eb5d782d2a078f3f0567d4d72693540f9a504a699382b8b8a98c3e73c24e5"
+    },
+    {
+      "id": "V-quadruple-medium-11",
+      "mode": "quadruple",
+      "hash": "b92eb5d782d2a078f3f0567d4d72693540f9a504a699382b8b8a98c3e73c24e5"
+    },
+    {
+      "id": "V-quadruple-hard-11",
+      "mode": "quadruple",
+      "hash": "b92eb5d782d2a078f3f0567d4d72693540f9a504a699382b8b8a98c3e73c24e5"
+    },
+    {
+      "id": "V-quadruple-easy-12",
+      "mode": "quadruple",
+      "hash": "fbdfb0d48001a58f05604b51a7cfb37f6c829942823d63bd45e97dea89283214"
+    },
+    {
+      "id": "V-quadruple-medium-12",
+      "mode": "quadruple",
+      "hash": "fbdfb0d48001a58f05604b51a7cfb37f6c829942823d63bd45e97dea89283214"
+    },
+    {
+      "id": "V-quadruple-hard-12",
+      "mode": "quadruple",
+      "hash": "fbdfb0d48001a58f05604b51a7cfb37f6c829942823d63bd45e97dea89283214"
+    },
+    {
+      "id": "F-thermo-killer-easy-v1",
+      "mode": "thermo-killer",
+      "hash": "f38539773b66be7bb73a54aaa0641be4b13e9e24e105b25f97b6ac957b0d5aed"
+    },
+    {
+      "id": "F-thermo-killer-medium-v1",
+      "mode": "thermo-killer",
+      "hash": "1fb977d52642fdb86ef6c3c7c4c912e93df983566c309f7efc43a7be09a489a6"
+    },
+    {
+      "id": "F-thermo-killer-hard-v1",
+      "mode": "thermo-killer",
+      "hash": "fc2c837fdd5170c5c1d293d23117d4e9efe2b904111789a71e3a59eecb8d7f93"
+    },
+    {
+      "id": "MG-twin-easy-1",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-1",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-1",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-2",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-2",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-2",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-1",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-1",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-1",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-2",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-2",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-2",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-3",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-3",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-3",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-4",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-4",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-4",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-5",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-5",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-5",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-6",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-6",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-6",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-7",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-7",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-7",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-8",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-8",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-8",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-9",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-9",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-9",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-10",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-10",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-10",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-11",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-11",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-11",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-easy-12",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-medium-12",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-twin-hard-12",
+      "mode": "twin",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-3",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-3",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-3",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-4",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-4",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-4",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-5",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-5",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-5",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-6",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-6",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-6",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-7",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-7",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-7",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-8",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-8",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-8",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-9",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-9",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-9",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-10",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-10",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-10",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-11",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-11",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-11",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-easy-12",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-medium-12",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    },
+    {
+      "id": "MG-samurai-hard-12",
+      "mode": "samurai",
+      "hash": "48009b3aa56a622f35863f854d255615ea71223997694e9e72d286eda6d35171"
+    }
+  ]
+}

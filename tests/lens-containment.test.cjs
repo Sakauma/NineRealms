@@ -1,0 +1,35 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.resolve(__dirname,'..'),css=fs.readFileSync(path.join(root,'src/desktop-workspace.css'),'utf8'),html=fs.readFileSync(path.join(root,'src/index.html'),'utf8'),workspace=fs.readFileSync(path.join(root,'src/workspace.js'),'utf8');
+assert(html.includes('<body data-advanced-tools="off"'),'advanced tools are off in shipped source');
+assert(html.includes('<section id="candidate-lens" class="candidate-lens candidate-filter"'));
+assert(!html.includes('<details id="candidate-lens"'),'filter is not an independent expanding drawer');
+assert(/<button\b[^>]*\bid="more-tools-toggle"[^>]*\btype="button"[^>]*\baria-expanded="false"[^>]*\baria-controls="more-tools-panel"/.test(html),'preserved dormant trigger retains its panel association');
+assert(/<section\b[^>]*\bid="more-tools-panel"[^>]*\bhidden(?:\s|>)/.test(html),'optional region is hidden in the source before scripts execute');
+assert(/<button\b[^>]*id="more-tools-toggle"[^>]*\bhidden\s+disabled/.test(html),'removed entry is both hidden and disabled before scripts');
+assert(/<section\b[^>]*id="more-tools-panel"[^>]*\bhidden\s+inert/.test(html),'preserved region is hidden and inert');
+assert(html.indexOf('id="more-tools-panel"')>html.indexOf('<aside class="control-panel"'),'optional region follows the primary board/control area');
+assert(html.indexOf('id="candidate-lens"')>html.indexOf('id="more-tools-panel"'),'filter is in the later optional region');
+assert(html.includes('id="batch-panel" class="batch-panel" aria-labelledby="batch-title" hidden'),'batch controls start separate and hidden');
+assert(html.includes('id="batch-digit"'),'batch target is explicit and independent');
+assert(css.includes('.candidate-filter .lens-digits{display:grid;grid-template-columns:repeat(9,minmax(0,1fr))'),'one horizontal digit row');
+assert(/\.more-tools-panel\{[^}]*grid-column:1\/-1/.test(css),'optional region spans the layout instead of squeezing the keypad');
+assert(/\[data-desktop=on\] \.more-tools-panel\{[^}]*grid-row:4/.test(css),'optional region sits below board and status rows');
+assert(css.includes('>.more-tools-panel{grid-row:5}'),'optional region shifts below status when alert row is present');
+assert(!css.includes('.desktop-tools:has('),'filter cannot resize or scroll the entry keypad');
+assert(!/[^{}]*(?:candidate-filter|more-tools-panel)[^{}]*\{[^}]*--desktop-key-height\s*:/.test(css),'optional filters cannot compact primary number keys');
+assert(!workspace.includes("lens.open ? 'lens'"),'filter cannot take over workspace/input state');
+for (const id of ['candidate-lens','batch-panel','more-tools-panel','draft-toggle','check-btn','error-toggle','auto-notes-btn']) {
+  assert(!new RegExp("\\['#"+id+"',\\s*(tools|controls)\\]").test(workspace),'optional content never moves into primary tools: '+id);
+}
+assert(workspace.includes("['#more-tools-toggle', controls]"),'dormant trigger preserves its original identity without a live entry');
+assert(workspace.includes('compose(wide.matches)'),'every released mode uses the shared desktop composition at the same breakpoint');
+assert(!/dataset\.mode\s*===\s*['"]classic['"]/.test(workspace),'presentation cannot gate the shared shell on classic mode');
+assert(!workspace.includes('compose(classic'),'no legacy classic-only composition remains');
+assert(!/(?:overflow(?:-[xy])?)\s*:\s*(?:auto|scroll)\b/.test(css),'desktop styling introduces no nested scroll area');
+assert(!css.includes('--desktop-key-height'),'primary square key height comes from width, never viewport or optional-tool state');
+assert(/\.number-key\{[^}]*height:auto;aspect-ratio:1\/1/.test(css),'desktop keypad remains square with dormant filters');
+assert(!/--desktop-key-height\s*:\s*(?:44|56)px/.test(css),'short viewports never restore tiny primary number keys');
+assert(!/\.number-key[^{}]*\{[^}]*\b(?:max-height|overflow(?:-[xy])?)\s*:/.test(css),'primary keypad has no new height cap or scrolling');
+assert(!css.match(/\.desktop-board-area\{[^}]*position:(sticky|fixed|absolute)/),'accepted overlap fix preserved');
+console.log('PASS optional-tools structure: removed hidden/disabled entry and inert region, later source region, fixed filter/batch homes, independent target, stable primary keypad and no nested scrolling. Static only; no rendered geometry claim.');

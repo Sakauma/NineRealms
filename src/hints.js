@@ -6,15 +6,20 @@
   "use strict";
 
   function isBoard(value, complete, length) {
-    return Array.isArray(value) && value.length === length && value.every(function (n) {
-      return Number.isInteger(n) && n >= (complete ? 1 : 0) && n <= 9;
-    });
+    if (!Array.isArray(value) || value.length !== length) return false;
+    for (var i = 0; i < length; i++) {
+      if (!Number.isInteger(value[i]) || value[i] < (complete ? 1 : 0) || value[i] > 9) return false;
+    }
+    return true;
   }
 
   function ruleNames(mode) {
     if (mode === "diagonal") return "行、列、宫和所在对角线";
     if (mode === "hyper") return "行、列、宫和所在额外窗口";
     if (mode === "knight") return "行、列、宫及马步相隔格";
+    if (mode === "king") return "行、列、宫及斜向紧邻格";
+    if (mode === "disjoint") return "行、列、宫和同位组";
+    if (mode === "jigsaw") return "行、列和不规则宫";
     return "行、列和宫";
   }
 
@@ -29,8 +34,10 @@
     var clues=context.clues;
     return !clues||typeof clues==='object'&&!Array.isArray(clues)&&Object.keys(clues).every(function(k){return k==='version'?clues[k]===1:['regions','cages','lines','edges','parity','outside','clones','quadruples'].indexOf(k)>=0&&Array.isArray(clues[k])&&clues[k].length===0;});
   }
-  function nextClassic(board,masks) {
-    var units=Engine.getUnits('classic');
+  function nextClassic(board,masks,context) {
+    context=context||'classic';
+    var mode=typeof context==='string'?context:context.mode;
+    var units=Engine.getUnits(context).filter(function(u){return u.cells.length===9;});
     function placement(kind,index,value,focus,explanation) {
       return {kind:kind,technique:kind,index:index,value:value,focusCells:focus,title:TECHNIQUES[kind],observe:'检查高亮格及区域内的候选关系。',explanation:explanation,answer:cellName(index)+'应填入 '+value+'。点击“填入这一格”后才会修改棋盘。'};
     }
@@ -39,7 +46,7 @@
       var after=masks.slice();changes.forEach(function(c){c.values.forEach(function(n){after[c.index]&=~(1<<(n-1));});});
       return {kind:'elimination',technique:kind,index:changes[0].index,value:0,focusCells:Array.from(new Set(focus.concat(changes.map(function(c){return c.index;})))),title:TECHNIQUES[kind],observe:'观察高亮区域中候选数字的位置关系；这一步只排除候选，不填数字。',explanation:explanation+' 可排除：'+changes.map(function(c){return cellName(c.index)+'的 '+c.values.join('、');}).join('；')+'。',answer:'应用后会以棋盘和已证明的推理替换全盘手写笔记，生成逻辑候选并完成本次排除；不会直接填入答案，可撤销以恢复原笔记。',eliminations:changes,candidateMasks:after};
     }
-    for(var i=0;i<81;i++)if(!board[i]&&digits(masks[i]).length===1)return placement('naked-single',i,digits(masks[i])[0],[i].concat(Engine.getPeers(i,'classic')),cellName(i)+'依据行、列、宫和已证明的候选排除，只剩数字 '+digits(masks[i])[0]+'。');
+    for(var i=0;i<81;i++)if(!board[i]&&digits(masks[i]).length===1)return placement('naked-single',i,digits(masks[i])[0],[i].concat(Engine.getPeers(i,context)),cellName(i)+'依据'+ruleNames(mode)+'和已证明的候选排除，只剩数字 '+digits(masks[i])[0]+'。');
     for(var u=0;u<units.length;u++)for(var n=1;n<=9;n++){
       var places=units[u].cells.filter(function(i){return !board[i]&&(masks[i]&(1<<(n-1)));});
       if(places.length===1)return placement('hidden-single',places[0],n,units[u].cells,units[u].label+'必须包含数字 '+n+'，而它只在'+cellName(places[0])+'的逻辑候选中出现。');
@@ -83,33 +90,58 @@
     }
     return actions[matched+1]||null;
   }
-  function rateClassic(givens,context,options) {
+  // These modes have only nine-cell all-different units and extra same-value peers.
+  // Arithmetic, line rules and overlapping grids need separate proof support.
+  var RATING_MODES=['classic','diagonal','hyper','knight','king','disjoint','jigsaw'];
+  function ratePuzzle(givens,context,options) {
     context=context||'classic';options=options||{};
+    var mode=typeof context==='string'?context:context.mode;
     var started=Date.now(),timeLimit=Number.isFinite(options.timeLimitMs)?Math.max(1,Math.min(1000,options.timeLimitMs)):200;
-    var result={scope:'classic',solved:false,status:'invalid',label:'无法评级',highestTechnique:null,steps:0,placements:0,eliminations:0,techniques:{},methodVersion:1,reason:'题面矛盾或无有效候选'};
-    if(!plainClassic(context)){result.status='unsupported';result.reason='仅支持无附加线索的经典九宫';return result;}
+    var result={scope:mode,solved:false,status:'invalid',label:'无法评级',highestTechnique:null,steps:0,placements:0,eliminations:0,techniques:{},methodVersion:mode==='classic'?1:2,reason:'题面矛盾或无有效候选'};
+    if(RATING_MODES.indexOf(mode)<0){result.status='unsupported';result.reason='此规则尚未纳入完整逻辑评级';return result;}
+    try { context={mode:mode,clues:Engine.normalizeClues(mode,typeof context==='object'?context.clues:undefined)}; }
+    catch(error){result.reason='规则线索格式无效';return result;}
     if(!isBoard(givens,false,81)){result.reason='题面格式无效';return result;}
-    var board=givens.slice(),units=Engine.getUnits('classic');
-    if(units.some(function(u){var filled=u.cells.map(function(i){return board[i];}).filter(Boolean);return new Set(filled).size!==filled.length;}))return result;
-    var masks=classicMasks(board),limit=Number.isInteger(options.maxSteps)?Math.max(0,Math.min(1000,options.maxSteps)):1000,highest=0;
+    var board=givens.slice();
+    if(Engine.getConflicts(board,context).length)return result;
+    var masks=board.map(function(v,i){return v?0:Engine.candidates(board,i,context).reduce(function(m,n){return m|(1<<(n-1));},0);});
+    var limit=Number.isInteger(options.maxSteps)?Math.max(0,Math.min(1000,options.maxSteps)):1000,highest=0;
+    if(options.trace===true)result.trace=[];
     var timedOut=false;
     for(var step=0;step<limit;step++){
       if(Date.now()-started>=timeLimit){timedOut=true;break;}
-      if(board.every(Boolean)){result.solved=Engine.validateComplete(board,'classic');break;}
+      if(board.every(Boolean))break;
       if(masks.some(function(m,i){return !board[i]&&!m;}))return result;
-      var action=nextClassic(board,masks);if(!action)break;
+      var action=nextClassic(board,masks,context);
+      if(Date.now()-started>=timeLimit){timedOut=true;break;}
+      if(!action)break;
+      if(result.trace)result.trace.push(JSON.parse(JSON.stringify(action)));
       result.steps++;result.techniques[action.technique]=(result.techniques[action.technique]||0)+1;
       if(LEVELS[action.technique]>highest){highest=LEVELS[action.technique];result.highestTechnique=action.technique;}
       if(action.kind==='elimination'){masks=action.candidateMasks;result.eliminations+=action.eliminations.reduce(function(n,c){return n+c.values.length;},0);}
-      else {board[action.index]=action.value;masks[action.index]=0;result.placements++;Engine.getPeers(action.index,'classic').forEach(function(i){masks[i]&=~(1<<(action.value-1));});}
+      else {board[action.index]=action.value;masks[action.index]=0;result.placements++;Engine.getPeers(action.index,context).forEach(function(i){masks[i]&=~(1<<(action.value-1));});}
     }
-    result.solved=board.every(Boolean)&&Engine.validateComplete(board,'classic');
+    var complete=board.every(Boolean)&&Engine.validateComplete(board,context);
+    timedOut=timedOut||Date.now()-started>=timeLimit;
+    result.solved=!timedOut&&complete;
     result.status=result.solved?'rated':result.steps>=limit||timedOut?'budget':'beyond-supported';
     result.label=result.solved?(result.steps===0?'完整题面 · 无需推理':highest<=1?'基础逻辑 · 唯一候选':highest===2?'进阶逻辑 · 锁定候选':'组合逻辑 · 数对'):'超出当前技巧 · 未评级';
     result.reason=result.solved?'已用支持的逻辑技巧完成全盘':result.status==='budget'?'超过评级计算预算':'当前技巧无法继续，未使用猜测或答案';
     result.remaining=board.filter(function(v){return !v;}).length;
-    result.explanation='仅按经典九宫的确定性逻辑路径评级：单格唯一、区域唯一、锁定候选及显性/隐性数对；不是给定数密度，也不代表所有人类解法的最低难度。';
+    result.explanation='按原始题面及本玩法规则的确定性逻辑路径评级：单格唯一、区域唯一、锁定候选及显性/隐性数对；不是给定数密度，不代表所选难度档，也不代表所有人类解法的最低难度。';
     return result;
+  }
+  function rateClassic(givens,context,options) {
+    if(!plainClassic(context||'classic'))return {scope:'classic',solved:false,status:'unsupported',label:'无法评级',highestTechnique:null,steps:0,placements:0,eliminations:0,techniques:{},methodVersion:1,reason:'仅支持无附加线索的经典九宫'};
+    return ratePuzzle(givens,context,options);
+  }
+
+  function getLogicalStep(board, givens, context, notes) {
+    context = context || "classic";
+    if (!plainClassic(context) || !isBoard(board, false, 81) || !isBoard(givens, false, 81) ||
+        !givens.every(function (v, i) { return !v || v === board[i]; }) || Engine.getConflicts(board, context).length) return null;
+    if (classicMasks(board).some(function (mask, i) { return !board[i] && !mask; })) return null;
+    return classicHint(board, notes);
   }
 
   function getStep(board, givens, solution, mode, notes) {
@@ -218,5 +250,5 @@
       (plainClassic(context) ? "当前已尝试唯一候选、锁定候选和数对，仍需要其他技巧。" : "当前没有找到单格唯一候选或区域唯一位置。") + "这里可能需要更深入的候选排除或分支推理；下一步会直接展示本题答案，作为求解辅助。");
   }
 
-  return { getStep: getStep, rateClassic: rateClassic };
+  return { getStep: getStep, getLogicalStep: getLogicalStep, rateClassic: rateClassic, ratePuzzle: ratePuzzle, ratingModes: RATING_MODES.slice() };
 });

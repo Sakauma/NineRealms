@@ -3,6 +3,7 @@
   "use strict";
   var NS = "http://www.w3.org/2000/svg";
   var cache = new WeakMap();
+  var materialIds = new WeakMap(), nextMaterialId = 0;
   var lastResult = null;
   var NAMES = { thermo: "温度计", arrow: "箭头", renban: "连续线", whispers: "低语线",
     palindrome: "回文线", between: "之间线", lockout: "锁定线", entropic: "熵线",
@@ -20,11 +21,72 @@
     if (parent) parent.appendChild(node);
     return node;
   }
-  function pathData(cells) {
-    return cells.map(function (cell, i) { var p = point(cell); return (i ? "L" : "M") + p.x + " " + p.y; }).join(" ");
+  // Definitions belong to this SVG, not the document. A replay and the live board
+  // can coexist, and theme changes flow through CSS without rebuilding clue data.
+  function materials(svg, clueLines) {
+    var prefix = materialIds.get(svg);
+    if (!prefix) { prefix = "variant-material-" + (++nextMaterialId); materialIds.set(svg, prefix); }
+    var defs = add("defs", { "data-variant-materials": prefix }, svg), paints = {};
+    clueLines.forEach(function (line) {
+      var type = line.type;
+      if (type === "arrow" || !NAMES[type] || paints[type]) return;
+      var solid = "var(--clue-" + (type === "thermo" ? "thermo-fill" : type) + ")";
+      var id = prefix + "-" + type;
+      var gradient = add("linearGradient", { id: id, gradientUnits: "userSpaceOnUse",
+        x1: 0, y1: 0, x2: 675, y2: 900 }, defs);
+      ["start", "mid", "end"].forEach(function (stop, index) {
+        add("stop", { offset: index / 2,
+          "stop-color": "var(--clue-" + type + "-glass-" + stop + "," + solid + ")" }, gradient);
+      });
+      paints[type] = { color: "url(#" + id + ") " + solid, solid: solid };
+    });
+    var filterId = prefix + "-thermo-frost";
+    if (paints.thermo) {
+      // One small lighting/grain pass on the combined family silhouette: no bulb
+      // seam, per-path edge glints, duplicate translucent pipes or moving texture.
+      var filter = add("filter", { id: filterId, x: "-2%", y: "-2%", width: "104%", height: "104%",
+        "color-interpolation-filters": "sRGB" }, defs);
+      add("feGaussianBlur", { in: "SourceAlpha", stdDeviation: 1.1, result: "bump" }, filter);
+      var shine = add("feSpecularLighting", { in: "bump", surfaceScale: 3, specularConstant: .16,
+        specularExponent: 18, "lighting-color": "var(--clue-glass-light,#d9eafa)", result: "shine" }, filter);
+      add("feDistantLight", { azimuth: 225, elevation: 45 }, shine);
+      add("feComposite", { in: "shine", in2: "SourceAlpha", operator: "in", result: "lit" }, filter);
+      add("feTurbulence", { type: "fractalNoise", baseFrequency: .65, numOctaves: 2, seed: 17, result: "grain" }, filter);
+      add("feColorMatrix", { in: "grain", type: "saturate", values: 0, result: "gray-grain" }, filter);
+      var transfer = add("feComponentTransfer", { in: "gray-grain", result: "faint-grain" }, filter);
+      add("feFuncA", { type: "linear", slope: .025 }, transfer);
+      add("feComposite", { in: "faint-grain", in2: "SourceAlpha", operator: "in", result: "clipped-grain" }, filter);
+      add("feBlend", { in: "clipped-grain", in2: "SourceGraphic", mode: "soft-light", result: "body" }, filter);
+      add("feComposite", { in: "lit", in2: "body", operator: "arithmetic", k2: 1, k3: 1, result: "frost" }, filter);
+      add("feComposite", { in: "frost", in2: "SourceAlpha", operator: "in" }, filter);
+    }
+    return { paints: paints, filter: "url(#" + filterId + ")", defs: defs, prefix: prefix };
+  }
+  // A small, cell-local corner cut softens turns without inventing a new route.
+  // The quadratic control is the original cell point; first/last points stay exact.
+  function pathData(points) {
+    function xy(p) { return +p.x.toFixed(3) + " " + +p.y.toFixed(3); }
+    if (!points.length) return "";
+    var d = ["M" + xy(points[0])];
+    for (var i = 1; i < points.length - 1; i++) {
+      var before = points[i - 1], p = points[i], after = points[i + 1];
+      var ax = p.x - before.x, ay = p.y - before.y, bx = after.x - p.x, by = after.y - p.y;
+      var incoming = Math.hypot(ax, ay), outgoing = Math.hypot(bx, by);
+      // Collinear points and reversals must keep their original geometry.
+      if (!incoming || !outgoing || Math.abs(ax * by - ay * bx) < .001) {
+        d.push("L" + xy(p));
+        continue;
+      }
+      var cut = Math.min(14, incoming / 4, outgoing / 4);
+      var entry = { x: p.x - ax / incoming * cut, y: p.y - ay / incoming * cut };
+      var exit = { x: p.x + bx / outgoing * cut, y: p.y + by / outgoing * cut };
+      d.push("L" + xy(entry), "Q" + xy(p) + " " + xy(exit));
+    }
+    if (points.length > 1) d.push("L" + xy(points[points.length - 1]));
+    return d.join(" ");
   }
   function label(parent, x, y, value, attrs) {
-    var node = add("text", Object.assign({ x: x, y: y, fill: "var(--text)", "font-family": "Segoe UI, sans-serif",
+    var node = add("text", Object.assign({ x: x, y: y, fill: "var(--clue-label)", "font-family": "Segoe UI, sans-serif",
       "font-size": 25, "font-weight": 600, "dominant-baseline": "middle",
       "paint-order": "stroke", stroke: "var(--cell-bg)", "stroke-width": 6, "stroke-linejoin": "round" }, attrs), parent);
     node.textContent = String(value);
@@ -44,14 +106,16 @@
       if (!right) d.push("M" + (x + 100 - inset) + " " + y1 + "V" + y2);
     });
     return add("path", Object.assign({ d: d.join(" "), fill: "none", stroke: "var(--accent)",
-      "stroke-width": 1.3, "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round" }, attrs), parent);
+      "stroke-width": 1.3, "vector-effect": "non-scaling-stroke", "stroke-linejoin": "round",
+      "stroke-linecap": "round" }, attrs), parent);
   }
-  function arrowHead(parent, x, y, dx, dy, color, size) {
+  function arrowHead(parent, x, y, dx, dy, color, size, attrs, halfWidth) {
     var length = Math.hypot(dx, dy) || 1, ux = dx / length, uy = dy / length;
+    if (halfWidth === undefined) halfWidth = size * .5;
     var backX = x - ux * size, backY = y - uy * size;
-    return add("path", { d: "M" + (backX - uy * size * .5) + " " + (backY + ux * size * .5) +
-      "L" + x + " " + y + "L" + (backX + uy * size * .5) + " " + (backY - ux * size * .5),
-      fill: "none", stroke: color, "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, parent);
+    return add("path", Object.assign({ d: "M" + (backX - uy * halfWidth) + " " + (backY + ux * halfWidth) +
+      "L" + x + " " + y + "L" + (backX + uy * halfWidth) + " " + (backY - ux * halfWidth),
+      fill: "none", stroke: color, "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, attrs), parent);
   }
   // Keep coincident arrow shafts in separate lanes without changing which cells they visit.
   function arrowLayouts(clueLines) {
@@ -92,7 +156,7 @@
       });
       // The text-color mix adapts the same deterministic hues to light and dark themes.
       var color = "color-mix(in srgb,hsl(" + ((198 + index * 137.508) % 360).toFixed(2) +
-        " 66% 56%) 76%,var(--text))";
+        " 66% 56%) 35%,var(--clue-arrow-base,var(--text)))";
       var layout = { line: line, index: index, points: points, color: color, lane: lane, segments: segments };
       layouts.set(line, layout);
       placed.push(layout);
@@ -106,6 +170,144 @@
       });
     });
     return { layouts: layouts, bulbs: bulbs };
+  }
+  // Use the same small quadratic corners as pathData when finding crossings.
+  // Sampling is only for clearance; the displayed route remains the original path.
+  function arrowSamples(points) {
+    var samples = [points[0]];
+    for (var i = 1; i < points.length - 1; i++) {
+      var a = points[i - 1], p = points[i], b = points[i + 1];
+      var ax = p.x - a.x, ay = p.y - a.y, bx = b.x - p.x, by = b.y - p.y;
+      var incoming = Math.hypot(ax, ay), outgoing = Math.hypot(bx, by);
+      if (!incoming || !outgoing || Math.abs(ax * by - ay * bx) < .001) { samples.push(p); continue; }
+      var cut = Math.min(14, incoming / 4, outgoing / 4);
+      var entry = { x: p.x - ax / incoming * cut, y: p.y - ay / incoming * cut };
+      var exit = { x: p.x + bx / outgoing * cut, y: p.y + by / outgoing * cut };
+      samples.push(entry);
+      for (var step = 1; step <= 12; step++) {
+        var t = step / 12, u = 1 - t;
+        samples.push({ x: u * u * entry.x + 2 * u * t * p.x + t * t * exit.x,
+          y: u * u * entry.y + 2 * u * t * p.y + t * t * exit.y });
+      }
+    }
+    if (points.length > 1) samples.push(points[points.length - 1]);
+    return samples;
+  }
+  function headPoints(tip, ux, uy, size, halfWidth) {
+    if (halfWidth === undefined) halfWidth = size * .5;
+    return [{ x: tip.x - ux * size - uy * halfWidth, y: tip.y - uy * size + ux * halfWidth }, tip,
+      { x: tip.x - ux * size + uy * halfWidth, y: tip.y - uy * size - ux * halfWidth }];
+  }
+  function clearArrowEnds(info) {
+    var arrows = Array.from(info.layouts.values());
+    arrows.forEach(function (arrow) {
+      var lastIndex = arrow.points.length - 1, tip = arrow.points[lastIndex], previous = arrow.points[lastIndex - 1];
+      var length = Math.hypot(tip.x - previous.x, tip.y - previous.y) || 1;
+      var ux = (tip.x - previous.x) / length, uy = (tip.y - previous.y) / length;
+      var cell = arrow.line.cells[lastIndex], center = point(cell);
+      // Keep the direction tip inside the final cell's entry edge, away from
+      // central digits and the arrow-only candidate grid. Wings may straddle
+      // this boundary; neither the shaft's route nor its direction is changed.
+      var edge = Math.min(ux ? (50 + Math.sign(ux) * (tip.x - center.x)) / Math.abs(ux) : Infinity,
+        uy ? (50 + Math.sign(uy) * (tip.y - center.y)) / Math.abs(uy) : Infinity);
+      var retreat = Math.min(Math.max(0, edge - (ux && uy ? 20 : 8)), Math.max(0, length - 12));
+      var end = { x: tip.x - ux * retreat, y: tip.y - uy * retreat };
+      arrow.points[lastIndex] = end;
+      arrow.retreat = retreat;
+      arrow.entry = { x: tip.x - ux * edge, y: tip.y - uy * edge };
+      arrow.entryInset = edge - retreat;
+      arrow.headSize = ux && uy ? 11 : 15;
+      arrow.headHalfWidth = arrow.headSize * .5;
+      arrow.head = headPoints(end, ux, uy, arrow.headSize);
+      arrow.direction = { x: ux, y: uy };
+    });
+    // Parallel tracking lanes can be narrower than a full chevron. Slim only
+    // those adjacent heads, rather than displacing either route or its endpoint.
+    arrows.forEach(function (a, index) {
+      arrows.slice(index + 1).forEach(function (b) {
+        if (a.line.cells[a.line.cells.length - 1] !== b.line.cells[b.line.cells.length - 1] ||
+            a.direction.x * b.direction.x + a.direction.y * b.direction.y < .995) return;
+        var dx = b.head[1].x - a.head[1].x, dy = b.head[1].y - a.head[1].y;
+        var gap = Math.abs(dx * a.direction.y - dy * a.direction.x);
+        if (gap < .1 || gap >= a.headHalfWidth + b.headHalfWidth + 5) return;
+        var halfWidth = Math.max(3, (gap - 5) / 2);
+        a.headHalfWidth = Math.min(a.headHalfWidth, halfWidth);
+        b.headHalfWidth = Math.min(b.headHalfWidth, halfWidth);
+      });
+    });
+    arrows.forEach(function (arrow) {
+      arrow.head = headPoints(arrow.head[1], arrow.direction.x, arrow.direction.y, arrow.headSize, arrow.headHalfWidth);
+    });
+    arrows.forEach(function (arrow) { arrow.samples = arrowSamples(arrow.points); arrow.gaps = []; });
+  }
+  function arrowCrossings(info, material) {
+    var arrows = Array.from(info.layouts.values()), segmentCache = new Map();
+    function segments(points) {
+      if (segmentCache.has(points)) return segmentCache.get(points);
+      var result = [];
+      for (var i = 1; i < points.length; i++) {
+        var a = points[i - 1], b = points[i], dx = b.x - a.x, dy = b.y - a.y;
+        result.push({ a: a, dx: dx, dy: dy, length: Math.hypot(dx, dy),
+          left: Math.min(a.x, b.x), right: Math.max(a.x, b.x), top: Math.min(a.y, b.y), bottom: Math.max(a.y, b.y) });
+      }
+      segmentCache.set(points, result);
+      return result;
+    }
+    function intersection(a, b) {
+      var cross = a.dx * b.dy - a.dy * b.dx, lengths = a.length * b.length;
+      if (!lengths || Math.abs(cross) / lengths < .12) return null;
+      var cx = b.a.x - a.a.x, cy = b.a.y - a.a.y;
+      var t = (cx * b.dy - cy * b.dx) / cross, u = (cx * a.dy - cy * a.dx) / cross;
+      if (t < -.00001 || t > 1.00001 || u < -.00001 || u > 1.00001) return null;
+      return { x: a.a.x + t * a.dx, y: a.a.y + t * a.dy, radius: Math.min(10, 5.5 * lengths / Math.abs(cross)) };
+    }
+    function gap(arrow, crossing, over) {
+      // Bulb interiors are already cleared once, before their rings are drawn.
+      var hidden = false;
+      info.bulbs.forEach(function (group, cell) {
+        var p = point(cell);
+        if (Math.hypot(crossing.x - p.x, crossing.y - p.y) <= group[group.length - 1].radius) hidden = true;
+      });
+      if (hidden) return;
+      var existing = arrow.gaps.find(function (p) { return Math.hypot(p.x - crossing.x, p.y - crossing.y) < 5; });
+      if (existing) { existing.radius = Math.max(existing.radius, crossing.radius); return; }
+      crossing.over = over.index;
+      arrow.gaps.push(crossing);
+    }
+    function crosses(a, b, visit) {
+      var first = segments(a), second = segments(b);
+      for (var i = 0; i < first.length; i++) for (var j = 0; j < second.length; j++) {
+        var one = first[i], two = second[j];
+        // Most curve fragments live in different cells. Reject their boxes
+        // before any crossing math, including for maximum-size imported clues.
+        if (one.right < two.left || two.right < one.left || one.bottom < two.top || two.bottom < one.top) continue;
+        var p = intersection(one, two);
+        if (p) visit(p);
+      }
+    }
+    arrows.forEach(function (a, index) {
+      arrows.slice(index + 1).forEach(function (b) {
+        crosses(a.samples, b.samples, function (p) {
+          // Never turn a direction marker's short approach into an underpass.
+          var tip = a.head[1], protect = Math.hypot(p.x - tip.x, p.y - tip.y) < a.headSize + 4;
+          gap(protect ? b : a, p, protect ? a : b);
+        });
+        crosses(a.samples, b.head, function (p) { gap(a, p, b); });
+        crosses(b.samples, a.head, function (p) { gap(b, p, a); });
+      });
+    });
+    arrows.forEach(function (arrow) {
+      if (!arrow.gaps.length) return;
+      var id = material.prefix + "-arrow-crossings-" + arrow.index;
+      var mask = add("mask", { id: id, x: 0, y: 0, width: 900, height: 900, maskUnits: "userSpaceOnUse",
+        maskContentUnits: "userSpaceOnUse", "mask-type": "luminance", "data-arrow-crossing-mask": arrow.index }, material.defs);
+      add("rect", { x: 0, y: 0, width: 900, height: 900, fill: "white" }, mask);
+      arrow.gaps.forEach(function (p) {
+        add("circle", { cx: +p.x.toFixed(3), cy: +p.y.toFixed(3), r: +p.radius.toFixed(3), fill: "black",
+          "data-arrow-crossing-gap": arrow.index, "data-arrow-crossing-over": p.over }, mask);
+      });
+      arrow.mask = "url(#" + id + ")";
+    });
   }
   function render(svg, context) {
     if (!svg) return { legend: "", cellDescriptions: Array(81).fill(""), hasOutside: false, replacesBoxes: false };
@@ -128,6 +330,7 @@
         if (descriptions[cell] && descriptions[cell].indexOf(value) < 0) descriptions[cell].push(value);
       });
     }
+    var material = materials(svg, clues.lines || []), thermoMaterial;
     var under = add("g", { "data-layer": "areas" }, svg);
     var lines = add("g", { "data-layer": "lines" }, svg);
     var endpoints = add("g", { "data-layer": "line-endpoints" }, svg);
@@ -136,7 +339,7 @@
       for (var region = 0; region < 9; region++) {
         var cells = [];
         clues.regions.forEach(function (value, index) { if (value === region) cells.push(index); });
-        outline(under, cells, 0, { stroke: "var(--grid-strong)", "stroke-width": 2.2 });
+        outline(under, cells, 0, { stroke: "var(--clue-neutral)", "stroke-width": 2.2 });
         describe(cells, "不规则第 " + (region + 1) + " 宫，数字 1～9 各一次");
       }
       legends.add("粗线围成不规则宫");
@@ -144,7 +347,9 @@
     (clues.parity || []).forEach(function (clue) {
       var p = point(clue.cell), even = clue.parity === "even";
       add(even ? "rect" : "circle", even ? { x: p.x - 29, y: p.y - 29, width: 58, height: 58, rx: 4,
-        fill: "var(--accent)", opacity: .15 } : { cx: p.x, cy: p.y, r: 30, fill: "var(--accent)", opacity: .15 }, under);
+        fill: "var(--accent)", "fill-opacity": .15, stroke: "var(--clue-edge)", "stroke-width": 3 } :
+        { cx: p.x, cy: p.y, r: 30, fill: "var(--accent)", "fill-opacity": .15,
+          stroke: "var(--clue-edge)", "stroke-width": 3 }, under);
       describe([clue.cell], even ? "方形偶数格，只能填 2、4、6、8" : "圆形奇数格，只能填 1、3、5、7、9");
       legends.add("圆形奇数 / 方形偶数");
     });
@@ -155,9 +360,9 @@
           var p = point(cell);
           add("rect", { x: p.x - 48, y: p.y - 48, width: 96, height: 96, fill: "var(--branch)", opacity: .08 }, under);
         });
-        outline(under, cells, 6, { stroke: "var(--branch)", "stroke-dasharray": "5 3" });
+        outline(under, cells, 6, { stroke: "var(--clue-renban)", "stroke-dasharray": "6 4", "stroke-width": 1.1 });
         var first = Math.min.apply(null, cells), p = point(first);
-        label(marks, p.x - 35, p.y - 29, name + (pair ? "′" : ""), { fill: "var(--branch)", "font-size": 23 });
+        label(marks, p.x - 35, p.y - 29, name + (pair ? "′" : ""), { fill: "var(--clue-renban)", "font-size": 23 });
       });
       clone.a.forEach(function (cell, i) {
         describe([cell], "克隆组 " + name + "，与第 " + (Math.floor(clone.b[i] / 9) + 1) + " 行第 " + (clone.b[i] % 9 + 1) + " 列数字相同");
@@ -166,38 +371,70 @@
       legends.add("同字母区域对应数字相同");
     });
     (clues.cages || []).forEach(function (cage) {
-      outline(marks, cage.cells, 6, { "stroke-dasharray": "4 3", stroke: "var(--muted)", "stroke-width": 1.2 });
+      outline(marks, cage.cells, 6, { "stroke-dasharray": "5 4", stroke: "var(--clue-cage)", "stroke-width": 1.1 });
       var p = point(Math.min.apply(null, cage.cells));
-      label(marks, p.x - 34, p.y - 29, cage.sum, { "font-size": 24, fill: "var(--text)" });
+      label(marks, p.x - 34, p.y - 29, cage.sum, { "font-size": 24 });
       describe(cage.cells, "虚线笼内数字和为 " + cage.sum + (cage.unique ? "，数字不重复" : ""));
       legends.add("笼角数字为笼内总和");
     });
     if (context.mode === "thermo-killer") legends.add("温笼合流：温度计递增与笼内不重复求和同时成立");
     var clueLines = clues.lines || [], arrowInfo = arrowLayouts(clueLines), endpointDraws = [];
-    clueLines.forEach(function (line) {
+    clearArrowEnds(arrowInfo);
+    arrowCrossings(arrowInfo, material);
+    clueLines.forEach(function (line, lineIndex) {
       var cells = line.cells, type = line.type, first = point(cells[0]), last = point(cells[cells.length - 1]);
       var arrow = arrowInfo.layouts.get(line);
-      var color = arrow ? arrow.color : type === "renban" || type === "palindrome" ? "var(--branch)" :
-        type === "whispers" ? "var(--accent-strong)" : type === "thermo" ? "var(--muted)" : "var(--accent-two)";
-      var d = arrow ? arrow.points.map(function (p, i) { return (i ? "L" : "M") + p.x + " " + p.y; }).join(" ") :
-        pathData(cells);
+      var color = arrow ? arrow.color : type === "thermo" ? "var(--clue-thermo-fill)" :
+        NAMES[type] ? "var(--clue-" + type + ")" : "var(--clue-line)";
+      var paint = material.paints[type];
+      if (paint) color = paint.color;
+      var d = pathData(arrow ? arrow.points : cells.map(point));
+      var widths = { thermo: 18, renban: 5.5, whispers: 5, palindrome: 4.5,
+        between: 3.5, lockout: 3.5, entropic: 4.5, modular: 4.5, "region-sum": 4.5 };
       var attrs = { d: d, fill: "none", stroke: color,
-        "stroke-width": type === "thermo" ? 16 : type === "renban" ? 12 : arrow ? 6 : 7,
-        opacity: type === "thermo" || type === "renban" ? .42 : arrow ? .95 : .8,
+        "stroke-width": arrow ? 4.5 : widths[type] || 6,
         "stroke-linecap": "round", "stroke-linejoin": "round" };
-      if (type === "entropic") attrs["stroke-dasharray"] = "15 8";
-      if (type === "modular") attrs["stroke-dasharray"] = "5 8";
-      if (arrow) add("path", Object.assign({}, attrs, {
-        stroke: "var(--cell-bg)", "stroke-width": 11, opacity: 1, "data-arrow-underlay": arrow.index
-      }), lines);
-      add("path", Object.assign({}, attrs, arrow ? { "data-arrow-path": arrow.index } : {}), lines);
-      if (type === "thermo") endpointDraws.push(function () {
-        add("circle", { cx: first.x, cy: first.y, r: 29, fill: color, opacity: .42 }, endpoints);
-      });
+      var identity = { "class": "variant-line variant-line--" + type + (paint ? " variant-glass-line" : ""),
+        "data-line-type": type, "data-line-index": lineIndex, "data-line-cells": cells.join(",") };
+      if (paint) identity.style = "--variant-solid-color:" + paint.solid;
+      function endpoint(role, cell) {
+        return { "class": "variant-endpoint variant-endpoint--" + type +
+            (paint ? (type === "thermo" ? " variant-glass-fill" : " variant-glass-line") : ""),
+          style: paint ? "--variant-solid-color:" + paint.solid : "",
+          "data-line-type": type, "data-line-index": lineIndex,
+          "data-endpoint-role": role, "data-endpoint-cell": cell };
+      }
+      if (type === "entropic") attrs["stroke-dasharray"] = "18 10";
+      if (type === "modular") attrs["stroke-dasharray"] = "4 10";
       if (arrow) {
+        if (arrow.mask) attrs.mask = arrow.mask;
+        identity["data-arrow-lane-x"] = arrow.lane.x;
+        identity["data-arrow-lane-y"] = arrow.lane.y;
+        identity["data-arrow-end-retreat"] = arrow.retreat;
+      }
+      if (type === "thermo") {
+        if (!thermoMaterial) thermoMaterial = add("g", {
+          "class": "variant-thermometer-material", filter: material.filter
+        }, lines);
+        var thermo = add("g", { "class": "variant-thermometer", "data-thermo-index": lineIndex }, thermoMaterial);
+        // Hidden during ordinary glass rendering; high contrast can expose this
+        // solid outline while keeping the body Canvas and the digits CanvasText.
+        add("path", Object.assign({}, attrs, { "class": "variant-thermo-shell", display: "none",
+          stroke: "var(--clue-thermo-ink)", "stroke-width": 22, "data-thermo-shell": lineIndex }), thermo);
+        add("circle", { cx: first.x, cy: first.y, r: 31, "class": "variant-thermo-shell", display: "none",
+          fill: "var(--clue-thermo-ink)", "data-thermo-bulb-shell": lineIndex }, thermo);
+        add("path", Object.assign({}, attrs, identity), thermo);
+        add("circle", Object.assign({ cx: first.x, cy: first.y, r: 29, fill: color },
+          endpoint("start", cells[0])), thermo);
+      } else {
+        add("path", Object.assign({}, attrs, identity, arrow ? { "data-arrow-path": arrow.index } : {}), lines);
+      }
+      if (arrow) {
+        arrow.lineIndex = lineIndex;
         endpointDraws.push(function () {
-          add("circle", { cx: first.x, cy: first.y, r: arrow.radius, fill: "none", stroke: color,
-            "stroke-width": arrow.sharedBulb ? 3.5 : 5, "data-arrow-circle": arrow.index }, endpoints);
+          add("circle", Object.assign({ cx: first.x, cy: first.y, r: arrow.radius, fill: "none", stroke: color,
+            "stroke-width": arrow.sharedBulb ? 3.5 : 4.5, "data-arrow-circle": arrow.index },
+            endpoint("start", cells[0])), endpoints);
         });
         describe(cells, "第 " + (arrow.index + 1) + " 根箭头：圆圈在第 " +
           (Math.floor(cells[0] / 9) + 1) + " 行第 " + (cells[0] % 9 + 1) +
@@ -206,11 +443,13 @@
           }).join("、") + "；" + LINE_RULES.arrow);
       }
       if (type === "between" || type === "lockout") endpointDraws.push(function () {
-        [first, last].forEach(function (p) {
-          if (type === "between") add("circle", { cx: p.x, cy: p.y, r: 26, fill: "var(--cell-bg)", stroke: color, "stroke-width": 5 }, endpoints);
-          else add("path", { d: "M" + p.x + " " + (p.y - 29) + "L" + (p.x + 29) + " " + p.y + "L" +
-            p.x + " " + (p.y + 29) + "L" + (p.x - 29) + " " + p.y + "Z",
-            fill: "var(--cell-bg)", stroke: color, "stroke-width": 5 }, endpoints);
+        [first, last].forEach(function (p, index) {
+          var marker = endpoint(index ? "end" : "start", cells[index ? cells.length - 1 : 0]);
+          if (type === "between") add("circle", Object.assign({ cx: p.x, cy: p.y, r: 26,
+            fill: "var(--cell-bg)", stroke: color, "stroke-width": 3.5 }, marker), endpoints);
+          else add("path", Object.assign({ d: "M" + p.x + " " + (p.y - 28) + "L" + (p.x + 28) + " " + p.y + "L" +
+            p.x + " " + (p.y + 28) + "L" + (p.x - 28) + " " + p.y + "Z",
+            fill: "var(--cell-bg)", stroke: color, "stroke-width": 3.5, "stroke-linejoin": "round" }, marker), endpoints);
         });
       });
       if (!arrow) describe(cells, (NAMES[type] || type) + "：" + (LINE_RULES[type] || "按本题线索规则"));
@@ -219,12 +458,22 @@
     // Mask shafts once per bulb, then draw every ring and arrowhead above every shaft.
     arrowInfo.bulbs.forEach(function (group, cell) {
       var p = point(cell), radius = group[group.length - 1].radius;
-      add("circle", { cx: p.x, cy: p.y, r: radius, fill: "var(--cell-bg)" }, endpoints);
+      add("circle", { cx: p.x, cy: p.y, r: radius, fill: "var(--cell-bg)", "data-arrow-mask-cell": cell }, endpoints);
     });
     endpointDraws.forEach(function (draw) { draw(); });
     arrowInfo.layouts.forEach(function (arrow) {
       var last = arrow.points[arrow.points.length - 1], previous = arrow.points[arrow.points.length - 2];
-      arrowHead(endpoints, last.x, last.y, last.x - previous.x, last.y - previous.y, arrow.color, 19);
+      arrowHead(endpoints, last.x, last.y, last.x - previous.x, last.y - previous.y, arrow.color, arrow.headSize, {
+        "class": "variant-endpoint variant-endpoint--arrow", "data-arrow-head": arrow.index,
+        "stroke-width": 3.2, "data-arrow-head-size": arrow.headSize, "data-arrow-end-retreat": arrow.retreat,
+        "data-arrow-head-width": +(arrow.headHalfWidth * 2).toFixed(3),
+        "data-arrow-head-placement": "cell-entry", "data-arrow-wing-containment": "entry-boundary",
+        "data-arrow-entry-inset": +arrow.entryInset.toFixed(3),
+        "data-arrow-entry-x": +arrow.entry.x.toFixed(3), "data-arrow-entry-y": +arrow.entry.y.toFixed(3),
+        "data-arrow-tip-x": +last.x.toFixed(3), "data-arrow-tip-y": +last.y.toFixed(3),
+        "data-line-type": "arrow", "data-line-index": arrow.lineIndex,
+        "data-endpoint-role": "end", "data-endpoint-cell": arrow.line.cells[arrow.line.cells.length - 1]
+      }, arrow.headHalfWidth);
     });
     if (arrowInfo.layouts.size) {
       legends.add("颜色仅辅助追踪；交叉处不连接；同心圈共用同一数字，各箭杆分别求和");
@@ -234,22 +483,26 @@
       var description;
       if (edge.type === "kropki-white" || edge.type === "kropki-black") {
         var black = edge.type === "kropki-black";
-        add("circle", { cx: x, cy: y, r: 11, fill: black ? "var(--text)" : "var(--cell-bg)",
-          stroke: "var(--text)", "stroke-width": 2, "vector-effect": "non-scaling-stroke" }, marks);
+        add("circle", { cx: x, cy: y, r: 15, fill: "var(--cell-bg)", "class": "variant-glyph-backing" }, marks);
+        add("circle", { cx: x, cy: y, r: 11, fill: black ? "var(--clue-edge)" : "var(--cell-bg)",
+          stroke: "var(--clue-edge)", "stroke-width": 3.5, "data-edge-type": edge.type }, marks);
         description = black ? "黑点两侧数字之比为 2" : "白点两侧数字相差 1";
         legends.add("白点差 1 / 黑点比 2");
       } else if (edge.type === "xv") {
-        add("rect", { x: x - 17, y: y - 20, width: 34, height: 40, rx: 6, fill: "var(--cell-bg)" }, marks);
-        label(marks, x, y + 1, edge.value === 10 ? "X" : "V", { "text-anchor": "middle", "font-size": 29 });
+        add("rect", { x: x - 17, y: y - 20, width: 34, height: 40, rx: 7, fill: "var(--cell-bg)",
+          "class": "variant-glyph-backing" }, marks);
+        label(marks, x, y + 1, edge.value === 10 ? "X" : "V", {
+          "text-anchor": "middle", "font-size": 29, "stroke-width": 4, "data-edge-type": edge.type });
         description = "标记两侧数字和为 " + edge.value;
         legends.add("X 和为 10 / V 和为 5");
       } else if (edge.type === "greater") {
         var dx = (b.x - a.x) / 100, dy = (b.y - a.y) / 100;
-        add("circle", { cx: x, cy: y, r: 20, fill: "var(--cell-bg)" }, marks);
+        add("circle", { cx: x, cy: y, r: 20, fill: "var(--cell-bg)", "class": "variant-glyph-backing" }, marks);
         add("path", { d: "M" + (x - dx * 11 - dy * 13) + " " + (y - dy * 11 + dx * 13) +
           "L" + (x + dx * 11) + " " + (y + dy * 11) +
           "L" + (x - dx * 11 + dy * 13) + " " + (y - dy * 11 - dx * 13),
-          fill: "none", stroke: "var(--text)", "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, marks);
+          fill: "none", stroke: "var(--clue-edge)", "stroke-width": 4, "stroke-linecap": "round",
+          "stroke-linejoin": "round", "data-edge-type": edge.type }, marks);
         description = "不等号开口一侧数字较大";
         legends.add("不等号开口朝较大数字");
       }
@@ -259,7 +512,8 @@
       var row = Math.min.apply(null, quad.cells.map(function (cell) { return Math.floor(cell / 9); }));
       var col = Math.min.apply(null, quad.cells.map(function (cell) { return cell % 9; }));
       var x = (col + 1) * 100, y = (row + 1) * 100;
-      add("circle", { cx: x, cy: y, r: 29, fill: "var(--cell-bg)", stroke: "var(--muted)", "stroke-width": 3 }, marks);
+      add("circle", { cx: x, cy: y, r: 29, fill: "var(--cell-bg)", stroke: "var(--clue-edge)",
+        "stroke-width": 2.5, "class": "variant-quadruple" }, marks);
       quad.values.forEach(function (value, i) {
         var dx = quad.values.length === 1 ? 0 : (i % 2 ? 11 : -11);
         var dy = quad.values.length <= 2 ? 0 : (i < 2 ? -11 : 11);
@@ -278,15 +532,16 @@
         clue.type === "skyscraper" ? "从这一侧看到 " + clue.value + " 栋楼" :
         clue.type === "xsum" ? "首格为 X，前 X 格数字之和为 " + clue.value :
         "箭头指向的斜线数字之和为 " + clue.value;
-      label(marks, x, y, clue.value, { "font-size": 29, "text-anchor": "middle", fill: "var(--accent)", "stroke-width": 5 });
+      label(marks, x, y, clue.value, { "font-size": 29, "text-anchor": "middle", "stroke-width": 5,
+        "class": "variant-outside-label", "data-outside-type": clue.type, "data-outside-side": clue.side });
       if (clue.type === "littlekiller" && clue.cells.length > 1) {
         var start = point(clue.cells[0]), next = point(clue.cells[1]);
         var dx = next.x - start.x, dy = next.y - start.y, length = Math.hypot(dx, dy) || 1;
         var ux = dx / length, uy = dy / length;
         var tipX = start.x - ux * 34, tipY = start.y - uy * 34;
         add("path", { d: "M" + (tipX - ux * 22) + " " + (tipY - uy * 22) + "L" + tipX + " " + tipY,
-          fill: "none", stroke: "var(--accent)", "stroke-width": 3.5 }, marks);
-        arrowHead(marks, tipX, tipY, dx, dy, "var(--accent)", 12);
+          fill: "none", stroke: "var(--clue-edge)", "stroke-width": 3.5, "stroke-linecap": "round" }, marks);
+        arrowHead(marks, tipX, tipY, dx, dy, "var(--clue-edge)", 12);
       }
       describe(clue.cells, desc);
       legends.add(clue.type === "sandwich" ? "外围夹心和值" : clue.type === "skyscraper" ? "外围楼高数量" :
