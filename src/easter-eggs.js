@@ -516,6 +516,7 @@
     }
 
     document.addEventListener("keydown", function (event) {
+      if (zenEnabled()) { abortHold(); cancelCalm(); resetCode(); return; }
       if(event.target&&event.target.closest&&event.target.closest("#secret-archive-panel"))return;
       var onBrand = event.target === brand || brand.contains(event.target);
       if ((event.key === " " || event.key === "Spacebar") && onBrand && zenEnabled() && brandAvailable() &&

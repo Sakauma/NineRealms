@@ -14,7 +14,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.2.0";
+  var APP_VERSION = "1.3.0";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -499,7 +499,7 @@
   }
 
   function motionEnabled() {
-    return (preferences.zen ? preferences.zenMotion : preferences.fx) && !reducedMotion.matches;
+    return !preferences.zen && preferences.fx && !reducedMotion.matches;
   }
 
   function automaticErrors() {
@@ -529,8 +529,11 @@
     $("zen-toggle").setAttribute("aria-pressed", String(preferences.zen));
     $("zen-toggle").setAttribute("aria-label", preferences.zen ? "退出禅模式" : "进入禅模式");
     $("zen-toggle").querySelector("span").textContent = preferences.zen ? "退出禅模式" : "禅模式";
-    $("zen-toggle").title = preferences.zen ? "回到原来的显示与反馈设置" : "收起成绩，进入静庭";
+    $("zen-toggle").title = preferences.zen ? "退出禅模式（Esc），保留当前棋局" : "只留下棋盘与基本填数工具";
+    $("zen-toggle").setAttribute("aria-keyshortcuts", preferences.zen ? "Escape" : "");
     $("zen-panel").hidden = !preferences.zen;
+    if (preferences.zen) prepareZenView();
+    renderZenContext();
     var zenMotion = $("zen-motion-toggle");
     zenMotion.disabled = reducedMotion.matches;
     zenMotion.setAttribute("aria-pressed", String(preferences.zenMotion && !reducedMotion.matches));
@@ -545,7 +548,7 @@
     $("focus-toggle").setAttribute("aria-label", preferences.focus ? "退出沉浸模式" : "进入沉浸模式");
     var focusLabel = $("focus-toggle").querySelector("span");
     if (focusLabel) focusLabel.textContent = preferences.focus ? "退出沉浸" : "沉浸";
-    Atmosphere.configure({ fx: preferences.zen ? preferences.zenMotion : preferences.fx,
+    Atmosphere.configure({ fx: !preferences.zen && preferences.fx,
       zen: preferences.zen, sound: preferences.sound && !preferences.zen,
       theme: preferences.theme, intensity: preferences.intensity, reducedMotion: reducedMotion.matches });
     var switcher = $("theme-switcher");
@@ -636,7 +639,7 @@
     batchSelection.forEach(function (i) { if (game.board[i] || game.givens[i]) batchSelection.delete(i); });
     renderModeControls();
     renderEnergy();
-    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
+    if (pendingHint && (document.body.dataset.zen === "on" || !canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
     var selectedValue = game.board[game.selected];
     var errors = automaticErrors() || checkedReveal ? conflicts() : new Set();
     var waitingToStart = !game.started;
@@ -664,14 +667,14 @@
       var specialPeer = i !== game.selected && (game.mode === "knight" ?
         isKnightMove(i, game.selected) :
         sameUnit(i, game.selected) && (isMulti() ? boardLayout.cells[game.selected].boards.length > 1 : !Engine.arePeers(i, game.selected, "classic")));
-      button.classList.toggle("variant-peer", specialPeer);
-      button.classList.toggle("knight-target", game.mode === "knight" && specialPeer);
+      button.classList.toggle("variant-peer", !preferences.zen && specialPeer);
+      button.classList.toggle("knight-target", !preferences.zen && game.mode === "knight" && specialPeer);
       button.classList.toggle("given", !fogged && Boolean(game.givens[i]));
       button.classList.toggle("arrow-bulb-cell", !fogged && arrowBulbCells.has(i));
       button.classList.toggle("filled", !fogged && Boolean(value) && !game.givens[i]);
       button.classList.toggle("selected", i === game.selected);
-      button.classList.toggle("related", i !== game.selected && sameUnit(i, game.selected));
-      button.classList.toggle("same-value", !fogged && Boolean(selectedValue) && value === selectedValue && i !== game.selected);
+      button.classList.toggle("related", !preferences.zen && i !== game.selected && sameUnit(i, game.selected));
+      button.classList.toggle("same-value", !preferences.zen && !fogged && Boolean(selectedValue) && value === selectedValue && i !== game.selected);
       button.classList.toggle("conflict", !fogged && errors.has(i));
       button.classList.toggle("hint-cell", Boolean(pendingHint && pendingHint.index === i));
       button.classList.toggle("branch-cell", inBranch() &&
@@ -704,7 +707,7 @@
       var remaining = Math.max(0, (ruleOnly() ? (isMulti() ? count : 9) : game.solution.filter(function (n) { return n === value; }).length) - count);
       button.querySelector(".remaining").textContent = ruleOnly() && isMulti() ? String(count) : remaining ? String(remaining) : "✓";
       button.classList.toggle("exhausted", !(ruleOnly() && isMulti()) && remaining === 0);
-      button.setAttribute("aria-label", "填入 " + value + (ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
+      button.setAttribute("aria-label", "填入 " + value + (preferences.zen ? "" : ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
       button.disabled = blocked;
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
@@ -753,6 +756,7 @@
       }
     }
     document.body.dataset.branch = inBranch() ? "on" : "off";
+    renderZenContext();
     $("fog-toggle").setAttribute("aria-pressed", String(game.fog));
     $("fog-banner").hidden = !game.fog;
     $("fog-clear").disabled = blocked || game.fogSeen.every(Boolean);
@@ -770,7 +774,7 @@
     if ($("error-toggle")) $("error-toggle").title = ruleOnly() ? "切换规则冲突即时标记" : "切换错误数字即时标红";
     renderLens();
     renderHint();
-    if (draftUi) draftUi.render();
+    if (draftUi && !preferences.zen) draftUi.render();
     if ($("pause-btn")) {
       $("pause-btn").disabled = waitingToStart || game.completed;
       var pauseText = waitingToStart ? "尚未开始" : game.paused ? "继续游戏" : "暂停游戏";
@@ -798,10 +802,10 @@
     document.body.dataset.gameState = game.completed ? "completed" : waitingToStart ? "ready" : game.paused ? "paused" : "playing";
     if ($("multi-selected-label") && isMulti()) $("multi-selected-label").textContent = cellLocation(game.selected);
     boardElement.setAttribute("aria-multiselectable", String(batchSelecting || batchSelection.size > 0));
-    boardElement.setAttribute("aria-label", modeInfo(game.mode).label + "棋盘，已填 " + filled + " 格，共 " + game.board.length + " 格");
+    boardElement.setAttribute("aria-label", modeInfo(game.mode).label + (preferences.zen ? "棋盘" : "棋盘，已填 " + filled + " 格，共 " + game.board.length + " 格"));
   }
 
-  function advancedToolsEnabled() { return document.body.dataset.advancedTools !== "off"; }
+  function advancedToolsEnabled() { return document.body.dataset.zen !== "on" && document.body.dataset.advancedTools !== "off"; }
 
   function renderLens() {
     // These are session-only view modes, not saved notes or draft data. Without
@@ -1524,7 +1528,7 @@
   function renderHint() {
     var panel = $("hint-panel");
     if (!panel) return;
-    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
+    if (pendingHint && (document.body.dataset.zen === "on" || !canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
     panel.hidden = !pendingHint;
     // Clear the actual text too, so stale answers do not remain in the hidden
     // panel after pausing, switching modes, changing cells or closing it.
@@ -1543,7 +1547,7 @@
   }
 
   function requestHint() {
-    if (!canInteract() || ruleOnly()) {
+    if (document.body.dataset.zen === "on" || !canInteract() || ruleOnly()) {
       pendingHint = null;
       renderHint();
       return;
@@ -1602,7 +1606,7 @@
   }
 
   function checkBoard() {
-    if (!canInteract()) return;
+    if (preferences.zen || !canInteract()) return;
     if (ruleOnly()) {
       var ruleErrors = conflicts();
       var stuck = [];
@@ -2006,7 +2010,8 @@
       (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) + "，每一个数字都找到了自己的位置。";
     if ($("completion-time")) $("completion-time").textContent = formatTime(game.elapsedMs);
     if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode ? "—" : String(game.mistakes);
-    showDialog($("completion-dialog"));
+    // Zen completion stays on the finished board, without a score dialog.
+    if (!preferences.zen) showDialog($("completion-dialog"));
     celebrate();
     save("完成");
   }
@@ -2176,23 +2181,59 @@
     selectedVoyage = button.dataset.voyage;
     renderVoyage();
   });
-  bind("zen-toggle", "click", function () {
-    preferences.zen = !preferences.zen;
-    // Only display/feedback changes. Never replace the puzzle or reset its clock.
-    clearPulse();
-    clearTimeout(checkTimeout);
-    checkedReveal = false;
+  function renderZenContext() {
+    var context = $("zen-context");
+    if (!context) return;
+    var message = game && game.completed ? "此境已圆满" :
+      inBranch() ? "假设中 · 退出后可管理" : "";
+    context.hidden = !preferences.zen || !message;
+    context.textContent = message;
+  }
+
+  function prepareZenView() {
+    // View state only: never erase saved notes, drafts, branches, fog or history.
+    clearTransientMarks();
+    lensDigit = 0; lensResult = null; lensKey = "";
+    var appearance = $("appearance-settings");
+    if (appearance) appearance.open = false;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.close();
+    if (window.NineRealmsFloatingDraft) window.NineRealmsFloatingDraft.close(false);
+    if ($("more-tools-panel")) $("more-tools-panel").hidden = true;
+  }
+
+  function setZen(enabled) {
+    enabled = Boolean(enabled);
+    if (preferences.zen === enabled) return;
+    preferences.zen = enabled;
+    // No new puzzle, pause, score reset or settings reset on either transition.
+    if (enabled) prepareZenView();
+    else clearTransientMarks();
     clearTimeout(toastTimeout);
     $("toast").hidden = true;
     stopCelebration();
     resetTilt();
     renderPreferences();
     render();
+    if (window.NineRealmsWorkspace) window.NineRealmsWorkspace.sync();
     if (!preferences.zen) Atmosphere.unlock();
-    setStatus(preferences.zen ? "禅模式已开启。慢慢来，需要时可使用检查与灵感提示。" :
+    setStatus(preferences.zen ? "禅模式。只留下棋盘、填数、笔记、擦除与撤销。按 Esc 退出。" :
       "已回到普通模式，棋局进度与原来的显示设置都已保留。");
     save();
-  });
+    var focus = !enabled ? $("zen-toggle") : !game.started ? $("start-btn") :
+      game.paused ? $("resume-btn") : game.completed ? $("zen-toggle") : cells[game.selected];
+    if (focus) focus.focus({ preventScroll: true });
+  }
+
+  function exitZenOnEscape(event) {
+    // Exit is available before input guards, including ready/paused/completed.
+    // An open select/dialog consumes its own first Escape before leaving Zen.
+    if (event.key !== "Escape" || event.defaultPrevented || !preferences.zen || dialogIsOpen()) return false;
+    event.preventDefault();
+    setZen(false);
+    return true;
+  }
+
+  bind("zen-toggle", "click", function () { setZen(!preferences.zen); });
   bind("zen-pause", "click", function () { setPaused(!game.paused); });
   bind("zen-motion-toggle", "click", function () {
     if (reducedMotion.matches) return;
@@ -2375,6 +2416,7 @@
   });
 
   document.addEventListener("keydown", function (event) {
+    if (exitZenOnEscape(event)) return;
     var appearance = $("appearance-settings");
     if (event.key === "Escape" && appearance && appearance.open) {
       event.preventDefault();

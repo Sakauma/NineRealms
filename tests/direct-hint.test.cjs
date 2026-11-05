@@ -54,7 +54,8 @@ function fixture(mode = 'classic') {
   const keyStart=source.indexOf('  document.addEventListener("keydown", function (event) {');
   const keyEnd=source.indexOf('    if (event.key === "Escape" && (batchSelection',keyStart);
   assert(keyStart>=0&&keyEnd>keyStart,'production global Escape handler boundaries');
-  s.document={addEventListener(name,callback){assert.equal(name,'keydown');s.keydown=callback;}};
+  s.exitZenOnEscape=()=>false;
+  s.document={body:{dataset:{zen:'off'}},addEventListener(name,callback){assert.equal(name,'keydown');s.keydown=callback;}};
   vm.runInContext(source.slice(keyStart,keyEnd)+'  });',context);
   return {s, $, calls, puzzle, close};
 }

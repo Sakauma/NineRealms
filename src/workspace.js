@@ -40,7 +40,7 @@
   });
   // Retain optional-tool code and saved data, but no hidden entry or batch drawer
   // may reopen it in the simplified interface.
-  function advancedToolsEnabled() { return body.dataset.advancedTools !== 'off'; }
+  function advancedToolsEnabled() { return body.dataset.zen !== 'on' && body.dataset.advancedTools !== 'off'; }
   function refreshTools() {
     if (!more || !moreButton) return;
     if (!advancedToolsEnabled()) {
@@ -116,7 +116,7 @@
     // One presentation shell for every mode. Board cells, clues and view geometry
     // remain owned by the game; only existing controls move at the breakpoint.
     set('workspace', 'unified');
-    compose(wide.matches);
+    compose(wide.matches && body.dataset.zen !== 'on');
     set('desktop', desktop ? 'on' : 'off');
     var tool = !hint.hidden ? 'hint' : draft.getAttribute('aria-expanded') === 'true' ? 'draft' : '';
     set('workspaceTool', tool);
@@ -126,13 +126,13 @@
       var heading = doc.getElementById('hint-title');
       heading.tabIndex = -1; heading.focus({preventScroll:true});
     } else if (tool !== 'hint' && previous === 'hint' && (hint.contains(doc.activeElement) || doc.activeElement === body)) {
-      hintButton.focus({preventScroll:true});
+      (body.dataset.zen === 'on' ? doc.getElementById('zen-toggle') : hintButton).focus({preventScroll:true});
     }
     previous = tool;
   }
   if (root.MutationObserver) {
     var observer = new root.MutationObserver(sync);
-    observer.observe(body, {attributes:true, attributeFilter:['data-mode', 'data-multi', 'data-multi-view', 'data-outside-clues']});
+    observer.observe(body, {attributes:true, attributeFilter:['data-mode', 'data-multi', 'data-multi-view', 'data-outside-clues', 'data-zen']});
     observer.observe(hint, {attributes:true, attributeFilter:['hidden']});
     observer.observe(draft, {attributes:true, attributeFilter:['aria-expanded']});
   }

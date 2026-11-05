@@ -48,7 +48,7 @@ async function fullApp(){
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
  }});
  const w=dom.window,d=w.document,$=id=>d.getElementById(id),trigger=id=>d.querySelector(`[data-select-id="${id}"] .glass-select-trigger`),panel=id=>$(trigger(id).getAttribute('aria-controls'));
- await new Promise(r=>setTimeout(r,30));assert.deepEqual(errors,[]);assert.equal(d.querySelectorAll('.glass-select-trigger').length,7);
+ await new Promise(r=>setTimeout(r,30));assert.deepEqual(errors,[]);assert.equal(d.querySelectorAll('.glass-select-trigger').length,d.querySelectorAll('select').length);assert([...d.querySelectorAll('select')].every(select=>select.dataset.glassEnhanced==='true'));
  assert.equal(trigger('scene-intensity').textContent,'轻柔 · 安静背景');assert.equal(trigger('difficulty').textContent,$('difficulty').selectedOptions[0].textContent);
  $('appearance-settings').open=true;trigger('scene-intensity').click();panel('scene-intensity').querySelector('[data-index="1"]').click();assert.equal(d.body.dataset.intensity,'balanced');assert($('appearance-settings').open);assert.equal(trigger('scene-intensity').textContent,'标准 · 均衡层次');
  trigger('scene-intensity').click();trigger('scene-intensity').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert($('appearance-settings').open);$('appearance-settings').open=false;
@@ -61,4 +61,4 @@ async function fullApp(){
  w.NineRealmsHistory.open();trigger('history-filter').click();panel('history-filter').querySelector('[data-index="2"]').click();assert.equal($('history-filter').value,'completed');w.NineRealmsHistory.close();w.NineRealmsHistory.open('glass-session');assert.equal($('history-filter').value,'all');assert.equal(trigger('history-filter').textContent,'全部棋局');
  assert.deepEqual(errors,[]);dom.window.close();
 }
-(async()=>{await fixture(false);await fixture(true);await fullApp();console.log('PASS glass selects: seven controls including draft relations + dynamic history, state/events/options/disabled, keyboard isolation, dismissals, owner ancestry, labels/focus, fallback + mocked popover, and full-app twin/settings/favorites/history integration. DOM simulation, not visual verification.');})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{await fixture(false);await fixture(true);await fullApp();console.log('PASS glass selects: every current control including draft relations + dynamic history, state/events/options/disabled, keyboard isolation, dismissals, owner ancestry, labels/focus, fallback + mocked popover, and full-app twin/settings/favorites/history integration. DOM simulation, not visual verification.');})().catch(e=>{console.error(e);process.exitCode=1;});

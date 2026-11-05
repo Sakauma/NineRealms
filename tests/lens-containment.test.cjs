@@ -23,7 +23,7 @@ for (const id of ['candidate-lens','batch-panel','more-tools-panel','draft-toggl
   assert(!new RegExp("\\['#"+id+"',\\s*(tools|controls)\\]").test(workspace),'optional content never moves into primary tools: '+id);
 }
 assert(workspace.includes("['#more-tools-toggle', controls]"),'dormant trigger preserves its original identity without a live entry');
-assert(workspace.includes('compose(wide.matches)'),'every released mode uses the shared desktop composition at the same breakpoint');
+assert(workspace.includes("compose(wide.matches && body.dataset.zen !== 'on')"),'every released mode uses the shared desktop breakpoint outside Zen');
 assert(!/dataset\.mode\s*===\s*['"]classic['"]/.test(workspace),'presentation cannot gate the shared shell on classic mode');
 assert(!workspace.includes('compose(classic'),'no legacy classic-only composition remains');
 assert(!/(?:overflow(?:-[xy])?)\s*:\s*(?:auto|scroll)\b/.test(css),'desktop styling introduces no nested scroll area');

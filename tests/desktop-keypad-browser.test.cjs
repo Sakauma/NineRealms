@@ -50,9 +50,13 @@ const sameSize=(a,b)=>{close(a.width,b.width,'state preserves target width');clo
   }
   checks.push('Repeated hint open/close at the narrowest short desktop width in both hands preserves board, square keys and primary rail, with the result contained in the final control row.');
   for(const hand of ['right','left']){
-   await load({w:980,h:560,large:true,hand});const normal=await run('('+readSquareRailGeometry.toString()+')()');await click('#zen-toggle');await run('scrollTo(0,0)');const zen=await run('('+readSquareRailGeometry.toString()+')()');assert(zen.zen,'Zen is enabled');assertSquareRailGeometry(zen,'Zen '+hand);for(let i=0;i<9;i++)sameSize(zen.keys[i],normal.keys[i]);await click('#zen-toggle');await run('scrollTo(0,0)');assertSquareRailGeometry(await run('('+readSquareRailGeometry.toString()+')()'),'Zen restored '+hand);
+   await load({w:980,h:560,large:true,hand});const normal=await run('('+readSquareRailGeometry.toString()+')()');await click('#zen-toggle');await run('scrollTo(0,0)');
+   assert.equal(await run('document.body.dataset.zen'),'on');assert.equal(await run('document.body.dataset.desktop'),'off','Zen suspends the desktop rail');
+   assert(await run('[...document.querySelectorAll("#number-pad button")].every(e=>{const r=e.getBoundingClientRect();return r.width>=44&&r.height>=44})'),'Zen retains accessible digit targets');
+   assert(await run('document.querySelector("#new-game").getClientRects().length===0'),'New Game is not a Zen action');
+   await click('#zen-toggle');await run('scrollTo(0,0)');const restored=await run('('+readSquareRailGeometry.toString()+')()');assertSquareRailGeometry(restored,'Zen restored '+hand);for(let i=0;i<9;i++)sameSize(restored.keys[i],normal.keys[i]);
   }
-  checks.push('Zen in both handedness modes preserves square key sizes and anchors the actual New Game action at the board bottom.');
+  checks.push('Zen in both handedness modes suspends the desktop rail, hides New Game, keeps 44px digit targets and restores ordinary square key sizes on exit.');
   // Force a genuinely overlong intrinsic section to exercise the no-clipping fallback.
   await load({w:980,h:560,large:true});await run('document.querySelector(".stats").style.minHeight="220px"');const overflow=await run('('+readSquareRailGeometry.toString()+')()');assert(assertSquareRailGeometry(overflow,'forced intrinsic overflow').overflow);assert(await run('document.documentElement.scrollHeight>innerHeight'));
   checks.push('Forced overlong stats expand the main row naturally; all digits/footer remain ordered and unclipped with document scrolling.');

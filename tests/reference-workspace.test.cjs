@@ -944,6 +944,20 @@ test('composition is idempotent, closes selects, repositions open draft and rese
   assert.equal(f.state.draftPositions, positions + 2); assertDesktopOrder(f); f.assertIdentity();
 });
 
+test('Zen suspends desktop composition and restores the same nodes across all modes and resizes', () => {
+  const f = fixture();
+  for (const mode of releasedModes) {
+    f.resize(1440, 900); f.mode(mode.mode, mode.multi, 'overview', mode.outsideClues);
+    assertDesktopOrder(f);
+    f.body.dataset.zen = 'on'; f.flush();
+    assert.equal(f.body.dataset.desktop, 'off'); f.assertRestored();
+    f.resize(1920, 1080); assert.equal(f.body.dataset.desktop, 'off'); f.assertRestored();
+    f.resize(390, 844); assert.equal(f.body.dataset.desktop, 'off'); f.assertRestored();
+    f.body.dataset.zen = 'off'; f.flush(); f.assertRestored();
+    f.resize(1440, 900); assertDesktopOrder(f); f.assertIdentity();
+  }
+});
+
 console.log((process.exitCode ? 'PARTIAL' : 'PASS') + ' reference workspace synthetic controller: ' + checks.length +
   ' groups. Simulated DOM only; no browser layout, pixels, native Tab/accessibility tree, pointer targets, 3D or app integration verification.');
 

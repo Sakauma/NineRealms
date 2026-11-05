@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 DIST = ROOT / "dist"
 RELEASE = ROOT / "release"
-STYLES = ("styles.css", "history.css", "easter-extras.css", "numerals.css", "workspace.css", "desktop-workspace.css")
+STYLES = ("styles.css", "history.css", "easter-extras.css", "numerals.css", "workspace.css", "desktop-workspace.css", "zen.css")
 SCRIPTS = (
     "variant-bank.js", "multigrid-bank.js", "engine.js", "desktop-bridge.js", "logic.js", "custom-puzzle.js", "challenge.js",
     "daily.js", "hints.js", "technique-guides.js", "training.js", "voyage.js", "variant-view.js", "scene-webgl.js",

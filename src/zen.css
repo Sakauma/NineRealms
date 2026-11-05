@@ -1,0 +1,64 @@
+/* Pure Zen is a reversible presentation of the same live puzzle.
+   workspace.js restores the original narrow DOM order while Zen is active;
+   no second board, keypad, save schema or puzzle rules are introduced. */
+body[data-workspace=unified][data-zen=on]{
+ --workspace-board:min(560px,calc(100vw - 32px));
+ --workspace-dock:560px;
+}
+body[data-workspace=unified][data-zen=on] .app-shell{width:min(560px,calc(100% - 32px));padding-bottom:32px}
+body[data-workspace=unified][data-zen=on][data-multi=true][data-multi-view=overview]{--workspace-dock:680px;--workspace-board:min(680px,calc(100vw - 32px))}
+body[data-workspace=unified][data-zen=on][data-multi=true][data-multi-view=overview] .app-shell{width:min(680px,calc(100% - 32px))}
+body[data-workspace=unified][data-zen=on] .topbar{width:100%;min-height:72px;justify-content:flex-end;border:0;margin:0;padding:12px 0}
+body[data-workspace=unified][data-zen=on] .topbar-right{width:100%;justify-content:flex-end;gap:12px}
+body[data-workspace=unified][data-zen=on] #zen-toggle{min-height:44px;padding:8px 12px;border-color:transparent;background:transparent;color:var(--muted);font-size:12px;box-shadow:none}
+body[data-workspace=unified][data-zen=on] #zen-toggle>.icon{display:none}
+body[data-workspace=unified][data-zen=on] #zen-toggle:hover{color:var(--text);background:var(--related)}
+body[data-workspace=unified][data-zen=on] .zen-context{margin-right:auto;font-size:12px;line-height:1.6;color:var(--muted)}
+body[data-workspace=unified][data-zen=on] main{padding-top:0}
+/* Remove chrome, scores, helpers and feature entrances, not the underlying data. */
+body[data-workspace=unified][data-zen=on] :is(.brand,#personal-open,#history-open,#appearance-settings,#puzzle-settings,.session-strip,.desktop-context,.desktop-heading,.desktop-status,.desktop-board-alerts,.stats,.board-bottomline,.pad-heading,.reasoning-workspace,.scene-drawer,.discovery-cards,footer,.keyboard-guide,#hint-btn,#hint-panel,#redo-btn,#more-tools-toggle,#more-tools-panel,#draft-dock,#draft-panel,#new-game,.tool-shortcut,.remaining,#draft-overlay,.draft-color-layer,.draft-mark){display:none!important}
+body[data-workspace=unified][data-zen=on] .game-layout{width:100%;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+body[data-workspace=unified][data-zen=on] .game-layout>.board-section{width:100%;min-width:0;max-width:100%;grid-column:1;order:1}
+/* Keep original 3D materials and per-variant padding, including outside clues. */
+body[data-workspace=unified][data-zen=on] .board-stage{transform:none}
+body[data-workspace=unified][data-zen=on] .board-card{transform:none;transition:none}
+body[data-workspace=unified][data-zen=on] .board-shadow{opacity:.2}
+body[data-workspace=unified][data-zen=on] .cell{transition:none}
+body[data-workspace=unified][data-zen=on] .cell::after{animation:none}
+body[data-workspace=unified][data-zen=on] .cell .value{animation:none}
+body[data-workspace=unified][data-zen=on] .game-layout>.control-panel{order:2;grid-column:1;width:100%;max-width:560px;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;position:static}
+body[data-workspace=unified][data-zen=on]:not([data-desktop=on]) #play-controls{display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
+body[data-workspace=unified][data-zen=on] .number-pad{display:flex;flex-wrap:wrap;justify-content:center;width:100%;gap:6px;order:1;margin:0}
+/* Inherit the original theme-linked frosted face, rim, blur and pointer states. */
+body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex:0 0 calc((100% - 48px) / 9);min-width:44px;min-height:52px;height:52px;aspect-ratio:auto;padding:0;border-radius:12px;color:var(--text);opacity:1}
+body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:27px;font-weight:400;text-shadow:none}
+body[data-workspace=unified][data-zen=on] .tools-grid{order:2;display:flex;width:auto;justify-content:center;gap:12px}
+body[data-workspace=unified][data-zen=on] .history-tools{display:contents}
+body[data-workspace=unified][data-zen=on] .control-panel :is(#undo-btn,#erase-btn,#notes-btn){width:auto;min-width:72px;min-height:44px;height:44px;padding:8px 10px;gap:6px;font-size:12px;color:var(--muted);border:1px solid transparent;background:transparent;box-shadow:none;flex-direction:row}
+body[data-workspace=unified][data-zen=on] .control-panel :is(#undo-btn,#erase-btn,#notes-btn):hover:not(:disabled){color:var(--text);background:var(--related)}
+body[data-workspace=unified][data-zen=on] .control-panel #notes-btn[aria-pressed=true]{color:var(--text);border-color:var(--accent);background:var(--related)}
+body[data-workspace=unified][data-zen=on] #undo-btn .sr-only{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;clip-path:none;white-space:normal}
+/* Multi-board navigation is a rule-essential control, not an optional helper. */
+body[data-workspace=unified][data-zen=on] #multigrid-tools{justify-content:center;width:100%;padding:0;margin:0 auto 12px;gap:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+body[data-workspace=unified][data-zen=on] #multigrid-tools>:is(div,p){display:none}
+body[data-workspace=unified][data-zen=on] #multigrid-tools label{flex:0 1 auto;font-size:12px;color:var(--muted)}
+body[data-workspace=unified][data-zen=on] #multigrid-tools .glass-select-trigger{background:transparent;box-shadow:none;border-color:var(--line)}
+body[data-workspace=unified][data-zen=on] #pause-description{max-width:25em;margin-inline:auto}
+body[data-workspace=unified][data-zen=on] .pause-overlay .pause-symbol{display:none}
+body[data-workspace=unified][data-zen=on] :is(button,select):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* On phones use 5 + 4 keys instead of shrinking nine targets below 44px. */
+@media(max-width:479px){
+ body[data-workspace=unified][data-zen=on] .topbar{min-height:60px;padding:8px 0}
+ body[data-workspace=unified][data-zen=on] .game-layout{gap:12px}
+ body[data-workspace=unified][data-zen=on] .number-pad{gap:4px 8px}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex-basis:calc((100% - 32px) / 5);height:48px;min-height:48px}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:25px}
+}
+@media(min-width:768px){body[data-workspace=unified][data-zen=on] .topbar{min-height:96px}}
+/* Keep the user's accessibility preference even in the reduced interface. */
+body[data-workspace=unified][data-zen=on][data-text-size=large] #number-pad .key-value{font-size:31px}
+body[data-workspace=unified][data-zen=on][data-text-size=large] :is(#zen-toggle,.zen-context,#undo-btn,#erase-btn,#notes-btn){font-size:14px}
+@media(forced-colors:active){
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key{border-color:ButtonText;color:ButtonText}
+ body[data-workspace=unified][data-zen=on] #notes-btn[aria-pressed=true]{outline:2px solid Highlight}
+}

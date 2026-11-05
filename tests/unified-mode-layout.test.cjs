@@ -18,7 +18,7 @@ function rule(css, selector) {
   return match[1];
 }
 assert(workspace.includes("set('workspace', 'unified')"));
-assert(workspace.includes('compose(wide.matches)'));
+assert(workspace.includes("compose(wide.matches && body.dataset.zen !== 'on')"));
 assert(!/dataset\.mode\s*===\s*['"]classic['"]/.test(workspace), 'no classic-only eligibility gate');
 assert(!/data-workspace=classic/.test(narrow + desktop), 'no forgotten classic-only visual selectors');
 assert(workspace.includes("['#multigrid-tools', alerts]"), 'multi chooser has a retained restoration anchor');

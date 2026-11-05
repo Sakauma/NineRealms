@@ -2334,6 +2334,72 @@ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [d
  body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [data-arrow-path]) .history-cell .history-notes>span{font-size:min(1em,2.222222cqw)}
 }
 
+</style><style>
+/* Pure Zen is a reversible presentation of the same live puzzle.
+   workspace.js restores the original narrow DOM order while Zen is active;
+   no second board, keypad, save schema or puzzle rules are introduced. */
+body[data-workspace=unified][data-zen=on]{
+ --workspace-board:min(560px,calc(100vw - 32px));
+ --workspace-dock:560px;
+}
+body[data-workspace=unified][data-zen=on] .app-shell{width:min(560px,calc(100% - 32px));padding-bottom:32px}
+body[data-workspace=unified][data-zen=on][data-multi=true][data-multi-view=overview]{--workspace-dock:680px;--workspace-board:min(680px,calc(100vw - 32px))}
+body[data-workspace=unified][data-zen=on][data-multi=true][data-multi-view=overview] .app-shell{width:min(680px,calc(100% - 32px))}
+body[data-workspace=unified][data-zen=on] .topbar{width:100%;min-height:72px;justify-content:flex-end;border:0;margin:0;padding:12px 0}
+body[data-workspace=unified][data-zen=on] .topbar-right{width:100%;justify-content:flex-end;gap:12px}
+body[data-workspace=unified][data-zen=on] #zen-toggle{min-height:44px;padding:8px 12px;border-color:transparent;background:transparent;color:var(--muted);font-size:12px;box-shadow:none}
+body[data-workspace=unified][data-zen=on] #zen-toggle>.icon{display:none}
+body[data-workspace=unified][data-zen=on] #zen-toggle:hover{color:var(--text);background:var(--related)}
+body[data-workspace=unified][data-zen=on] .zen-context{margin-right:auto;font-size:12px;line-height:1.6;color:var(--muted)}
+body[data-workspace=unified][data-zen=on] main{padding-top:0}
+/* Remove chrome, scores, helpers and feature entrances, not the underlying data. */
+body[data-workspace=unified][data-zen=on] :is(.brand,#personal-open,#history-open,#appearance-settings,#puzzle-settings,.session-strip,.desktop-context,.desktop-heading,.desktop-status,.desktop-board-alerts,.stats,.board-bottomline,.pad-heading,.reasoning-workspace,.scene-drawer,.discovery-cards,footer,.keyboard-guide,#hint-btn,#hint-panel,#redo-btn,#more-tools-toggle,#more-tools-panel,#draft-dock,#draft-panel,#new-game,.tool-shortcut,.remaining,#draft-overlay,.draft-color-layer,.draft-mark){display:none!important}
+body[data-workspace=unified][data-zen=on] .game-layout{width:100%;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+body[data-workspace=unified][data-zen=on] .game-layout>.board-section{width:100%;min-width:0;max-width:100%;grid-column:1;order:1}
+/* Keep original 3D materials and per-variant padding, including outside clues. */
+body[data-workspace=unified][data-zen=on] .board-stage{transform:none}
+body[data-workspace=unified][data-zen=on] .board-card{transform:none;transition:none}
+body[data-workspace=unified][data-zen=on] .board-shadow{opacity:.2}
+body[data-workspace=unified][data-zen=on] .cell{transition:none}
+body[data-workspace=unified][data-zen=on] .cell::after{animation:none}
+body[data-workspace=unified][data-zen=on] .cell .value{animation:none}
+body[data-workspace=unified][data-zen=on] .game-layout>.control-panel{order:2;grid-column:1;width:100%;max-width:560px;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;position:static}
+body[data-workspace=unified][data-zen=on]:not([data-desktop=on]) #play-controls{display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
+body[data-workspace=unified][data-zen=on] .number-pad{display:flex;flex-wrap:wrap;justify-content:center;width:100%;gap:6px;order:1;margin:0}
+/* Inherit the original theme-linked frosted face, rim, blur and pointer states. */
+body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex:0 0 calc((100% - 48px) / 9);min-width:44px;min-height:52px;height:52px;aspect-ratio:auto;padding:0;border-radius:12px;color:var(--text);opacity:1}
+body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:27px;font-weight:400;text-shadow:none}
+body[data-workspace=unified][data-zen=on] .tools-grid{order:2;display:flex;width:auto;justify-content:center;gap:12px}
+body[data-workspace=unified][data-zen=on] .history-tools{display:contents}
+body[data-workspace=unified][data-zen=on] .control-panel :is(#undo-btn,#erase-btn,#notes-btn){width:auto;min-width:72px;min-height:44px;height:44px;padding:8px 10px;gap:6px;font-size:12px;color:var(--muted);border:1px solid transparent;background:transparent;box-shadow:none;flex-direction:row}
+body[data-workspace=unified][data-zen=on] .control-panel :is(#undo-btn,#erase-btn,#notes-btn):hover:not(:disabled){color:var(--text);background:var(--related)}
+body[data-workspace=unified][data-zen=on] .control-panel #notes-btn[aria-pressed=true]{color:var(--text);border-color:var(--accent);background:var(--related)}
+body[data-workspace=unified][data-zen=on] #undo-btn .sr-only{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;clip-path:none;white-space:normal}
+/* Multi-board navigation is a rule-essential control, not an optional helper. */
+body[data-workspace=unified][data-zen=on] #multigrid-tools{justify-content:center;width:100%;padding:0;margin:0 auto 12px;gap:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+body[data-workspace=unified][data-zen=on] #multigrid-tools>:is(div,p){display:none}
+body[data-workspace=unified][data-zen=on] #multigrid-tools label{flex:0 1 auto;font-size:12px;color:var(--muted)}
+body[data-workspace=unified][data-zen=on] #multigrid-tools .glass-select-trigger{background:transparent;box-shadow:none;border-color:var(--line)}
+body[data-workspace=unified][data-zen=on] #pause-description{max-width:25em;margin-inline:auto}
+body[data-workspace=unified][data-zen=on] .pause-overlay .pause-symbol{display:none}
+body[data-workspace=unified][data-zen=on] :is(button,select):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* On phones use 5 + 4 keys instead of shrinking nine targets below 44px. */
+@media(max-width:479px){
+ body[data-workspace=unified][data-zen=on] .topbar{min-height:60px;padding:8px 0}
+ body[data-workspace=unified][data-zen=on] .game-layout{gap:12px}
+ body[data-workspace=unified][data-zen=on] .number-pad{gap:4px 8px}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex-basis:calc((100% - 32px) / 5);height:48px;min-height:48px}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:25px}
+}
+@media(min-width:768px){body[data-workspace=unified][data-zen=on] .topbar{min-height:96px}}
+/* Keep the user's accessibility preference even in the reduced interface. */
+body[data-workspace=unified][data-zen=on][data-text-size=large] #number-pad .key-value{font-size:31px}
+body[data-workspace=unified][data-zen=on][data-text-size=large] :is(#zen-toggle,.zen-context,#undo-btn,#erase-btn,#notes-btn){font-size:14px}
+@media(forced-colors:active){
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key{border-color:ButtonText;color:ButtonText}
+ body[data-workspace=unified][data-zen=on] #notes-btn[aria-pressed=true]{outline:2px solid Highlight}
+}
+
 </style>
 </head>
 <body data-advanced-tools="off" data-theme="nebula" data-fx="on" data-game-state="ready" data-focus="off" data-zen="off" data-zen-motion="on" data-motion="full">
@@ -2368,7 +2434,7 @@ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [d
 <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
 <div class="space-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
 <div class="app-shell">
-<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle personal-open" id="personal-open" type="button" aria-haspopup="dialog" aria-controls="personal-dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>我的题目</span></button><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="收起成绩，进入静庭"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
+<header class="topbar"><a class="brand" href="#" aria-label="九境 Nine Realms 首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="brand-word">九境<span>NINE REALMS</span></span></a><div class="topbar-right"><button class="fx-toggle personal-open" id="personal-open" type="button" aria-haspopup="dialog" aria-controls="personal-dialog"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>我的题目</span></button><button class="fx-toggle history-open" id="history-open" type="button" aria-label="打开棋局历史与回放" title="棋局历史与逐步回放" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><path d="M3 11a9 9 0 1 1 2.3 7M3 4v7h7M12 7v5l3 2"/></svg><span>历史</span></button><span id="zen-context" class="zen-context" role="status" hidden></span><button class="fx-toggle" id="zen-toggle" type="button" aria-pressed="false" title="只留下棋盘与基本填数工具"><svg class="icon" aria-hidden="true"><use href="#i-zen"/></svg><span>禅模式</span></button>
 <details id="appearance-settings" class="appearance-settings">
 <summary>外观设置<svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg></summary>
 <div class="appearance-panel"><div class="settings-heading"><p class="settings-label">场景主题</p><span id="theme-current-name">星云</span></div>
@@ -2390,7 +2456,7 @@ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [d
 <div class="reading-setting"><span id="reading-hand-label">单盘工具位置</span><div role="group" aria-labelledby="reading-hand-label"><button type="button" data-reading-pref="handedness" data-reading-value="left" aria-pressed="false">左手</button><button type="button" data-reading-pref="handedness" data-reading-value="right" aria-pressed="true">右手</button></div></div>
 <p class="reading-help">辅助开启后：草稿青色用点纹、金色用横纹、紫色用斜纹、玫色用交叉纹；按钮另配形状和色名；冲突数字另加波浪下划线。左右手只调整宽屏单盘，窄屏始终先显示棋盘。</p></fieldset>
 <p class="theme-help">动态效果控制背景与 3D 视差，关闭后保留静态背景。</p>
-<p class="theme-zen-help">禅模式保留柔和的场景，在棋盘上方切换“流动 / 静止”。</p>
+<p class="theme-zen-help">禅模式收起工具与成绩，保留静态主题、棋盘和基本填数。按 Esc 可退出。</p>
 <div class="appearance-toggles"><button class="fx-toggle" id="sound-toggle" aria-pressed="false" title="开启或关闭合成音效" aria-label="开启或关闭合成音效"><svg class="icon"><use href="#i-sound"/></svg><span>音效</span><span class="toggle-light"></span></button><button class="fx-toggle" id="fx-toggle" aria-pressed="true" title="开启或关闭动态背景与 3D 视差"><svg class="icon"><use href="#i-orbit"/></svg><span>动态效果</span><span class="toggle-light"></span></button><button class="fx-toggle" id="focus-toggle" aria-pressed="false" title="切换沉浸模式" aria-label="切换沉浸模式"><svg class="icon"><use href="#i-focus"/></svg><span>沉浸</span><span class="toggle-light"></span></button></div>
 </div></details></div></header>
 <main>
@@ -2499,7 +2565,7 @@ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [d
 </div>
 
 </main>
-<footer><div class="footer-copy"><span class="app-version">1.2.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 11</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
+<footer><div class="footer-copy"><span class="app-version">1.3.0</span><button id="backup-open" class="secrets-open" type="button" aria-haspopup="dialog" aria-controls="backup-dialog">数据备份</button><span>进度自动保存，随时回来继续</span><button id="secrets-open" class="secrets-open" type="button" aria-haspopup="dialog"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>旅途拾遗</span><small id="secrets-count">0 / 11</small></button></div><div class="keyboard-guide"><span><kbd>1–9</kbd> 填数</span><span><kbd>N</kbd> 笔记</span><span><kbd>Ctrl Z</kbd> 撤销</span></div></footer>
 </div>
 <canvas id="fx-canvas" aria-hidden="true"></canvas>
 <div id="toast" class="toast" role="status" hidden></div>
@@ -17917,6 +17983,7 @@ body[data-workspace=unified] .history-board-stage:has(.history-replay-overlay [d
     }
 
     document.addEventListener("keydown", function (event) {
+      if (zenEnabled()) { abortHold(); cancelCalm(); resetCode(); return; }
       if(event.target&&event.target.closest&&event.target.closest("#secret-archive-panel"))return;
       var onBrand = event.target === brand || brand.contains(event.target);
       if ((event.key === " " || event.key === "Spacebar") && onBrand && zenEnabled() && brandAvailable() &&
@@ -19050,7 +19117,7 @@ return api;
   assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');return mark(b);
  }
  function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
- function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.2.0',createdAt:new Date().toISOString(),entries:entries};}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.0',createdAt:new Date().toISOString(),entries:entries};}
  function create(storage,options){return validate(draft(storage,options));}
  function createAsync(storage,options){return validateAsync(draft(storage,options));}
  function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Object.keys(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
@@ -19524,7 +19591,7 @@ return api;
   });
   // Retain optional-tool code and saved data, but no hidden entry or batch drawer
   // may reopen it in the simplified interface.
-  function advancedToolsEnabled() { return body.dataset.advancedTools !== 'off'; }
+  function advancedToolsEnabled() { return body.dataset.zen !== 'on' && body.dataset.advancedTools !== 'off'; }
   function refreshTools() {
     if (!more || !moreButton) return;
     if (!advancedToolsEnabled()) {
@@ -19600,7 +19667,7 @@ return api;
     // One presentation shell for every mode. Board cells, clues and view geometry
     // remain owned by the game; only existing controls move at the breakpoint.
     set('workspace', 'unified');
-    compose(wide.matches);
+    compose(wide.matches && body.dataset.zen !== 'on');
     set('desktop', desktop ? 'on' : 'off');
     var tool = !hint.hidden ? 'hint' : draft.getAttribute('aria-expanded') === 'true' ? 'draft' : '';
     set('workspaceTool', tool);
@@ -19610,13 +19677,13 @@ return api;
       var heading = doc.getElementById('hint-title');
       heading.tabIndex = -1; heading.focus({preventScroll:true});
     } else if (tool !== 'hint' && previous === 'hint' && (hint.contains(doc.activeElement) || doc.activeElement === body)) {
-      hintButton.focus({preventScroll:true});
+      (body.dataset.zen === 'on' ? doc.getElementById('zen-toggle') : hintButton).focus({preventScroll:true});
     }
     previous = tool;
   }
   if (root.MutationObserver) {
     var observer = new root.MutationObserver(sync);
-    observer.observe(body, {attributes:true, attributeFilter:['data-mode', 'data-multi', 'data-multi-view', 'data-outside-clues']});
+    observer.observe(body, {attributes:true, attributeFilter:['data-mode', 'data-multi', 'data-multi-view', 'data-outside-clues', 'data-zen']});
     observer.observe(hint, {attributes:true, attributeFilter:['hidden']});
     observer.observe(draft, {attributes:true, attributeFilter:['aria-expanded']});
   }
@@ -19652,7 +19719,7 @@ return api;
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.2.0";
+  var APP_VERSION = "1.3.0";
   try { if (Backup) Backup.recover(localStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -20137,7 +20204,7 @@ return api;
   }
 
   function motionEnabled() {
-    return (preferences.zen ? preferences.zenMotion : preferences.fx) && !reducedMotion.matches;
+    return !preferences.zen && preferences.fx && !reducedMotion.matches;
   }
 
   function automaticErrors() {
@@ -20167,8 +20234,11 @@ return api;
     $("zen-toggle").setAttribute("aria-pressed", String(preferences.zen));
     $("zen-toggle").setAttribute("aria-label", preferences.zen ? "退出禅模式" : "进入禅模式");
     $("zen-toggle").querySelector("span").textContent = preferences.zen ? "退出禅模式" : "禅模式";
-    $("zen-toggle").title = preferences.zen ? "回到原来的显示与反馈设置" : "收起成绩，进入静庭";
+    $("zen-toggle").title = preferences.zen ? "退出禅模式（Esc），保留当前棋局" : "只留下棋盘与基本填数工具";
+    $("zen-toggle").setAttribute("aria-keyshortcuts", preferences.zen ? "Escape" : "");
     $("zen-panel").hidden = !preferences.zen;
+    if (preferences.zen) prepareZenView();
+    renderZenContext();
     var zenMotion = $("zen-motion-toggle");
     zenMotion.disabled = reducedMotion.matches;
     zenMotion.setAttribute("aria-pressed", String(preferences.zenMotion && !reducedMotion.matches));
@@ -20183,7 +20253,7 @@ return api;
     $("focus-toggle").setAttribute("aria-label", preferences.focus ? "退出沉浸模式" : "进入沉浸模式");
     var focusLabel = $("focus-toggle").querySelector("span");
     if (focusLabel) focusLabel.textContent = preferences.focus ? "退出沉浸" : "沉浸";
-    Atmosphere.configure({ fx: preferences.zen ? preferences.zenMotion : preferences.fx,
+    Atmosphere.configure({ fx: !preferences.zen && preferences.fx,
       zen: preferences.zen, sound: preferences.sound && !preferences.zen,
       theme: preferences.theme, intensity: preferences.intensity, reducedMotion: reducedMotion.matches });
     var switcher = $("theme-switcher");
@@ -20274,7 +20344,7 @@ return api;
     batchSelection.forEach(function (i) { if (game.board[i] || game.givens[i]) batchSelection.delete(i); });
     renderModeControls();
     renderEnergy();
-    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
+    if (pendingHint && (document.body.dataset.zen === "on" || !canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
     var selectedValue = game.board[game.selected];
     var errors = automaticErrors() || checkedReveal ? conflicts() : new Set();
     var waitingToStart = !game.started;
@@ -20302,14 +20372,14 @@ return api;
       var specialPeer = i !== game.selected && (game.mode === "knight" ?
         isKnightMove(i, game.selected) :
         sameUnit(i, game.selected) && (isMulti() ? boardLayout.cells[game.selected].boards.length > 1 : !Engine.arePeers(i, game.selected, "classic")));
-      button.classList.toggle("variant-peer", specialPeer);
-      button.classList.toggle("knight-target", game.mode === "knight" && specialPeer);
+      button.classList.toggle("variant-peer", !preferences.zen && specialPeer);
+      button.classList.toggle("knight-target", !preferences.zen && game.mode === "knight" && specialPeer);
       button.classList.toggle("given", !fogged && Boolean(game.givens[i]));
       button.classList.toggle("arrow-bulb-cell", !fogged && arrowBulbCells.has(i));
       button.classList.toggle("filled", !fogged && Boolean(value) && !game.givens[i]);
       button.classList.toggle("selected", i === game.selected);
-      button.classList.toggle("related", i !== game.selected && sameUnit(i, game.selected));
-      button.classList.toggle("same-value", !fogged && Boolean(selectedValue) && value === selectedValue && i !== game.selected);
+      button.classList.toggle("related", !preferences.zen && i !== game.selected && sameUnit(i, game.selected));
+      button.classList.toggle("same-value", !preferences.zen && !fogged && Boolean(selectedValue) && value === selectedValue && i !== game.selected);
       button.classList.toggle("conflict", !fogged && errors.has(i));
       button.classList.toggle("hint-cell", Boolean(pendingHint && pendingHint.index === i));
       button.classList.toggle("branch-cell", inBranch() &&
@@ -20342,7 +20412,7 @@ return api;
       var remaining = Math.max(0, (ruleOnly() ? (isMulti() ? count : 9) : game.solution.filter(function (n) { return n === value; }).length) - count);
       button.querySelector(".remaining").textContent = ruleOnly() && isMulti() ? String(count) : remaining ? String(remaining) : "✓";
       button.classList.toggle("exhausted", !(ruleOnly() && isMulti()) && remaining === 0);
-      button.setAttribute("aria-label", "填入 " + value + (ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
+      button.setAttribute("aria-label", "填入 " + value + (preferences.zen ? "" : ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
       button.disabled = blocked;
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
@@ -20391,6 +20461,7 @@ return api;
       }
     }
     document.body.dataset.branch = inBranch() ? "on" : "off";
+    renderZenContext();
     $("fog-toggle").setAttribute("aria-pressed", String(game.fog));
     $("fog-banner").hidden = !game.fog;
     $("fog-clear").disabled = blocked || game.fogSeen.every(Boolean);
@@ -20408,7 +20479,7 @@ return api;
     if ($("error-toggle")) $("error-toggle").title = ruleOnly() ? "切换规则冲突即时标记" : "切换错误数字即时标红";
     renderLens();
     renderHint();
-    if (draftUi) draftUi.render();
+    if (draftUi && !preferences.zen) draftUi.render();
     if ($("pause-btn")) {
       $("pause-btn").disabled = waitingToStart || game.completed;
       var pauseText = waitingToStart ? "尚未开始" : game.paused ? "继续游戏" : "暂停游戏";
@@ -20436,10 +20507,10 @@ return api;
     document.body.dataset.gameState = game.completed ? "completed" : waitingToStart ? "ready" : game.paused ? "paused" : "playing";
     if ($("multi-selected-label") && isMulti()) $("multi-selected-label").textContent = cellLocation(game.selected);
     boardElement.setAttribute("aria-multiselectable", String(batchSelecting || batchSelection.size > 0));
-    boardElement.setAttribute("aria-label", modeInfo(game.mode).label + "棋盘，已填 " + filled + " 格，共 " + game.board.length + " 格");
+    boardElement.setAttribute("aria-label", modeInfo(game.mode).label + (preferences.zen ? "棋盘" : "棋盘，已填 " + filled + " 格，共 " + game.board.length + " 格"));
   }
 
-  function advancedToolsEnabled() { return document.body.dataset.advancedTools !== "off"; }
+  function advancedToolsEnabled() { return document.body.dataset.zen !== "on" && document.body.dataset.advancedTools !== "off"; }
 
   function renderLens() {
     // These are session-only view modes, not saved notes or draft data. Without
@@ -21162,7 +21233,7 @@ return api;
   function renderHint() {
     var panel = $("hint-panel");
     if (!panel) return;
-    if (pendingHint && (!canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
+    if (pendingHint && (document.body.dataset.zen === "on" || !canInteract() || ruleOnly() || pendingHint.signature !== hintSignature())) pendingHint = null;
     panel.hidden = !pendingHint;
     // Clear the actual text too, so stale answers do not remain in the hidden
     // panel after pausing, switching modes, changing cells or closing it.
@@ -21181,7 +21252,7 @@ return api;
   }
 
   function requestHint() {
-    if (!canInteract() || ruleOnly()) {
+    if (document.body.dataset.zen === "on" || !canInteract() || ruleOnly()) {
       pendingHint = null;
       renderHint();
       return;
@@ -21240,7 +21311,7 @@ return api;
   }
 
   function checkBoard() {
-    if (!canInteract()) return;
+    if (preferences.zen || !canInteract()) return;
     if (ruleOnly()) {
       var ruleErrors = conflicts();
       var stuck = [];
@@ -21644,7 +21715,8 @@ return api;
       (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) + "，每一个数字都找到了自己的位置。";
     if ($("completion-time")) $("completion-time").textContent = formatTime(game.elapsedMs);
     if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode ? "—" : String(game.mistakes);
-    showDialog($("completion-dialog"));
+    // Zen completion stays on the finished board, without a score dialog.
+    if (!preferences.zen) showDialog($("completion-dialog"));
     celebrate();
     save("完成");
   }
@@ -21814,23 +21886,59 @@ return api;
     selectedVoyage = button.dataset.voyage;
     renderVoyage();
   });
-  bind("zen-toggle", "click", function () {
-    preferences.zen = !preferences.zen;
-    // Only display/feedback changes. Never replace the puzzle or reset its clock.
-    clearPulse();
-    clearTimeout(checkTimeout);
-    checkedReveal = false;
+  function renderZenContext() {
+    var context = $("zen-context");
+    if (!context) return;
+    var message = game && game.completed ? "此境已圆满" :
+      inBranch() ? "假设中 · 退出后可管理" : "";
+    context.hidden = !preferences.zen || !message;
+    context.textContent = message;
+  }
+
+  function prepareZenView() {
+    // View state only: never erase saved notes, drafts, branches, fog or history.
+    clearTransientMarks();
+    lensDigit = 0; lensResult = null; lensKey = "";
+    var appearance = $("appearance-settings");
+    if (appearance) appearance.open = false;
+    if (window.NineRealmsSelect) window.NineRealmsSelect.close();
+    if (window.NineRealmsFloatingDraft) window.NineRealmsFloatingDraft.close(false);
+    if ($("more-tools-panel")) $("more-tools-panel").hidden = true;
+  }
+
+  function setZen(enabled) {
+    enabled = Boolean(enabled);
+    if (preferences.zen === enabled) return;
+    preferences.zen = enabled;
+    // No new puzzle, pause, score reset or settings reset on either transition.
+    if (enabled) prepareZenView();
+    else clearTransientMarks();
     clearTimeout(toastTimeout);
     $("toast").hidden = true;
     stopCelebration();
     resetTilt();
     renderPreferences();
     render();
+    if (window.NineRealmsWorkspace) window.NineRealmsWorkspace.sync();
     if (!preferences.zen) Atmosphere.unlock();
-    setStatus(preferences.zen ? "禅模式已开启。慢慢来，需要时可使用检查与灵感提示。" :
+    setStatus(preferences.zen ? "禅模式。只留下棋盘、填数、笔记、擦除与撤销。按 Esc 退出。" :
       "已回到普通模式，棋局进度与原来的显示设置都已保留。");
     save();
-  });
+    var focus = !enabled ? $("zen-toggle") : !game.started ? $("start-btn") :
+      game.paused ? $("resume-btn") : game.completed ? $("zen-toggle") : cells[game.selected];
+    if (focus) focus.focus({ preventScroll: true });
+  }
+
+  function exitZenOnEscape(event) {
+    // Exit is available before input guards, including ready/paused/completed.
+    // An open select/dialog consumes its own first Escape before leaving Zen.
+    if (event.key !== "Escape" || event.defaultPrevented || !preferences.zen || dialogIsOpen()) return false;
+    event.preventDefault();
+    setZen(false);
+    return true;
+  }
+
+  bind("zen-toggle", "click", function () { setZen(!preferences.zen); });
   bind("zen-pause", "click", function () { setPaused(!game.paused); });
   bind("zen-motion-toggle", "click", function () {
     if (reducedMotion.matches) return;
@@ -22013,6 +22121,7 @@ return api;
   });
 
   document.addEventListener("keydown", function (event) {
+    if (exitZenOnEscape(event)) return;
     var appearance = $("appearance-settings");
     if (event.key === "Escape" && appearance && appearance.open) {
       event.preventDefault();
