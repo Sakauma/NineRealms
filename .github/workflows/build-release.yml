@@ -110,4 +110,4 @@ jobs:
           sha256sum --check SHA256SUMS.txt
           gh release create "$TAG_NAME" --verify-tag --draft \
             --title "九境 · Nine Realms $TAG_NAME" --generate-notes \
-            Setup.exe Nine-Realms-Web.zip SHA256SUMS.txt
+            Setup.exe

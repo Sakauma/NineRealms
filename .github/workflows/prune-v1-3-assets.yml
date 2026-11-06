@@ -1,0 +1,42 @@
+name: One-time release asset cleanup
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    if: github.event.head_commit.message == 'Remove requested release assets'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Remove the two specified draft assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release="$(gh api "repos/$GH_REPO/releases/435330906")"
+          jq -e '
+            .id == 435330906 and .tag_name == "v1.3.0" and .draft == true and
+            ([.assets[] | select(.id == 713742954 and .name == "Setup.exe")] | length == 1) and
+            all(.assets[];
+              (.id == 713742954 and .name == "Setup.exe") or
+              (.id == 713742953 and .name == "Nine-Realms-Web.zip") or
+              (.id == 713742956 and .name == "SHA256SUMS.txt"))
+          ' <<< "$release" >/dev/null
+          if jq -e '.assets | any(.id == 713742953 and .name == "Nine-Realms-Web.zip")' <<< "$release" >/dev/null; then
+            gh api --method DELETE "repos/$GH_REPO/releases/assets/713742953"
+          fi
+          if jq -e '.assets | any(.id == 713742956 and .name == "SHA256SUMS.txt")' <<< "$release" >/dev/null; then
+            gh api --method DELETE "repos/$GH_REPO/releases/assets/713742956"
+          fi
+          gh api "repos/$GH_REPO/releases/435330906" | jq -e '
+            .tag_name == "v1.3.0" and .draft == true and
+            (.assets | length == 1 and .[0].id == 713742954 and .[0].name == "Setup.exe")
+          ' >/dev/null
