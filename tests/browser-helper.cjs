@@ -21,9 +21,23 @@ async function launch(options={}){
   let stderr='';
   // Headless workers may expose no pointer; hover tests opt into explicit fine-pointer media.
   const chrome=spawn(process.env.CHROMIUM_PATH||'/usr/bin/chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--no-first-run','--no-default-browser-check','--force-prefers-reduced-motion',...(options.finePointer?['--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4']:[]),'--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:['ignore','ignore','pipe']});
+  const chromeClosed=new Promise(resolve=>chrome.once('close',resolve));
   chrome.stderr.on('data',b=>{stderr+=b.toString();});
   chrome.on('error',e=>{stderr+=e.message;});
-  async function close(){chrome.kill('SIGTERM');server.close();await Promise.race([new Promise(r=>chrome.once('exit',r)),delay(1000)]);fs.rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});}
+  async function close(){
+    chrome.kill('SIGTERM');server.close();
+    let timer;
+    const stopped=await Promise.race([chromeClosed.then(()=>true),new Promise(resolve=>{timer=setTimeout(()=>resolve(false),5000);})]);
+    clearTimeout(timer);
+    if(!stopped)chrome.kill('SIGKILL');
+    for(let attempt=0;;attempt++){
+      try{await fs.promises.rm(profile,{recursive:true,force:true});return;}
+      catch(error){
+        if(!['ENOTEMPTY','EBUSY','EPERM','EACCES'].includes(error.code)||attempt>=14)throw error;
+        await delay(Math.min(1000,100*(attempt+1)));
+      }
+    }
+  }
   try{
     // Cold CI runners can take longer to start Chromium.
     for(let n=0;n<300&&!fs.existsSync(path.join(profile,'DevToolsActivePort'));n++){if(chrome.exitCode!==null)throw Error('Chromium exited: '+stderr.slice(-1500));await delay(100);}
