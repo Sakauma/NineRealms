@@ -1,7 +1,7 @@
-/* Optional DOM simulation only: cached jsdom@26.1.0; not visual/browser QA. */
+/* DOM simulation via the pinned development dependency; not visual/browser QA. */
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
-const {JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM,VirtualConsole}=require('jsdom');
 const source=fs.readFileSync('src/glass-select.js','utf8');
 const tick=()=>new Promise(r=>setTimeout(r,0));
 const select=(id,label)=>`<label for="${id}">${label}</label><select id="${id}"><option value="a">Alpha</option><option value="b">Beta</option><option value="c" disabled>Closed</option><option value="d">Delta</option></select>`;

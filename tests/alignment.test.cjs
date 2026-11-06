@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
-const {JSDOM}=require('../.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM}=require('jsdom');
 const html=fs.readFileSync('src/index.html','utf8'),css=fs.readFileSync('src/styles.css','utf8');
 const dom=new JSDOM(html.replace(/<script[\s\S]*?<\/script>/g,''),{runScripts:'outside-only'}),w=dom.window,d=w.document,$=id=>d.getElementById(id);
 const main=d.querySelector('.game-layout'),workspace=d.querySelector('.reasoning-workspace');

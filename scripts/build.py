@@ -14,8 +14,8 @@ RELEASE = ROOT / "release"
 STYLES = ("styles.css", "history.css", "easter-extras.css", "numerals.css", "workspace.css", "desktop-workspace.css", "zen.css")
 SCRIPTS = (
     "variant-bank.js", "multigrid-bank.js", "engine.js", "desktop-bridge.js", "logic.js", "custom-puzzle.js", "challenge.js",
-    "daily.js", "hints.js", "technique-guides.js", "training.js", "voyage.js", "variant-view.js", "scene-webgl.js",
-    "atmosphere.js", "secret-archives.js", "easter-eggs.js", "drafts.js", "branches.js", "edits.js", "checkpoints.js", "history.js", "puzzle-deck.js", "generator.js", "favorites.js", "backup.js", "personal.js", "glass-select.js", "floating-draft.js", "draft-ui.js", "training-ui.js", "custom-ui.js", "workspace.js", "app.js",
+    "daily.js", "hints.js", "technique-guides.js", "rule-examples.js", "training.js", "voyage.js", "variant-view.js", "scene-webgl.js",
+    "atmosphere.js", "secret-archives.js", "easter-eggs.js", "drafts.js", "branches.js", "edits.js", "checkpoints.js", "history.js", "puzzle-deck.js", "generator.js", "favorites.js", "backup.js", "save-recovery.js", "personal.js", "glass-select.js", "floating-draft.js", "draft-ui.js", "training-ui.js", "custom-ui.js", "workspace.js", "app.js",
 )
 
 

@@ -40,10 +40,22 @@ for (const pinned of baseline.modes) {
     }
     for (let index=0; index<81; index++) assert.equal(view.getCellLabel(index), result.cellDescriptions[index]);
     rendered++;
-    return {id:puzzle.id, result};
+    // Only thermometer accessibility copy intentionally changes; keep the
+    // historical geometry/legend baseline and every other description pinned.
+    const oldThermo='温度计：从球端起严格递增';
+    const normalized=clone(result);
+    normalized.cellDescriptions=normalized.cellDescriptions.map(text=>{
+      let value=text.replace(/第 \d+ 根温度计：球端在第 [^；]+，从球端起严格递增/g,oldThermo),seen=false;
+      return value.split('；').filter(part=>{if(part!==oldThermo)return true;if(seen)return false;seen=true;return true;}).join('；');
+    });
+    for(const [lineIndex,line] of context.clues.lines.entries())if(line.type==='thermo'){
+      const location=i=>(Math.floor(i/9)+1)+' 行 '+(i%9+1)+' 列';
+      for(const cell of line.cells){const label=result.cellDescriptions[cell];assert(label.includes('第 '+context.clues.lines.slice(0,lineIndex+1).filter(l=>l.type==='thermo').length+' 根温度计'));assert(label.includes('球端在第 '+(Math.floor(line.cells[0]/9)+1)+' 行第 '+(line.cells[0]%9+1)+' 列'));assert(label.includes(line.cells.map(location).join('、')));}
+    }
+    return {id:puzzle.id, result:normalized};
   });
   assert.equal(hash(results), pinned.semanticHash,
-    pinned.mode + ': exact legends, accessibility descriptions and metadata match the pre-styling baseline');
+    pinned.mode + ': legends and non-thermometer descriptions match the baseline; thermometer descriptions additionally contain the original ordered path');
 }
 // Reuse the same SVG across all modes in both directions, including exterior clues
 // and multi-grid handoffs. Nothing from the previous clue family may remain.
@@ -87,4 +99,4 @@ assert.equal(after.cellDescriptions[0], '');
 assert.match(after.cellDescriptions[80], /温度计/);
 assert.equal(view.getCellLabel(80), after.cellDescriptions[80]);
 assert.equal(view.render(svg, context), after);
-console.log('PASS variant renderer semantics: ' + rendered + ' immutable catalog clue documents across 33 modes, exact pre-styling legend/accessible-label baselines, ' + transitionOrder.length + ' mode transitions, outside flags, layering, cache and mutation invalidation. SVG facade only, not visual/browser validation.');
+console.log('PASS variant renderer semantics: ' + rendered + ' immutable catalog clue documents across 33 modes, pinned legends/non-thermometer labels, explicit ordered thermometer labels, ' + transitionOrder.length + ' mode transitions, outside flags, layering, cache and mutation invalidation. SVG facade only, not visual/browser validation.');

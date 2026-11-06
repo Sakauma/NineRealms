@@ -1,7 +1,7 @@
 /* Optional DOM simulation only, not actual rendered layout. */
 'use strict';
 const {enableDormantDOM}=require('./dormant-tools-fixture.cjs');
-const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{JSDOM,VirtualConsole}=require('jsdom');
 const dom=new JSDOM('<button id="history-open">历史</button><dialog id="other"><button id="other-focus">别的对话框</button></dialog>',{url:'https://ninerealms.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,d=w.document,$=id=>d.getElementById(id),resumed=[];
 w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
 for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(path.join(__dirname,'../src',file),'utf8'));

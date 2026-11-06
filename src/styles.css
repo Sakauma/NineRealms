@@ -1165,3 +1165,40 @@ body{--input-surface:color-mix(in srgb,var(--button-bg) 62%,var(--panel));--inpu
 @media(forced-colors:active){#draft-panel.floating-draft{background:Canvas;border-color:CanvasText;box-shadow:none}#draft-panel :is(.draft-buttons button,.draft-link-tools>button,.draft-links button,.draft-footer>button,.glass-select-trigger,#draft-close,#draft-reset-window){background:ButtonFace;border-color:ButtonText;box-shadow:none}#draft-panel .draft-buttons button[aria-pressed=true]{color:HighlightText;background:Highlight;border-color:Highlight}}
 
 @media(forced-colors:active){#draft-panel :is(.draft-buttons button,.draft-link-tools>button,.draft-links button,.draft-footer>button,.glass-select-trigger,#draft-close,#draft-reset-window):hover:not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight}#draft-panel .draft-buttons button[aria-pressed=true]:hover:not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight}}
+
+/* Optional rule examples inherit the active theme and never enter the board. */
+/* Rule reading uses a wider, left-aligned sheet; the board stays unchanged. */
+.rules-dialog{width:min(640px,calc(100vw - 32px));padding:32px;text-align:left;max-height:calc(100dvh - 48px);overscroll-behavior:contain;scrollbar-width:thin}
+.rules-dialog .dialog-close{top:20px;right:20px;z-index:1}
+.rules-heading :is(.eyebrow,h2){padding-right:48px}
+.rules-dialog .rules-heading .eyebrow{margin:0 0 8px}
+.rules-dialog .rules-heading h2{margin:0;font-size:24px;line-height:1.4}
+.rules-dialog :is(#rules-description,.rule-example-explanation,.rule-example-note){text-wrap:pretty}
+.rules-dialog #rules-description{margin:12px 0 0;font-size:15px;line-height:1.8;color:var(--muted)}
+.rules-dialog>.variant-legend{text-wrap:balance;margin:18px 0 24px;padding:0 0 0 12px;border:0;border-left:2px solid var(--glass-edge);border-radius:0;background:transparent;font-size:13px;line-height:1.8;color:var(--muted)}
+.rules-dialog .technique-guide{margin:0;border-top:1px solid var(--glass-edge)}
+.rules-dialog .technique-guide>summary{display:flex;align-items:center;gap:8px;min-height:48px;padding:12px 0;list-style:none;font-size:14px;line-height:1.6}
+.rules-dialog .technique-guide>summary::marker{content:""}
+.rules-dialog .technique-guide>summary::before{content:"";width:6px;height:6px;margin:0 4px 0 2px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);flex:none}
+.rules-dialog .technique-guide[open]>summary::before{transform:rotate(45deg)}
+.rules-dialog .technique-guide>summary span{margin-left:auto;font-size:12px;white-space:nowrap}
+.rules-dialog .technique-guide ul{margin:4px 0 16px}
+.rules-dialog .rules-footnote{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--glass-edge);font-size:13px;line-height:1.8;color:var(--muted)}
+.rules-dialog .rule-example-title{font-size:14px;line-height:1.7;margin:4px 0 16px;color:var(--text)}
+.rule-example-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rule-example-pair figure{display:flex;flex-direction:column;gap:12px;margin:0;padding:16px;border:1px solid var(--glass-edge);border-radius:12px;background:var(--glass-button);min-width:0}
+.rule-example-pair figcaption{font-size:13px;line-height:1.5;color:var(--text)}
+.rule-example-pair figcaption strong{font-weight:600}
+.rule-example-pair svg{display:block;width:100%;height:auto;max-width:248px;margin:0 auto;color:var(--accent);flex:none}
+.rule-example-pair svg text{fill:var(--text);font:600 30px/1 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.rules-dialog .rule-example-explanation{margin:0;font-size:14px;line-height:1.8;color:var(--muted)}
+.rules-dialog .rule-example-note{font-size:13px;line-height:1.8;color:var(--muted);margin:16px 0 20px}
+body[data-text-size=large] .rules-dialog :is(#rules-description,.variant-legend,.rule-example-title,.rule-example-explanation,.rule-example-note,.rules-footnote){font-size:16px}
+body[data-text-size=large] .rules-dialog .technique-guide>summary{font-size:17px}
+body[data-text-size=large] .rule-example-pair figcaption{font-size:15px}
+@media(max-width:600px){.rules-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:20px;border-radius:16px}.rules-dialog .dialog-close{top:12px;right:12px}.rules-heading :is(.eyebrow,h2){padding-right:44px}.rules-dialog .rules-heading h2{font-size:22px}.rule-example-pair{grid-template-columns:1fr;gap:12px}.rule-example-pair figure{padding:12px;gap:8px}.rule-example-pair svg{max-width:224px}.rules-dialog .rule-example-title{margin-bottom:12px}.rules-dialog .rule-example-note{margin:12px 0 16px}.rules-dialog>.variant-legend{margin:16px 0 20px}}
+@media(forced-colors:active){.rules-dialog>.variant-legend{border-color:CanvasText}.rule-example-pair figure{background:Canvas;border-color:CanvasText}.rule-example-pair svg{color:CanvasText}}
+
+/* Existing storage exception panels keep their actions aligned and reachable. */
+:is(#save-conflict-dialog,#save-recovery-dialog){text-align:left}
+:is(#save-conflict-dialog,#save-recovery-dialog)>button{display:flex;width:100%;margin-top:10px}

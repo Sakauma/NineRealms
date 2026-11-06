@@ -1,19 +1,25 @@
 /* Optional DOM-only integration; does not certify browser rendering or measured contrast. */
 'use strict';
 const fs=require('node:fs'),assert=require('node:assert/strict');
-const {JSDOM,VirtualConsole}=require('../../NineRealms/.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM,VirtualConsole}=require('jsdom');
 const E=require('../src/engine.js'),B=require('../src/backup.js');
 const tick=(ms=25)=>new Promise(r=>setTimeout(r,ms)),live=new Set();
 const html=fs.readFileSync('src/index.html','utf8').replace(/<script src="\.\/([^"]+)"><\/script>/g,(_,name)=>'<script>'+fs.readFileSync('src/'+name,'utf8')+'</script>').replace(/<link[^>]*href="\.\/[^"]+"[^>]*>/g,'');
 async function app(prefs={},mode='classic'){
  const p=E.getPuzzle('easy','reading-test',mode),initial={version:8,preferences:Object.assign({theme:'nebula',fx:false,intensity:'soft'},prefs),game:{sessionId:'reading-'+mode,createdAt:1,puzzleId:p.id,sourceId:p.sourceId,mode,difficulty:'easy',clues:p.clues,givens:p.givens,solution:p.solution,board:p.givens.slice(),notes:p.givens.map(()=>0),selected:0,mistakes:0,hints:0,elapsedMs:500,started:true,paused:false,completed:false,history:[],branch:null}};
- const errors=[],downloads=[],blobs=new Map(),vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!String(e.message).includes('navigation'))errors.push(e.message)});
+ const errors=[],downloads=[],blobs=new Map(),strongBorders=new WeakSet(),borderDescriptors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!String(e.message).includes('navigation'))errors.push(e.message)});
  const dom=new JSDOM(html,{url:'https://ninerealms.test/',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){
+  // jsdom 26 drops valid var() border shorthands; record assignments without claiming rendered geometry.
+  for(const name of ['borderTop','borderLeft','borderRight','borderBottom']){
+   const proto=w.CSSStyleDeclaration.prototype,original=Object.getOwnPropertyDescriptor(proto,name);
+   assert(original&&original.set);borderDescriptors.push([proto,name,original]);
+   Object.defineProperty(proto,name,{...original,set(value){if(typeof value==='string'&&value.includes('var(--reading-strong-width'))strongBorders.add(this);original.set.call(this,value)}});
+  }
   w.localStorage.setItem('nine-realms.sudoku.v1',JSON.stringify(initial));w.matchMedia=()=>({matches:true,addEventListener(){},addListener(){}});w.requestAnimationFrame=()=>0;w.cancelAnimationFrame=()=>{};w.HTMLElement.prototype.scrollIntoView=function(){};w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.Blob=Blob;w.File=File;
   w.HTMLCanvasElement.prototype.getContext=function(type){if(type!=='2d')return null;return new Proxy({canvas:this},{get:(o,k)=>k in o?o[k]:k==='createLinearGradient'||k==='createRadialGradient'?()=>({addColorStop(){}}):()=>{}})};
   w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'))};w.URL.createObjectURL=b=>{const id='blob:'+blobs.size;blobs.set(id,b);return id};w.URL.revokeObjectURL=id=>blobs.delete(id);w.HTMLAnchorElement.prototype.click=function(){downloads.push(blobs.get(this.href))};
  }});live.add(dom);const w=dom.window,d=w.document,$=id=>d.getElementById(id),saved=()=>JSON.parse(w.localStorage.getItem('nine-realms.sudoku.v1'));await tick();assert.deepEqual(errors,[]);assert.equal(saved().game.sessionId,initial.game.sessionId);if(saved().game.paused)$('resume-btn').click();
- return {w,d,$,saved,downloads,close(){assert.deepEqual(errors,[]);dom.window.close();live.delete(dom)}};
+ return {w,d,$,saved,downloads,strongBorders,close(){assert.deepEqual(errors,[]);dom.window.close();for(const [proto,name,original] of borderDescriptors)Object.defineProperty(proto,name,original);live.delete(dom)}};
 }
 (async()=>{
  let f=await app(),{w,d,$}=f;assert.equal(d.body.dataset.textSize,'normal');assert.equal(d.body.dataset.lineContrast,'standard');assert.equal(d.body.dataset.colorAssist,'false');assert.equal(d.body.dataset.handedness,'right');
@@ -29,7 +35,7 @@ async function app(prefs={},mode='classic'){
  Object.defineProperty($('backup-file'),'files',{configurable:true,value:[new File([text],'readability.json')]});$('backup-file').dispatchEvent(new w.Event('change'));for(let n=0;n<100&&!$('backup-preview').textContent;n++)await tick(10);assert($('backup-preview').textContent);$('backup-confirm').checked=true;$('backup-confirm').dispatchEvent(new w.Event('change'));$('backup-replace').click();await tick();for(const key of ['textSize','lineContrast','colorAssist','handedness'])assert.equal(f.saved().preferences[key],prefs[key]);f.close();
  f=await app(prefs);({w,d,$}=f);assert.equal(d.body.dataset.textSize,'large');assert.equal(d.body.dataset.lineContrast,'strong');assert.equal(d.body.dataset.colorAssist,'true');assert.equal(d.body.dataset.handedness,'left');f.close();
  f=await app({textSize:'unsupported',lineContrast:'unsupported',colorAssist:'yes',handedness:'unsupported'});({d}=f);assert.equal(d.body.dataset.textSize,'normal');assert.equal(d.body.dataset.lineContrast,'standard');assert.equal(d.body.dataset.colorAssist,'false');assert.equal(d.body.dataset.handedness,'right');f.close();
- for(const mode of ['twin','samurai']){f=await app(prefs,mode);({w,d,$}=f);assert.equal(d.body.dataset.multi,'true');assert.equal(d.body.dataset.lineContrast,'strong');assert(d.querySelector('#board .cell[style*="--reading-strong-width"]'));const view=$('grid-view');view.value=view.options[1].value;view.dispatchEvent(new w.Event('change',{bubbles:true}));assert.equal(d.body.dataset.multiView,'detail');assert.equal(f.saved().preferences.handedness,'left');f.close();}
+ for(const mode of ['twin','samurai']){f=await app(prefs,mode);({w,d,$}=f);assert.equal(d.body.dataset.multi,'true');assert.equal(d.body.dataset.lineContrast,'strong');assert([...d.querySelectorAll('#board .cell')].some(cell=>f.strongBorders.has(cell.style)),'multi-grid cells receive strong border assignments');const view=$('grid-view');view.value=view.options[1].value;view.dispatchEvent(new w.Event('change',{bubbles:true}));assert.equal(d.body.dataset.multiView,'detail');assert.equal(f.saved().preferences.handedness,'left');f.close();}
  const css=fs.readFileSync('src/styles.css','utf8');assert(css.includes('body[data-handedness=left]:not([data-multi=true])'));assert(css.includes('@media(min-width:961px){body[data-handedness=left]')); for(const shape of ['●','■','▲','◆'])assert(css.includes('content:"'+shape+' "'));assert(css.includes('underline wavy'));assert(css.includes('forced-colors:active'));
  assert(css.includes('.game-dialog button:not(.training-cell)'),'large general buttons exclude training cells');
  assert(!/data-color-assist=true[^\n]*draft-color-layer::after/.test(css),'no symbol overlay on candidates');

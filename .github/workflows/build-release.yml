@@ -1,6 +1,8 @@
 name: Build and package
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     tags: ['v*']
@@ -40,13 +42,13 @@ jobs:
             exit 1
           fi
           printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
-      - name: Check version, saves and Zen mode
+      - name: Install test dependencies
+        run: npm ci --ignore-scripts --no-audit
+      - name: Check core behavior and DOM interactions
         run: |
-          node tests/product-version.test.cjs
-          node tests/backup.test.cjs
-          node tests/tauri-config.test.cjs
+          npm test
+          npm run test:dom
           python3 tests/package-download.test.py
-          npm run test:zen
       - name: Find Chromium
         shell: bash
         run: |
@@ -56,10 +58,12 @@ jobs:
               exit 0
             fi
           done
-          echo 'A Chromium-compatible browser is required for the Zen test.' >&2
+          echo 'A Chromium-compatible browser is required for browser tests.' >&2
           exit 1
-      - name: Check Zen mode in Chromium
-        run: npm run test:zen:browser
+      - name: Check recovery, rules, generation and Zen mode in Chromium
+        run: |
+          npm run test:improvements:browser
+          npm run test:browser
       - name: Verify standalone web page
         run: |
           python3 scripts/build.py --check-only

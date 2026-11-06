@@ -378,7 +378,7 @@
       legends.add("笼角数字为笼内总和");
     });
     if (context.mode === "thermo-killer") legends.add("温笼合流：温度计递增与笼内不重复求和同时成立");
-    var clueLines = clues.lines || [], arrowInfo = arrowLayouts(clueLines), endpointDraws = [];
+    var clueLines = clues.lines || [], arrowInfo = arrowLayouts(clueLines), endpointDraws = [], thermoIndex = 0;
     clearArrowEnds(arrowInfo);
     arrowCrossings(arrowInfo, material);
     clueLines.forEach(function (line, lineIndex) {
@@ -452,7 +452,10 @@
             fill: "var(--cell-bg)", stroke: color, "stroke-width": 3.5, "stroke-linejoin": "round" }, marker), endpoints);
         });
       });
-      if (!arrow) describe(cells, (NAMES[type] || type) + "：" + (LINE_RULES[type] || "按本题线索规则"));
+      if (type === "thermo") describe(cells, "第 " + (++thermoIndex) + " 根温度计：球端在第 " +
+        (Math.floor(cells[0] / 9) + 1) + " 行第 " + (cells[0] % 9 + 1) + " 列，沿球端到尖端依次经过 " +
+        cells.map(function (cell) { return (Math.floor(cell / 9) + 1) + " 行 " + (cell % 9 + 1) + " 列"; }).join("、") + "，" + LINE_RULES.thermo);
+      else if (!arrow) describe(cells, (NAMES[type] || type) + "：" + (LINE_RULES[type] || "按本题线索规则"));
       legends.add(NAMES[type] || type);
     });
     // Mask shafts once per bulb, then draw every ring and arrowhead above every shaft.

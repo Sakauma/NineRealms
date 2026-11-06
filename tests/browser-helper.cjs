@@ -19,10 +19,11 @@ async function launch(options={}){
   });
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   let stderr='';
-  const chrome=spawn(process.env.CHROMIUM_PATH||'/usr/bin/chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--no-first-run','--no-default-browser-check','--force-prefers-reduced-motion','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:['ignore','ignore','pipe']});
+  // Headless workers may expose no pointer; hover tests opt into explicit fine-pointer media.
+  const chrome=spawn(process.env.CHROMIUM_PATH||'/usr/bin/chromium',['--headless','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--no-first-run','--no-default-browser-check','--force-prefers-reduced-motion',...(options.finePointer?['--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4']:[]),'--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:['ignore','ignore','pipe']});
   chrome.stderr.on('data',b=>{stderr+=b.toString();});
   chrome.on('error',e=>{stderr+=e.message;});
-  async function close(){chrome.kill('SIGTERM');server.close();await Promise.race([new Promise(r=>chrome.once('exit',r)),delay(1000)]);fs.rmSync(profile,{recursive:true,force:true});}
+  async function close(){chrome.kill('SIGTERM');server.close();await Promise.race([new Promise(r=>chrome.once('exit',r)),delay(1000)]);fs.rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});}
   try{
     // Cold CI runners can take longer to start Chromium.
     for(let n=0;n<300&&!fs.existsSync(path.join(profile,'DevToolsActivePort'));n++){if(chrome.exitCode!==null)throw Error('Chromium exited: '+stderr.slice(-1500));await delay(100);}
@@ -38,10 +39,10 @@ async function launch(options={}){
     const url='http://127.0.0.1:'+server.address().port;
     async function waitFor(expression){for(let n=0;n<100;n++){try{if(await evaluate(expression))return;}catch(error){if(!/Execution context was destroyed|Cannot find context|Inspected target navigated or closed/.test(error.message))throw error;}await delay(50);}throw Error('Browser wait failed: '+expression);}
     let navigationSequence=0;
-    async function load(snapshot,route='/src/index.html'){
+    async function loadStorage(entries,route='/src/index.html',before=''){
       const marker='nine-realms-navigation-'+(++navigationSequence);
       await evaluate('window.__nineRealmsPreviousDocument='+JSON.stringify(marker));
-      const script=await send('Page.addScriptToEvaluateOnNewDocument',{source:'localStorage.clear();localStorage.setItem("nine-realms.sudoku.v1",'+JSON.stringify(JSON.stringify(snapshot))+');'});
+      const script=await send('Page.addScriptToEvaluateOnNewDocument',{source:'localStorage.clear();Object.entries('+JSON.stringify(entries)+').forEach(([key,value])=>{if(value!==null)localStorage.setItem(key,value);});'+before});
       events.length=0;
       try {
         const navigation=await send('Page.navigate',{url:route.startsWith('file:')?route:url+route});
@@ -49,7 +50,8 @@ async function launch(options={}){
         await waitFor('window.__nineRealmsPreviousDocument!=='+JSON.stringify(marker)+" && document.readyState==='complete' && document.querySelectorAll('#board .cell').length>0 && document.querySelectorAll('#number-pad button').length===9");
       }finally{await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:script.identifier});}
     }
-    return {send,evaluate,waitFor,load,url,events,root,close:async()=>{ws.close();await close();}};
+    async function load(snapshot,route='/src/index.html'){return loadStorage({'nine-realms.sudoku.v1':JSON.stringify(snapshot)},route);}
+    return {send,evaluate,waitFor,load,loadStorage,url,events,root,close:async()=>{ws.close();await close();}};
   }catch(error){await close();throw error;}
 }
 function fixture(seed='browser-features'){

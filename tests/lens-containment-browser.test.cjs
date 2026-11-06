@@ -17,9 +17,13 @@ const {keypadMetrics} = require('./tactile-keypad-metrics.cjs');
       e.scrollIntoView({block:'nearest',inline:'nearest'});
       const r = e.getBoundingClientRect(), x = r.x+r.width/2, y = r.y+r.height/2;
       const h = document.elementFromPoint(x,y);
-      return {x,y,scrollY,ok:r.width>0&&r.height>0&&!!h&&(h===e||e.contains(h))&&!e.disabled};
+      return {x,y,scrollY,width:innerWidth,height:innerHeight,rect:r.toJSON(),hit:h&&h.outerHTML.slice(0,200),blockedByToast:!!h&&!!h.closest('#toast'),disabled:e.disabled,ok:r.width>0&&r.height>0&&!!h&&(h===e||e.contains(h))&&!e.disabled};
     })()`);
-    assert(p.ok, 'visible pointer target ' + selector);
+    if (!p.ok && p.blockedByToast) {
+      await b.waitFor('document.getElementById("toast").hidden');
+      return click(selector, modifiers);
+    }
+    assert(p.ok, 'visible pointer target ' + selector + ' ' + JSON.stringify(p));
     for (const type of ['mousePressed','mouseReleased'])
       await send('Input.dispatchMouseEvent', {type,x:p.x,y:p.y,button:'left',clickCount:1,modifiers});
     await delay(60);

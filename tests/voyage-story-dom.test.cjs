@@ -1,7 +1,7 @@
 /* Optional jsdom integration; no actual browser rendering or native keyboard emulation. */
 'use strict';
 const fs=require('node:fs'),assert=require('node:assert/strict');
-const {JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM,VirtualConsole}=require('jsdom');
 const E=require('../src/engine.js'),V=require('../src/voyage.js');
 const html=fs.readFileSync('src/index.html','utf8').replace(/<script src="\.\/([^"]+)"><\/script>/g,(_,name)=>'<script>'+fs.readFileSync('src/'+name,'utf8')+'</script>').replace(/<link[^>]*href="\.\/[^"]+"[^>]*>/g,'');
 const tick=(ms=30)=>new Promise(r=>setTimeout(r,ms));

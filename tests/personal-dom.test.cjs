@@ -1,7 +1,7 @@
-/* Optional DOM integration (not a rendering test): npm install --prefix .build-cache/dom-test --ignore-scripts jsdom@26.1.0 */
+/* DOM integration via npm ci; not a rendering test. */
 'use strict';
 const fs=require('node:fs'),assert=require('node:assert/strict');
-const {JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM,VirtualConsole}=require('jsdom');
 const Backup=require('../src/backup.js'),Engine=require('../src/engine.js');
 const mode=process.env.MODE||'classic',puzzle=Engine.getPuzzle('easy','personal-dom-'+mode,mode);
 const initial={version:8,preferences:{theme:'nebula',fx:false,intensity:'soft'},game:{sessionId:'dom-'+mode,createdAt:1,puzzleId:puzzle.id,sourceId:puzzle.sourceId,mode,difficulty:'easy',clues:puzzle.clues,givens:puzzle.givens,solution:puzzle.solution,board:puzzle.givens.slice(),notes:puzzle.givens.map(()=>0),selected:0,mistakes:0,hints:0,elapsedMs:0,started:false,paused:false,completed:false,history:[],branch:null}};

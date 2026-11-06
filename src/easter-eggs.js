@@ -54,6 +54,7 @@
   function init(callbacks) {
     if (initialized) return;
     callbacks = callbacks || {};
+    var storage; try { storage = callbacks.storage || root.localStorage; } catch (error) {}
     var byId = function (id) { return document.getElementById(id); };
     var dialog = byId("secrets-dialog");
     var scene = byId("secret-scene");
@@ -88,7 +89,7 @@
     }
 
     try {
-      var raw = localStorage.getItem(STORAGE_KEY);
+      var raw = storage.getItem(STORAGE_KEY);
       if (raw !== null) {
         var saved = Archives.validateEnvelope(JSON.parse(raw));
         found = saved.found.slice();archiveState=saved.archives||null;
@@ -99,7 +100,7 @@
     function saveCollection() {
       try {
         if(persistenceSuspended||collectionBlocked)return false;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectionValue()));return true;
+        storage.setItem(STORAGE_KEY, JSON.stringify(collectionValue()));return true;
       } catch (error) { storageWarning();return false; }
     }
 

@@ -11,8 +11,8 @@ const limited=H.createStore({Engine:E,maxSteps:1});limited.capture({...s,game:{.
 // Old snapshots without a draft still capture and replay without invented draft events.
 const old=H.createStore({Engine:E});delete s.game.draft;s.game.branch=null;old.capture(s,{origin:'new'});s.game.board[index]=p.solution[index];s.game.notes[index]=0;old.capture(s);assert.equal(old.summarize(s.game.sessionId).counts.drafts,0);assert.equal(old.frameAt(s.game.sessionId,1).draft,undefined);
 console.log('PASS review: observed hint/note/draft/undo/mistake/branch events, exact replay jumps, no elapsed-only or inferred-technique events, retained-window statistics and legacy draft omission.');
-if(process.env.REVIEW_DOM){
- const fs=require('node:fs'),{JSDOM}=require('../.build-cache/dom-test/node_modules/jsdom');
+if(process.env.REVIEW_DOM||process.argv.includes('--dom')){
+ const fs=require('node:fs'),{JSDOM}=require('jsdom');
  const dom=new JSDOM('<button id="history-open">历史</button>',{url:'https://ninerealms.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
  for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(require('node:path').join(__dirname,'../src',file),'utf8'));

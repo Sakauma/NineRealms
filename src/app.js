@@ -1,7 +1,20 @@
 /* Nine Realms — local, dependency-free game controller. */
-(function () {
+(async function () {
   "use strict";
 
+  var SaveRecovery = window.NineRealmsSaveRecovery, saveRecoveryState = null;
+  if (!SaveRecovery || typeof SaveRecovery.createSession !== "function") {
+    var missingResource = document.getElementById("status-message");
+    if (missingResource) { missingResource.textContent = "游戏资源未完整加载，请重新打开完整的游戏文件。"; missingResource.parentElement.classList.remove("status-quiet"); }
+    return;
+  }
+  var nativeStorage, windowLocks;
+  try { nativeStorage = window.localStorage; } catch (error) {}
+  try { windowLocks = navigator.locks; } catch (error) {}
+  var storageSession = SaveRecovery.createSession({ storage: nativeStorage, locks: windowLocks,
+    onConflict: function () { setTimeout(reportStorageConflict, 0); } });
+  var writableAtStart = await storageSession.start();
+  var playerStorage = storageSession.storage, storageConflict = !writableAtStart;
   var Engine = window.SudokuEngine;
   var Desktop = window.NineRealmsDesktop;
   var Logic = window.NineRealmsLogic;
@@ -14,8 +27,8 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.3.0";
-  try { if (Backup) Backup.recover(localStorage); }
+  var APP_VERSION = "1.3.1";
+  try { if (Backup && writableAtStart) Backup.recover(playerStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
       var recoveryDialog = document.getElementById("backup-dialog");
@@ -28,13 +41,13 @@
       return;
     }
   }
-  try { if (Favorites) favoriteStore = Favorites.createStore(localStorage); } catch (favoriteReadError) { /* Preserve corrupt or inaccessible data until explicit recovery. */ }
+  try { if (Favorites) favoriteStore = Favorites.createStore(playerStorage); } catch (favoriteReadError) { /* Preserve corrupt or inaccessible data until explicit recovery. */ }
   var Generator = window.NineRealmsGenerator;
   var generatorClient = Generator ? Generator.createClient() : null;
   var generationEpoch = 0, generatingPuzzle = false;
   var RECENT_GENERATED_KEY = "nine-realms.generated-recent.v1", recentGenerated = [];
   try {
-    var storedGenerated = JSON.parse(localStorage.getItem(RECENT_GENERATED_KEY) || "[]");
+    var storedGenerated = JSON.parse(playerStorage.getItem(RECENT_GENERATED_KEY) || "[]");
     if (Array.isArray(storedGenerated)) recentGenerated = storedGenerated.filter(function (v) { return typeof v === "string" && /^[a-f0-9]{32}$/.test(v); }).slice(-256);
   } catch (error) { /* Recent-repeat avoidance is optional; validity never depends on storage. */ }
 
@@ -69,7 +82,7 @@
   var MODES = Engine ? Engine.getModes().map(function (entry) { return entry.id; }) : [];
   var PUZZLE_CATALOG = Engine ? Engine.getPuzzleCatalog() : [];
   var Deck = null;
-  try { Deck = window.NineRealmsPuzzleDeck(Engine, localStorage); }
+  try { Deck = window.NineRealmsPuzzleDeck(Engine, playerStorage); }
   catch (error) { Deck = window.NineRealmsPuzzleDeck(Engine, { getItem: function () { return null; }, setItem: function () {} }); }
   var $ = function (id) { return document.getElementById(id); };
   var boardElement = $("board");
@@ -110,11 +123,13 @@
     return Engine.getModes().find(function (entry) { return entry.id === mode; });
   }
 
-  function generationInfo(value, puzzle) {
+  function generationInfo(value, puzzle, difficulty) {
     if (!Generator || !value || value.version !== 1 || value.kind !== "carved" ||
         typeof value.seed !== "string" || value.seed.length > 256 ||
         value.fingerprint !== Generator.fingerprint(puzzle)) return null;
-    return { version: 1, seed: value.seed, kind: "carved", difficultyBasis: "clue-density",
+    var basis = value.difficultyBasis === "supported-logic" && puzzle.mode === "classic" &&
+      Generator.matchesDifficulty(puzzle.givens, difficulty) ? "supported-logic" : "clue-density";
+    return { version: 1, seed: value.seed, kind: "carved", difficultyBasis: basis,
       fingerprint: value.fingerprint, givenCount: puzzle.givens.filter(Boolean).length };
   }
 
@@ -139,7 +154,7 @@
     if (!Generator || !puzzle.generation) return;
     var key = Generator.fingerprint(puzzle);
     recentGenerated = recentGenerated.filter(function (v) { return v !== key; }).concat(key).slice(-256);
-    try { localStorage.setItem(RECENT_GENERATED_KEY, JSON.stringify(recentGenerated)); } catch (error) { /* Keep a bounded in-memory ledger. */ }
+    try { playerStorage.setItem(RECENT_GENERATED_KEY, JSON.stringify(recentGenerated)); } catch (error) { /* Keep a bounded in-memory ledger. */ }
   }
 
   function sourceIdFor(puzzle, mode, difficulty) {
@@ -189,7 +204,7 @@
 
   function restore(provided, keepPreferences) {
     try {
-      var raw = provided ? null : localStorage.getItem(STORAGE_KEY);
+      var raw = provided ? null : playerStorage.getItem(STORAGE_KEY);
       if (!provided && !raw) return false;
       var saved = provided || JSON.parse(raw);
       if (!saved || [1, 2, 3, 4, 5, 6, 7, SAVE_VERSION].indexOf(saved.version) < 0) return false;
@@ -245,7 +260,7 @@
         custom: source.custom === true,
         practice: History ? History.practiceInfo(source.practice) : source.practice || null,
         logicMode: source.logicMode === true,
-        generation: generationInfo(source.generation, { mode: mode, clues: clues, givens: source.givens }),
+        generation: generationInfo(source.generation, { mode: mode, clues: clues, givens: source.givens }, difficulty),
         sessionId: validSessionId(source.sessionId) ? source.sessionId : newSessionId(),
         createdAt: Number.isFinite(source.createdAt) && source.createdAt > 0 ? source.createdAt : Date.now(),
         puzzleId: String(source.puzzleId || "saved"),
@@ -321,27 +336,90 @@
         !generatingPuzzle && !storageTransition && !dialogIsOpen() && !document.hidden) runningSince = performance.now();
   }
 
+  function currentSaveEnvelope() {
+    if (!game) throw new Error("当前没有可导出的对局。");
+    Branches.sync(game, noteMode);
+    return { version: SAVE_VERSION, preferences: preferences,
+      game: Object.assign({}, game, { elapsedMs: Math.floor(currentElapsed()), noteMode: noteMode }) };
+  }
+
+  function liveSaveExport() { return Boolean(game && (storageSession.isTemporary() || storageFailed || storageConflict)); }
+
   function save(action) {
-    if (!game || storageTransition) return false;
+    if (!game || storageTransition || saveRecoveryState || storageSession.isTemporary()) return false;
     try {
-      Branches.sync(game, noteMode);
-      var snapshot = Object.assign({}, game, { elapsedMs: Math.floor(currentElapsed()), noteMode: noteMode });
-      var envelope = { version: SAVE_VERSION, preferences: preferences, game: snapshot };
+      storageSession.check();
+      var envelope = currentSaveEnvelope();
       if (History) {
         try { History.capture(envelope, { action: typeof action === "string" ? action : undefined, origin: historyOrigin || undefined }); }
         catch (historyError) { /* Current-game saving remains independent of the history archive. */ }
         historyOrigin = null;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-      storageFailed = false;
+      playerStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
+      storageFailed = false; refreshSaveStatus();
       return true;
     } catch (error) {
+      if (error.code === "SAVE_CONFLICT") { reportStorageConflict(); return false; }
       if (!storageFailed) {
         storageFailed = true;
-        toast("浏览器未允许本地保存，本局仍可正常游玩。");
+        toast("进度尚未保存。可继续游玩，请在关闭前从页脚导出当前对局。");
       }
+      refreshSaveStatus();
       return false;
     }
+  }
+
+  function pauseSaveMessage() {
+    if (storageSession.isTemporary()) return "本次进度仅保留在此窗口，关闭前可从页脚“临时对局”导出原文。";
+    if (storageConflict) return "此窗口已暂停保存。请先导出本窗口进度，或重新读取本机进度。";
+    if (storageFailed) return "进度尚未保存到本机。可继续游玩，关闭前请从页脚导出当前对局。";
+    return preferences.zen ? "棋局已为你保留，准备好后再继续。" : "进度已经保存，点击继续后再恢复计时。";
+  }
+
+  function refreshSaveStatus() {
+    var state = storageSession.isTemporary() ? "temporary" : storageConflict ? "conflict" :
+      saveRecoveryState ? "protected" : storageFailed ? "failed" : "saved";
+    var messages = { temporary: "本次对局不自动保存", conflict: "此窗口已暂停保存", protected: "自动保存已暂停，原档保持不变",
+      failed: "进度尚未保存，关闭前请导出当前对局", saved: "进度自动保存，随时回来继续" };
+    var label = $("save-status");
+    if (label.textContent !== messages[state]) label.textContent = messages[state];
+    if (label.dataset.saveState !== state) { label.dataset.saveState = state; refreshRecoveryLink(); }
+    if (game && game.started && game.paused) $("pause-description").textContent = pauseSaveMessage();
+    var notice = $("toast");
+    if (state === "failed" && preferences.zen) {
+      if (notice.dataset.saveWarning !== "true") toast(messages.failed);
+    } else if (notice.dataset.saveWarning === "true") {
+      clearTimeout(toastTimeout); notice.hidden = true; notice.classList.remove("visible"); delete notice.dataset.saveWarning;
+    }
+  }
+
+  function suspendOtherPersistence(value) {
+    if (History) History.suspendPersistence(value);
+    if (window.NineRealmsEasterEggs && window.NineRealmsEasterEggs.suspendPersistence) window.NineRealmsEasterEggs.suspendPersistence(value);
+  }
+
+  function reportStorageConflict() {
+    if (storageSession.isTemporary()) return;
+    storageConflict = true; storageTransition = true;
+    suspendClock();
+    if (game && game.started && !game.completed) game.paused = true;
+    cancelPuzzleGeneration(); suspendOtherPersistence(true);
+    var dialog = $("save-conflict-dialog");
+    document.querySelectorAll("dialog[open]").forEach(function (open) { if (open !== dialog) closeDialog(open); });
+    if (game) render();
+    refreshSaveStatus();
+    $("save-conflict-export").disabled = !game;
+    if (!dialog.open) { if (dialog.showModal) dialog.showModal(); else dialog.setAttribute("open", ""); }
+  }
+
+  function enterTemporarySession(freshGame) {
+    storageSession.temporary(); storageConflict = false;
+    saveRecoveryState = { status: "temporary", sessionOnly: true };
+    storageTransition = false; suspendOtherPersistence(true);
+    document.querySelectorAll("dialog[open]").forEach(closeDialog);
+    if (freshGame || !game) newGame("easy", true); else render();
+    refreshSaveStatus();
+    setStatus("仅本次游玩，不会覆盖本机存档或其他记录。关闭前可从页脚“临时对局”导出当前对局原文。");
   }
 
   function formatTime(milliseconds) {
@@ -357,9 +435,13 @@
     var element = $("toast");
     if (!element) return;
     clearTimeout(toastTimeout);
-    element.textContent = message;
+    var persistent = storageFailed && preferences.zen && !storageConflict && !storageSession.isTemporary();
+    if (persistent) message = "进度尚未保存。请退出禅模式后，从页脚导出未保存对局。";
+    if (element.textContent !== message) element.textContent = message;
+    element.dataset.saveWarning = String(persistent);
     element.hidden = false;
     element.classList.add("visible");
+    if (persistent) return;
     toastTimeout = setTimeout(function () {
       element.classList.remove("visible");
       element.hidden = true;
@@ -603,9 +685,10 @@
     if ($("catalog-count")) $("catalog-count").textContent = MODES.length + " 种玩法";
     if ($("puzzle-bank-status")) {
       var available = PUZZLE_CATALOG.filter(function (p) { return p.mode === game.mode && p.difficulty === game.difficulty; }).length;
-      $("puzzle-bank-status").textContent = game.custom ? "自建经典题 · " + game.givens.filter(Boolean).length + " 个给定数 · 已验证唯一解" : game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + "密度档" :
+      var calibrated = game.generation && game.generation.difficultyBasis === "supported-logic";
+      $("puzzle-bank-status").textContent = game.custom ? "自建经典题 · " + game.givens.filter(Boolean).length + " 个给定数 · 已验证唯一解" : game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + (calibrated ? " · 技巧校准" : "密度档") :
         difficulty.label + "原题库 · " + available + " 题" + (game.difficulty === "master" ? "" : " · 新游戏可离线生成");
-      $("puzzle-bank-status").title = game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
+      $("puzzle-bank-status").title = calibrated ? "已验证唯一解，并完整通过当前逻辑技巧检查：入门只用单格唯一候选，标准需区域唯一位置，进阶需锁定候选或数对。代表此推理路径，不保证是所有人类解法的最低难度。" : game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
         "原题库轮换保留。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
     }
     document.body.dataset.outsideClues = String(Boolean(game.clues && game.clues.outside && game.clues.outside.length));
@@ -620,7 +703,8 @@
     if ($("mode-rule")) $("mode-rule").textContent = info.description;
     $("zen-rule").textContent = info.label + " · " + info.description;
     if ($("board-context")) $("board-context").textContent = info.label + " · " + difficulty.label;
-    if ($("difficulty-description")) $("difficulty-description").textContent = difficulty.description;
+    if ($("difficulty-description")) $("difficulty-description").textContent = game.mode === "classic" ? difficulty.description :
+      "按给定数密度分档，尚未按所选档位校准解题技巧；实际体验会随玩法规则而变化。";
     if ($("rule-badge")) $("rule-badge").textContent = {
       classic: "基础规则", diagonal: "双对角线", hyper: "四个窗口", knight: "马步约束"
     }[game.mode];
@@ -658,7 +742,7 @@
       if (value) filled++;
       if (!game.givens[i]) {
         editableTotal++;
-        if (ruleOnly() ? Boolean(value) : value === game.solution[i]) solved++;
+        if (ruleOnly() || !automaticErrors() ? Boolean(value) : value === game.solution[i]) solved++;
       }
       (button._variantDecorations || []).forEach(function (name) { button.classList.remove(name); });
       var decorations = Engine.getCellDecorations(i, gameContext());
@@ -713,8 +797,11 @@
     if ($("difficulty")) $("difficulty").value = game.difficulty;
     if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
     if ($("timer")) $("timer").textContent = formatTime(currentElapsed());
-    if ($("mistakes")) $("mistakes").textContent = ruleOnly() ? "—" : String(game.mistakes).padStart(2, "0");
-    if ($("progress-count")) $("progress-count").textContent = solved + " / " + editableTotal;
+    if ($("mistakes")) $("mistakes").textContent = ruleOnly() || !automaticErrors() ? "—" : String(game.mistakes).padStart(2, "0");
+    if ($("progress-count")) {
+      $("progress-count").textContent = solved + " / " + editableTotal;
+      $("progress-count").setAttribute("aria-label", (ruleOnly() || !automaticErrors() ? "已填 " : "已核对正确 ") + solved + " 格，共 " + editableTotal + " 个待填格");
+    }
     if ($("progress-fill")) $("progress-fill").style.width = (editableTotal ? solved / editableTotal * 100 : 100) + "%";
     if ($("notes-btn")) {
       $("notes-btn").classList.toggle("active", noteMode);
@@ -795,10 +882,9 @@
     if ($("start-btn")) $("start-btn").hidden = !waitingToStart || game.completed;
     if ($("resume-btn")) $("resume-btn").hidden = waitingToStart || game.completed;
     if ($("pause-title")) $("pause-title").textContent = waitingToStart ? "准备好，开启这一境。" : "暂停一下，也很好。";
-    if ($("pause-description")) $("pause-description").textContent = preferences.zen ?
-      (waitingToStart ? "准备好了，就从一个空格开始。不必着急。" : "棋局已为你保留，准备好后再继续。") :
-      waitingToStart ? modeInfo(game.mode).label + " · " + (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) +
-        "。点击开始后，棋盘与计时一起开启。" : "进度已经保存，点击继续后再恢复计时。";
+    if ($("pause-description")) $("pause-description").textContent = !waitingToStart ? pauseSaveMessage() : preferences.zen ?
+      "准备好了，就从一个空格开始。不必着急。" : modeInfo(game.mode).label + " · " + (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) +
+        "。点击开始后，棋盘与计时一起开启。";
     document.body.dataset.gameState = game.completed ? "completed" : waitingToStart ? "ready" : game.paused ? "paused" : "playing";
     if ($("multi-selected-label") && isMulti()) $("multi-selected-label").textContent = cellLocation(game.selected);
     boardElement.setAttribute("aria-multiselectable", String(batchSelecting || batchSelection.size > 0));
@@ -926,11 +1012,11 @@
       game.board[index] = value;
       game.notes[index] = 0;
       clearPeerNotes(index, value);
-      if (!ruleOnly() && value !== game.solution[index] && !fromHint) {
+      if (!ruleOnly() && automaticErrors() && value !== game.solution[index] && !fromHint) {
         game.mistakes++;
         setStatus(automaticErrors() ? "这个数字与答案不符，可以撤销后再想一想。" : "已填入数字。");
       } else if (!fromHint) {
-        setStatus(ruleOnly() ? "已填入数字，仅检查规则冲突。" : preferences.zen ? "已填入数字。" : "保持节奏，答案就在这些细节里。");
+        setStatus(ruleOnly() ? "已填入数字，仅检查规则冲突。" : !automaticErrors() ? "已填入数字。" : "保持节奏，答案就在这些细节里。");
       }
       recordEnergy(index, value, fromHint);
       flash(index);
@@ -999,13 +1085,13 @@
     if (!canInteract() || !inBranch()) return;
     try {
       var adopted = Branches.adopt(game, noteMode); noteMode = adopted.noteMode;
-      var newErrors = adopted.main && !game.logicMode ? game.board.reduce(function (count, value, i) {
+      var newErrors = adopted.main && !game.logicMode && automaticErrors() ? game.board.reduce(function (count, value, i) {
         return count + (!game.givens[i] && value && value !== adopted.before.board[i] && value !== game.solution[i] ? 1 : 0);
       }, 0) : 0;
       game.mistakes += newErrors;
       if (adopted.main) {
         game.board.forEach(function (value, i) { if (value) game.energy.claimed[i] = true; });
-        if (!game.logicMode) settleUnits(false);
+        if (!game.logicMode && automaticErrors()) settleUnits(false);
       }
       game.energy.combo = 0; clearTransientMarks();
       setStatus(newErrors ? "已采纳到主盘，新增 " + newErrors + " 个答案核对失误；可整组撤销。" : "已采纳到上层，修改可整组撤销。其他分支仍保留。");
@@ -1123,7 +1209,8 @@
     // Never compare trial entries to the solution: the checkpoint is a safe workspace.
     if (ruleOnly()) return;
     var energy = game.energy;
-    if (fromHint || !preferences.errorCheck) {
+    if (!automaticErrors()) { energy.combo = 0; energy.claimed[index] = true; return; }
+    if (fromHint) {
       energy.combo = 0;
       energy.claimed[index] = true;
       settleUnits(false);
@@ -1159,7 +1246,7 @@
 
   function readVoyage() {
     try {
-      var raw = localStorage.getItem(VOYAGE_KEY);
+      var raw = playerStorage.getItem(VOYAGE_KEY);
       voyageProgress = Voyage.migrateProgress(raw === null ? {} : JSON.parse(raw), game && game.voyageId, { existing: raw !== null || Boolean(game) });
       saveVoyage();
     }
@@ -1167,8 +1254,8 @@
   }
 
   function saveVoyage() {
-    if (voyageStorageBlocked) return;
-    try { localStorage.setItem(VOYAGE_KEY, JSON.stringify(voyageProgress)); }
+    if (voyageStorageBlocked || storageTransition || saveRecoveryState || storageSession.isTemporary()) return;
+    try { playerStorage.setItem(VOYAGE_KEY, JSON.stringify(voyageProgress)); }
     catch (error) { toast("星图成绩暂时无法保存到本机，本局仍可继续游玩。"); }
   }
 
@@ -1366,12 +1453,13 @@
 
   function readDaily() {
     try {
-      dailyRecords = Daily.normalizeRecords(JSON.parse(localStorage.getItem(DAILY_KEY) || "{}"));
+      dailyRecords = Daily.normalizeRecords(JSON.parse(playerStorage.getItem(DAILY_KEY) || "{}"));
     } catch (error) { dailyRecords = {}; }
   }
 
   function saveDaily() {
-    try { localStorage.setItem(DAILY_KEY, JSON.stringify(dailyRecords)); }
+    if (storageTransition || saveRecoveryState || storageSession.isTemporary()) return;
+    try { playerStorage.setItem(DAILY_KEY, JSON.stringify(dailyRecords)); }
     catch (error) { toast("每日记录暂时无法保存到本机，本次仍可继续游玩。"); }
   }
 
@@ -1781,7 +1869,7 @@
     game = {
       custom: puzzle.custom === true,
       logicMode: preferences.logicMode,
-      generation: generationInfo(puzzle.generation, { mode: mode, clues: clues, givens: puzzle.givens }),
+      generation: generationInfo(puzzle.generation, { mode: mode, clues: clues, givens: puzzle.givens }, difficulty),
       sessionId: newSessionId(),
       createdAt: Date.now(),
       puzzleId: String(puzzle.id || Date.now()),
@@ -1868,8 +1956,9 @@
       installPuzzle(puzzle, difficulty, mode);
       Deck.remember(mode, difficulty, puzzle.sourceId, true);
       rememberGenerated(puzzle);
-      setStatus(puzzle.generation ? modeInfo(mode).label + "新题已准备好 · " + difficultyInfo(mode, difficulty).label + "密度档（非技巧评级），点击开始后计时。" :
-        fallback ? "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。" :
+      setStatus(puzzle.generation ? modeInfo(mode).label + "新题已准备好 · " + difficultyInfo(mode, difficulty).label +
+        (game.generation.difficultyBasis === "supported-logic" ? "（已通过技巧校准）" : "密度档（非技巧评级）") + "，点击开始后计时。" :
+        fallback ? (mode === "classic" ? "本次未能在预算内完成技巧校准，已使用题库原分档；点击开始后计时。" : "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。") :
         preferences.zen ? modeInfo(mode).label + "已准备好，等你开始。" : downgraded ? "已准备" + modeInfo(mode).label + " · 进阶。极境仅用于经典玩法，点击开始后计时。" :
         modeInfo(mode).label + " · " + difficultyInfo(mode, difficulty).label + "已准备好，点击开始游戏后计时。");
       save();
@@ -2009,7 +2098,7 @@
     if (summary) summary.textContent = modeInfo(game.mode).label + " · " +
       (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) + "，每一个数字都找到了自己的位置。";
     if ($("completion-time")) $("completion-time").textContent = formatTime(game.elapsedMs);
-    if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode ? "—" : String(game.mistakes);
+    if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode || !automaticErrors() ? "—" : String(game.mistakes);
     // Zen completion stays on the finished board, without a score dialog.
     if (!preferences.zen) showDialog($("completion-dialog"));
     celebrate();
@@ -2328,6 +2417,9 @@
     if (!game || dialogIsOpen()) return;
     $("rules-title").textContent = modeInfo(game.mode).label;
     $("rules-description").textContent = modeInfo(game.mode).description;
+    var examples = $("rule-examples");
+    examples.open = false;
+    examples.hidden = !window.NineRealmsRuleExamples.render($("rule-examples-content"), game.mode);
     renderTechniqueGuide();
     renderLogicRating();
     showDialog($("rules-dialog")); save();
@@ -2392,7 +2484,7 @@
     clearPulse();
     renderPreferences();
     render();
-    toast(ruleOnly() ? (preferences.errorCheck ? "规则冲突即时标记已开启。" : "规则冲突即时标记已关闭。") : preferences.errorCheck ? "即时错误提示已开启。" : "即时错误提示已关闭，可随时点击检查。");
+    toast(ruleOnly() ? (preferences.errorCheck ? "规则冲突即时标记已开启。" : "规则冲突即时标记已关闭。") : preferences.errorCheck ? "即时错误提示已开启。" : "即时纠错已关闭：失误暂停统计，进度按已填格数显示；仍可主动点击检查。");
     save();
   });
   bind("board-stage", "pointermove", function (event) {
@@ -2464,6 +2556,8 @@
   });
 
   window.addEventListener("storage", function(event) {
+    if (storageSession.isTemporary()) return;
+    storageSession.changed(event);
     if(!Backup || event.key!==Backup.journalKey)return;
     if(event.newValue!==null){
       cancelPuzzleGeneration();suspendClock();storageTransition=true;if(History)History.suspendPersistence(true);
@@ -2489,12 +2583,14 @@
       resumeClock();
     }
   });
-  window.addEventListener("pagehide", function () {
+  window.addEventListener("pagehide", function (event) {
     suspendClock();
     if (game && game.started && !game.completed) game.paused = true;
     save();
     if (History) History.flush();
+    if (event.isTrusted) storageSession.release();
   });
+  window.addEventListener("pageshow", function (event) { if (event.persisted) window.location.reload(); });
   window.addEventListener("beforeunload", function () { save(); if (History) History.flush(); });
   if (reducedMotion.addEventListener) reducedMotion.addEventListener("change", renderPreferences);
   else if (reducedMotion.addListener) reducedMotion.addListener(renderPreferences);
@@ -2518,6 +2614,124 @@
     setTimeout(function(){URL.revokeObjectURL(url);},30000);
     return true;
   }
+
+  function refreshRecoveryLink() {
+    if (liveSaveExport()) { $("save-recovery-open").hidden = false; $("save-recovery-open").textContent = storageSession.isTemporary() ? "临时对局" : "未保存对局"; return; }
+    $("save-recovery-open").textContent = "原档副本";
+    try { $("save-recovery-open").hidden = playerStorage.getItem(SaveRecovery.archiveKey) === null; }
+    catch (error) { $("save-recovery-open").hidden = true; }
+  }
+
+  function showSaveRecovery(state) {
+    var pending = Boolean(state), unavailable = state && state.status === "unavailable", live = !pending && liveSaveExport();
+    $("save-recovery-title").textContent = live ? "本窗口尚未保存的对局" : pending ? "棋局暂未能恢复" : "保留的原档副本";
+    $("save-recovery-description").textContent = live ?
+      "可以导出当前对局原文留存；此文件不包含其他历史、收藏或成绩，不是完整备份，不能在数据备份入口导入。本机原存档和副本不会改变。" : !pending ?
+      "开新局前保留的原始数据仍在本机。可以导出留存，交由兼容版本检查；这些副本不是完整备份，不能直接在数据备份中导入。" : unavailable ?
+      "浏览器暂不允许读取本机存档。可以重试，或仅本次游玩；仅本次游玩不会自动保存当前对局。" : state.status === "unsupported" ?
+      "这份存档来自较新的存档版本（" + state.version + "），当前版本无法读取。原始数据未改变，请优先用对应版本打开，也可以导出留存。" :
+      "发现无法读取的棋局数据，原始内容未改变。可导出留存、重新读取，或保留原档副本后开新局；历史、收藏和成绩会保留。";
+    var archiveRaw = null;
+    try { archiveRaw = playerStorage.getItem(SaveRecovery.archiveKey); } catch (error) {}
+    $("save-recovery-export-archive").hidden = !pending && !live || archiveRaw === null;
+    $("save-recovery-export").textContent = live ? "导出当前对局原文" : pending ? "导出原档" : "导出已有副本原文";
+    $("save-recovery-export").dataset.currentWindow = String(live);
+    $("save-recovery-temporary").hidden = !pending || Boolean(unavailable);
+    $("save-recovery-export").disabled = Boolean(unavailable);
+    $("save-recovery-retry").hidden = !pending;
+    $("save-recovery-new").hidden = !pending;
+    $("save-recovery-new").textContent = unavailable ? "仅本次游玩" : "保留原档并开新局";
+    $("save-recovery-close").hidden = pending;
+    $("save-recovery-status").textContent = "";
+    var dialog = $("save-recovery-dialog");
+    if (!dialog.open) { if (dialog.showModal) dialog.showModal(); else dialog.setAttribute("open", ""); }
+  }
+
+  function readCurrentSave() {
+    var state;
+    try { state = SaveRecovery.inspect(playerStorage, SAVE_VERSION); }
+    catch (error) { state = { status: "unavailable", raw: null }; }
+    if (state.status === "candidate") {
+      if (restore(state.value)) return { status: "restored" };
+      state.status = "invalid";
+    }
+    return state;
+  }
+
+  bind("save-recovery-dialog", "cancel", function (event) { if (saveRecoveryState && !saveRecoveryState.sessionOnly) event.preventDefault(); });
+  bind("save-recovery-close", "click", function () { closeDialog($("save-recovery-dialog")); resumeClock(); });
+  bind("save-recovery-open", "click", function () {
+    if (dialogIsOpen() || storageTransition) return;
+    suspendClock(); showSaveRecovery(null);
+  });
+  bind("save-recovery-export", "click", async function () {
+    try {
+      var pending = saveRecoveryState && !saveRecoveryState.sessionOnly;
+      var live = !pending && $("save-recovery-export").dataset.currentWindow === "true";
+      var raw = live ? JSON.stringify(currentSaveEnvelope()) : pending ? saveRecoveryState.raw : playerStorage.getItem(SaveRecovery.archiveKey);
+      if (typeof raw !== "string") throw new Error("暂时无法读取原档，请重试。");
+      var saved = await downloadPlayerFile(raw, live ? "Nine-Realms-window-save.json" : pending ? "Nine-Realms-unreadable-save.json" : "Nine-Realms-original-saves.json");
+      $("save-recovery-status").textContent = saved ? "已发起保存，请确认文件已保存到设备。原数据仍保留在本机。" : "已取消保存，原数据仍保留在本机。";
+    } catch (error) { $("save-recovery-status").textContent = error.message || "导出未完成，原数据仍保留。"; }
+  });
+  bind("save-recovery-retry", "click", function () {
+    try { storageSession.rebase(); } catch (error) {}
+    var state = readCurrentSave();
+    if (state.status !== "missing" && state.status !== "restored") {
+      saveRecoveryState = state; showSaveRecovery(state); return;
+    }
+    saveRecoveryState = null; storageTransition = false;
+    suspendOtherPersistence(false);
+    closeDialog($("save-recovery-dialog")); renderPreferences();
+    if (state.status === "restored") { render(); setStatus("棋局已重新读取，点击继续后恢复计时。"); save(); }
+    else newGame("easy", true);
+    refreshRecoveryLink();
+  });
+  bind("save-recovery-new", "click", function () {
+    if (!saveRecoveryState) return;
+    var sessionOnly = saveRecoveryState.status === "unavailable";
+    if (sessionOnly) { enterTemporarySession(true); return; }
+    try {
+      if (!sessionOnly) SaveRecovery.preserve(playerStorage, saveRecoveryState);
+      if (!sessionOnly) saveRecoveryState = null;
+      storageTransition = false; closeDialog($("save-recovery-dialog"));
+      suspendOtherPersistence(false);
+      newGame("easy", true); refreshRecoveryLink();
+      refreshSaveStatus(); toast("原档副本已保留，可在页脚“原档副本”中导出。");
+    } catch (error) {
+      $("save-recovery-status").textContent = (error.message || "原档副本保存失败。") + " 当前原档与已有副本均未改变。可分别导出，或选择仅本次游玩。";
+    }
+  });
+
+  bind("save-recovery-export-archive", "click", async function () {
+    try {
+      var raw = playerStorage.getItem(SaveRecovery.archiveKey);
+      if (typeof raw !== "string") throw new Error("暂时无法读取已有副本，原数据未改变。");
+      var saved = await downloadPlayerFile(raw, "Nine-Realms-original-saves.json");
+      $("save-recovery-status").textContent = saved ? "已发起保存已有副本的原文，请确认文件已保存。" : "已取消保存，已有副本仍保留。";
+    } catch (error) { $("save-recovery-status").textContent = error.message; }
+  });
+  bind("save-recovery-temporary", "click", function () { enterTemporarySession(true); });
+  bind("save-conflict-dialog", "cancel", function (event) { event.preventDefault(); });
+  bind("save-conflict-temporary", "click", function () { enterTemporarySession(false); });
+  bind("save-conflict-reload", "click", async function () {
+    if (await storageSession.start()) window.location.reload();
+    else $("save-conflict-status").textContent = "另一窗口仍在保存。请先关闭其他九境窗口，再重新读取；也可选择仅本次游玩。";
+  });
+  bind("save-conflict-export", "click", async function () {
+    var actions = [$("save-conflict-export"), $("save-conflict-reload"), $("save-conflict-temporary")];
+    actions.forEach(function (button) { button.disabled = true; });
+    $("save-conflict-status").textContent = "正在准备本窗口进度，请等待导出完成或取消后再重新读取。";
+    try {
+      var value, rawOnly = false;
+      try { value = await preparePlayerBackup(); }
+      catch (error) { value = currentSaveEnvelope(); rawOnly = true; }
+      var saved = await downloadPlayerFile(value, rawOnly ? "Nine-Realms-window-save.json" : "Nine-Realms-window-backup.json");
+      $("save-conflict-status").textContent = saved ? "已发起保存本窗口备份，请确认文件已保存。重新读取会放弃本窗口尚未保存的修改。" : "已取消导出，本窗口进度仍保留。";
+      if (saved && rawOnly) $("save-conflict-status").textContent = "完整备份暂不可导出，已发起保存本窗口对局原文；它不含其他记录，不能在数据备份入口导入。请确认文件已保存。";
+    } catch (error) { $("save-conflict-status").textContent = error.message || "导出未完成，请保留此窗口。"; }
+    finally { actions.forEach(function (button) { button.disabled = false; }); $("save-conflict-export").disabled = !game; }
+  });
 
   function favoriteSession(record, unfinished) {
     if (!History || !Favorites) return null;
@@ -2552,14 +2766,14 @@
     save();if(History)History.flush();
     // Export the live snapshot even when quota prevents persistence. Never export stale progress.
     var entries={};
-    entries[STORAGE_KEY]={version:SAVE_VERSION,preferences:preferences,game:Object.assign({},game,{elapsedMs:Math.floor(currentElapsed()),noteMode:noteMode})};
+    entries[STORAGE_KEY]=currentSaveEnvelope();
     if(History)entries[History.KEY]=History.exportData();
     entries[DAILY_KEY]=dailyRecords;entries[VOYAGE_KEY]=voyageProgress;
     entries[RECENT_GENERATED_KEY]=recentGenerated.slice();
     if(Deck&&Deck.exportData)entries["nine-realms.puzzle-deck.v1"]=Deck.exportData();
     if(favoriteStore)entries[Favorites.key]=favoriteStore.exportData();
     if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.exportData)entries["nine-realms.secrets.v1"]=window.NineRealmsEasterEggs.exportData();
-    var liveStorage={getItem:function(key){return Object.prototype.hasOwnProperty.call(entries,key)?JSON.stringify(entries[key]):localStorage.getItem(key);}};
+    var liveStorage={getItem:function(key){return Object.prototype.hasOwnProperty.call(entries,key)?JSON.stringify(entries[key]):playerStorage.getItem(key);}};
     return await Backup.createAsync(liveStorage,{appVersion:APP_VERSION});
   }
 
@@ -2568,7 +2782,7 @@
     if(!save()||(History&&!History.flush()))throw new Error("当前进度暂时无法安全保存，已停止替换。请先释放本机存储空间。");
     storageTransition=true;if(History)History.suspendPersistence(true);
     try{
-      Backup.replace(localStorage,validated);
+      Backup.replace(playerStorage,validated);
       document.body.dataset.storageTransition="true";
       window.location.reload();
     }catch(error){
@@ -2608,7 +2822,7 @@
   bind("checkpoints-open", "click", function () { if (storageTransition || !History) return; save(); History.flush(); History.openCheckpoints(); });
 
   if (History) History.init({
-    Engine: Engine,
+    Engine: Engine, storage: playerStorage,
     VariantView: window.SudokuVariantView,
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { render(); resumeClock(); save(); },
@@ -2638,7 +2852,9 @@
 
   buildCatalog();
   buildBoard();
-  var restored = restore();
+  var startupSave = readCurrentSave();
+  var restored = startupSave.status === "restored";
+  if (!restored && startupSave.status !== "missing") { saveRecoveryState = startupSave; storageTransition = true; }
   readDaily();
   readVoyage();
   renderDaily();
@@ -2652,10 +2868,15 @@
       !game.started ? "已恢复准备中的棋局，点击开始游戏后计时。" :
       "已恢复" + modeInfo(game.mode).label + (inBranch() ? "的假设分支，检查点仍然保留；点击继续后计时。" : "进度，点击继续后再恢复计时。"));
     save();
-  } else {
+  } else if (!saveRecoveryState && !storageConflict) {
     newGame("easy", true);
   }
+  refreshRecoveryLink();
+  if (storageConflict) reportStorageConflict();
+  else if (saveRecoveryState) { suspendOtherPersistence(true); showSaveRecovery(saveRecoveryState); }
+  refreshSaveStatus();
   if (window.NineRealmsEasterEggs) window.NineRealmsEasterEggs.init({
+    storage: playerStorage,
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { resumeClock(); save(); },
     toast: toast

@@ -2,7 +2,7 @@
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
   else root.SudokuHints = factory(root.SudokuEngine);
-})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function createHints(Engine) {
   "use strict";
 
   function isBoard(value, complete, length) {
@@ -250,5 +250,6 @@
       (plainClassic(context) ? "当前已尝试唯一候选、锁定候选和数对，仍需要其他技巧。" : "当前没有找到单格唯一候选或区域唯一位置。") + "这里可能需要更深入的候选排除或分支推理；下一步会直接展示本题答案，作为求解辅助。");
   }
 
-  return { getStep: getStep, getLogicalStep: getLogicalStep, rateClassic: rateClassic, ratePuzzle: ratePuzzle, ratingModes: RATING_MODES.slice() };
+  return { getStep: getStep, getLogicalStep: getLogicalStep, rateClassic: rateClassic, ratePuzzle: ratePuzzle, ratingModes: RATING_MODES.slice(),
+    workerSource: function () { return "var SudokuHints=(" + createHints.toString() + ")(SudokuEngine);\n"; } };
 });

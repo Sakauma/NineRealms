@@ -1,6 +1,6 @@
 /* Optional jsdom interaction test; not real browser rendering or visual QA. */
 'use strict';
-const assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const assert=require('node:assert/strict'),fs=require('node:fs'),{JSDOM,VirtualConsole}=require('jsdom');
 const E=require('../src/engine.js'),A=require('../src/secret-archives.js'),B=require('../src/backup.js');
 const html=fs.readFileSync('src/index.html','utf8').replace(/<script src="\.\/([^"]+)"><\/script>/g,(_,file)=>'<script>'+fs.readFileSync('src/'+file,'utf8')+'</script>');
 const puzzle=E.getPuzzle('easy','archives-dom','classic'),initial={version:8,preferences:{theme:'nebula',fx:false,intensity:'soft'},game:{sessionId:'archive-isolation',createdAt:1,puzzleId:puzzle.id,sourceId:puzzle.sourceId,mode:'classic',difficulty:'easy',clues:puzzle.clues,givens:puzzle.givens,solution:puzzle.solution,board:puzzle.givens.slice(),notes:puzzle.givens.map(()=>0),selected:0,mistakes:0,hints:0,elapsedMs:0,started:false,paused:false,completed:false,history:[],branch:null}};

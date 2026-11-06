@@ -1,8 +1,8 @@
-/* Offline seeded clue carving. Difficulty here is clue density, not a human rating. */
+/* Offline seeded clue carving. Classic tiers require a complete supported logical path. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
-  else root.NineRealmsGenerator = factory(root.SudokuEngine);
-})(typeof globalThis !== "undefined" ? globalThis : this, function createGenerator(Engine) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"), require("./hints.js"));
+  else root.NineRealmsGenerator = factory(root.SudokuEngine, root.SudokuHints);
+})(typeof globalThis !== "undefined" ? globalThis : this, function createGenerator(Engine, Hints) {
   "use strict";
   var VERSION = 1;
   function hashWords(text) {
@@ -33,27 +33,34 @@
     return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2) + "-" + Math.random().toString(36).slice(2);
   }
   function fail(code) { var error = new Error(code); error.code = code; throw error; }
-  function generate(request) {
+  function carve(request, attempt) {
     request = request || {};
     var mode = request.mode || "classic", difficulty = request.difficulty || "easy";
     if (["easy", "medium", "hard"].indexOf(difficulty) < 0) fail("CURATED_DIFFICULTY");
     if (typeof request.seed !== "string" || !request.seed.length || request.seed.length > 256) fail("INVALID_SEED");
-    var random = rng("carve-v" + VERSION + ":" + request.seed);
-    var source = Engine.getPuzzle(difficulty, request.seed, mode, request.sourceId ? { sourceId: request.sourceId } : {});
+    var attemptSeed = request.seed + (attempt ? ":logic-" + attempt : "");
+    var random = rng("carve-v" + VERSION + ":" + attemptSeed);
+    var source = Engine.getPuzzle(difficulty, attemptSeed, mode, request.sourceId ? { sourceId: request.sourceId } : {});
     var context = { mode: mode, clues: source.clues };
     if (!Engine.validateComplete(source.solution, context)) fail("INVALID_TEMPLATE");
     var board = source.solution.slice(), order = board.map(function (_, i) { return i; });
     for (var i = order.length - 1; i > 0; i--) { var j = Math.floor(random() * (i + 1)), old = order[i]; order[i] = order[j]; order[j] = old; }
-    var base = { easy: 44, medium: 36, hard: 28 }[difficulty];
+    var base = (mode === "classic" ? { easy: 44, medium: 27, hard: 25 } : { easy: 44, medium: 36, hard: 28 })[difficulty];
     var target = Math.round(board.length * (base + Math.floor(random() * 5) - 2) / 81);
     var givenCount = board.length, checks = 0, nodes = 0, rejectedByBudget = 0;
-    // Node budgets, unlike wall-clock cutoffs, keep successful seed output reproducible.
+    // Uniqueness checks use reproducible node budgets; logic calibration has a separate safety budget.
     var maxNodes = 12000;
     for (var n = 0; n < order.length && givenCount > target; n++) {
       var cell = order[n], value = board[cell]; board[cell] = 0;
       var result = Engine.analyzeSolutions(board, context, { limit: 2, maxNodes: maxNodes });
       checks++; nodes += result.nodes;
-      if (result.count === 1 && !result.exhausted) givenCount--;
+      if (result.count === 1 && !result.exhausted) {
+        givenCount--;
+        // Stop as soon as this logical tier is reached; clue count is only a search bound.
+        if (mode === "classic" && difficulty !== "easy" && givenCount <= 44 && matchesDifficulty(board, difficulty)) {
+          target = givenCount; break;
+        }
+      }
       else { board[cell] = value; if (result.exhausted) rejectedByBudget++; }
     }
     if (givenCount > target) fail("DENSITY_NOT_REACHED");
@@ -65,6 +72,34 @@
     puzzle.generation = { version: VERSION, seed: request.seed, kind: "carved", difficultyBasis: "clue-density", givenCount: givenCount,
       target: target, fingerprint: key, unique: true, checks: checks, nodes: nodes, rejectedByBudget: rejectedByBudget };
     return puzzle;
+  }
+  function ratingTier(result) {
+    if (!result || !result.solved || result.status !== "rated" || !result.steps) return null;
+    if (result.highestTechnique === "naked-single") return "easy";
+    if (result.highestTechnique === "hidden-single") return "medium";
+    if (["locked-candidate", "naked-pair", "hidden-pair"].indexOf(result.highestTechnique) >= 0) return "hard";
+    return null;
+  }
+  function matchesDifficulty(givens, difficulty) {
+    return Boolean(Hints && ratingTier(Hints.rateClassic(givens, "classic", { maxSteps: 200, timeLimitMs: 200 })) === difficulty);
+  }
+  function generate(request) {
+    request = request || {};
+    if ((request.mode || "classic") !== "classic") return carve(request, 0);
+    for (var attempt = 0; attempt < 16; attempt++) {
+      var puzzle;
+      try { puzzle = carve(request, attempt); }
+      catch (error) {
+        if (["DENSITY_NOT_REACHED", "UNCHANGED_MASK"].indexOf(error.code) < 0) throw error;
+        continue;
+      }
+      if (matchesDifficulty(puzzle.givens, request.difficulty || "easy")) {
+        puzzle.generation.difficultyBasis = "supported-logic";
+        puzzle.rating = "generated-logic-" + puzzle.difficulty;
+        return puzzle;
+      }
+    }
+    fail("CLASSIC_DIFFICULTY_NOT_REACHED");
   }
   function createClient() {
     var active = null;
@@ -81,7 +116,7 @@
         }
         active = { cancel: function () { var e = new Error("GENERATION_CANCELLED"); e.name = "AbortError"; finish(e); } };
         try {
-          var source = Engine.workerSource() + "var generator=(" + createGenerator.toString() + ")(SudokuEngine);\n" +
+          var source = Engine.workerSource() + Hints.workerSource() + "var generator=(" + createGenerator.toString() + ")(SudokuEngine,SudokuHints);\n" +
             "self.onmessage=function(event){try{self.postMessage({puzzle:generator.generate(event.data)});}catch(error){self.postMessage({error:error.code||error.message});}};";
           url = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
           worker = new Worker(url);
@@ -95,5 +130,6 @@
     }
     return { run: run, cancel: cancel };
   }
-  return { generate: generate, createClient: createClient, fingerprint: fingerprint, seed: seed, version: VERSION };
+  return { generate: generate, createClient: createClient, fingerprint: fingerprint, seed: seed, version: VERSION,
+    matchesDifficulty: matchesDifficulty, ratingTier: ratingTier };
 });

@@ -1,7 +1,7 @@
 /* Optional jsdom integration; not browser rendering. */
 'use strict';
 const fs=require('node:fs'),assert=require('node:assert/strict');
-const {JSDOM,VirtualConsole}=require('../.build-cache/dom-test/node_modules/jsdom');
+const {JSDOM,VirtualConsole}=require('jsdom');
 const E=require('../src/engine.js'),V=require('../src/voyage.js'),H=require('../src/hints.js');
 const p=E.getPuzzle('hard','hints3','classic');
 const board='820579406709008250040030987900000142010924008402100009300060700206000805100800620'.split('').map(Number);
@@ -33,6 +33,6 @@ const w=dom.window,d=w.document,$=id=>d.getElementById(id),tick=()=>new Promise(
  $('voyage-btn').click();$('voyage-tracks').querySelector('[data-track="lines"]').click();$('voyage-start').click();$('confirm-accept').click();await tick();
  assert.equal(saved().voyageId,'lines-rise-v1');const q=V.getPuzzle('lines-rise-v1');assert.deepEqual(saved().givens,q.givens);assert.deepEqual(saved().clues,q.clues);assert.equal(saved().started,false);
  $('rules-open').click();await tick();assert($('logic-rating-panel').hidden);assert.equal($('logic-rating').textContent,'');$('rules-close').click();
- assert.equal(d.querySelector('.app-version').textContent,'1.3.0');assert.deepEqual(errors,[]);dom.window.close();
+ assert.equal(d.querySelector('.app-version').textContent,'1.3.1');assert.deepEqual(errors,[]);dom.window.close();
  console.log('PASS roadmap DOM: single selected-cell result without board/note/history mutation, bounded original-puzzle rating, linked tracks with inherited passage, legacy progress, teaching text, cancel preservation and full-clue new chapter install. No actual rendering.');
 })().catch(e=>{console.error(e);dom.window.close();process.exitCode=1;});

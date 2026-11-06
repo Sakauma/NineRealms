@@ -176,7 +176,7 @@ function createStore(options){
  return {capture:capture,flush:flush,practiceAt:practiceAt,summarize:summarize,checkpoints:checkpointList,markCheckpoint:markCheckpoint,removeCheckpoint:removeCheckpoint,exportData:function(){return copy(envelope());},getRecords:summaries,get:function(id){var r=raw(id);return r?copy(r):null;},getSnapshot:function(id){var r=raw(id);return r?copy(r.snapshot):null;},frameAt:frameAt,status:function(){return {currentId:currentId,records:records.length,persistenceFailed:persistenceFailed,removedRecords:removed,limits:copy(limits)};}};
 }
 function getStore(){
- if(!singleton){var storage=null;try{storage=root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
+ if(!singleton){var storage=null;try{storage=hooks.storage||root.localStorage;}catch(e){}singleton=createStore({storage:storage,Engine:hooks.Engine||root.SudokuEngine||null,onWarning:function(s){if(hooks.toast)hooks.toast(s);}});}
  return singleton;
 }
 function capture(snapshot,meta){if(persistenceSuspended)return false;var ok=getStore().capture(snapshot,meta);if(ok){clearTimeout(flushTimer);flushTimer=setTimeout(function(){flushTimer=null;getStore().flush();},700);if(ui&&ui.dialog.open)ui.refreshList(false);}return ok;}
