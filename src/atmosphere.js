@@ -1,7 +1,7 @@
 /* Nine Realms - layered local atmosphere and quiet opt-in feedback. */
 (function (root) {
   "use strict";
-  var settings = { fx: false, sound: false, theme: "nebula", reducedMotion: false, zen: false, intensity: "cinematic" };
+  var settings = { fx: false, sound: false, soundVolume: 0.65, effectsEnabled: true, effectsVolume: 1, musicEnabled: false, musicVolume: 0.35, musicPhase: "coordinates", musicActive: false, theme: "nebula", reducedMotion: false, zen: false, intensity: "cinematic" };
   var palette = {
     nebula: { stars: ["#bba5ff", "#63e5ff", "#f2eaff"], clouds: ["#8265df", "#478bab"],
       moon: "#e3ddf9", mountain: "#777caa", water: "#a8b4d7" },
@@ -26,7 +26,7 @@
   var scenery = { trees: [] };
   var frameId = 0, lastPaint = 0, skyTime = 0;
   var pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
-  var audioContext = null, masterGain = null;
+  var audioContext = null, masterGain = null, musicPlayer = null, audioError = null;
   var voices = new Set(), lastSoundAt = -1000;
   var document = root.document, TAU = Math.PI * 2;
 
@@ -587,7 +587,8 @@
     try { voice.gain.disconnect(); } catch (_) {}
   }
 
-  function stopSound() {
+  function stopEffects() {
+    majorSoundUntil = 0;
     if (audioContext && masterGain) {
       try {
         masterGain.gain.cancelScheduledValues(audioContext.currentTime);
@@ -601,78 +602,80 @@
     voices.clear();
   }
 
-  function unlock() {
-    // This is the only path that may create/resume AudioContext; call on a gesture.
-    if (settings.zen || !settings.sound || hidden()) return;
+  function musicChanged() {
+    try { if (root.dispatchEvent && root.CustomEvent) root.dispatchEvent(new root.CustomEvent("nine-realms-music-state")); } catch (_) {}
+  }
+
+  function syncMusicPlayer() {
+    var allowed = settings.musicEnabled && settings.musicActive && settings.sound && !settings.zen && !hidden() && settings.soundVolume > 0 && settings.musicVolume > 0;
+    if (!allowed || !audioContext || audioContext.state !== "running") { if (musicPlayer) musicPlayer.stop(); return; }
+    if (!root.NineRealmsMusic) return;
+    if (!musicPlayer) musicPlayer = root.NineRealmsMusic.createPlayer(audioContext, {
+      OfflineAudioContext: root.OfflineAudioContext || root.webkitOfflineAudioContext, onState: musicChanged
+    });
+    var player = musicPlayer;
+    player.update({ active: true, phase: settings.musicPhase, volume: 0.9 * settings.soundVolume * settings.musicVolume }).then(function (playing) { if (playing && musicPlayer === player && audioContext && majorSoundUntil > audioContext.currentTime) player.duck(majorSoundUntil-audioContext.currentTime); });
+  }
+
+  function setMusic(options) {
+    if (typeof options.enabled === "boolean") settings.musicEnabled = options.enabled;
+    if (!settings.musicEnabled && musicPlayer) { musicPlayer.release(); musicPlayer = null; }
+    if (typeof options.active === "boolean") settings.musicActive = options.active;
+    if (Number.isFinite(options.volume)) settings.musicVolume = Math.max(0,Math.min(1,options.volume));
+    if (["coordinates","routes","home"].indexOf(options.phase) >= 0) settings.musicPhase = options.phase;
+    syncMusicPlayer();
+  }
+
+  function musicStatus() { return Object.assign(musicPlayer ? musicPlayer.status() : {state:"idle",playing:false,phase:null,sources:0,cached:0}, {audioState:audioContext?audioContext.state:(root.AudioContext||root.webkitAudioContext?"uninitialized":"unavailable"),audioError:audioError}); }
+  function stopSound() { stopEffects(); if (musicPlayer) musicPlayer.stop(); }
+  function releaseAudio() {
+    stopSound(); if (musicPlayer) { musicPlayer.release(); musicPlayer = null; }
+    var context = audioContext; audioContext = null; masterGain = null; audioError = null; lastSoundAt = -1000; majorSoundUntil = 0;
+    if (context && context.state !== "closed") { try { var closing = context.close(); if (closing && closing.catch) closing.catch(function () {}); } catch (_) {} }
+  }
+
+  function unlock(options) {
+    if (settings.zen || !settings.sound || hidden()) return Promise.resolve(false);
     try {
+      // Explicit retry recreates a failed synthesizer without changing saved switches.
+      if(options&&options.retryMusic&&musicPlayer&&musicPlayer.status().state==="error"){musicPlayer.release();musicPlayer=null;}
       if (!audioContext || audioContext.state === "closed") {
+        if (musicPlayer) { musicPlayer.release(); musicPlayer = null; }
         var Audio = root.AudioContext || root.webkitAudioContext;
-        if (!Audio) return;
-        audioContext = new Audio();
-        masterGain = audioContext.createGain();
-        masterGain.gain.value = 0.28;
-        masterGain.connect(audioContext.destination);
+        if (!Audio) {audioError="unavailable";musicChanged();return Promise.resolve(false);}
+        audioContext = new Audio(); lastSoundAt = -1000; majorSoundUntil = 0; masterGain = audioContext.createGain();
+        masterGain.gain.value = 0.9 * settings.soundVolume * settings.effectsVolume; masterGain.connect(audioContext.destination);
+        var observed = audioContext;
+        if (observed.addEventListener) observed.addEventListener("statechange", function () { if (audioContext !== observed) return; if (observed.state !== "running") { if (musicPlayer) musicPlayer.stop(); } else {audioError=null;syncMusicPlayer();} musicChanged(); });
       }
-      if (audioContext.state === "suspended") {
-        var result = audioContext.resume();
-        if (result && typeof result.catch === "function") result.catch(function () {});
+      if (audioContext.state === "suspended" || audioContext.state === "interrupted") {
+        var resuming = audioContext;musicChanged();
+        return Promise.resolve(resuming.resume()).then(function () { if (audioContext !== resuming) return false;audioError=resuming.state==="running"?null:"blocked";syncMusicPlayer();musicChanged();return resuming.state === "running"; }).catch(function () {if(audioContext!==resuming)return false;audioError="blocked";musicChanged();return false;});
       }
-    } catch (_) {
-      audioContext = null;
-      masterGain = null;
-    }
+      audioError=null;syncMusicPlayer();musicChanged();return Promise.resolve(audioContext.state === "running");
+    } catch (_) {releaseAudio();audioError="initialization";musicChanged();return Promise.resolve(false);}
   }
 
-  function tone(frequency, offset, duration, type, peak, endFrequency) {
-    if (!audioContext || !masterGain || voices.size >= 12) return;
-    var voice = null;
+  var majorSoundUntil = 0;
+  function play(kind) {
+    if (settings.zen || !settings.sound || !settings.effectsEnabled || settings.effectsVolume === 0 || settings.soundVolume === 0 || hidden() || !audioContext || audioContext.state !== "running" || !masterGain || !root.NineRealmsSound) return false;
     try {
-      var oscillator = audioContext.createOscillator();
-      var gain = audioContext.createGain();
-      var start = audioContext.currentTime + offset;
-      oscillator.type = type || "sine";
-      oscillator.frequency.setValueAtTime(frequency, start);
-      if (endFrequency) oscillator.frequency.exponentialRampToValueAtTime(endFrequency, start + duration * 0.8);
-      gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(peak || 0.055, start + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-      oscillator.connect(gain);
-      gain.connect(masterGain);
-      voice = { oscillator: oscillator, gain: gain };
-      voices.add(voice);
-      oscillator.onended = function () { releaseVoice(voice); };
-      oscillator.start(start);
-      oscillator.stop(start + duration + 0.025);
-    } catch (_) {
-      if (voice) releaseVoice(voice);
-    }
-  }
-
-  function play(kind, level) {
-    if (settings.zen || !settings.sound || hidden() || !audioContext || audioContext.state !== "running" || !masterGain) return;
-    try {
-      var now = audioContext.currentTime;
-      if (kind === "place" && now - lastSoundAt < 0.055) return;
+      var now = audioContext.currentTime, major = ["win", "voyage-enter", "voyage-repair", "voyage-unlock", "voyage-home"].indexOf(kind) >= 0;
+      var editing = ["input","note","erase","undo","redo"].indexOf(kind) >= 0;
+      if (!editing && !major && now < majorSoundUntil) return false;
+      if (!editing && (kind === "place" || kind === "voyage-select") && now - lastSoundAt < 0.075) return false;
+      var notes = root.NineRealmsSound.score(kind); if (!notes.length) return false;
+      if (major) { stopEffects(); majorSoundUntil = now + Math.max.apply(null, notes.map(function (n) { return n.offset + n.duration; })); }
+      if (musicPlayer && (major || kind === "unit")) musicPlayer.duck(Math.max.apply(null, notes.map(function (n) { return n.offset + n.duration; })));
       lastSoundAt = now;
-      masterGain.gain.setValueAtTime(0.28, now);
-      if (kind === "place") {
-        var scale = [392, 440, 523.25, 587.33, 659.25, 783.99];
-        var step = Math.max(0, Math.min(5, Math.floor((Number(level) || 1) / 2)));
-        tone(scale[step], 0, 0.17, "sine", 0.055);
-      } else if (kind === "mistake") {
-        tone(196, 0, 0.19, "sine", 0.04, 146.83);
-      } else if (kind === "unit") {
-        [523.25, 659.25, 783.99].forEach(function (frequency, index) {
-          tone(frequency, index * 0.055, 0.23, "sine", 0.04);
-        });
-      } else if (kind === "win") {
-        stopSound();
-        masterGain.gain.setValueAtTime(0.28, now);
-        [392, 523.25, 659.25, 783.99, 1046.5].forEach(function (frequency, index) {
-          tone(frequency, index * 0.095, 0.36, "sine", 0.045);
-        });
-      }
-    } catch (_) {}
+      masterGain.gain.setValueAtTime(0.9 * settings.soundVolume * settings.effectsVolume, now);
+      var started = 0;
+      notes.forEach(function (note) {
+        if (voices.size >= 12) return;
+        var voice = root.NineRealmsSound.voice(audioContext, masterGain, note, now, releaseVoice); voices.add(voice);started++;
+      });
+      return started > 0;
+    } catch (_) { return false; }
   }
 
   function configure(options) {
@@ -681,16 +684,21 @@
     if (["cinematic","balanced","soft"].indexOf(options.intensity) !== -1) settings.intensity = options.intensity;
     if (typeof options.zen === "boolean") settings.zen = options.zen;
     if (typeof options.sound === "boolean") settings.sound = options.sound;
+    if (typeof options.effectsEnabled === "boolean") settings.effectsEnabled = options.effectsEnabled;
+    if (Number.isFinite(options.effectsVolume)) settings.effectsVolume = Math.max(0, Math.min(1, options.effectsVolume));
+    if (Number.isFinite(options.soundVolume)) settings.soundVolume = Math.max(0, Math.min(1, options.soundVolume));
+    if (audioContext && masterGain && settings.sound && !settings.zen && !hidden()) { try { masterGain.gain.setTargetAtTime(0.9 * settings.soundVolume * settings.effectsVolume, audioContext.currentTime, 0.015); } catch (_) {} }
     if (typeof options.reducedMotion === "boolean") settings.reducedMotion = options.reducedMotion;
     if (Object.prototype.hasOwnProperty.call(palette, options.theme)) settings.theme = options.theme;
-    if (settings.zen || !settings.sound || hidden()) stopSound();
+    if (settings.zen || !settings.sound || settings.soundVolume === 0 || hidden()) stopSound();
+    else { if(!settings.effectsEnabled || settings.effectsVolume===0)stopEffects();syncMusicPlayer(); }
     if (settings.zen || !settings.fx || settings.reducedMotion) {
       pointer.x = pointer.y = pointer.targetX = pointer.targetY = 0;
     }
     syncSky();
   }
 
-  root.NineRealmsAtmosphere = { configure: configure, unlock: unlock, play: play };
+  root.NineRealmsAtmosphere = { configure: configure, unlock: unlock, play: play, stopSound: stopSound, setMusic: setMusic, musicStatus: musicStatus, releaseAudio: releaseAudio };
   if (document && root.addEventListener) {
     // Read-only pointer input; touch scrolling never changes the backdrop.
     root.addEventListener("pointermove", function (event) {
@@ -708,7 +716,7 @@
       cacheBoard();
       if (!animates()) drawSky(settings.reducedMotion ? 0 : skyTime);
     }, { passive: true });
-    root.addEventListener("pagehide", function () { stopSky(); stopSound(); });
+    root.addEventListener("pagehide", function () { stopSky(); releaseAudio(); });
     root.addEventListener("pageshow", syncSky);
     document.addEventListener("visibilitychange", function () {
       if (hidden()) stopSound();

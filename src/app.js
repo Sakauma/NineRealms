@@ -27,7 +27,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.3.1";
+  var APP_VERSION = "1.3.3";
   try { if (Backup && writableAtStart) Backup.recover(playerStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -73,6 +73,7 @@
   var Daily = window.SudokuDaily;
   var pendingHint = null;
   var dailyRecords = {};
+  var dailyUnreadable = null;
   var dailyToday = Daily ? Daily.dateKey() : "";
   var loadingDaily = false;
   var THEMES = ["nebula", "aurora", "ember", "ivory", "ocean", "sakura", "firefly", "sunset"];
@@ -95,12 +96,14 @@
   }
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var preferences = { theme: "nebula", fx: true, errorCheck: true, logicMode: false, customDraft: "", fog: false, sound: false, focus: false, zen: false, zenMotion: true, intensity: "cinematic", textSize: "normal", lineContrast: "standard", colorAssist: false, handedness: "right" };
+  var preferences = { theme: "nebula", fx: true, errorCheck: true, logicMode: false, customDraft: "", fog: false, sound: false, soundVolume: 0.65, effectsEnabled: true, effectsVolume: 1, musicEnabled: false, musicVolume: 0.35, focus: false, zen: false, zenMotion: true, intensity: "cinematic", textSize: "normal", lineContrast: "standard", colorAssist: false, handedness: "right" };
   var game = null;
+  var musicAudition = null, settingsMusicAudition = false, editSoundSequence = 0;
   var currentContext = null;
   var catalogCategory = "全部";
   var cells = [];
   var numberKeys = [];
+  var numberPresses = new Map();
   var runningSince = null;
   var noteMode = false;
   var checkedReveal = false;
@@ -164,7 +167,12 @@
       var id = String(puzzle.puzzleId || puzzle.id || "");
       return id === p.id || id.indexOf(p.id + "-") === 0;
     });
-    return match ? match.id : null;
+    if (match) return match.id;
+    var chapter = Voyage.chapters().find(function (entry) {
+      return entry.id === puzzle.voyageId || entry.legacySourceId && entry.sourceId === puzzle.sourceId;
+    });
+    var voyage = chapter && Voyage.puzzleInfo(chapter.id, puzzle.givens, mode, difficulty, puzzle.clues);
+    return voyage ? voyage.sourceId : null;
   }
 
   function difficultyInfo(mode, difficulty) {
@@ -218,6 +226,11 @@
       nextPreferences.customDraft = typeof prefs.customDraft === "string" && prefs.customDraft.length <= 2048 ? prefs.customDraft : "";
       nextPreferences.fog = prefs.fog === true;
       nextPreferences.sound = prefs.sound === true;
+      nextPreferences.soundVolume = Number.isFinite(prefs.soundVolume) && prefs.soundVolume >= 0 && prefs.soundVolume <= 1 ? prefs.soundVolume : 0.65;
+      nextPreferences.effectsEnabled = typeof prefs.effectsEnabled === "boolean" ? prefs.effectsEnabled : true;
+      nextPreferences.effectsVolume = Number.isFinite(prefs.effectsVolume) && prefs.effectsVolume >= 0 && prefs.effectsVolume <= 1 ? prefs.effectsVolume : 1;
+      nextPreferences.musicEnabled = prefs.musicEnabled === true;
+      nextPreferences.musicVolume = Number.isFinite(prefs.musicVolume) && prefs.musicVolume >= 0 && prefs.musicVolume <= 1 ? prefs.musicVolume : 0.35;
       nextPreferences.focus = prefs.focus === true;
       nextPreferences.zen = prefs.zen === true;
       nextPreferences.zenMotion = prefs.zenMotion !== false;
@@ -244,9 +257,10 @@
           !Number.isInteger(source.hints) || source.hints < 0) return false;
       // A saved answer must belong to this puzzle, not just be another complete grid.
       if (source.custom !== undefined && typeof source.custom !== "boolean" || source.custom && (mode !== "classic" || !Logic.scope(restoredContext).complete)) return false;
-      var trustedSolution = source.custom ? Engine.analyzeSolutions(source.givens, restoredContext, {limit:1,maxNodes:250000,timeLimitMs:750}).solution : Engine.solve(source.givens, restoredContext);
+      var fullRuleOnly = source.logicMode === true && Logic.scope(restoredContext).complete;
+      var trustedSolution = fullRuleOnly ? source.solution : source.custom ? Engine.analyzeSolutions(source.givens, restoredContext, {limit:1,maxNodes:250000,timeLimitMs:750}).solution : Engine.solve(source.givens, restoredContext);
       if (!trustedSolution || !trustedSolution.every(function (v, i) { return v === source.solution[i]; })) return false;
-      if (source.logicMode !== undefined && typeof source.logicMode !== "boolean") return false;
+      if (source.logicMode !== undefined && typeof source.logicMode !== "boolean" || source.errorCheckIncomplete !== undefined && typeof source.errorCheckIncomplete !== "boolean") return false;
       var branch = restoreBranch(source.branch, source.givens, clues);
       if (!Branches.matches(branch, source)) return false;
       var completed = !Branches.active(branch) && !(source.practice && !source.completed) && (source.logicMode ? Logic.complete(source.board, restoredContext) : source.board.every(function (value, i) { return value === source.solution[i]; }));
@@ -280,6 +294,7 @@
         selected: Number.isInteger(source.selected) && source.selected >= 0 && source.selected < restoredSize
           ? source.selected : source.givens.indexOf(0),
         mistakes: source.mistakes,
+        errorCheckIncomplete: source.errorCheckIncomplete === true || source.errorCheckIncomplete === undefined && !completed && recordedProgress,
         hints: source.hints,
         elapsedMs: started ? source.elapsedMs : 0,
         started: started,
@@ -480,6 +495,32 @@
 
   function isMulti() { return Boolean(game && game.board.length > 81); }
 
+  // Transient input feedback uses no puzzle state and never inspects correctness.
+  function clearNumberPress(button) {
+    var pressed = numberPresses.get(button);
+    if (pressed) clearTimeout(pressed.timer);
+    button.classList.remove("is-pressed"); numberPresses.delete(button);
+  }
+
+  function clearNumberPresses() { numberPresses.forEach(function (_, button) { clearNumberPress(button); }); }
+
+  function pressNumberKey(value, source) {
+    var button = numberKeys[value - 1];
+    if (!button || button.disabled || !canInteract()) return;
+    var pressed = numberPresses.get(button);
+    if (!pressed) { pressed = { sources: new Set(), started: performance.now(), timer: null }; numberPresses.set(button, pressed); }
+    clearTimeout(pressed.timer); pressed.sources.add(source); button.classList.add("is-pressed");
+  }
+
+  function releaseNumberKey(source, immediate) {
+    numberPresses.forEach(function (pressed, button) {
+      if (!pressed.sources.delete(source) || pressed.sources.size) return;
+      var remaining = immediate || reducedMotion.matches || !preferences.fx ? 0 : Math.max(0, 90 - (performance.now() - pressed.started));
+      if (!remaining) clearNumberPress(button);
+      else pressed.timer = setTimeout(function () { if (numberPresses.get(button) === pressed && !pressed.sources.size) clearNumberPress(button); }, remaining);
+    });
+  }
+
   function buildBoard() {
     boardLayout = Engine.getLayout(gameContext());
     boardLayoutKey = (game ? game.mode : "classic") + ":" + boardLayout.cellCount;
@@ -523,7 +564,9 @@
       var label = document.createElement("span"); label.className = "key-value"; label.textContent = String(digit);
       var remaining = document.createElement("span"); remaining.className = "remaining";
       key.append(label, remaining);
-      key.addEventListener("click", function (event) { enterNumber(Number(event.currentTarget.dataset.value), false); });
+      key.addEventListener("pointerdown", function (event) { if (event.button === 0 && event.isPrimary !== false) pressNumberKey(Number(event.currentTarget.dataset.value), "pointer:" + event.pointerId); });
+      key.addEventListener("pointerleave", function (event) { releaseNumberKey("pointer:" + event.pointerId, true); });
+      key.addEventListener("click", function (event) { var value = Number(event.currentTarget.dataset.value); if (event.detail === 0) { pressNumberKey(value, "activation"); releaseNumberKey("activation"); } enterNumber(value, false); });
       numberPad.appendChild(key); numberKeys.push(key);
     }
   }
@@ -624,14 +667,15 @@
       preferences.zenMotion ? "让场景与棋盘静止，保留主题背景" : "开启柔和场景动画与棋盘视差";
     zenMotion.setAttribute("aria-label", zenMotion.title);
     $("sound-toggle").setAttribute("aria-pressed", String(preferences.sound));
-    $("sound-toggle").setAttribute("aria-label", preferences.sound ? "关闭音效" : "开启音效");
-    $("sound-toggle").title = preferences.sound ? "音效已开启" : "音效已关闭";
+    if ($("sound-volume")) { $("sound-volume").value = String(Math.round(preferences.soundVolume * 100)); $("sound-volume-value").textContent = Math.round(preferences.soundVolume * 100) + "%"; }
+    $("sound-toggle").setAttribute("aria-label", preferences.sound ? "关闭全部声音" : "开启声音总开关");
+    $("sound-toggle").title = preferences.sound ? "声音总开关已开启" : "全部声音已静音";
     $("focus-toggle").setAttribute("aria-pressed", String(preferences.focus));
     $("focus-toggle").setAttribute("aria-label", preferences.focus ? "退出沉浸模式" : "进入沉浸模式");
     var focusLabel = $("focus-toggle").querySelector("span");
     if (focusLabel) focusLabel.textContent = preferences.focus ? "退出沉浸" : "沉浸";
     Atmosphere.configure({ fx: !preferences.zen && preferences.fx,
-      zen: preferences.zen, sound: preferences.sound && !preferences.zen,
+      zen: preferences.zen, sound: preferences.sound && !preferences.zen, soundVolume: preferences.soundVolume, effectsEnabled: preferences.effectsEnabled !== false, effectsVolume: preferences.effectsVolume===undefined?1:preferences.effectsVolume,
       theme: preferences.theme, intensity: preferences.intensity, reducedMotion: reducedMotion.matches });
     var switcher = $("theme-switcher");
     if (switcher) switcher.querySelectorAll("[data-theme]").forEach(function (button) {
@@ -653,6 +697,8 @@
       stopCelebration();
       clearPulse();
     }
+    if (typeof syncMusic === "function") syncMusic();
+    if (typeof renderEffectsStatus === "function") renderEffectsStatus();
   }
 
   function renderModeControls() {
@@ -713,6 +759,7 @@
   }
 
   function render() {
+    if (typeof syncMusic === "function") syncMusic();
     if (personalUi) personalUi.refreshCurrent();
     if (!game) return;
     if (boardLayoutKey !== game.mode + ':' + game.board.length) buildBoard();
@@ -791,8 +838,9 @@
       var remaining = Math.max(0, (ruleOnly() ? (isMulti() ? count : 9) : game.solution.filter(function (n) { return n === value; }).length) - count);
       button.querySelector(".remaining").textContent = ruleOnly() && isMulti() ? String(count) : remaining ? String(remaining) : "✓";
       button.classList.toggle("exhausted", !(ruleOnly() && isMulti()) && remaining === 0);
-      button.setAttribute("aria-label", "填入 " + value + (preferences.zen ? "" : ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
+      button.setAttribute("aria-label", noteMode ? "切换候选 " + value : "填入 " + value + (preferences.zen ? "" : ruleOnly() && isMulti() ? "，当前已填 " + count + " 个" : "，还可填写 " + remaining + " 个"));
       button.disabled = blocked;
+      if (blocked) clearNumberPress(button);
     });
     if ($("difficulty")) $("difficulty").value = game.difficulty;
     if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
@@ -849,12 +897,13 @@
     $("fog-clear").disabled = blocked || game.fogSeen.every(Boolean);
     $("fog-progress").textContent = "已点亮 " + (game.completed ? game.board.length : game.fogSeen.filter(Boolean).length) + " / " + game.board.length;
     $("voyage-game-badge").hidden = !game.voyageId;
-    $("voyage-game-badge").textContent = game.voyageId ? "远征 · " + chapterInfo(game.voyageId).title : "";
+    var voyageChapter = game.voyageId && Voyage.presentation(game.voyageId, game);
+    $("voyage-game-badge").textContent = voyageChapter ? "远征 · " + voyageChapter.title + (voyageChapter.legacyEdition ? " · 旧版题面" : "") : "";
     if ($("custom-badge")) $("custom-badge").hidden = !game.custom;
     if ($("practice-badge")) { $("practice-badge").hidden = !game.practice; $("practice-badge").textContent = game.practice ? (game.practice.wasAssumption ? "假设卡点复练" : "独立复练") + " · 原第 " + game.practice.absoluteStep + " 步" : ""; }
     $("daily-game-badge").hidden = !game.dailyDate;
     $("daily-game-badge").textContent = game.dailyDate ? "每日一境 · " + game.dailyDate.slice(5).replace("-", "/") : "";
-    if ($("logic-toggle")) $("logic-toggle").setAttribute("aria-pressed", String(game.logicMode));
+    if ($("logic-toggle")) { $("logic-toggle").setAttribute("aria-pressed", String(game.logicMode)); $("logic-toggle").disabled = Boolean(game.completed); }
     if ($("logic-badge")) $("logic-badge").hidden = !game.logicMode;
     if ($("logic-scope")) $("logic-scope").textContent = Logic.scope(gameContext()).message;
     document.body.dataset.logic = game.logicMode ? "on" : "off";
@@ -961,6 +1010,15 @@
     save();
   }
 
+  function playEditSound(kind) {
+    var sequence=++editSoundSequence,session=game&&game.sessionId,at=performance.now();
+    function allowed(){return game&&game.sessionId===session&&canInteract()&&!storageConflict&&preferences.sound&&preferences.effectsEnabled!==false&&preferences.effectsVolume!==0&&preferences.soundVolume>0&&!preferences.zen&&!document.hidden;}
+    if(!allowed())return;
+    if(Atmosphere.musicStatus&&Atmosphere.musicStatus().audioState==="running"){Atmosphere.play(kind);return;}
+    // Resume within the input gesture; never queue stale feedback after a pause or new edit.
+    Promise.resolve(Atmosphere.unlock()).then(function(ready){if(ready&&sequence===editSoundSequence&&performance.now()-at<250&&allowed())Atmosphere.play(kind);});
+  }
+
   function remember() { Edits.push(game, noteMode); }
 
   function batchNotes(operation, mask) {
@@ -970,7 +1028,7 @@
     if (!count) { toast("所选格的笔记无需改变。"); return; }
     noteMode = true; pendingHint = null;
     setStatus("已批量修改 " + count + " 格候选，一次撤销或重做可恢复整组。");
-    render(); save("批量候选 · " + operation);
+    render(); save("批量候选 · " + operation);playEditSound("note");
   }
 
   function flash(index) {
@@ -1010,6 +1068,7 @@
       if (game.board[index] === value) return;
       remember();
       game.board[index] = value;
+      if (!inBranch() && (!automaticErrors() || game.logicMode)) game.errorCheckIncomplete = true;
       game.notes[index] = 0;
       clearPeerNotes(index, value);
       if (!ruleOnly() && automaticErrors() && value !== game.solution[index] && !fromHint) {
@@ -1023,6 +1082,7 @@
     }
     render();
     checkCompletion();
+    if(!fromHint&&!game.completed)playEditSound(noteMode?"note":"input");
     save(fromHint ? "提示填入" : noteMode ? "笔记" : "填数");
   }
 
@@ -1037,12 +1097,12 @@
     if (!inBranch()) game.energy.combo = 0;
     setStatus("已擦除当前格。");
     render();
-    save("擦除");
+    save("擦除");playEditSound("erase");
   }
 
   function travelEdit(forward) {
     if (!canTravelEdit()) return;
-    var wasCompleted = game.completed;
+    var wasCompleted = game.completed,oldBoard=game.board,oldNotes=game.notes,oldDraft=game.draft,oldNoteMode=noteMode;
     var result = forward ? Edits.redo(game, noteMode) : Edits.undo(game, noteMode);
     if (!result) return;
     noteMode = result.noteMode;
@@ -1052,6 +1112,7 @@
     clearTransientMarks();
     setStatus((forward ? "已重做" : "已撤销") + "上一步，数字、候选与草稿一并恢复。");
     render(); if (forward) checkCompletion(); save(forward ? "重做" : "撤销");
+    if(!game.completed&&(oldNoteMode!==noteMode||oldBoard.some(function(v,i){return v!==game.board[i]||oldNotes[i]!==game.notes[i];})||!Drafts.equal(oldDraft,game.draft,game.board.length)))playEditSound(forward?"redo":"undo");
   }
   function undo() { travelEdit(false); }
   function redo() { travelEdit(true); }
@@ -1089,6 +1150,7 @@
         return count + (!game.givens[i] && value && value !== adopted.before.board[i] && value !== game.solution[i] ? 1 : 0);
       }, 0) : 0;
       game.mistakes += newErrors;
+      if (adopted.main && (!automaticErrors() || game.logicMode) && game.board.some(function (value, i) { return value && value !== adopted.before.board[i]; })) game.errorCheckIncomplete = true;
       if (adopted.main) {
         game.board.forEach(function (value, i) { if (value) game.energy.claimed[i] = true; });
         if (!game.logicMode && automaticErrors()) settleUnits(false);
@@ -1129,7 +1191,7 @@
     noteMode = true;
     setStatus("已按" + modeInfo(game.mode).label + "规则整理候选，可撤销。候选仍需结合其他格子推理。");
     render();
-    save("候选速记");
+    save("候选速记");if(changed)playEditSound("note");
   }
 
 
@@ -1218,7 +1280,6 @@
     }
     if (value !== game.solution[index]) {
       energy.combo = 0;
-      Atmosphere.play("mistake");
       return;
     }
     var fresh = !energy.claimed[index];
@@ -1232,7 +1293,6 @@
         void cells[index].offsetWidth;
         cells[index].classList.add("combo-pulse");
       }
-      Atmosphere.play("place", energy.combo);
     } else {
       energy.combo = 0;
     }
@@ -1248,6 +1308,7 @@
     try {
       var raw = playerStorage.getItem(VOYAGE_KEY);
       voyageProgress = Voyage.migrateProgress(raw === null ? {} : JSON.parse(raw), game && game.voyageId, { existing: raw !== null || Boolean(game) });
+      if (game && !game.completed && game.voyageId && !Voyage.canEnter(voyageProgress, game.voyageId) && Voyage.matchesPuzzle(game.voyageId, game.givens, game.mode, game.difficulty, game.clues)) voyageProgress = Voyage.retainCurrent(voyageProgress, game.voyageId);
       saveVoyage();
     }
     catch (error) { voyageProgress = {}; voyageStorageBlocked = true; }
@@ -1259,206 +1320,231 @@
     catch (error) { toast("星图成绩暂时无法保存到本机，本局仍可继续游玩。"); }
   }
 
-  function renderVoyageWorld() {
-    var world = Voyage.worldState(voyageProgress), nodes = $("voyage-world-nodes"), svg = $("voyage-world-edges");
-    var active = document.activeElement && document.activeElement.dataset.worldId;
-    nodes.replaceChildren(); svg.replaceChildren();
-    function point(index) { return { x: 50 + (index % 4) * 100, y: 50 + Math.floor(index / 4) * 100 }; }
-    function reaches(from, target, seen) {
-      if (from === target) return true;
-      if (seen.indexOf(from) >= 0) return false;
-      return world.edges.some(function (edge) { return edge.from === from && reaches(edge.to, target, seen.concat(from)); });
-    }
-    // Draw the minimal dependency paths; retain every prerequisite in voyage validation.
-    world.edges.filter(function (edge) {
-      return !world.edges.some(function (first) { return first.from === edge.from && first.to !== edge.to && reaches(first.to, edge.to, []); });
-    }).forEach(function (edge) {
-      var a = point(world.nodes.findIndex(function (node) { return node.id === edge.from; }));
-      var b = point(world.nodes.findIndex(function (node) { return node.id === edge.to; }));
-      var path = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      path.setAttribute("x1", a.x); path.setAttribute("y1", a.y); path.setAttribute("x2", b.x); path.setAttribute("y2", b.y);
-      path.setAttribute("class", "world-edge" + (edge.repaired ? " repaired" : "")); svg.appendChild(path);
+  function renderVoyageWorld(journey) {
+    var world = Voyage.worldState(voyageProgress), nodes = $("voyage-world-nodes");
+    var active = document.activeElement, activeId = active && active.dataset.worldId;
+    var focusedPhase = active && active.dataset.phaseToggle, oldOpen = {};
+    nodes.querySelectorAll('details[data-phase]').forEach(function (item) { oldOpen[item.dataset.phase] = item.open; });
+    var groups = [
+      { id: "coordinate", title: "定位星", ids: Voyage.chapters("legacy").map(function (c) { return c.id; }), note: "先校准九处坐标，再开启两条航路。" },
+      { id: "lines", title: "循线", ids: Voyage.chapters("lines").map(function (c) { return c.id; }), note: "方向 → 对应 → 连续集合" },
+      { id: "energy", title: "汇能", ids: Voyage.chapters("sums").slice(0, 2).map(function (c) { return c.id; }), note: "笼的组合 → 箭头拆分" },
+      { id: "convergence", title: "群星合奏", ids: ["sums-constellation-v1"], note: "循线三关与汇能两关完成后，在此汇合。" },
+      { id: "homecoming", title: "归航核心", ids: ["fusion-homecoming-v1"], note: "点亮前十五处星点，用温度计与杀手笼完成最后校准。" }
+    ];
+    var branchChoice = ["lines-rise-v1", "sums-sparks-v1"].every(function (id) { return Voyage.canEnter(voyageProgress, id, game && game.voyageId) && !voyageProgress[id]; });
+    nodes.replaceChildren();
+    groups.forEach(function (group, groupIndex) {
+      var section = document.createElement("details"), summary = document.createElement("summary"), beacon = document.createElement("span"), heading = document.createElement("span"), count = document.createElement("span");
+      var done = group.ids.filter(function (id) { return Boolean(voyageProgress[id]); }).length;
+      section.className = "voyage-phase"; section.dataset.phase = group.id; section.dataset.complete = String(done === group.ids.length);
+      section.open = Boolean(oldOpen[group.id] || group.ids.indexOf(selectedVoyage) >= 0 || branchChoice && (group.id === "lines" || group.id === "energy"));
+      summary.dataset.phaseToggle = group.id; beacon.className = "phase-beacon"; beacon.setAttribute("aria-hidden", "true"); beacon.textContent = done === group.ids.length ? "✓" : String(groupIndex + 1).padStart(2, "0");
+      heading.textContent = group.title; count.className = "phase-count"; count.textContent = voyageStorageBlocked ? "—" : done + " / " + group.ids.length;
+      summary.append(beacon, heading, count); section.appendChild(summary);
+      var note = document.createElement("p"), stops = document.createElement("div"); note.className = "phase-route-note"; note.textContent = group.note; stops.className = "phase-stops";
+      section.append(note, stops);
+      group.ids.forEach(function (id) {
+        var stage = journey.stages.find(function (item) { return item.id === id; }), record = voyageProgress[id];
+        var current = game && !game.completed && game.voyageId === id;
+        var state = record ? "completed" : current ? "current" : stage.canEnter ? "open" : "locked";
+        var label = record ? "✓ 已修复" : current ? "正在探索" : stage.canEnter ? "可出发" : "未解锁 · 可预览";
+        var button = document.createElement("button"), meta = document.createElement("span"), title = document.createElement("span"), status = document.createElement("span");
+        button.type = "button"; button.className = "world-node"; button.dataset.worldId = id; button.dataset.state = state; button.dataset.repaired = String(Boolean(record)); button.disabled = voyageStorageBlocked;
+        button.setAttribute("aria-pressed", String(id === selectedVoyage));
+        if (current || (!game || !game.voyageId || game.completed) && journey.nextId === id) button.setAttribute("aria-current", "step");
+        button.setAttribute("aria-label", "第 " + (stage.storyIndex + 1) + " 关，" + stage.title + "，" + label + (record ? "，最佳 " + record.stars + " 星" : ""));
+        meta.className = "stop-meta"; meta.textContent = String(stage.storyIndex + 1).padStart(2, "0") + (record ? "  ·  " + "★".repeat(record.stars) : "");
+        title.className = "stop-title"; title.textContent = stage.title; status.className = "stop-state"; status.textContent = label;
+        button.append(meta, title, status); stops.appendChild(button);
+      });
+      nodes.appendChild(section);
     });
-    world.nodes.forEach(function (node, index) {
-      var p = point(index), button = document.createElement("button"), title = document.createElement("span");
-      button.type = "button"; button.className = "world-node"; button.dataset.worldId = node.id; button.dataset.repaired = String(node.repaired);
-      button.dataset.phase = node.phase; button.style.left = p.x / 4 + "%"; button.style.top = p.y / 4 + "%";
-      button.textContent = String(index + 1).padStart(2, "0"); title.textContent = node.title; button.appendChild(title);
-      button.disabled = voyageStorageBlocked; button.setAttribute("aria-label", node.title + (node.repaired ? "，已修复" : "，未修复，查看任务"));
-      nodes.appendChild(button);
+    var signal = $("voyage-signal"), ns = "http://www.w3.org/2000/svg";
+    signal.replaceChildren(); signal.dataset.finished = String(world.finished);
+    var points = [{x:34,y:54},{x:130,y:25},{x:130,y:83},{x:226,y:54},{x:300,y:54}];
+    var paths = [[0,1],[0,2],[1,3],[2,3],[3,4]];
+    paths.forEach(function (pair) {
+      var a = points[pair[0]], b = points[pair[1]], dx = b.x-a.x, dy = b.y-a.y, length = Math.hypot(dx,dy), gap = 14;
+      var line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", a.x+dx/length*gap); line.setAttribute("y1", a.y+dy/length*gap); line.setAttribute("x2", b.x-dx/length*gap); line.setAttribute("y2", b.y-dy/length*gap);
+      line.dataset.repaired = String(world.phases[pair[0]].complete && world.phases[pair[1]].complete); signal.appendChild(line);
+    });
+    world.phases.forEach(function (phase,i) {
+      var p = points[i], circle = document.createElementNS(ns,"circle"), selected = groups[i].ids.indexOf(selectedVoyage) >= 0;
+      var available = groups[i].ids.some(function (id) { return !voyageProgress[id] && journey.stages.some(function (stage) { return stage.id === id && stage.canEnter; }); });
+      circle.setAttribute("cx",p.x);circle.setAttribute("cy",p.y);circle.setAttribute("r",5);
+      circle.dataset.state = phase.complete ? "completed" : selected ? "current" : available ? "open" : "locked";signal.appendChild(circle);
+      var ring=document.createElementNS(ns,"circle"); ring.setAttribute("cx",p.x);ring.setAttribute("cy",p.y);ring.setAttribute("r",10);ring.setAttribute("class","signal-halo");
+      ring.style.opacity = phase.repaired ? "0.8" : "0.2"; ring.setAttribute("stroke-dasharray", (Math.PI*20*phase.repaired/phase.total) + " " + Math.PI*20);ring.setAttribute("transform","rotate(-90 " + p.x + " " + p.y + ")");signal.appendChild(ring);
     });
     $("voyage-world").dataset.finished = String(world.finished);
-    $("voyage-world-feedback").textContent = voyageStorageBlocked ? "原始远征记录保留，星图状态暂不可读取。" :
-      world.phases.map(function (phase) { return phase.title + " " + phase.repaired + "/" + phase.total; }).join(" · ") +
-      (world.finished ? " · 归航环已亮起。" : " · 已修复节点与航线随实际通关点亮，旧版通行不会代替完成。") ;
+    $("voyage-world-feedback").textContent = voyageStorageBlocked ? "远征记录暂不可读取，原始记录已保留。" : world.finished ? "十六处星点已归位。沿熟悉的航路，随时重访。" : branchChoice ? "两条航路都已开放。两路都需完成，先走哪一条由你决定。" : journey.inheritedPassage ? "旧版已解锁资格与最佳成绩均已保留。" : "通关即修复星点，无需满星。";
     var links = $("voyage-training-links");
     if (!links.children.length) window.NineRealmsTraining.stations().forEach(function (station) {
-      var button = document.createElement("button"); button.type = "button"; button.dataset.station = station.id || station.technique; links.appendChild(button);
+      var button = document.createElement("button"); button.type = "button"; button.dataset.station = station.id; links.appendChild(button);
     });
     var practice = Voyage.practiceProgress(voyageProgress);
     links.querySelectorAll("button").forEach(function (button) {
-      var station = window.NineRealmsTraining.stations().find(function (item) { return (item.id || item.technique) === button.dataset.station; });
-      var ids = station.exerciseIds; button.textContent = station.title + " · " + ids.filter(function (id) { return practice.completed.indexOf(id) >= 0; }).length + "/" + ids.length;
-      button.disabled = voyageStorageBlocked;
+      var station = window.NineRealmsTraining.stations().find(function (item) { return item.id === button.dataset.station; });
+      button.textContent = station.title + " · " + station.exerciseIds.filter(function (id) { return practice.completed.indexOf(id) >= 0; }).length + "/" + station.exerciseIds.length; button.disabled = voyageStorageBlocked;
     });
-    if (active && $("voyage-dialog").open) { var focus = nodes.querySelector('[data-world-id="' + active + '"]'); if (focus) focus.focus(); }
+    if ($( "voyage-dialog").open) {
+      var focus = activeId ? nodes.querySelector('[data-world-id="' + activeId + '"]') : focusedPhase ? nodes.querySelector('[data-phase-toggle="' + focusedPhase + '"]') : null;
+      if (focus && !focus.disabled) focus.focus({ preventScroll: true });
+    }
   }
 
   function renderVoyage() {
-    renderVoyageWorld();
-    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
-    var status = Voyage.getStatus(voyageProgress, selectedVoyageTrack);
+    var journey = Voyage.journey(voyageProgress, game && !game.completed && game.voyageId);
     var overall = Voyage.getStatus(voyageProgress, "all");
-    var chapters = Voyage.chapters(selectedVoyageTrack);
-    var next = chapterInfo(status.nextId) || chapters[chapters.length - 1];
-    var tracks = Voyage.tracks();
-    var track = tracks.find(function (item) { return item.id === selectedVoyageTrack; });
-    var tabs = $("voyage-tracks");
-    if (!tabs.children.length) tracks.forEach(function (item) {
-      var button = document.createElement("button"); button.type = "button"; button.dataset.track = item.id; button.textContent = item.title; tabs.appendChild(button);
-    });
-    tabs.querySelectorAll("button").forEach(function (button) {
-      var item = tracks.find(function (track) { return track.id === button.dataset.track; });
-      var state = Voyage.getStatus(voyageProgress, item.id);
-      button.textContent = voyageStorageBlocked ? item.title : item.title + " " + state.completed + "/" + state.total;
-      button.setAttribute("aria-pressed", String(item.id === selectedVoyageTrack));
-    });
-    $("voyage-track-summary").textContent = track.description || track.subtitle || "沿着熟悉的九颗星，重温最初的旅程。";
-    $("voyage-star-max").textContent = "/ " + overall.total * 3;
-    var recommended = chapterInfo(journey.nextId);
-    $("voyage-objective").textContent = journey.finished ? "归航星图已复原。所有已点亮星点都可自由回访。" : "修复归航星图：校准星位 → 连线与汇能 → 群星合奏 → 融合归航。";
-    $("voyage-milestones").textContent = "星位 " + Voyage.getStatus(voyageProgress, "legacy").completed + "/9 → 航路 " + Voyage.getStatus(voyageProgress, "lines").completed + "/3 ＋ 能量 " + ["sums-sparks-v1", "sums-arrows-v1"].filter(function (id) { return Boolean(voyageProgress[id]); }).length + "/2 → 合流 " + (voyageProgress["sums-constellation-v1"] ? "1" : "0") + "/1 → 归航 " + (voyageProgress["fusion-homecoming-v1"] ? "1" : "0") + "/1";
-    $("voyage-next-stop").textContent = recommended ? "继续主线 · " + recommended.title : "星图已完整 · 自由回访";
-    $("voyage-next-stop").disabled = !recommended || voyageStorageBlocked;
-    $("voyage-card-title").textContent = journey.finished ? "归航星图已复原 · 自由回访" : "修复归航星图 · 下一站 · " + (recommended ? recommended.title : next.title);
+    var recommended = chapterInfo(journey.nextId), selected = chapterInfo(selectedVoyage);
+    if (!selected) { selectedVoyage = journey.nextId || "fusion-homecoming-v1"; selected = chapterInfo(selectedVoyage); }
+    selectedVoyageTrack = selected.trackId;
+    renderVoyageWorld(journey);
+    $("voyage-repaired").textContent = overall.completed + " / " + overall.total;
+    $("voyage-total-stars").textContent = String(overall.stars); $("voyage-star-max").textContent = " / " + overall.total * 3 + " 星";
+    $("voyage-card-title").textContent = journey.finished ? "归航星图已复原 · 自由回访" : "下一站 · " + (recommended ? recommended.title : selected.title);
     $("voyage-card-progress").textContent = overall.completed + " / " + overall.total + " 关 · " + overall.stars + " / " + overall.total * 3 + " 星";
-    $("voyage-total-stars").textContent = String(overall.stars);
-    var selected = chapterInfo(selectedVoyage);
-    if (!selected || selected.trackId !== selectedVoyageTrack) {
-      selectedVoyage = next.id;
-      selected = next;
-    }
-    var map = $("voyage-map");
-    var focusedChapter = map.contains(document.activeElement) ? document.activeElement.dataset.voyage : null;
-    map.replaceChildren();
-    chapters.forEach(function (chapter) {
-      var record = voyageProgress[chapter.id];
-      var locked = voyageStorageBlocked || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId);
-      var button = document.createElement("button");
-      button.type = "button";
-      button.className = "voyage-node" + (locked ? " locked" : "") +
-        (record ? " completed" : "") + (chapter.id === selectedVoyage ? " current" : "");
-      button.dataset.voyage = chapter.id;
-      button.disabled = locked;
-      button.setAttribute("aria-pressed", String(chapter.id === selectedVoyage));
-      button.setAttribute("aria-label", "第 " + (chapter.index + 1) + " 关，" + chapter.title +
-        (locked ? "，完成主线前置目标后解锁" : record ? "，已获得 " + record.stars + " 星，可重玩" : "，可挑战"));
-      var number = document.createElement("span");
-      number.className = "node-number";
-      number.textContent = String(chapter.index + 1).padStart(2, "0");
-      var title = document.createElement("strong");
-      title.textContent = chapter.title;
-      var stars = document.createElement("small");
-      stars.textContent = locked ? "待解锁" : "★".repeat(record ? record.stars : 0) + "☆".repeat(3 - (record ? record.stars : 0));
-      button.append(number, title, stars);
-      map.appendChild(button);
-    });
-    $("voyage-selected-title").textContent = String(selected.index + 1).padStart(2, "0") + " · " + selected.title;
-    $("voyage-selected-rule").textContent = modeInfo(selected.mode).label + " · " +
-      difficultyInfo(selected.mode, selected.difficulty).label + "。 " + selected.subtitle;
-    $("voyage-lesson").textContent = (selected.lesson ? selected.lesson + "\n本关目标：" + selected.goal + "\n" + selected.ratingNote : "观察行、列、宫与本关附加规则，用自己的节奏探索。");
-    $("voyage-description").textContent = "通关推进主线，不以星级设门槛。启程完成后分头循线、求和；两支汇齐才开启群星合奏。旧版通行与最佳成绩保留。";
-    var allowed = Voyage.canEnter(voyageProgress, selected.id, game && game.voyageId);
-    $("voyage-connection").textContent = (selected.bridge || "") + "\n任务：" + (selected.mission || selected.goal || selected.subtitle) + "\n" + (selected.nextLink || "");
-    $("voyage-gate").textContent = allowed ? (voyageProgress.__journey && voyageProgress.__journey.granted.indexOf(selected.id) >= 0 ? "旧版通行已保留；成绩仍需实际通关获得。" : "此站已开放；完成后主线会指向下一处缺口。") : selected.id === "fusion-homecoming-v1" ? "归航条件：完成前十五处星点，再联合运用温度计与杀手笼。" : selected.id === "sums-constellation-v1" ? "合流条件：循线三关与求和前两关全部通关（无需满星）。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "先完成启程九关，建立共同的星位基础。" : "先完成本章前一站，再将学到的关系带到这里。";
-    var current = game && game.voyageId === selected.id && !game.completed;
-    $("voyage-start").textContent = current ? "返回这一关" : voyageProgress[selected.id] ? "重访这一星" : "准备出发";
+    var current = game && game.voyageId === selected.id && !game.completed, allowed = Voyage.canEnter(voyageProgress, selected.id, game && game.voyageId);
+    selected = Voyage.presentation(selected.id, current ? game : null);
+    $("voyage-destination-label").textContent = journey.finished && selected.id === "fusion-homecoming-v1" ? "归航已完成" : current ? "继续这一站" : voyageProgress[selected.id] ? "重访星点" : allowed ? "当前目的地" : "航路预览";
+    $("voyage-selected-title").textContent = String(selected.storyIndex + 1).padStart(2, "0") + " · " + selected.title;
+    $("voyage-selected-rule").textContent = modeInfo(selected.mode).label + " · " + difficultyInfo(selected.mode, selected.difficulty).label + (selected.editionLabel ? " · " + selected.editionLabel : "");
+    $("voyage-connection").textContent = journey.finished && selected.id === "fusion-homecoming-v1" ? "航线在此合拢。你已经找回归途。" : selected.scene || selected.bridge;
+    $("voyage-observation").textContent = selected.observation || selected.goal || selected.subtitle;
+    $("voyage-lesson").textContent = (selected.lesson || selected.mission) + (selected.ratingNote ? "\n" + selected.ratingNote : "");
+    var missing = journey.stages.find(function (stage) { return stage.id === selected.id; }).requires.filter(function (id) { return !voyageProgress[id]; });
+    $("voyage-gate").textContent = voyageStorageBlocked ? "远征存档格式较新或不可读取，原数据已保留。请使用对应版本或有效备份恢复。" : allowed ? voyageProgress[selected.id] ? "章节历史最佳 " + voyageProgress[selected.id].stars + " 星" + (selected.legacySourceId ? "（含旧版题面）" : "") + "已保留，重玩不会降低成绩。" : journey.granted.indexOf(selected.id) >= 0 && missing.length ? "旧版通行已保留，仍可继续这一站。" : current ? "保留当前棋局，回到棋盘后由你继续计时。" : "已开放 · 准备后，由你点击开始计时。" : selected.id === "fusion-homecoming-v1" ? "还需修复前十五处星点中的 " + missing.length + " 处，才会开放归航核心。" : selected.id === "sums-constellation-v1" ? "循线三关与汇能两关都完成后汇合，还差 " + missing.length + " 关。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "完成定位星九关后开放；可先预览规则。" : "先完成「" + chapterInfo(missing[missing.length - 1]).title + "」，再继续这一站。";
+    $("voyage-start").textContent = current ? "继续 · " + selected.title : voyageProgress[selected.id] ? "重访 · " + selected.title : allowed ? "准备 · " + selected.title : "尚未解锁";
     $("voyage-start").disabled = loadingVoyage || !allowed || voyageStorageBlocked;
+    $("voyage-next-stop").hidden = !recommended || recommended.id === selected.id;
+    $("voyage-next-stop").textContent = recommended ? "回到当前目的地 · " + recommended.title : "";
+    $("voyage-next-stop").disabled = voyageStorageBlocked;
     if (voyageStorageBlocked) {
-      $("voyage-gate").textContent = "远征存档格式较新或暂不可读取，原数据已保留；请用对应版本打开，或从有效备份恢复。";
-      $("voyage-card-title").textContent = "远征记录暂不可读取";
-      $("voyage-card-progress").textContent = "原始记录已保留，未清空";
-      $("voyage-objective").textContent = "远征记录暂不可读取，暂不显示完成统计。";
-      $("voyage-milestones").textContent = "原始记录已保留；请使用对应版本读取。";
-      $("voyage-total-stars").textContent = "—"; $("voyage-star-max").textContent = "";
-      $("voyage-next-stop").textContent = "远征暂不可用";
+      $("voyage-repaired").textContent = "—"; $("voyage-total-stars").textContent = "—"; $("voyage-star-max").textContent = "";
+      $("voyage-card-title").textContent = "远征记录暂不可读取"; $("voyage-card-progress").textContent = "原始记录已保留，未清空";
     }
-    if (focusedChapter && $("voyage-dialog").open) {
-      var focusTarget = Array.from(map.querySelectorAll("button")).find(function (button) { return button.dataset.voyage === focusedChapter && !button.disabled; });
-      if (focusTarget) focusTarget.focus();
-    }
+  }
+
+  function renderEffectsStatus(){
+    var toggle=$("effects-toggle");if(!toggle)return;
+    var enabled=preferences.effectsEnabled!==false,volume=preferences.effectsVolume===undefined?1:preferences.effectsVolume,muted=!preferences.sound||preferences.soundVolume===0||volume===0;
+    toggle.setAttribute("aria-pressed",String(enabled));toggle.textContent="音效 · "+(enabled?(muted?"开启（静音）":"开启"):"关闭");
+    $("effects-volume").value=String(Math.round(volume*100));$("effects-volume-value").textContent=Math.round(volume*100)+"%";
+    var audio=Atmosphere.musicStatus?Atmosphere.musicStatus():{};
+    $("effects-status").textContent=!enabled?"音效已关闭。":!preferences.sound?"声音总开关已关闭，音效保持静音。":preferences.zen?"禅模式保持安静，音效设置会保留。":document.hidden?"切到后台，音效已暂停。":muted?"总音量或音效音量为零，音效保持静音。":audio.audioError||audio.audioState==="suspended"||audio.audioState==="interrupted"?"音频尚未就绪，再次操作时会尝试恢复声音。":"填数、候选、擦除与撤销使用不同短音。";
+  }
+
+  function musicContext() {
+    var mapOpen = Boolean($("voyage-dialog").open), settingsOpen = Boolean($("appearance-settings").open);
+    var currentId = game && game.voyageId && !game.completed ? game.voyageId : null;
+    var journey = Voyage.journey(voyageProgress, currentId);
+    var id = mapOpen ? currentId || journey.nextId || (journey.finished ? "fusion-homecoming-v1" : "dawn") : game && game.voyageId;
+    var phase = mapOpen && musicAudition || window.NineRealmsMusic.phaseFor(id);
+    var audition = Boolean(mapOpen && musicAudition || settingsOpen && settingsMusicAudition);
+    var otherDialog = Array.from(document.querySelectorAll("dialog[open]")).some(function (d) { return d.id !== "voyage-dialog"; });
+    var reason = storageTransition || storageConflict ? "storage" : document.hidden ? "hidden" : preferences.zen ? "zen" : generatingPuzzle ? "preparing" : otherDialog ? "dialog" : !audition && game && game.paused ? "paused" : !audition && !mapOpen && !(game && game.started && !game.completed) ? "ready" : null;
+    return { active: !reason, phase: phase, audition: audition, reason: reason };
+  }
+
+  function renderMusicStatus() {
+    if (!window.NineRealmsMusic || !Atmosphere.musicStatus) return;
+    var info = musicContext(), state = Atmosphere.musicStatus(), title = window.NineRealmsMusic.tracks().find(function (t) { return t.id === info.phase; }).title;
+    var settingsPath = $("voyage-dialog").open ? "关闭星图后，在右上角“外观设置”中" : $("appearance-settings").open ? "在本面板中" : "在右上角“外观设置”中";
+    var muted = !preferences.sound || preferences.soundVolume === 0 || preferences.musicVolume === 0;
+    var retry = state.state === "error" || state.audioError || state.audioState === "suspended" || state.audioState === "interrupted" || state.audioState === "closed";
+    var text = !preferences.musicEnabled ? "背景音乐已关闭。" + settingsPath + "开启背景音乐；它随声音总开关一起静音。" : !preferences.sound ? "声音总开关已关闭，BGM 也处于静音。" + settingsPath + "开启“声音”后可试听。" : preferences.zen ? "禅模式保持安静，音乐开关与音量会保留。" : preferences.soundVolume === 0 || preferences.musicVolume === 0 ? "音量为零，音乐保持静音。" + settingsPath + "调高总音量与 BGM 音量。" : info.reason === "hidden" ? "切到后台，音乐已暂停。" : info.reason === "storage" ? "数据恢复或保存冲突期间，音乐已暂停。" : info.reason === "dialog" ? "查看弹窗时音乐暂停，关闭后恢复。" : info.reason === "paused" ? "棋局已暂停，继续后恢复音乐；也可在外观设置中单独试听，不开始计时。" : info.reason === "preparing" ? "正在准备棋局，音乐暂时暂停。" : !info.active ? "开始棋局后播放背景音乐；也可在本面板试听，不开始计时。" : state.state === "error" ? "BGM 暂时无法合成，可点击试听重试；游戏与音效仍可使用。" : state.audioState === "unavailable" || state.audioError === "initialization" ? "当前环境暂无法启动音频，可点击试听重试。" : retry ? "浏览器尚未允许播放声音，请点击试听或继续游戏重试。" : state.state === "loading" ? "正在准备「" + title + "」……" : state.playing ? (info.audition ? "正在试听 · " : "正在播放 · ") + title : "点击开始或试听，允许浏览器播放声音。";
+    ["music-status","voyage-music-status"].forEach(function (id) { var node=$(id); if(node && node.textContent!==text)node.textContent=text; });
+    var toggle=$("music-toggle"); if(toggle){toggle.setAttribute("aria-pressed",String(Boolean(preferences.musicEnabled)));toggle.textContent="背景音乐 · "+(preferences.musicEnabled?(muted?"开启（静音）":"开启"):"关闭");}
+    if($("music-volume")){var volume=Number.isFinite(preferences.musicVolume)?preferences.musicVolume:0.35;$("music-volume").value=String(Math.round(volume*100));$("music-volume-value").textContent=Math.round(volume*100)+"%";}
+    var preview=$("music-preview");if(preview){preview.disabled=!preferences.musicEnabled||muted||preferences.zen||document.hidden||storageTransition||storageConflict;preview.setAttribute("aria-pressed",String(settingsMusicAudition));preview.textContent=settingsMusicAudition?(retry?"重试试听":"停止试听"):"试听背景音乐";}
+    document.querySelectorAll("[data-music-preview]").forEach(function(button){button.setAttribute("aria-pressed",String(Boolean(state.playing && info.phase===button.dataset.musicPreview)));});
+  }
+
+  function syncMusic() {
+    if (!window.NineRealmsMusic || !Atmosphere.setMusic) return;
+    if(preferences.zen||document.hidden||storageTransition||storageConflict){settingsMusicAudition=false;musicAudition=null;}
+    var context = musicContext();
+    Atmosphere.setMusic({ enabled: preferences.musicEnabled === true, volume: Number.isFinite(preferences.musicVolume)?preferences.musicVolume:0.35, phase: context.phase, active: context.active });
+    renderMusicStatus();
+  }
+
+  function playVoyageSound(kind, requireDialog) {
+    if (!preferences.sound || preferences.zen || preferences.soundVolume === 0 || document.hidden) return Promise.resolve(false);
+    return Promise.resolve(Atmosphere.unlock()).then(function (ready) {
+      if (ready === false || requireDialog && !$("voyage-dialog").open) return false;
+      return Atmosphere.play(kind) !== false;
+    });
   }
 
   function openVoyage(targetId) {
     if (dialogIsOpen()) return;
-    var journey = Voyage.journey(voyageProgress, game && game.voyageId);
-    selectedVoyage = typeof targetId === "string" && chapterInfo(targetId) ? targetId :
-      game && game.voyageId && !game.completed ? game.voyageId : journey.nextId || "sums-constellation-v1";
-    selectedVoyageTrack = chapterInfo(selectedVoyage).trackId;
-    renderVoyage();
-    showDialog($("voyage-dialog"));
-    save();
+    var journey = Voyage.journey(voyageProgress, game && !game.completed && game.voyageId);
+    selectedVoyage = typeof targetId === "string" && chapterInfo(targetId) ? targetId : game && game.voyageId && !game.completed ? game.voyageId : journey.nextId || "fusion-homecoming-v1";
+    $("voyage-world-nodes").replaceChildren();
+    renderVoyage(); showDialog($("voyage-dialog"));
+    $("voyage-dialog").scrollTop = 0; $("voyage-selected-title").focus({ preventScroll: true });
+    playVoyageSound("voyage-enter", true); save();
   }
 
-  async function startVoyage() {
-    if (voyageStorageBlocked || loadingVoyage || !$("voyage-dialog").open) return;
-    var chapter = chapterInfo(selectedVoyage);
+  async function startVoyage(targetId) {
+    if (voyageStorageBlocked || storageTransition || loadingVoyage || typeof targetId !== "string" && !$("voyage-dialog").open) return;
+    var chapter = chapterInfo(typeof targetId === "string" ? targetId : selectedVoyage);
     if (!chapter || !Voyage.canEnter(voyageProgress, chapter.id, game && game.voyageId)) return;
-    loadingVoyage = true;
-    $("voyage-start").disabled = true;
+    loadingVoyage = true; $("voyage-start").disabled = true;
     try {
       closeDialog($("voyage-dialog"));
       if (game && game.voyageId === chapter.id && !game.completed) {
-        setStatus(!game.started ? "这一关已准备好，点击开始游戏后计时。" :
-          game.paused ? "已返回这一关，点击继续后再恢复计时。" : "继续点亮这一星。");
-        return;
+        setStatus(!game.started ? "这一关已准备好，点击开始游戏后计时。" : game.paused ? "已返回这一关，点击继续后再恢复计时。" : "继续点亮这一星。"); return;
       }
-      if (game && hasProgress()) {
-        var accepted = await confirmNewGame(chapter.difficulty, chapter.mode, false);
-        if (!accepted) { setStatus("已保留当前棋局，星图随时等你出发。"); return; }
-      }
+      if (game && hasProgress() && !await confirmNewGame(chapter.difficulty, chapter.mode, false)) { setStatus("已保留当前棋局，星图随时等你出发。"); openVoyage(chapter.id); return; }
       if (storageTransition) return;
       installPuzzle(Voyage.getPuzzle(chapter.id), chapter.difficulty, chapter.mode);
-      setStatus("星图远征 · " + chapter.title + "已准备好。点击开始游戏，点亮第一颗星。");
-      save();
-    } catch (error) {
-      toast("暂时无法载入这一关，当前棋局已保留。");
-      resumeClock();
-    } finally {
-      loadingVoyage = false;
-      renderVoyage();
-    }
+      setStatus("星图远征 · " + chapter.title + "已准备好。点击开始游戏，点亮这一处星点。"); save();
+    } catch (error) { toast("暂时无法载入这一关，当前棋局已保留。"); resumeClock(); }
+    finally { loadingVoyage = false; renderVoyage(); }
   }
 
+  var voyageBranchChoice = false, voyagePracticeReturn = null;
   function finishVoyage() {
-    $("completion-voyage").hidden = !game.voyageId;
-    $("play-again").textContent = game.voyageId ? "返回星图 · 探索下一站" : "探索下一境";
+    var voyageCompletionSound = null;
+    var dialog = $("completion-dialog"); dialog.dataset.voyage = String(Boolean(game.voyageId)); dialog.dataset.homecoming = "false";
+    dialog.querySelector(".eyebrow").textContent = game.voyageId ? "THE WAY HOME" : "A PERFECT LITTLE UNIVERSE";
+    dialog.querySelector("h2").textContent = "这一境，已圆满。";
+    $("completion-voyage").hidden = !game.voyageId; voyageCompletionSound = null; voyageBranchChoice = false;
+    $("play-again").textContent = game.voyageId ? "返回星图" : "探索下一境";
     if (!game.voyageId) return;
     if (voyageStorageBlocked) { $("completion-voyage").textContent = "本局已完成；远征存档暂不可写，原始记录未被覆盖。"; return; }
-    var earned = 1 + (game.hints === 0 ? 1 : 0) + (game.mistakes === 0 ? 1 : 0);
-    var beforeAccess = Voyage.chapters().filter(function (chapter) { return Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); }).map(function (chapter) { return chapter.id; });
-    voyageProgress = Voyage.award(voyageProgress, game.voyageId, {
-      elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
-    });
-    saveVoyage();
-    renderVoyage();
-    $("completion-voyage").textContent = "★".repeat(earned) + "☆".repeat(3 - earned) +
-      " · " + chapterInfo(game.voyageId).title + "已点亮！最佳星级 " +
-      (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星。 " + (chapterInfo(game.voyageId).outcome || "");
-    var opened = Voyage.chapters().filter(function (chapter) { return beforeAccess.indexOf(chapter.id) < 0 && Voyage.canEnter(voyageProgress, chapter.id, game.voyageId); });
-    if (opened.length) $("completion-voyage").textContent += " 新航路已开放：" + opened.map(function (chapter) { return chapter.title; }).join("、") + "。";
+    var prior = Boolean(voyageProgress[game.voyageId]);
+    var beforeAccess = Voyage.chapters().filter(function (c) { return Voyage.canEnter(voyageProgress, c.id, game.voyageId); }).map(function (c) { return c.id; });
+    var stats = { elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints, errorCheckIncomplete: game.errorCheckIncomplete === true };
+    var earned = Voyage.starsFor(stats);
+    voyageProgress = Voyage.award(voyageProgress, game.voyageId, stats); saveVoyage(); renderVoyage();
+    var chapter = chapterInfo(game.voyageId), journey = Voyage.journey(voyageProgress);
+    var opened = Voyage.chapters().filter(function (c) { return beforeAccess.indexOf(c.id) < 0 && Voyage.canEnter(voyageProgress, c.id, game.voyageId); });
+    voyageBranchChoice = opened.length > 1;
+    voyageCompletionSound = !prior && journey.finished ? "voyage-home" : !prior && opened.length ? "voyage-unlock" : "voyage-repair";
+    dialog.dataset.homecoming = String(journey.finished);
+    dialog.querySelector("h2").textContent = journey.finished ? "归途，已完整。" : voyageBranchChoice ? "两条航路，已接通。" : chapter.title + "，已点亮。";
+    var prerequisitesMet = journey.stages.find(function (stage) { return stage.id === chapter.id; }).requires.every(function (id) { return Boolean(voyageProgress[id]); });
+    var resolution = prerequisitesMet ? chapter.resolution || chapter.outcome : chapter.title + "已点亮。这一站的成绩已保留，其余星点仍按实际通关修复。";
+    $("completion-voyage").textContent = resolution + "\n" + "★".repeat(earned) + "☆".repeat(3 - earned) + " · 本次 " + earned + " 星，最佳 " + (voyageProgress[game.voyageId] ? voyageProgress[game.voyageId].stars : earned) + " 星。" + (game.errorCheckIncomplete ? " 本局未全程统计失误，不授予零失误星。" : "") + (opened.length ? "\n新航路已开放：" + opened.map(function (c) { return c.title; }).join("、") + "。" : "");
     var nextId = Voyage.nextAfter(voyageProgress, game.voyageId);
-    $("play-again").textContent = nextId ? "前往下一站 · " + chapterInfo(nextId).title : "归航完成 · 重访星图";
+    $("play-again").textContent = journey.finished ? "归航完成 · 重访星图" : voyageBranchChoice ? "选择下一条航路" : nextId ? "准备下一站 · " + chapterInfo(nextId).title : "返回星图";
+    return voyageCompletionSound;
   }
+
 
   function readDaily() {
     try {
-      dailyRecords = Daily.normalizeRecords(JSON.parse(playerStorage.getItem(DAILY_KEY) || "{}"));
-    } catch (error) { dailyRecords = {}; }
+      var raw = playerStorage.getItem(DAILY_KEY), value = raw === null ? {} : JSON.parse(raw);
+      Daily.validateRecords(value); dailyRecords = Daily.normalizeRecords(value); dailyUnreadable = null;
+    } catch (error) { dailyRecords = {}; dailyUnreadable = { status: error.code === "DAILY_RECORDS_UNSUPPORTED" ? "unsupported" : "invalid", raw: typeof raw === "string" ? raw : null }; }
   }
 
   function saveDaily() {
-    if (storageTransition || saveRecoveryState || storageSession.isTemporary()) return;
+    if (storageTransition || saveRecoveryState || dailyUnreadable || storageSession.isTemporary()) return;
     try { playerStorage.setItem(DAILY_KEY, JSON.stringify(dailyRecords)); }
     catch (error) { toast("每日记录暂时无法保存到本机，本次仍可继续游玩。"); }
   }
@@ -1470,18 +1556,21 @@
     var currentDaily = game && game.dailyDate === dailyToday && !game.completed;
     var label = modeInfo(puzzle.mode).label + " · " + difficultyInfo(puzzle.mode, puzzle.difficulty).label;
     $("daily-card-date").textContent = dailyToday.slice(5).replace("-", " / ") + " · " + label;
-    $("daily-card-status").textContent = stats.todayCompleted ? "今日已点亮" : currentDaily ? "今日进行中" : "今日待探索";
+    $("daily-card-status").textContent = dailyUnreadable ? "记录待恢复" : stats.todayCompleted ? "今日已点亮" : currentDaily ? "今日进行中" : "今日待探索";
     $("daily-date").textContent = dailyToday.replace(/-/g, " / ");
     $("daily-description").textContent = label + "。每天一道题，把专注留给此刻。";
-    $("daily-total").textContent = String(stats.total);
-    $("daily-streak").textContent = String(stats.streak);
+    $("daily-total").textContent = dailyUnreadable ? "—" : (stats.totalIncomplete ? "≥" : "") + String(stats.total);
+    $("daily-streak").textContent = dailyUnreadable ? "—" : (stats.streakIncomplete ? "≥" : "") + String(stats.streak);
+    $("daily-export-original").hidden = !dailyUnreadable;
+    $("daily-export-original").disabled = !dailyUnreadable || typeof dailyUnreadable.raw!=="string";
+    $("daily-stat-note").textContent = dailyUnreadable ? "每日记录暂不可读取，已保留原文并暂停覆盖。可在数据备份中恢复有效备份。" : stats.totalIncomplete ? "旧版仅保留最近400条明细，较早记录可能缺失；≥ 表示目前能确认的下限，不补造历史。" : "累计与连续按已完成日期计算，明细仅保留最近400条。";
     $("daily-start").textContent = currentDaily ? "返回今日棋局" : stats.todayCompleted ? "重玩今日一境" : "准备今日一境";
-    $("daily-start").disabled = loadingDaily;
+    $("daily-start").disabled = loadingDaily || Boolean(dailyUnreadable);
     var calendar = $("daily-calendar");
     calendar.replaceChildren();
     Daily.recentDates(dailyToday, 7).forEach(function (key) {
       var day = document.createElement("span");
-      var complete = Boolean(dailyRecords[key]);
+      var complete = Daily.hasCompletion(dailyRecords, key);
       day.className = "daily-day" + (complete ? " completed" : "") + (key === dailyToday ? " today" : "");
       day.setAttribute("role", "listitem");
       day.setAttribute("aria-label", key + (complete ? "，已完成" : "，未完成"));
@@ -1497,6 +1586,13 @@
     });
   }
 
+  bind("daily-export-original", "click", async function () {
+    try { if (!dailyUnreadable || typeof dailyUnreadable.raw !== "string") throw new Error("每日原文暂不可读取。");
+      var saved = await downloadPlayerFile(dailyUnreadable.raw, "Nine-Realms-unreadable-daily.json");
+      $("daily-stat-note").textContent = saved ? "已发起导出，请确认文件已保存。原文仍保留，自动覆盖已暂停。" : "已取消导出，原文未改变。";
+    } catch (error) { $("daily-stat-note").textContent = error.message; }
+  });
+
   function openDaily() {
     if (dialogIsOpen()) return;
     renderDaily();
@@ -1505,7 +1601,7 @@
   }
 
   async function startDaily() {
-    if (loadingDaily || !$("daily-dialog").open) return;
+    if (loadingDaily || dailyUnreadable || !$("daily-dialog").open) return;
     if (dailyToday !== Daily.dateKey()) {
       renderDaily();
       toast("北京时间已进入新的一天，今日题目已更新。");
@@ -1747,6 +1843,7 @@
     if (!game || storageTransition || generatingPuzzle || !game.started || game.completed || dialogIsOpen()) return;
     suspendClock();
     game.paused = paused;
+    if (paused) { settingsMusicAudition = false; musicAudition = null; if (Atmosphere.stopSound) Atmosphere.stopSound(); }
     clearPulse();
     if (!paused) Atmosphere.unlock();
     resetTilt();
@@ -1757,6 +1854,7 @@
   }
 
   function showDialog(element) {
+    clearNumberPresses();
     if (window.NineRealmsFloatingDraft) window.NineRealmsFloatingDraft.close(false);
     if(storageTransition)return;
     if (generatingPuzzle) {
@@ -1764,16 +1862,19 @@
       setStatus("已取消后台生成，原有棋局和进度已保留。");
     }
     suspendClock();
+    settingsMusicAudition = false;
     resetTilt();
     if (!element) return;
     if (typeof element.showModal === "function") element.showModal();
     else element.setAttribute("open", "");
+    if (typeof syncMusic === "function") syncMusic();
   }
 
   function closeDialog(element) {
     if (!element) return;
     if (typeof element.close === "function") element.close();
     else element.removeAttribute("open");
+    if (typeof syncMusic === "function") syncMusic();
   }
 
   function confirmAction(title, description, acceptLabel) {
@@ -1886,6 +1987,7 @@
       redo: [],
       selected: Math.max(0, puzzle.givens.indexOf(0)),
       mistakes: 0,
+      errorCheckIncomplete: false,
       hints: 0,
       elapsedMs: 0,
       started: false,
@@ -2081,24 +2183,28 @@
     game.completed = true;
     game.paused = false;
     try { if (favoriteStore) favoriteStore.markCompleted(game, game.sessionId); } catch (error) { toast("收藏完成状态暂未保存，当前棋局仍会保存在历史中。"); }
+    var dailyUpdated = true;
     if (game.dailyDate) {
-      dailyRecords = Daily.recordCompletion(dailyRecords, game.dailyDate, {
-        elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
-      });
-      saveDaily();
+      try {
+        if (dailyUnreadable) throw new Error("每日原文待恢复");
+        dailyRecords = Daily.recordCompletion(dailyRecords, game.dailyDate, {
+          elapsedMs: Math.floor(game.elapsedMs), mistakes: game.mistakes, hints: game.hints
+        });
+        saveDaily();
+      } catch (error) { dailyUpdated = false; toast("本局已完成，但每日统计未能更新。原记录已保留，可先导出留存。"); }
       renderDaily();
     }
-    finishVoyage();
-    Atmosphere.play("win");
+    var completionSound = finishVoyage();
+    Atmosphere.play(completionSound || "win");
     $("completion-daily").hidden = !game.dailyDate;
-    $("completion-daily").textContent = game.dailyDate ? game.dailyDate + " · 每日一境已点亮，重玩保留首次成绩。" : "";
+    $("completion-daily").textContent = game.dailyDate ? game.dailyDate + (dailyUpdated ? " · 每日一境已点亮，重玩保留首次成绩。" : " · 本局已完成，每日统计尚未更新，原记录已保留。") : "";
     render();
     setStatus(game.board.length + " 格，恰到好处。恭喜完成" + modeInfo(game.mode).label + "！");
     var summary = $("completion-dialog") && $("completion-dialog").querySelector("p");
     if (summary) summary.textContent = modeInfo(game.mode).label + " · " +
       (game.custom ? "自建题" : difficultyInfo(game.mode, game.difficulty).label) + "，每一个数字都找到了自己的位置。";
     if ($("completion-time")) $("completion-time").textContent = formatTime(game.elapsedMs);
-    if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode || !automaticErrors() ? "—" : String(game.mistakes);
+    if ($("completion-mistakes")) $("completion-mistakes").textContent = game.logicMode || !automaticErrors() || game.voyageId && game.errorCheckIncomplete ? "—" : String(game.mistakes);
     // Zen completion stays on the finished board, without a score dialog.
     if (!preferences.zen) showDialog($("completion-dialog"));
     celebrate();
@@ -2242,13 +2348,15 @@
   bind("voyage-btn", "click", openVoyage);
   bind("voyage-start", "click", startVoyage);
   bind("voyage-close", "click", function () { closeDialog($("voyage-dialog")); });
-  bind("voyage-dialog", "close", function () { resumeClock(); save(); });
+  bind("voyage-dialog", "close", function () { if (!this.open) { musicAudition = null; if (Atmosphere.stopSound) Atmosphere.stopSound(); } if (typeof syncMusic === "function") syncMusic(); resumeClock(); save(); });
   bind("voyage-world-nodes", "click", function (event) {
     var button = event.target.closest("[data-world-id]"); if (!button || button.disabled) return;
-    selectedVoyage = button.dataset.worldId; selectedVoyageTrack = chapterInfo(selectedVoyage).trackId; renderVoyage(); $("voyage-selected-title").scrollIntoView({ block: "nearest" });
+    selectedVoyage = button.dataset.worldId; selectedVoyageTrack = chapterInfo(selectedVoyage).trackId; renderVoyage(); playVoyageSound("voyage-select", true);
+    if (window.matchMedia("(max-width: 760px)").matches) $("voyage-selected-title").scrollIntoView({ block: "start" });
   });
   bind("voyage-training-links", "click", function (event) {
     var button = event.target.closest("[data-station]"); if (!button || button.disabled || !trainingUi) return;
+    voyagePracticeReturn = { id: selectedVoyage, station: button.dataset.station };
     closeDialog($("voyage-dialog")); trainingUi.open(button.dataset.station);
   });
   bind("completion-review", "click", function () {
@@ -2257,18 +2365,7 @@
   bind("voyage-next-stop", "click", function () {
     var nextId = Voyage.journey(voyageProgress, game && game.voyageId).nextId;
     if (!nextId) return;
-    selectedVoyage = nextId; selectedVoyageTrack = chapterInfo(nextId).trackId; renderVoyage(); $("voyage-start").focus();
-  });
-  bind("voyage-tracks", "click", function (event) {
-    var button = event.target.closest("[data-track]");
-    if (!button) return;
-    selectedVoyageTrack = button.dataset.track; renderVoyage();
-  });
-  bind("voyage-map", "click", function (event) {
-    var button = event.target.closest("[data-voyage]");
-    if (!button || button.disabled) return;
-    selectedVoyage = button.dataset.voyage;
-    renderVoyage();
+    selectedVoyage = nextId; renderVoyage(); $("voyage-selected-title").focus();
   });
   function renderZenContext() {
     var context = $("zen-context");
@@ -2337,10 +2434,34 @@
     renderPreferences();
     save();
   });
+  window.addEventListener("nine-realms-music-state", function () { renderMusicStatus();renderEffectsStatus(); });
+  bind("effects-toggle", "click", function(){preferences.effectsEnabled=preferences.effectsEnabled===false;editSoundSequence++;renderPreferences();save();});
+  bind("effects-volume", "input", function(){preferences.effectsVolume=Number($("effects-volume").value)/100;editSoundSequence++;renderPreferences();save();});
+  bind("music-toggle", "click", function () { preferences.musicEnabled = !preferences.musicEnabled; renderPreferences(); if (preferences.musicEnabled && preferences.sound) Atmosphere.unlock(); save(); });
+  bind("appearance-settings", "toggle", function () { if(!this.open)settingsMusicAudition=false;syncMusic(); });
+  bind("music-preview", "click", function () {
+    if(!preferences.musicEnabled||!preferences.sound||preferences.soundVolume===0||preferences.musicVolume===0||preferences.zen||document.hidden||storageTransition||storageConflict)return;
+    var state=Atmosphere.musicStatus(),retry=state.state==="error"||state.audioError||state.audioState==="suspended"||state.audioState==="interrupted"||state.audioState==="closed";
+    if(settingsMusicAudition&&!retry){settingsMusicAudition=false;syncMusic();return;}
+    settingsMusicAudition=true;syncMusic();Atmosphere.unlock({retryMusic:true});
+  });
+  bind("music-volume", "input", function () { preferences.musicVolume = Number($("music-volume").value) / 100; syncMusic(); if (preferences.sound && preferences.musicEnabled) Atmosphere.unlock(); save(); });
+  bind("voyage-dialog", "click", function (event) {
+    var button = event.target.closest("[data-music-preview]"); if (!button) return;
+    if (!preferences.sound || !preferences.musicEnabled || preferences.soundVolume === 0 || preferences.musicVolume === 0 || preferences.zen) { renderMusicStatus(); return; }
+    musicAudition = button.dataset.musicPreview; syncMusic(); Atmosphere.unlock({retryMusic:true});
+  });
+  bind("sound-volume", "input", function () { preferences.soundVolume = Number($("sound-volume").value) / 100; renderPreferences(); if (preferences.sound) Atmosphere.unlock(); save(); });
+  bind("voyage-dialog", "click", function (event) {
+    var button = event.target.closest("[data-sound-preview]"); if (!button) return;
+    var status = $("voyage-sound-status");
+    if (!preferences.sound || preferences.effectsEnabled === false || preferences.effectsVolume === 0 || preferences.zen || preferences.soundVolume === 0) { status.textContent = preferences.zen ? "禅模式保持安静。" : "请在外观设置中开启声音和音效，并调高对应音量。"; return; }
+    playVoyageSound(button.dataset.soundPreview, true).then(function (played) { status.textContent = played ? "正在试听 · " + button.textContent : "声音尚未就绪，请再次点击试听。"; });
+  });
   bind("sound-toggle", "click", function () {
     preferences.sound = !preferences.sound;
     renderPreferences();
-    if (preferences.sound) { Atmosphere.unlock(); Atmosphere.play("place", 1); }
+    if (preferences.sound) { Promise.resolve(Atmosphere.unlock()).then(function(ready){if(ready&&preferences.sound&&!preferences.zen&&!document.hidden)Atmosphere.play("input");}); }
     save();
   });
   bind("fog-toggle", "click", toggleFog);
@@ -2371,7 +2492,7 @@
   bind("lens-notes", "click", function () { lensSource = "notes"; render(); });
   bind("lens-rules", "click", function () { lensSource = "rules"; render(); });
   bind("logic-toggle", "click", function () {
-    if (!game || storageTransition || generatingPuzzle) return;
+    if (!game || game.completed || storageTransition || generatingPuzzle) return;
     game.logicMode = !game.logicMode; preferences.logicMode = game.logicMode;
     game.energy.combo = 0; clearTransientMarks();
     setStatus(game.logicMode ? "纯逻辑模式 · " + Logic.scope(gameContext()).message : "已恢复普通模式，填写与检查会核对本题答案。");
@@ -2463,7 +2584,11 @@
   bind("completion-dialog", "close", resumeClock);
   bind("play-again", "click", function () {
     closeDialog($("completion-dialog"));
-    if (game.voyageId) openVoyage(Voyage.nextAfter(voyageProgress, game.voyageId));
+    if (game.voyageId) {
+      var nextId = Voyage.nextAfter(voyageProgress, game.voyageId);
+      if (nextId && !voyageBranchChoice && !voyageStorageBlocked) startVoyage(nextId);
+      else openVoyage(nextId);
+    }
     else newGame(game.difficulty, false);
   });
   bind("theme-switcher", "click", function (event) {
@@ -2536,6 +2661,7 @@
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (/^[1-9]$/.test(event.key)) {
       event.preventDefault();
+      pressNumberKey(Number(event.key), "keyboard:" + (event.code || event.key));
       enterNumber(Number(event.key), false);
       return;
     }
@@ -2555,20 +2681,28 @@
     moveOnLayout(direction[0], direction[1], event.shiftKey ? "extend" : false);
   });
 
+  document.addEventListener("keyup", function (event) { releaseNumberKey("keyboard:" + (event.code || event.key)); });
+  document.addEventListener("pointerup", function (event) { releaseNumberKey("pointer:" + event.pointerId); }, { passive: true });
+  document.addEventListener("pointercancel", function (event) { releaseNumberKey("pointer:" + event.pointerId, true); }, { passive: true });
+  window.addEventListener("blur", clearNumberPresses);
+
   window.addEventListener("storage", function(event) {
     if (storageSession.isTemporary()) return;
     storageSession.changed(event);
     if(!Backup || event.key!==Backup.journalKey)return;
     if(event.newValue!==null){
-      cancelPuzzleGeneration();suspendClock();storageTransition=true;if(History)History.suspendPersistence(true);
+      cancelPuzzleGeneration();suspendClock();storageTransition=true;clearNumberPresses();if(Atmosphere.stopSound)Atmosphere.stopSound();if(History)History.suspendPersistence(true);
       document.body.inert=true;if(window.NineRealmsEasterEggs&&window.NineRealmsEasterEggs.suspendPersistence)window.NineRealmsEasterEggs.suspendPersistence(true);
       setStatus("另一窗口正在恢复数据，当前窗口已暂停保存。完成后将重新载入。");
     }else if(storageTransition){window.location.reload();}
   });
 
+  document.querySelectorAll("dialog").forEach(function (dialog) { dialog.addEventListener("close", function () { if (typeof syncMusic === "function") syncMusic(); }); });
+
   document.addEventListener("visibilitychange", function () {
     document.body.dataset.pageHidden = String(document.hidden);
     if (document.hidden) {
+      clearNumberPresses();
       stopCelebration();
       suspendClock();
       if (game && game.started && !game.completed) {
@@ -2582,8 +2716,10 @@
       render();
       resumeClock();
     }
+    syncMusic();
   });
   window.addEventListener("pagehide", function (event) {
+    clearNumberPresses();
     suspendClock();
     if (game && game.started && !game.completed) game.paused = true;
     save();
@@ -2627,7 +2763,7 @@
     $("save-recovery-title").textContent = live ? "本窗口尚未保存的对局" : pending ? "棋局暂未能恢复" : "保留的原档副本";
     $("save-recovery-description").textContent = live ?
       "可以导出当前对局原文留存；此文件不包含其他历史、收藏或成绩，不是完整备份，不能在数据备份入口导入。本机原存档和副本不会改变。" : !pending ?
-      "开新局前保留的原始数据仍在本机。可以导出留存，交由兼容版本检查；这些副本不是完整备份，不能直接在数据备份中导入。" : unavailable ?
+      "已保留的原始棋局或记录仍在本机。可以导出留存，交由兼容版本检查；这些副本不是完整备份，不能直接在数据备份中导入。" : unavailable ?
       "浏览器暂不允许读取本机存档。可以重试，或仅本次游玩；仅本次游玩不会自动保存当前对局。" : state.status === "unsupported" ?
       "这份存档来自较新的存档版本（" + state.version + "），当前版本无法读取。原始数据未改变，请优先用对应版本打开，也可以导出留存。" :
       "发现无法读取的棋局数据，原始内容未改变。可导出留存、重新读取，或保留原档副本后开新局；历史、收藏和成绩会保留。";
@@ -2761,6 +2897,7 @@
   }
 
   async function preparePlayerBackup() {
+    if (dailyUnreadable) throw new Error("每日原文暂不可读取，为避免遗漏，完整备份已暂停；请在每日一境导出原文，或用有效备份恢复。");
     if (voyageStorageBlocked) throw new Error("远征存档格式较新或暂不可读取，为避免导出遗漏，完整备份已暂停；原数据未改变，请使用对应版本导出。");
     suspendClock();
     save();if(History)History.flush();
@@ -2779,7 +2916,9 @@
 
   function commitPlayerBackup(validated) {
     cancelPuzzleGeneration();suspendClock();
-    if(!save()||(History&&!History.flush()))throw new Error("当前进度暂时无法安全保存，已停止替换。请先释放本机存储空间。");
+    if(!save())throw new Error("当前进度暂时无法安全保存，已停止替换。请先释放本机存储空间。");
+    if(History){var state=History.originalState();if(["invalid","unsupported"].indexOf(state.status)>=0)History.preserveOriginal();else if(!History.flush())throw new Error("历史暂时无法安全保存，已停止替换。");}
+    if(dailyUnreadable){if(typeof dailyUnreadable.raw!=="string")throw new Error("暂不可读取每日原文，未替换任何数据。");SaveRecovery.preserve(playerStorage,dailyUnreadable,DAILY_KEY);}
     storageTransition=true;if(History)History.suspendPersistence(true);
     try{
       Backup.replace(playerStorage,validated);
@@ -2807,7 +2946,10 @@
   if (window.NineRealmsTrainingUI) trainingUi = window.NineRealmsTrainingUI({
     progress: function () { return Voyage.practiceProgress(voyageProgress); },
     blocked: function () { return storageTransition || voyageStorageBlocked; },
-    open: showDialog, close: closeDialog, afterClose: function () { resumeClock(); save(); },
+    open: showDialog, close: closeDialog, afterClose: function () {
+      resumeClock(); save();
+      if (voyagePracticeReturn && !storageTransition) { var back = voyagePracticeReturn; voyagePracticeReturn = null; openVoyage(back.id); $("voyage-training-links").closest("details").open = true; var button = $("voyage-training-links").querySelector('[data-station="' + back.station + '"]'); if (button) button.focus(); }
+    },
     success: function (id, cell, digit) { if (storageTransition || voyageStorageBlocked) throw new Error("练习成绩暂不可保存，原记录未改变。"); voyageProgress = Voyage.recordPractice(voyageProgress, id, cell, digit); saveVoyage(); renderVoyage(); }
   });
 
@@ -2823,6 +2965,8 @@
 
   if (History) History.init({
     Engine: Engine, storage: playerStorage,
+    preserveOriginal: function (state) { SaveRecovery.preserve(playerStorage, state, History.KEY); refreshRecoveryLink(); },
+    downloadOriginal: function (raw) { return downloadPlayerFile(raw, "Nine-Realms-unreadable-history.json"); },
     VariantView: window.SudokuVariantView,
     openDialog: function (element) { showDialog(element); save(); },
     afterClose: function () { render(); resumeClock(); save(); },
@@ -2846,7 +2990,7 @@
       return {validated:validated,summary:"备份时间："+new Date(p.createdAt).toLocaleString()+" · 版本 "+p.appVersion+
         "\n"+(p.currentGame?"当前棋局："+modeInfo(p.currentGame.mode).label+" · "+p.currentGame.filled+" / "+p.currentGame.total+" 格":"没有当前棋局")+
         "\n历史 "+p.historyCount+" 局 / "+p.historySteps+" 步 · 收藏 "+p.favoritesCount+" 题"+
-        "\n彩蛋 "+p.secretsCount+" 项 · 每日 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
+        "\n彩蛋 "+p.secretsCount+" 项 · 每日明细 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
     },commitBackup:commitPlayerBackup,downloadRecovery:function(value){return downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
   });
 

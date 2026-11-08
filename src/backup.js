@@ -1,8 +1,8 @@
 /* Versioned offline player-data backups. Product versions never gate save-schema migration. */
 (function(root,factory){
- if(typeof module==='object'&&module.exports) module.exports=factory(require('./engine.js'),require('./daily.js'),require('./voyage.js'),function(){return require('./favorites.js');},require('./drafts.js'),require('./checkpoints.js'),require('./secret-archives.js'),require('./branches.js'));
- else root.NineRealmsBackup=factory(root.SudokuEngine,root.SudokuDaily,root.SudokuVoyage,function(){return root.NineRealmsFavorites;},root.NineRealmsDrafts,root.NineRealmsCheckpoints,root.NineRealmsSecretArchives,root.NineRealmsBranches);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites,Drafts,Checkpoints,SecretArchives,Branches){
+ if(typeof module==='object'&&module.exports) module.exports=factory(require('./engine.js'),require('./daily.js'),require('./voyage.js'),function(){return require('./favorites.js');},require('./drafts.js'),require('./checkpoints.js'),require('./secret-archives.js'),require('./branches.js'),require('./logic.js'));
+ else root.NineRealmsBackup=factory(root.SudokuEngine,root.SudokuDaily,root.SudokuVoyage,function(){return root.NineRealmsFavorites;},root.NineRealmsDrafts,root.NineRealmsCheckpoints,root.NineRealmsSecretArchives,root.NineRealmsBranches,root.NineRealmsLogic);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites,Drafts,Checkpoints,SecretArchives,Branches,Logic){
  'use strict';
  var KEYS=['nine-realms.sudoku.v1','nine-realms.history.v1','nine-realms.secrets.v1','nine-realms.daily.v1','nine-realms.voyage.v1','nine-realms.puzzle-deck.v1','nine-realms.generated-recent.v1','nine-realms.favorites.v1'];
  var JOURNAL='nine-realms.backup-rollback.v1',MAX=4*1024*1024,trusted=new WeakSet();
@@ -28,7 +28,8 @@
    if(g.clues!==undefined)assert(stable(clues)===stable(g.clues),'规则线索格式无效');
    assert(board(g.givens,n,9)&&board(g.solution,n,9,1),'题目尺寸或数字无效');
    assert(Engine.validateComplete(g.solution,context)&&g.givens.every(function(v,i){return !v||v===g.solution[i];}),'题目答案不符合规则');
-   var key=stable([mode,g.givens,clues,g.solution]);if(!cache.has(key)){
+   var ruleOnly=g.logicMode===true&&Logic.scope(context).complete&&!g.custom&&!g.dailyDate&&!g.voyageId;
+   var key=stable([mode,g.givens,clues,g.solution,ruleOnly]);if(!ruleOnly&&!cache.has(key)){
     assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');
     var prove=function(){assert(Date.now()<deadline,'验证预算已用完');var proof=Engine.analyzeSolutions(g.givens,context,{limit:2,maxNodes:250000,timeLimitMs:g.custom?750:100});
     assert(proof.count===1&&!proof.exhausted&&stable(proof.solution)===stable(g.solution),'题目未能在预算内证明唯一解');};
@@ -39,18 +40,18 @@
   function snapshot(s,history){
    keys(s,['version','preferences','game']);assert(integer(s.version,8)&&s.version>=1,'不支持此存档格式版本');assert(object(s.game),'缺少棋局');
    if(s.preferences!==undefined){
-    var p=s.preferences;keys(p,['theme','fx','errorCheck','logicMode','customDraft','fog','sound','focus','zen','zenMotion','intensity','textSize','lineContrast','colorAssist','handedness']);
-    Object.keys(p).forEach(function(k){if(k==='theme')assert(['nebula','aurora','ember','ivory','ocean','sakura','firefly','sunset'].indexOf(p[k])>=0,'主题无效');else if(k==='intensity')assert(['cinematic','balanced','soft'].indexOf(p[k])>=0,'画质无效');else if(k==='textSize')assert(['normal','large'].indexOf(p[k])>=0,'字号无效');else if(k==='lineContrast')assert(['standard','strong'].indexOf(p[k])>=0,'线条设置无效');else if(k==='customDraft')assert(typeof p[k]==='string'&&p[k].length<=2048,'自建题草稿无效');else if(k==='handedness')assert(['right','left'].indexOf(p[k])>=0,'左右手布局无效');else assert(typeof p[k]==='boolean','设置无效');});
+    var p=s.preferences;keys(p,['theme','fx','errorCheck','logicMode','customDraft','fog','sound','soundVolume','effectsEnabled','effectsVolume','musicEnabled','musicVolume','focus','zen','zenMotion','intensity','textSize','lineContrast','colorAssist','handedness']);
+    Object.keys(p).forEach(function(k){if(k==='soundVolume'||k==='effectsVolume'||k==='musicVolume')assert(typeof p[k]==='number'&&Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1,'音量无效');else if(k==='theme')assert(['nebula','aurora','ember','ivory','ocean','sakura','firefly','sunset'].indexOf(p[k])>=0,'主题无效');else if(k==='intensity')assert(['cinematic','balanced','soft'].indexOf(p[k])>=0,'画质无效');else if(k==='textSize')assert(['normal','large'].indexOf(p[k])>=0,'字号无效');else if(k==='lineContrast')assert(['standard','strong'].indexOf(p[k])>=0,'线条设置无效');else if(k==='customDraft')assert(typeof p[k]==='string'&&p[k].length<=2048,'自建题草稿无效');else if(k==='handedness')assert(['right','left'].indexOf(p[k])>=0,'左右手布局无效');else assert(typeof p[k]==='boolean','设置无效');});
    }
-   var g=s.game;keys(g,['logicMode','custom','practice','generation','sessionId','createdAt','puzzleId','sourceId','difficulty','mode','clues','givens','solution','board','notes','history','redo','selected','mistakes','hints','elapsedMs','started','paused','completed','branch','voyageId','dailyDate','fog','fogSeen','energy','noteMode','draft']);
+   var g=s.game;keys(g,['logicMode','custom','practice','generation','sessionId','createdAt','puzzleId','sourceId','difficulty','mode','clues','givens','solution','board','notes','history','redo','selected','mistakes','errorCheckIncomplete','hints','elapsedMs','started','paused','completed','branch','voyageId','dailyDate','fog','fogSeen','energy','noteMode','draft']);
    if(g.custom!==undefined)assert(typeof g.custom==='boolean'&&(!g.custom||(g.mode==='classic'&&Object.keys(Engine.normalizeClues(g.mode,g.clues)).every(function(k){return k==='version'||!Engine.normalizeClues(g.mode,g.clues)[k].length;}))),'自建题规则无效');
    if(g.practice){keys(g.practice,['version','sourceSessionId','absoluteStep','wasAssumption']);assert(g.practice.version===1&&id(g.practice.sourceSessionId)&&integer(g.practice.absoluteStep,1000003000)&&typeof g.practice.wasAssumption==='boolean'&&!g.dailyDate&&!g.voyageId,'复练来源无效');}
    var info=puzzle(g,s.version);frame(g,g.givens,g.clues);stats(g);
    if(history||g.sessionId!==undefined)assert(id(g.sessionId),'棋局标识无效');
-   ['started','paused','completed','fog','noteMode','logicMode'].forEach(function(k){if(g[k]!==undefined)assert(typeof g[k]==='boolean','棋局状态无效');});
+   ['started','paused','completed','fog','noteMode','logicMode','errorCheckIncomplete'].forEach(function(k){if(g[k]!==undefined)assert(typeof g[k]==='boolean','棋局状态无效');});
    if(g.createdAt!==undefined)assert(number(g.createdAt,1e15),'创建时间无效');
    ['sourceId','puzzleId'].forEach(function(k){if(g[k]!==undefined&&g[k]!==null)assert(typeof g[k]==='string'&&g[k].length<=512,'来源标识无效');});
-   if(g.completed)assert(g.board.every(function(v,i){return v===g.solution[i];})&&!Branches.active(g.branch),'完成状态与棋盘不符');
+   if(g.completed)assert((g.logicMode?Logic.complete(g.board,info.context):g.board.every(function(v,i){return v===g.solution[i];}))&&!Branches.active(g.branch),'完成状态与棋盘不符');
    ['history','redo'].forEach(function(key){if(g[key]!==undefined){assert(Array.isArray(g[key])&&g[key].length<=80,'撤销或重做记录过多');g[key].forEach(function(h){keys(h,['board','notes','selected','noteMode','draft']);frame(h,g.givens,g.clues);});}});
    if(g.branch){var branch=Branches.validate(g.branch,g.givens,g.clues);assert(Branches.matches(branch,g),'当前棋盘与活动分支不符');}
    if(g.fogSeen!==undefined)assert(Array.isArray(g.fogSeen)&&g.fogSeen.length===info.n&&g.fogSeen.every(function(v){return typeof v==='boolean';}),'迷雾记录无效');
@@ -70,7 +71,7 @@
     if(r.replayRecovered!==undefined)assert(typeof r.replayRecovered==='boolean','回放修复标记无效');
     var f=clone(r.base);keys(f,['board','notes','selected','noteMode','branch','elapsedMs','mistakes','hints','completed','draft','logicMode','branchId','branchLabel']);frame(f,g.givens,g.clues);stats(f);
     ['noteMode','branch','completed'].forEach(function(k){assert(typeof f[k]==='boolean','回放状态无效');});
-    if(f.completed)assert(!f.branch&&f.board.every(function(v,i){return v===g.solution[i];}),'回放完成状态无效');
+    if(f.completed)assert(!f.branch&&(f.logicMode?Logic.complete(f.board,{mode:g.mode,clues:g.clues}):f.board.every(function(v,i){return v===g.solution[i];})),'回放完成状态无效');
     assert(Array.isArray(r.steps)&&r.steps.length<=3000,'回放步骤过多');
     if(r.checkpoints!==undefined)Checkpoints.validate(r.checkpoints,r.droppedSteps+r.steps.length);
     r.steps.forEach(function(step){
@@ -80,7 +81,7 @@
      if(step.branchId!==undefined){assert(step.branchId===null||typeof step.branchId==='string'&&/^b[1-9][0-9]{0,8}$/.test(step.branchId),'回放分支无效');assert(typeof step.branchLabel==='string'&&step.branchLabel.length<=32,'回放分支名无效');f.branchId=step.branchId;f.branchLabel=step.branchLabel;}
      if(step.logicMode!==undefined){assert(typeof step.logicMode==='boolean','回放检查模式无效');f.logicMode=step.logicMode;}
      if(step.draft!==undefined){Drafts.validate(step.draft,g.givens.length,g.clues||{});f.draft=clone(step.draft);}
-     ['selected','noteMode','branch','elapsedMs','mistakes','hints','completed'].forEach(function(k){f[k]=step[k];});frame(f,g.givens,g.clues);if(f.completed)assert(!f.branch&&f.board.every(function(v,i){return v===g.solution[i];}),'回放完成状态无效');
+     ['selected','noteMode','branch','elapsedMs','mistakes','hints','completed'].forEach(function(k){f[k]=step[k];});frame(f,g.givens,g.clues);if(f.completed)assert(!f.branch&&(f.logicMode?Logic.complete(f.board,{mode:g.mode,clues:g.clues}):f.board.every(function(v,i){return v===g.solution[i];})),'回放完成状态无效');
     });
     assert(Drafts.equal(f.draft,g.draft,g.givens.length)&&stable(f.board)===stable(g.board)&&stable(f.notes)===stable(g.notes)&&f.branch===Branches.active(g.branch)&&f.completed===Boolean(g.completed)&&f.mistakes===g.mistakes&&f.hints===g.hints&&Boolean(f.logicMode)===Boolean(g.logicMode)&&(f.branchId||null)===(g.branch&&g.branch.version===2?g.branch.activeId:null),'回放终点与存档不符');
    });
@@ -96,7 +97,7 @@
    if(k===KEYS[0])v.snapshot(x,false);
    else if(k===KEYS[1])v.history(x);
    else if(k===KEYS[2])assert(stable(SecretArchives.validateEnvelope(x))===stable(x),'彩蛋记录无效');
-   else if(k===KEYS[3])assert(stable(Daily.normalizeRecords(x))===stable(x),'每日成绩无效');
+   else if(k===KEYS[3]){Daily.validateRecords(x);assert(stable(Daily.normalizeRecords(x))===stable(x),'每日成绩无效');}
    else if(k===KEYS[4])assert(stable(Voyage.normalizeProgress(x))===stable(x),'旅程成绩无效');
    else if(k===KEYS[5]){keys(x,['version','seen']);assert(x.version===1&&object(x.seen),'轮换格式无效');var pools={};Engine.getPuzzleCatalog().forEach(function(p){var key=p.mode+'/'+p.difficulty;(pools[key]||(pools[key]=new Set())).add(p.id);});Object.keys(x.seen).forEach(function(key){var ids=x.seen[key];assert(pools[key]&&Array.isArray(ids)&&ids.length<=pools[key].size&&new Set(ids).size===ids.length&&ids.every(function(id){return pools[key].has(id);}), '轮换来源无效');});}
    else if(k===KEYS[6])assert(Array.isArray(x)&&x.length<=256&&new Set(x).size===x.length&&x.every(function(s){return typeof s==='string'&&/^[a-f0-9]{32}$/.test(s);}), '生成去重记录无效');
@@ -112,10 +113,10 @@
   assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');return mark(b);
  }
  function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
- function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.1',createdAt:new Date().toISOString(),entries:entries};}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.3',createdAt:new Date().toISOString(),entries:entries};}
  function create(storage,options){return validate(draft(storage,options));}
  function createAsync(storage,options){return validateAsync(draft(storage,options));}
- function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Object.keys(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
+ function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Daily.detailDates(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
  function rawJournal(text){assert(typeof text==='string'&&text.length<=MAX*2,'恢复日志过大');var j=JSON.parse(text);keys(j,['format','version','previous']);assert(j.format==='nine-realms-rollback'&&j.version===1,'恢复日志格式无效');keys(j.previous,KEYS);assert(KEYS.every(function(k){return Object.prototype.hasOwnProperty.call(j.previous,k)&&(j.previous[k]===null||typeof j.previous[k]==='string');}),'恢复日志不完整');return j;}
  function restoreRaw(storage,previous){KEYS.forEach(function(k){storage.removeItem(k);});KEYS.forEach(function(k){if(previous[k]!==null)storage.setItem(k,previous[k]);});assert(stable(read(storage))===stable(previous),'原数据恢复校验失败');storage.removeItem(JOURNAL);}
  function recoveryError(error,text){var e=new Error('存储恢复尚未完成。请勿继续游戏；保留恢复文件后重试。');e.code='RECOVERY_REQUIRED';e.recoveryRequired=true;e.previousBackup=text;e.cause=error;return e;}

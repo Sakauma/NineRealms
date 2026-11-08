@@ -28,10 +28,10 @@ body[data-workspace=unified][data-zen=on] .cell::after{animation:none}
 body[data-workspace=unified][data-zen=on] .cell .value{animation:none}
 body[data-workspace=unified][data-zen=on] .game-layout>.control-panel{order:2;grid-column:1;width:100%;max-width:560px;padding:0;border:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;position:static}
 body[data-workspace=unified][data-zen=on]:not([data-desktop=on]) #play-controls{display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
-body[data-workspace=unified][data-zen=on] .number-pad{display:flex;flex-wrap:wrap;justify-content:center;width:100%;gap:6px;order:1;margin:0}
+body[data-workspace=unified][data-zen=on] .number-pad{display:flex;flex-wrap:wrap;justify-content:center;width:100%;gap:6px;align-items:flex-start;order:1;margin:0}
 /* Inherit the original theme-linked frosted face, rim, blur and pointer states. */
-body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex:0 0 calc((100% - 48px) / 9);min-width:44px;min-height:52px;height:52px;aspect-ratio:auto;padding:0;border-radius:12px;color:var(--text);opacity:1}
-body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:27px;font-weight:400;text-shadow:none}
+body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex:0 0 calc((100% - 48px) / 9);min-width:44px;min-height:44px;height:auto;aspect-ratio:1/1;padding:0;border-radius:12px;opacity:1}
+body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:27px;font-weight:500;text-shadow:none}
 body[data-workspace=unified][data-zen=on] .tools-grid{order:2;display:flex;width:auto;justify-content:center;gap:12px}
 body[data-workspace=unified][data-zen=on] .history-tools{display:contents}
 body[data-workspace=unified][data-zen=on] .control-panel :is(#undo-btn,#erase-btn,#notes-btn){width:auto;min-width:72px;min-height:44px;height:44px;padding:8px 10px;gap:6px;font-size:12px;color:var(--muted);border:1px solid transparent;background:transparent;box-shadow:none;flex-direction:row}
@@ -51,7 +51,7 @@ body[data-workspace=unified][data-zen=on] :is(button,select):focus-visible{outli
  body[data-workspace=unified][data-zen=on] .topbar{min-height:60px;padding:8px 0}
  body[data-workspace=unified][data-zen=on] .game-layout{gap:12px}
  body[data-workspace=unified][data-zen=on] .number-pad{gap:4px 8px}
- body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex-basis:calc((100% - 32px) / 5);height:48px;min-height:48px}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key{flex-basis:calc((100% - 32px) / 5);height:auto;min-height:44px}
  body[data-workspace=unified][data-zen=on] #number-pad .number-key .key-value{font-size:25px}
 }
 @media(min-width:768px){body[data-workspace=unified][data-zen=on] .topbar{min-height:96px}}
@@ -60,5 +60,7 @@ body[data-workspace=unified][data-zen=on][data-text-size=large] #number-pad .key
 body[data-workspace=unified][data-zen=on][data-text-size=large] :is(#zen-toggle,.zen-context,#undo-btn,#erase-btn,#notes-btn){font-size:14px}
 @media(forced-colors:active){
  body[data-workspace=unified][data-zen=on] #number-pad .number-key{border-color:ButtonText;color:ButtonText}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key:is(:active:focus-visible,.is-pressed):not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight;box-shadow:none}
+ body[data-workspace=unified][data-zen=on] #number-pad .number-key:disabled{color:GrayText;border-color:GrayText}
  body[data-workspace=unified][data-zen=on] #notes-btn[aria-pressed=true]{outline:2px solid Highlight}
 }

@@ -6,107 +6,68 @@
   "use strict";
 
   var CHAPTERS = [
-    { id: "dawn", title: "启明星", subtitle: "从第一束光出发", mode: "classic", difficulty: "easy" },
-    { id: "orbit", title: "双轨", subtitle: "沿两条对角线相遇", mode: "diagonal", difficulty: "easy" },
-    { id: "window", title: "方窗", subtitle: "点亮四扇隐秘的窗口", mode: "hyper", difficulty: "easy" },
-    { id: "pegasus", title: "天马", subtitle: "跟随马步探索星空", mode: "knight", difficulty: "easy" },
-    { id: "echo", title: "回声", subtitle: "在九宫之间寻找呼应", mode: "classic", difficulty: "medium" },
-    { id: "cross", title: "交汇", subtitle: "让两束星光各归其位", mode: "diagonal", difficulty: "medium" },
-    { id: "chamber", title: "光室", subtitle: "解开窗口之间的联系", mode: "hyper", difficulty: "medium" },
-    { id: "jump", title: "跃迁", subtitle: "让每一步跳跃都有答案", mode: "knight", difficulty: "medium" },
-    { id: "home", title: "归星", subtitle: "用逻辑点亮最后一颗星", mode: "classic", difficulty: "hard" }
-  ].map(function (chapter, index) {
-    return Object.assign({ index: index, trackId: "legacy" }, chapter);
-  });
+    {"id":"dawn","trackId":"legacy","index":0,"title":"启明星","subtitle":"从第一束光出发","mode":"classic","difficulty":"easy"},
+    {"id":"orbit","trackId":"legacy","index":1,"title":"双轨","subtitle":"沿两条对角线相遇","mode":"diagonal","difficulty":"easy"},
+    {"id":"window","trackId":"legacy","index":2,"title":"方窗","subtitle":"点亮四扇隐秘的窗口","mode":"hyper","difficulty":"easy"},
+    {"id":"pegasus","trackId":"legacy","index":3,"title":"天马","subtitle":"跟随马步探索星空","mode":"knight","difficulty":"easy"},
+    {"id":"echo","trackId":"legacy","index":4,"title":"回声","subtitle":"在九宫之间寻找呼应","mode":"classic","difficulty":"medium"},
+    {"id":"cross","trackId":"legacy","index":5,"title":"交汇","subtitle":"让两束星光各归其位","mode":"diagonal","difficulty":"medium"},
+    {"id":"chamber","trackId":"legacy","index":6,"title":"光室","subtitle":"解开窗口之间的联系","mode":"hyper","difficulty":"medium"},
+    {"id":"jump","trackId":"legacy","index":7,"title":"跃迁","subtitle":"让每一步跳跃都有答案","mode":"knight","difficulty":"medium"},
+    {"id":"home","trackId":"legacy","index":8,"title":"归星","subtitle":"用逻辑点亮最后一颗星","mode":"classic","difficulty":"hard"},
+    {"id":"lines-rise-v1","trackId":"lines","index":0,"title":"微光升温","subtitle":"先看方向，再填数字","mode":"thermo","difficulty":"easy","sourceId":"V-thermo-easy-1"},
+    {"id":"lines-mirror-v1","trackId":"lines","index":1,"title":"星河镜面","subtitle":"读出两端的回应","mode":"palindrome","difficulty":"medium","sourceId":"V-palindrome-medium-1"},
+    {"id":"lines-spectrum-v1","trackId":"lines","index":2,"title":"流光成谱","subtitle":"从单格走向数字集合","mode":"renban","difficulty":"hard","sourceId":"V-renban-hard-1"},
+    {"id":"sums-sparks-v1","trackId":"sums","index":0,"title":"星火相聚","subtitle":"认识不重复的总和","mode":"killer","difficulty":"easy","sourceId":"V-killer-easy-1"},
+    {"id":"sums-arrows-v1","trackId":"sums","index":1,"title":"光束汇流","subtitle":"拆开圆圈里的数字","mode":"arrow","difficulty":"medium","sourceId":"V-arrow-medium-1"},
+    {"id":"sums-constellation-v1","trackId":"sums","index":2,"title":"群星合奏","subtitle":"让总和与九宫相互印证","mode":"killer","difficulty":"hard","sourceId":"V-killer-hard-1"},
+    {"id":"fusion-homecoming-v1","trackId":"fusion","index":0,"title":"归航合鸣","subtitle":"让两种规则在同一格相遇","mode":"thermo-killer","difficulty":"hard","sourceId":"F-thermo-killer-hard-v1"}
+  ];
 
   var TRACKS = [
-    { id: "legacy", title: "九星远征", subtitle: "原来的九站旅程，进度原样保留", description: "从经典规则走向对角线、窗口与马步；重访旧关不丢最佳成绩。" },
-    { id: "lines", title: "循线之旅", subtitle: "递增 · 镜像 · 连续", description: "三站认识线条的不同语言：先看方向，再看对称，最后看连续集合。" },
-    { id: "sums", title: "星火求和", subtitle: "组合 · 拆分 · 交叉验证", description: "从小笼的总和出发，学习箭头拆分，再把多个笼与行列宫联系起来。" }
+    {"id":"legacy","title":"九星远征","subtitle":"原来的九站旅程，进度原样保留","description":"校准九处定位星：从行列宫出发，再用对角线、窗口与马步交叉核对。完成后，同时开放循线和汇能两路。"},
+    {"id":"lines","title":"循线之旅","subtitle":"递增 · 镜像 · 连续","description":"连接三段航线：递增定方向，相等校信号，连续集合补齐频谱。三站完成后，与汇能前两站在群星合奏汇合。"},
+    {"id":"sums","title":"星火求和","subtitle":"组合 · 拆分 · 交叉验证","description":"先读笼的总和，再拆分箭头，最后联合行列宫检查组合。完成与循线的汇合后，再校准归航核心。"},
+    {"id":"fusion","title":"归航合鸣","subtitle":"递增与求和 · 同盘相证","description":"第十六处归航核心：前十五处星点全部点亮后开放，在同一盘中同时使用温度计与杀手笼。"}
   ];
-  var THEMED = [
-    { id: "lines-rise-v1", trackId: "lines", title: "微光升温", subtitle: "先看方向，再填数字", mode: "thermo", difficulty: "easy", sourceId: "V-thermo-easy-1",
-      lesson: "温度计从圆球到尖端严格递增。长度为 n 的线，圆球最多是 10−n；沿线每前进一步，数字至少增大 1。",
-      goal: "先找到一条温度计，比较相邻格的上下界，再与行、列和宫的已填数交叉检查。" },
-    { id: "lines-mirror-v1", trackId: "lines", title: "星河镜面", subtitle: "读出两端的回应", mode: "palindrome", difficulty: "medium", sourceId: "V-palindrome-medium-1",
-      lesson: "回文线两端向内对应的位置必须相等；它不是递增线。先找到已知数字的镜像位置。",
-      goal: "沿一条回文线成对检查两端；同值仍要遵守各自行、列和宫的限制。" },
-    { id: "lines-spectrum-v1", trackId: "lines", title: "流光成谱", subtitle: "从单格走向数字集合", mode: "renban", difficulty: "hard", sourceId: "V-renban-hard-1",
-      lesson: "连续线上的数字互不重复，并组成一段连续整数；排列顺序不限，不要求沿线递增。",
-      goal: "根据线长和已知数字缩小整段连续区间，再把候选与行列宫相互核对。" },
-    { id: "sums-sparks-v1", trackId: "sums", title: "星火相聚", subtitle: "认识不重复的总和", mode: "killer", difficulty: "easy", sourceId: "V-killer-easy-1",
-      lesson: "每个虚线笼的数字不重复，合计等于角标。两格和为 3 只能是 1 与 2；其他组合还要接受行列宫约束。",
-      goal: "先找最短的笼，列出不重复的数字组合；已知一格时，用总和减去它。" },
-    { id: "sums-arrows-v1", trackId: "sums", title: "光束汇流", subtitle: "拆开圆圈里的数字", mode: "arrow", difficulty: "medium", sourceId: "V-arrow-medium-1",
-      lesson: "圆圈中的数字等于箭身各格之和。箭身可否重复由行列宫等规则决定，不能照搬杀手笼的不重复条件。",
-      goal: "先从已知圆圈或已知箭身作减法，再检查每种拆分是否符合所在行列宫。" },
-    { id: "sums-constellation-v1", trackId: "sums", title: "群星合奏", subtitle: "让总和与九宫相互印证", mode: "killer", difficulty: "hard", sourceId: "V-killer-hard-1",
-      lesson: "每行、列、宫的 1–9 总和都是 45。若干完整笼都位于同一行、列或宫内且互不重叠时，可从 45 扣去它们的总和，求出该区域其余格的合计。",
-      goal: "结合笼的候选组合与行列宫限制逐步推进；不要把跨区域的完整笼总和直接相减。" }
-  ];
-  THEMED.forEach(function (chapter) {
-    chapter.index = THEMED.filter(function (other) { return other.trackId === chapter.trackId; }).indexOf(chapter);
-    chapter.ratingNote = "章节按概念逐步展开；入门／标准／进阶是原题给定密度档，不是人类技巧评级。";
-    CHAPTERS.push(chapter);
-  });
 
-  // One story, three acts. Metadata never changes a puzzle or saved record.
-  var STORY = [
-    ["星图失去第一处坐标。", "用行、列、宫找回第一颗定位星。", "沿修复的坐标寻找两条交叉航道。"],
-    ["两条航道在远方交叉。", "让两条对角线也各自容纳 1–9。", "交叉点指向四扇被遮住的窗口。"],
-    ["窗口里藏着下一段航线。", "同时核对九宫与四个额外窗口。", "穿过窗口，追上跳跃的信标。"],
-    ["信标不沿直线移动。", "检查马步相隔格，避免数字相撞。", "把学到的交叉检查带回经典九宫。"],
-    ["旧坐标发来新的回声。", "在给定更少的经典盘里连接行列宫。", "回声汇聚到更复杂的双轨交点。"],
-    ["双轨间的空白需要彼此印证。", "用对角线与宫的共同约束推进。", "顺着交点打开最后一间光室。"],
-    ["光室中的窗口同时亮起。", "把额外窗口的限制传回行列宫。", "借这束光完成最后一次跃迁。"],
-    ["返航信标只剩一次跳跃。", "在更稀疏的盘面中保持马步约束。", "回到九宫中心，校准原始星图。"],
-    ["九颗定位星终于归位，航线仍然断裂。", "解开经典九宫，完成星图的坐标骨架。", "九星定位完成；可选择循线或求和两路，最终在群星合奏汇合。"],
-    ["温度计般的航线从微光中升起。", "沿圆球到尖端的递增关系修复航线。", "方向确定后，寻找两端互相回应的镜面信号。"],
-    ["一束信号在航线两端出现。", "用回文线对应位置相等的规则校对信号。", "把单点对应扩大为一整段连续频谱。"],
-    ["离散光点需要组成连续的频谱。", "找出连续线上的数字集合，完成航线修复。", "航线已通；完成求和前两站后，一同进入群星合奏。"],
-    ["沿途星火被收进标有总量的容器。", "用笼内不重复的数字组合补齐能量。", "沿箭头把分散的能量汇入同一圆圈。"],
-    ["能量沿箭身汇向接收圆圈。", "核对圆圈等于箭身之和，不额外假设笼规则。", "求和能量已备齐；循线三站完成后，一同进入群星合奏。"],
-    ["坐标、航线与能量在归途汇合。", "用笼总和与行列宫交叉检查，点亮最后的星点。", "所有十五处星点点亮后，返航星图完整修复。" ]
-  ];
-  var EXAMPLES = [
-    "例如一行只缺 7，就用列与宫再核对 7。", "例如主对角线已有 5，其余对角线格不能再放 5。",
-    "例如额外窗口已有 3，同一窗口其余格排除 3。", "例如一个格填 4，它的马步相隔格不能填 4。",
-    "例如某宫的 2 只剩一处候选，就检查对应行列。", "例如对角线唯一缺数也必须满足所在宫。",
-    "例如窗口排除的 6，也会缩小交叉行的候选。", "例如两个候选格与已填 8 呈马步时，都需排除 8。",
-    "例如同一行的缺数要分别接受列与宫检验。", "例如三格温度计的圆球最多为 7。",
-    "例如五格回文线第一格为 4，则第五格也是 4。", "例如三格连续线可为 4、2、3，顺序不限。",
-    "例如两格笼和为 3，只能用 1 与 2。", "例如两格箭身的圆圈为 6、一格已填 2，则另一格为 4。",
-    "例如完全位于同一行、互不重叠的若干笼合计为 40，则该行其余格合计为 5。"
+  // One source of chapter copy: scene, observation, rule, example, resolution, next, objective.
+  var TEACHING = [
+    ["返航星图只留下一束微光。先校准第一处坐标。","先找候选只剩一个的空格，再核对交叉的行、列与宫。","每行、列、宫都恰好包含1–9。一个空格排除已出现的数后若只剩一个候选，才可确定它。","某行只缺7，唯一空格的列与宫也允许7，即可填入7。","第一颗定位星归位，两条航道显出交点。","下一站沿两条对角线继续定位。","naked-single"],
+    ["两条航道穿过九宫中心，交叉点需要再次校对。","从对角线上的空格出发，把对角线已有的数字也加入排除。","两条主对角线各自包含1–9，行、列、宫的限制仍同时成立；中心格属于两条对角线。","主对角线已有5，同一对角线的其他格不能再填5。","交叉航道已定位，四扇窗口从星图里显现。","下一站检查额外窗口里的数字。","diagonal"],
+    ["四扇窗口透出微光，照见平常九宫之外的联系。","检查额外窗口已有的数，再观察它怎样缩小交叉行列宫的候选。","标出的四个窗口各自包含1–9。一个格可以同时属于普通宫和额外窗口，两边限制都要满足。","额外窗口已有3，窗口中的空格排除3，即使它不在该数的普通宫里。","窗口校准，远处跳跃的信标变得清晰。","下一站追踪马步相隔的格子。","hyper"],
+    ["定位信标按马步跳跃，留下成对的检查位置。","从已填数出发，检查与它相隔一个马步的空格。","马步相隔的两格不能相同：横向走两格再纵向一格，或纵向两格再横向一格。它不代替行列宫规则。","一个格为4，与它呈马步的空格不能填4。","信标的位置已确认，把交叉核对带回经典九宫。","下一站从数字的落点反查空格。","knight"],
+    ["熟悉的坐标传回一段回声，需要从另一个方向核对。","除了看单格候选，也反查一个数字在同一区域里是否只剩一个落点。","区域唯一位置是看某个数字能去哪里，不要求那个格本来就只有一个候选。","某宫的2只在一个空格的候选中出现，即可确定它的落点。","回声已经对齐，两条航道还需进一步校准。","下一站把区域落点与对角线约束一起检查。","hidden-single"],
+    ["双轨的空白需要彼此印证，单看一个区域还不够。","把对角线与行列宫同时列入候选检查，再寻找数字的唯一落点。","对角线也属于必须放齐1–9的区域。它与行、列、宫共有的格子，要同时接受这些区域的限制。","某数字在对角线上只剩一个位置时，该位置也必须符合所在行列宫。","双轨校准，信号传入更深一层的窗口。","下一站用窗口限制检查区域落点。","diagonal"],
+    ["窗口同时亮起，信号开始在多个区域间传递。","比较窗口与行列宫的候选，再反查某个数字是否只有一个位置。","额外窗口不是独立的小盘。窗口排除的数字会影响其所在行、列和普通宫，区域落点也要一起检查。","窗口排除一个格的6，可能让交叉行的6只剩另一个位置。","光室接通，最后一段跳跃轨迹可以继续追踪。","下一站联合马步排除与区域落点。","hyper"],
+    ["信标留下一段更稀疏的轨迹，返航坐标逐渐收拢。","先按马步排除，再检查区域中某个数字的剩余落点。","马步约束会缩小候选，但一个空格仍可能有多个候选。需要继续与行列宫配合，不凭跳跃方向猜数。","两个空格都与已填8呈马步时，都应排除8，再重新检查所在区域。","信标回到九宫中心，只差骨架的最后校准。","下一站观察宫与行列的候选交集。","knight"],
+    ["九处坐标即将归位，先把骨架中的最后一处关系接通。","若某宫的一个候选只落在同一行或列，检查交集外能否排除它。","锁定候选依靠一个区域的全部候选落点都被限制在交集内。先确认全部落点，再到另一区域排除。","某宫所有候选2都在同一行，该行宫外的格子即可排除2。","九处定位星归位，循线与汇能两条航路同时开放。","两条航路都要完成，先探索哪一条由你决定。","locked-candidate"],
+    ["一段航线从微光中升温，先让它的方向变得确定。","认出球端后，先看第8行第6列：它位于线上两个给定数之间。","从圆球到尖端严格递增。相邻两格至少相差1；已知两端时，先夹出中间格的范围，再与行列宫核对。","一格位于温度计上已知4和6之间，只能取两者之间的整数；这是规则例，不是本盘答案。","航线有了方向，下一束信号将在两端回应。","下一站沿回文线寻找对应的位置。","thermo-bounds"],
+    ["同一束信号出现在航线两端，开始校对它们的回应。","沿回文线从两端向内配对，优先找一端已知、另一端空着的组合。","回文线对应位置的数字相等，行列宫仍需成立；它不是递增线，奇数长度线的正中格没有另一端配对。","五格线的第一格为4，则第五格也为4；第二格与第四格再成一对。","两端信号吻合，接下来把散落光点连成频谱。","下一站观察整段连续集合，顺序不限。","palindrome-pair"],
+    ["散落的光点等待组成一段完整频谱。","结合线长和线上已有数字，缩小连续区间；不要把视觉方向当成大小顺序。","连续线上数字不重复，并组成连续整数集合，在线上的排列顺序不限。先确定可能的集合，再检查每格位置。","三格连续线可以依次为4、2、3，它们构成同一连续集合。","连续频谱已补齐，循线航路可以与汇能航路汇合。","循线三站与汇能前两站都完成时，进入群星合奏。","renban-set"],
+    ["沿途星火收进带有总量标记的小笼，需要先读懂角标。","可先看左上角的两格笼：用角标减去已知数，再核对行列宫。","每个虚线笼的数字不重复，合计等于角标。只有一个空格时可用总和减法；多个空格时先列不重复组合。","两格和为3的笼只能用1与2；组合尚未决定各自的位置。","第一束能量已聚拢，下一站把总量沿箭头拆开。","下一站区分箭头总和与笼内不重复。","cage-remainder"],
+    ["圆圈记录一束光的总量，箭身标出它的组成。","从已知圆圈或已知箭身作减法，再用行列宫检查每种拆分。","圆圈数字等于箭身各格之和。箭身是否能重复，由所在行列宫等限制决定，不能直接套用笼内不重复。","两格箭身的圆圈为6，其中一格给定2，另一格的数由减法确定。","总量与拆分已对齐，汇能航路可以与循线航路汇合。","循线三站与汇能前两站都完成时，进入群星合奏。","arrow-sum"],
+    ["坐标、航线与能量汇合，需要对同一组格子交叉核对。","笼的组合仍有多个时，用所在行列宫继续筛选，而不是只看总和。","先列不重复组合，再按行列宫决定位置。每行列宫总和为45，可用于完整区域的合计复核；跨区域的笼不能整笼相减。","一个和为5的两格笼有1与4或2与3两组可能时，已有行列宫数字可以继续排除组合。","两路已完成校准，归航核心等待最后的同盘核对。","前十五处星点齐亮后，进入归航合鸣。","cage-combinations"],
+    ["归途只剩最后一道校准，两条推理路径在同一盘相遇。","当温度计和笼各自还不能确定时，试着交叉检查同一格的候选。","本盘同时满足温度计递增与杀手笼不重复求和。把线上界限与笼组合取交集，两个规则都不能省略。","若某两格和为5的笼沿温度计排列，1与4、2与3两组都必须按递增方向放置；这是规则例。","十六处星点归位，返航星图已经复原。","可以重访任一星点，或去可选练习站继续观察。","joint-intersection"]
   ];
   CHAPTERS.forEach(function (chapter, index) {
-    chapter.storyIndex = index;
-    chapter.transition = STORY[index][0];
-    chapter.mission = STORY[index][1] + EXAMPLES[index];
-    chapter.bridge = STORY[index][0];
-    chapter.outcome = index < 9 ? "修复第 " + (index + 1) + " 颗定位星，保留这一站的最佳星级。" : index < 12 ? "接通第 " + (index - 8) + " 段航路，让线条规则与星图骨架吻合。" : index < 14 ? "汇聚第 " + (index - 11) + " 束能量，为两路汇合做准备。" : "完成两路的最终校准；十五处星点齐亮时，返航星图修复完成。";
-    chapter.nextLink = STORY[index][2];
-    chapter.nextStep = STORY[index][2];
+    var copy = TEACHING[index]; chapter.storyIndex = index;
+    chapter.scene = chapter.bridge = chapter.transition = copy[0];
+    chapter.observation = chapter.goal = copy[1]; chapter.lesson = copy[2];
+    chapter.mission = copy[1] + " 例如，" + copy[3];
+    chapter.resolution = chapter.outcome = copy[4]; chapter.nextLink = chapter.nextStep = copy[5];
+    chapter.objective = copy[6];
+    chapter.ratingNote = chapter.mode === "classic" ? "固定关卡沿用原分档；观察点用于练习，不限定解题顺序。" : "难度沿用来源题库分档，尚未按完整求解技巧校准。";
   });
-  TRACKS[0].description = "第一幕：修复九颗定位星。行列宫是共同骨架，对角线、窗口与马步练习交叉约束；完成后同时开放线条与求和两路。";
-  TRACKS[1].description = "第二幕：连接返航航线。在行列宫骨架上加入递增、对应相等与连续集合；完成三站后，与求和前两站共同解锁最终汇合。";
-  TRACKS[2].description = "第二幕与终章：汇聚返航能量。把笼与箭头的局部总和同九宫骨架相互核对，前两站汇聚能量；与循线三站共同解锁最终关，修复全部十五处星点。";
 
-  TRACKS.push({ id: "fusion", title: "归航合鸣", subtitle: "递增与求和 · 同盘相证", description: "第十六处归航核心：旧十五处星点全部点亮后开放，在同一盘中同时使用温度计与杀手笼。" });
-  CHAPTERS.push({ id: "fusion-homecoming-v1", trackId: "fusion", index: 0, storyIndex: 15,
-    title: "归航合鸣", subtitle: "让两种规则在同一格相遇", mode: "thermo-killer", difficulty: "hard", sourceId: "F-thermo-killer-hard-v1",
-    lesson: "本题同时遵守温度计从圆球到尖端严格递增，以及杀手笼数字不重复且总和等于角标。两类线索都必须满足。",
-    goal: "先列出笼的可行组合，再用温度计方向排除位置；也可将线条上下界反过来缩小笼的组合。",
-    bridge: "坐标、航线与能量已经汇合；最后把两条推理路径放到同一盘中校验。",
-    mission: "用温度计与笼求和共同约束同一组格。例如假设同一个两格和为 5 的笼恰好沿温度计排列，则组合 1、4 或 2、3 只能按递增方向放置；这只是规则示例，不代表本盘必有该图形。",
-    outcome: "完成真正的双规则校准，点亮第十六处归航核心；原有十五关成绩全部保留。",
-    nextLink: "归航星图完整后，可回访任意关卡，或去可选技巧观察站继续练习。",
-    transition: "两路推理在归航核心相遇。", nextStep: "完成归航核心后，重访星图或选择可选练习。",
-    ratingNote: "双规则题经完整约束验证；进阶是来源密度档，不代表已覆盖变体人类技巧评级。" });
-  var convergence = CHAPTERS.find(function (chapter) { return chapter.id === "sums-constellation-v1"; });
-  convergence.mission = "用笼总和与行列宫交叉检查，点亮两路汇合点。例如完整覆盖一行的若干笼总和为 40，行内其余格合计为 5。";
-  convergence.outcome = "完成原有两路校准；旧十五处星点齐亮后，开放新的归航合鸣。";
-  convergence.nextStep = convergence.nextLink = "点亮旧十五处星点后，进入同盘温度计＋杀手笼的归航合鸣。";
-  TRACKS[2].description = "汇聚返航能量：求和前两站与循线三站共同解锁群星合奏；旧十五处星点完成后，再进入新的双规则归航核心。";
+  // New puzzle identities leave both old boards and chapter progress readable.
+  var REVISIONS = {
+    "lines-rise-v1": { id: "voyage-lines-rise-lesson-v2", sourceId: "VOYAGE-THERMO-INTRO-V2", remove: [68], lines: [2] },
+    "sums-sparks-v1": { id: "voyage-sums-sparks-lesson-v2", sourceId: "VOYAGE-KILLER-INTRO-V2", remove: [23] }
+  };
+  CHAPTERS.forEach(function (chapter) { var revision = REVISIONS[chapter.id]; if (revision) { chapter.legacySourceId = chapter.sourceId; chapter.sourceId = revision.sourceId; } });
+  var puzzleCache = Object.create(null);
+  function copy(value) { return JSON.parse(JSON.stringify(value)); }
 
   function tracks() { return TRACKS.map(function (track) { return Object.assign({}, track); }); }
 
@@ -118,14 +79,33 @@
     return CHAPTERS.filter(function (chapter) { return !trackId || chapter.trackId === trackId; }).map(function (chapter) { return Object.assign({}, chapter); });
   }
 
-  function getPuzzle(id) {
+  function originalPuzzle(id) {
     var chapter = chapterFor(id);
     if (!chapter) throw new RangeError("未知的星图关卡。");
-    var legacy = chapter.trackId === "legacy";
-    return Object.assign({}, Engine.getPuzzle(chapter.difficulty,
-      (legacy ? "nine-realms-voyage-v1:" : "nine-realms-themed-voyage-v1:") + id,
-      chapter.mode, legacy ? { legacyPool: true } : { sourceId: chapter.sourceId }), { voyageId: id });
+    var key = id + ":original";
+    if (!puzzleCache[key]) {
+      var legacy = chapter.trackId === "legacy";
+      puzzleCache[key] = Object.assign({}, Engine.getPuzzle(chapter.difficulty,
+        (legacy ? "nine-realms-voyage-v1:" : "nine-realms-themed-voyage-v1:") + id,
+        chapter.mode, legacy ? { legacyPool: true } : { sourceId: chapter.legacySourceId || chapter.sourceId }), { voyageId: id });
+    }
+    return puzzleCache[key];
   }
+
+  function currentPuzzle(id) {
+    var original = originalPuzzle(id), revision = REVISIONS[id];
+    if (!revision) return original;
+    var key = id + ":lesson-v2";
+    if (!puzzleCache[key]) {
+      var revised = copy(original); revised.id = revision.id; revised.sourceId = revision.sourceId;
+      revision.remove.forEach(function (index) { revised.givens[index] = 0; });
+      if (revision.lines) revised.clues = Engine.normalizeClues(revised.mode, { version: 1, lines: revision.lines.map(function (index) { return original.clues.lines[index]; }) });
+      puzzleCache[key] = revised;
+    }
+    return puzzleCache[key];
+  }
+  function getPuzzle(id) { return copy(currentPuzzle(id)); }
+  function getLegacyPuzzle(id) { return copy(originalPuzzle(id)); }
 
   // Legacy schedules contain no per-puzzle clues; extra constraints cannot claim their records.
   function legacyClues(clues) {
@@ -138,14 +118,32 @@
     });
   }
 
-  function matchesPuzzle(id, givens, mode, difficulty, clues) {
+  function puzzleInfo(id, givens, mode, difficulty, clues) {
     var chapter = chapterFor(id);
-    if (!chapter || !Array.isArray(givens) || givens.length !== 81) return false;
-    if (chapter.trackId === "legacy" && !legacyClues(clues)) return false;
-    var puzzle = getPuzzle(id);
-    if (chapter.trackId !== "legacy" && canonical(clues) !== canonical(puzzle.clues)) return false;
-    return puzzle.mode === mode && puzzle.difficulty === difficulty &&
-      puzzle.givens.every(function (value, index) { return value === givens[index]; });
+    if (!chapter || !Array.isArray(givens) || givens.length !== 81) return null;
+    if (chapter.trackId === "legacy" && !legacyClues(clues)) return null;
+    function matches(puzzle) {
+      return puzzle.mode === mode && puzzle.difficulty === difficulty &&
+        (chapter.trackId === "legacy" || canonical(clues) === canonical(puzzle.clues)) &&
+        puzzle.givens.every(function (value, index) { return value === givens[index]; });
+    }
+    if (matches(currentPuzzle(id))) return { edition: REVISIONS[id] ? "lesson-v2" : "original", label: REVISIONS[id] ? "教学题面 v2" : "", sourceId: currentPuzzle(id).sourceId, revised: Boolean(REVISIONS[id]) };
+    if (REVISIONS[id] && matches(originalPuzzle(id))) return { edition: "original", label: "旧版题面", sourceId: originalPuzzle(id).sourceId, revised: true };
+    return null;
+  }
+  function matchesPuzzle(id, givens, mode, difficulty, clues) { return Boolean(puzzleInfo(id, givens, mode, difficulty, clues)); }
+
+  function presentation(id, snapshot) {
+    var chapter = chapterFor(id); if (!chapter) return null;
+    var result = Object.assign({}, chapter), info = snapshot && puzzleInfo(id, snapshot.givens, snapshot.mode, snapshot.difficulty, snapshot.clues);
+    result.editionLabel = REVISIONS[id] ? info ? info.label : "教学题面 v2" : "";
+    result.legacyEdition = Boolean(REVISIONS[id] && info && info.edition === "original");
+    if (result.legacyEdition) {
+      result.observation = result.goal = id === "lines-rise-v1" ? "沿球端到尖端检查递增，再与行列宫交叉核对候选。" : "从短笼的角标与已填数字入手，检查不重复组合。";
+      result.mission = result.observation;
+      result.ratingNote = "旧版题面保持原样，继续不会换题。章节历史最佳包含旧版成绩。";
+    }
+    return result;
   }
 
   function canonical(value) {
@@ -160,20 +158,23 @@
     return stats && typeof stats === "object" && !Array.isArray(stats) &&
       Number.isFinite(stats.elapsedMs) && stats.elapsedMs >= 0 && stats.elapsedMs <= 1e12 &&
       Number.isInteger(stats.mistakes) && stats.mistakes >= 0 && stats.mistakes <= 1e9 &&
-      Number.isInteger(stats.hints) && stats.hints >= 0 && stats.hints <= 1e9;
+      Number.isInteger(stats.hints) && stats.hints >= 0 && stats.hints <= 1e9 &&
+      (stats.errorCheckIncomplete === undefined || typeof stats.errorCheckIncomplete === "boolean");
   }
 
   function starsFor(stats) {
-    return 1 + (stats.hints === 0 ? 1 : 0) + (stats.mistakes === 0 ? 1 : 0);
+    return 1 + (stats.hints === 0 ? 1 : 0) + (stats.mistakes === 0 && stats.errorCheckIncomplete !== true ? 1 : 0);
   }
 
   function copyRecord(record) {
-    return {
+    var copy = {
       stars: starsFor(record),
       elapsedMs: Math.floor(record.elapsedMs),
       mistakes: record.mistakes,
       hints: record.hints
     };
+    if (record.errorCheckIncomplete === true) copy.errorCheckIncomplete = true;
+    return copy;
   }
 
   function normalizeProgress(raw) {
@@ -404,7 +405,7 @@
     return clean;
   }
 
-  return { tracks: tracks, chapters: chapters, getPuzzle: getPuzzle, matchesPuzzle: matchesPuzzle,
+  return { tracks: tracks, chapters: chapters, getPuzzle: getPuzzle, getLegacyPuzzle: getLegacyPuzzle, puzzleInfo: puzzleInfo, presentation: presentation, matchesPuzzle: matchesPuzzle, starsFor: starsFor,
     normalizeProgress: normalizeProgress, award: award, getStatus: getStatus,
     journey: journey, canEnter: canEnter, nextAfter: nextAfter, migrateProgress: migrateProgress, retainCurrent: retainCurrent,
     practiceProgress: practiceProgress, recordPractice: recordPractice, worldState: worldState };

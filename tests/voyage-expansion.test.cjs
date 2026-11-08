@@ -13,7 +13,7 @@ const id='fusion-homecoming-v1',stats={elapsedMs:200,mistakes:0,hints:0};
 function storage(initial={}){const m=new Map(Object.entries(initial));return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)};}
 assert.equal(V.chapters().length,16);assert.equal(V.chapters('fusion').length,1);
 for(const p of fixture.voyage)assert.equal(hash(V.getPuzzle(p.id)),p.sha256);
-for(const [key,expected] of Object.entries(pinned))assert.equal(hash(V.getPuzzle(key)),expected);
+for(const [key,expected] of Object.entries(pinned))assert.equal(hash(V.getLegacyPuzzle(key)),expected,'original edition remains available');
 let old15={};for(const chapter of V.chapters().filter(c=>c.id!==id))old15=V.award(old15,chapter.id,stats);
 const oldCopy=JSON.parse(JSON.stringify(old15));assert.equal(V.getStatus(old15,'all').completed,15);assert(!V.journey(old15).finished);assert(V.canEnter(old15,id));assert.equal(V.nextAfter(old15,'sums-constellation-v1'),id);
 const fresh=V.migrateProgress(null,null,{existing:false}),oldEmpty=V.migrateProgress({},null,{existing:true});
@@ -39,4 +39,4 @@ for(const invalid of [{version:2,completed:[]},null,{version:1,completed:['unkno
 }
 const merged=V.recordPractice(won,practiceId,move.index,move.values[0]),source=storage({[B.keys[4]]:JSON.stringify(merged)}),backup=B.create(source,{appVersion:'1.0.1'}),target=storage();assert.equal(B.preview(backup).voyageCount,16);assert(B.replace(target,backup).replaced);assert.deepEqual(JSON.parse(target.getItem(B.keys[4])),merged);
 const bad=JSON.parse(JSON.stringify(backup));bad.entries[B.keys[4]].__practice.completed=['unknown'];assert.throws(()=>B.validate(bad));
-console.log('PASS voyage expansion: old15 puzzles/stats unchanged, fusion16 full-rule unique and gated, no migration grandfathering, complete clue matching, actual-only world repair, verified optional practice and strict backup/migration.');
+console.log('PASS voyage expansion: original15 puzzle editions/stats retained, fusion16 full-rule unique and gated, no migration grandfathering, complete clue matching, actual-only world repair, verified optional practice and strict backup/migration.');

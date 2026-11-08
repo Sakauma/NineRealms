@@ -82,43 +82,96 @@
     return { elapsedMs: Math.floor(record.elapsedMs), mistakes: record.mistakes, hints: record.hints };
   }
 
+  var SUMMARY = "__summary", MAX_RANGES = 10000;
+  function invalid(message, future) { var error = new Error(message); error.code = future ? "DAILY_RECORDS_UNSUPPORTED" : "DAILY_RECORDS_INVALID"; throw error; }
+  function detailDates(raw) { return raw && typeof raw === "object" && !Array.isArray(raw) ? Object.keys(raw).filter(function (key) { return isDateKey(key) && validRecord(raw[key]); }).sort() : []; }
+  function keyFor(day) { return new Date(day * DAY).toISOString().slice(0, 10); }
+  function includes(ranges, day) {
+    var low = 0, high = ranges.length - 1;
+    while (low <= high) { var mid = (low + high) >> 1, range = ranges[mid];
+      if (day < requireDate(range[0])) high = mid - 1;
+      else if (day > requireDate(range[1])) low = mid + 1;
+      else return true;
+    }
+    return false;
+  }
+  function addDate(ranges, key) {
+    var start = requireDate(key), end = start, result = [], inserted = false;
+    ranges.forEach(function (range) {
+      var a = requireDate(range[0]), b = requireDate(range[1]);
+      if (b + 1 < start) result.push(range.slice());
+      else if (end + 1 < a) { if (!inserted) { result.push([keyFor(start), keyFor(end)]); inserted = true; } result.push(range.slice()); }
+      else { start = Math.min(start, a); end = Math.max(end, b); }
+    });
+    if (!inserted) result.push([keyFor(start), keyFor(end)]);
+    if (result.length > MAX_RANGES) invalid("每日汇总超出可保存范围，原记录未改变。");
+    return result;
+  }
+  function summaryFor(raw, dates) {
+    if (Object.prototype.hasOwnProperty.call(raw, SUMMARY)) {
+      var value = raw[SUMMARY];
+      if (value && Number.isInteger(value.version) && value.version > 1) invalid("每日汇总来自较新版本，已暂停覆盖。", true);
+      if (!value || typeof value !== "object" || Array.isArray(value) || value.version !== 1 || !Array.isArray(value.ranges) || value.ranges.length > MAX_RANGES || Object.keys(value).some(function (key) { return ["version", "ranges", "unknownBefore"].indexOf(key) < 0; })) invalid("每日汇总格式无法读取，已暂停覆盖。");
+      var last = null;
+      value.ranges.forEach(function (range) {
+        if (!Array.isArray(range) || range.length !== 2 || !isDateKey(range[0]) || !isDateKey(range[1])) invalid("每日日期区间无效。");
+        var a = requireDate(range[0]), b = requireDate(range[1]);
+        if (a > b || last !== null && a <= last + 1) invalid("每日日期区间重叠或未合并。"); last = b;
+      });
+      if (dates.some(function (key) { return !includes(value.ranges, requireDate(key)); })) invalid("每日明细与汇总不一致，原记录已保留。");
+      if (value.unknownBefore !== undefined && (!isDateKey(value.unknownBefore) || !includes(value.ranges, requireDate(value.unknownBefore)))) invalid("每日旧记录范围标记无效。");
+      var result = { version: 1, ranges: value.ranges.map(function (range) { return range.slice(); }) };
+      if (value.unknownBefore !== undefined) result.unknownBefore = value.unknownBefore;
+      return result;
+    }
+    var result = { version: 1, ranges: [] };
+    dates.forEach(function (key) { result.ranges = addDate(result.ranges, key); });
+    // The old writer retained at most 400 details. Earlier losses cannot be reconstructed.
+    if (dates.length >= MAX_RECORDS) result.unknownBefore = dates[0];
+    return result;
+  }
   function normalizeRecords(raw) {
     var result = {};
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return result;
-    Object.keys(raw).filter(function (key) {
-      return isDateKey(key) && validRecord(raw[key]);
-    }).sort().slice(-MAX_RECORDS).forEach(function (key) {
-      result[key] = copyRecord(raw[key]);
-    });
+    var dates = detailDates(raw), summary = summaryFor(raw, dates);
+    dates.slice(-MAX_RECORDS).forEach(function (key) { result[key] = copyRecord(raw[key]); });
+    if (Object.prototype.hasOwnProperty.call(raw, SUMMARY) || dates.length > MAX_RECORDS) result[SUMMARY] = summary;
     return result;
   }
-
+  function validateRecords(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) invalid("每日记录格式无效。");
+    var dates = detailDates(raw);
+    if (dates.length > MAX_RECORDS || Object.keys(raw).some(function (key) {
+      if (key === SUMMARY) return false;
+      var value = raw[key];
+      return !isDateKey(key) || !validRecord(value) || !Number.isInteger(value.elapsedMs) || Object.keys(value).length !== 3 || Object.keys(value).some(function (field) { return ["elapsedMs", "mistakes", "hints"].indexOf(field) < 0; });
+    })) invalid("每日记录包含无法读取的明细，原文已保留。");
+    summaryFor(raw, dates); return raw;
+  }
   function recordCompletion(records, key, record) {
     requireDate(key);
     if (!validRecord(record)) throw new TypeError("每日完成记录无效。");
-    var result = normalizeRecords(records);
-    // The first finish is kept; replaying the same date does not inflate achievements.
+    var result = normalizeRecords(records), summary = summaryFor(result, detailDates(result));
+    if (!includes(summary.ranges, requireDate(key))) summary.ranges = addDate(summary.ranges, key);
     if (!Object.prototype.hasOwnProperty.call(result, key)) result[key] = copyRecord(record);
+    result[SUMMARY] = summary;
     return normalizeRecords(result);
   }
-
+  function hasCompletion(records, key) {
+    var clean = normalizeRecords(records), summary = summaryFor(clean, detailDates(clean));
+    return includes(summary.ranges, requireDate(key));
+  }
   function getStats(records, today) {
-    var day = requireDate(today);
-    var clean = normalizeRecords(records);
-    var total = Object.keys(clean).filter(function (key) { return key <= today; }).length;
-    var todayCompleted = Object.prototype.hasOwnProperty.call(clean, today);
-    var cursor = day - (todayCompleted ? 0 : 1);
-    var streak = 0;
-    while (streak < MAX_RECORDS) {
-      var key = new Date(cursor * DAY).toISOString().slice(0, 10);
-      if (!Object.prototype.hasOwnProperty.call(clean, key)) break;
-      streak++;
-      cursor--;
-    }
-    return { total: total, streak: streak, todayCompleted: todayCompleted };
+    var day = requireDate(today), clean = normalizeRecords(records), summary = summaryFor(clean, detailDates(clean));
+    var total = summary.ranges.reduce(function (sum, range) { return sum + Math.max(0, Math.min(day, requireDate(range[1])) - requireDate(range[0]) + 1); }, 0);
+    var todayCompleted = includes(summary.ranges, day), cursor = day - (todayCompleted ? 0 : 1), streak = 0, start = null;
+    summary.ranges.forEach(function (range) { var a = requireDate(range[0]), b = requireDate(range[1]); if (a <= cursor && cursor <= b) { streak = cursor - a + 1; start = a; } });
+    var result = { total: total, streak: streak, todayCompleted: todayCompleted };
+    if (summary.unknownBefore !== undefined) { result.totalIncomplete = true; if (streak && start <= requireDate(summary.unknownBefore)) result.streakIncomplete = true; }
+    return result;
   }
 
   return { dateKey: dateKey, isDateKey: isDateKey, getPuzzle: getPuzzle,
     matchesPuzzle: matchesPuzzle, recentDates: recentDates, normalizeRecords: normalizeRecords,
-    recordCompletion: recordCompletion, getStats: getStats };
+    recordCompletion: recordCompletion, getStats: getStats, hasCompletion: hasCompletion, validateRecords: validateRecords, detailDates: detailDates };
 });

@@ -25,7 +25,7 @@ for(const track of ['lines','sums']){
  const chapters=V.chapters(track);assert.equal(chapters.length,3);assert.deepEqual(chapters.map(c=>c.index),[0,1,2]);
  for(const c of chapters){
   assert(c.lesson&&c.goal&&c.ratingNote);const p=V.getPuzzle(c.id),context={mode:p.mode,clues:p.clues};
-  assert.equal(p.sourceId,c.sourceId);assert.equal(hash(p),pinned[c.id]);assert.deepEqual(V.getPuzzle(c.id),p);
+  assert.equal(p.sourceId,c.sourceId);assert.equal(hash(V.getLegacyPuzzle(c.id)),pinned[c.id]);assert.deepEqual(V.getPuzzle(c.id),p);
   assert(E.validateComplete(p.solution,context));assert(p.givens.every((n,i)=>!n||n===p.solution[i]));
   const a=E.analyzeSolutions(p.givens,context,{limit:2,maxNodes:250000});assert.equal(a.count,1);assert.equal(a.exhausted,false);assert.deepEqual(a.solution,p.solution);
   assert(V.matchesPuzzle(c.id,p.givens,p.mode,p.difficulty,p.clues));
@@ -65,4 +65,4 @@ for(const c of V.chapters().filter(c=>c.trackId!=='legacy')){
  const source=storage({[B.keys[0]]:JSON.stringify(snapshot),[B.keys[4]]:JSON.stringify(progress)}),backup=B.create(source,{appVersion:'1.0.1'}),target=storage();
  assert.equal(B.preview(backup).voyageCount,15);assert(B.replace(target,backup).replaced);assert.equal(target.getItem(B.keys[0]),source.getItem(B.keys[0]));assert.deepEqual(JSON.parse(target.getItem(B.keys[4])),progress);
 }
-console.log('PASS themed voyages: 9 legacy puzzles and records unchanged; 6 pinned unique full-rule puzzles, '+steps+' verified hint steps without answer fallback; independent unlock/progress/revisit, full clue matching and source stability; old15 completion opens fusion16 without inventing a win.');
+console.log('PASS themed voyages: 9 legacy puzzles and records unchanged; 6 original editions pinned and current full-rule puzzles unique, '+steps+' verified hint steps without answer fallback; independent unlock/progress/revisit, full clue matching and source stability; old15 completion opens fusion16 without inventing a win.');

@@ -43,6 +43,7 @@ function fixture(advancedTools = true) {
         pressedDigits:$('lens-digits').children.map(n=>n.getAttribute('aria-pressed'))
       });}}
     },
+    sounds:[],playEditSound(kind){sandbox.sounds.push(kind);},
     saves:0,canInteract:()=>game.started&&!game.paused&&!game.completed,
     revealFog(){},gameContext:()=>({mode:game.mode,clues:game.clues}),toast(){},setStatus(){},save(){sandbox.saves++;},
     bind(id,type,fn){$(id).addEventListener(type,fn);}};
@@ -104,7 +105,10 @@ function fixture(advancedTools = true) {
   assert(!$('batch-panel').hidden,'batch panel visible in selection mode');
   assert(!$('batch-add').disabled && !$('batch-remove').disabled,'independent batch digit stays usable with filter off');
   assert.equal(s.batchDigit,1,'batch default is independent of inactive filter');
+  assert.deepEqual(s.sounds,[],'selection and filter controls stay silent');
   clickDigit(3);$('batch-add').click();assert(blanks.every(i=>s.game.notes[i]===4));
+  assert.deepEqual(s.sounds,['note'],'a multi-cell transaction emits one neutral candidate cue');
+  $('batch-add').click();assert.deepEqual(s.sounds,['note'],'unchanged candidate batch stays silent');
   assert.equal(s.game.history.length,1,'batch addition is one undo frame');
   const beforeUndo=clone(s.game.notes);Edits.undo(s.game,s.noteMode);assert(blanks.every(i=>s.game.notes[i]===0));
   Edits.redo(s.game,s.noteMode);assert.deepEqual(s.game.notes,beforeUndo);
@@ -121,7 +125,8 @@ function fixture(advancedTools = true) {
   assert.deepEqual(s.selectSyncs.at(-1),{value:'8',disabled:false},'independent batch digit change synchronizes enhanced select');
   assert.equal(s.batchDigit,8);assert.equal(s.lensDigit,0,'batch target never activates filter');
   $('batch-digit').value='0';$('batch-digit').change();assert.equal(s.batchDigit,8,'invalid batch digit ignored');
-  const before=clone(s.game);s.game.paused=true;s.batchNotes('add');s.game.paused=false;
+  const sounds=s.sounds.length;const before=clone(s.game);s.game.paused=true;s.batchNotes('add');s.game.paused=false;
+  assert.equal(s.sounds.length,sounds,'paused candidate edit stays silent');
   assert.deepEqual(clone(s.game),before,'paused game cannot batch-edit');
 }
 // More Tools must be able to cancel an existing selection even after gameplay

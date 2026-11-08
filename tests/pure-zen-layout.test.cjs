@@ -12,6 +12,7 @@ assert(html.indexOf('./zen.css')>html.indexOf('./desktop-workspace.css'),'Zen ov
 assert(read('scripts/build.py').includes('"zen.css"'),'offline bundle includes the same styles');
 assert(css.includes(scope+' #number-pad .number-key{'),'Zen key geometry uses the shared ID-level selector');
 const keyRule=css.split(scope+' #number-pad .number-key{')[1].split('}')[0];
+assert(/aspect-ratio:1\/1/.test(keyRule),'Zen digits are square');
 assert(!/(?:background|box-shadow|backdrop-filter)\s*:/.test(keyRule),'Zen inherits original theme-linked frosted key material');
 const shared=read('src/desktop-workspace.css');
 for(const token of ['--key-glass-face','--key-glass-hover','--key-glass-pressed','--key-glass-disabled']) assert(shared.includes(token),'retained glass state '+token);

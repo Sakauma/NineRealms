@@ -66,10 +66,10 @@ body[data-workspace=unified] .cell.fogged{background-color:var(--panel-soft)}
 body[data-workspace=unified] .game-layout>.control-panel{order:2;grid-column:1;width:100%;align-self:start;padding:10px;border:1px solid var(--workspace-edge);border-radius:20px;background:var(--workspace-surface);box-shadow:var(--workspace-shadow);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
 body[data-workspace=unified] #play-controls{height:auto;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px 6px}
 body[data-workspace=unified] .pad-heading{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-body[data-workspace=unified] .number-pad{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:52px;gap:6px;flex:none}
-body[data-workspace=unified] .number-key{grid-column:auto;min-width:0;min-height:52px;height:52px;padding:4px;gap:2px;border:1px solid var(--workspace-edge);border-radius:12px;background:color-mix(in srgb,var(--cell-bg) 86%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,white 9%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
+body[data-workspace=unified] .number-pad{grid-column:1/-1;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:auto;gap:6px;flex:none}
+body[data-workspace=unified] .number-key{grid-column:auto;display:grid;place-items:center;align-self:start;min-width:44px;min-height:44px;height:auto;aspect-ratio:1/1;padding:0;gap:0;border:1px solid var(--workspace-edge);border-radius:12px;background:color-mix(in srgb,var(--cell-bg) 86%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,white 9%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
 body[data-workspace=unified] .number-key:hover:not(:disabled){background:var(--related);border-color:var(--accent)}
-body[data-workspace=unified] .key-value{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:25px;font-weight:400;line-height:1}
+body[data-workspace=unified] .key-value{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:25px;font-weight:500;line-height:1}
 body[data-workspace=unified] .remaining{font-family:"Nine Realms Numerals","Segoe UI",sans-serif;font-size:9px;opacity:.85}
 body[data-workspace=unified] .tools-grid{display:contents}
 body[data-workspace=unified] .history-tools{grid-column:span 2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
@@ -152,10 +152,10 @@ body[data-workspace=unified][data-text-size=large] .status-box p{font-size:14px}
  body[data-workspace=unified] .cell.selected::after{inset:1px;border-radius:3px}
  body[data-workspace=unified] .game-layout>.control-panel{padding:9px;border-radius:17px}
  body[data-workspace=unified] #play-controls{grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
- body[data-workspace=unified] .number-pad{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(2,44px);gap:6px}
- body[data-workspace=unified] .number-key{grid-column:span 2;min-height:44px;height:44px;padding:3px;border-radius:10px;gap:1px}
+ body[data-workspace=unified] .number-pad{grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(2,auto);gap:6px}
+ body[data-workspace=unified] .number-key{grid-column:span 2;min-height:44px;height:auto;aspect-ratio:1/1;padding:0;border-radius:10px;gap:0}
  body[data-workspace=unified] .number-key:nth-child(6){grid-column:2/span 2}
- body[data-workspace=unified] .key-value{font-size:23px}
+ body[data-workspace=unified] .key-value{font-size:25px}
  body[data-workspace=unified] .remaining{font-size:9px}
  body[data-workspace=unified] .history-tools{grid-column:span 4;gap:6px}
  body[data-workspace=unified] .control-panel :is(.tool-btn,.auto-notes-btn,.draft-toggle){grid-column:span 2;min-height:44px;height:44px;padding:3px 2px;font-size:10.5px;flex-direction:column;gap:2px;border-radius:10px}
@@ -222,3 +222,31 @@ body[data-workspace=unified] #multi-selected-label{min-width:0;margin:0;overflow
    than their text height. Only phone-sized boards use compact clue margins. */
 @media(max-width:480px){body[data-workspace=unified][data-outside-clues=true]{--outside-clue-gutter:24px}}
 @media(max-width:400px){body[data-workspace=unified][data-outside-clues=true]{--outside-clue-gutter:21px}}
+
+/* Large text applies to the input digits in every narrow layout. */
+body[data-workspace=unified][data-text-size=large] .key-value{font-size:31px}
+
+/* Shared quiet scroll chrome. Native overflow, focus, wheel and touch stay intact. */
+:root{--scrollbar-thumb:rgba(150,165,188,.58);--scrollbar-thumb-hover:rgba(180,192,211,.78);--scrollbar-scheme:dark}
+:root:has(body:is([data-color-scheme=light],[data-theme=ivory],[data-theme=sakura],[data-theme=sunset])){--scrollbar-thumb:rgba(83,95,108,.72);--scrollbar-thumb-hover:rgba(59,70,83,.86);--scrollbar-scheme:light}
+:is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea){scrollbar-width:thin;scrollbar-color:var(--scrollbar-thumb) transparent;color-scheme:var(--scrollbar-scheme)}
+/* Firefox retains its standard thin scrollbar; Chromium/WebKit can shape it. */
+@supports selector(::-webkit-scrollbar){
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea){scrollbar-width:auto;scrollbar-color:auto}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar{width:10px;height:10px;background:transparent}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-track{background:transparent;margin:12px 0}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-track:horizontal{margin:0 12px}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-thumb{border:3px solid transparent;border-radius:999px;background:var(--scrollbar-thumb);background-clip:padding-box}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-thumb:hover{background-color:var(--scrollbar-thumb-hover)}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-corner{background:transparent}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-button{display:none;width:0;height:0}
+}
+/* High contrast keeps the system scrollbar and its target size, including hover. */
+@media(forced-colors:active){
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea){scrollbar-width:auto;scrollbar-color:auto;color-scheme:light dark}
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar,
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-track,
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-thumb,
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-corner,
+ :is(html,body,.game-dialog,.appearance-panel,.history-list,.history-board-viewport,.history-review-events,.floating-draft-content,#draft-panel .draft-links,.glass-select-list,.secret-cards,.training-explanation,textarea)::-webkit-scrollbar-button{all:revert!important}
+}

@@ -88,7 +88,7 @@ function fixture(mode = 'classic') {
     window:{NineRealmsSelect:{syncAll(){},close(){calls.selectClose++;}},
       NineRealmsFloatingDraft:{close(focus){calls.draftClose.push(focus);}},
       NineRealmsWorkspace:{sync(){calls.sync++;},revealHint(){throw Error('Zen must not reveal a hint');}}},
-    undo(){calls.undo++;},redo(){calls.redo++;},enterNumber(value,fromHint){calls.numbers.push([value,fromHint]);},
+    pressNumberKey(){},undo(){calls.undo++;},redo(){calls.redo++;},enterNumber(value,fromHint){calls.numbers.push([value,fromHint]);},
     erase(){calls.erase++;},toggleNotes(){calls.notes++;},moveOnLayout(...args){calls.moves.push(args);},
     revealFog(index){calls.fog.push(index);},
     favoriteStore:null, dailyRecords:{}, Daily:{recordCompletion(){throw Error('unexpected daily fixture');}},

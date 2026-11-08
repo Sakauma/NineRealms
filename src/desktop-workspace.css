@@ -57,7 +57,7 @@ body[data-workspace=unified][data-desktop=on] .number-pad{grid-column:1/-1;grid-
 body[data-workspace=unified][data-desktop=on] #play-controls>#more-tools-toggle{grid-row:5;grid-column:1/-1;min-height:36px;height:36px;border:0;background:transparent;color:var(--muted)}
 /* Desktop geometry stays generous; shared frosted material is defined below. */
 body[data-workspace=unified][data-desktop=on] .number-key{position:relative;display:grid;place-items:center;box-sizing:border-box;width:100%;max-width:100%;height:auto;aspect-ratio:1/1;min-width:44px;min-height:0;justify-self:center;align-self:start;padding:0;gap:0;border-radius:14px}
-body[data-workspace=unified][data-desktop=on] .key-value{font-size:36px;font-weight:600;line-height:1;letter-spacing:0;text-shadow:none}
+body[data-workspace=unified][data-desktop=on] .key-value{font-size:36px;font-weight:500;line-height:1;letter-spacing:0;text-shadow:none}
 body[data-workspace=unified][data-desktop=on] .remaining{display:none}
 body[data-workspace=unified][data-desktop=on] .remaining::before{content:none}
 body[data-workspace=unified][data-desktop=on] .number-key.exhausted:not(:disabled){opacity:1}
@@ -208,48 +208,60 @@ body[data-workspace=unified][data-desktop=on][data-text-size=large] .pause-card 
 
 body[data-workspace=unified][data-desktop=on][data-game-state=ready] .pause-symbol{display:none}
 
-/* One translucent material for the main keypad in every layout. The opaque
-   baseline also covers WebViews without backdrop-filter or color-mix support.
-   No solid bottom edge, separate panel or moving keycap is introduced. */
+/* Quiet matte frosting: uniform tint, diffuse edges and no reflective layers.
+   Geometry and input feedback remain shared by normal and Zen layouts. */
 body{
- --key-glass-face:linear-gradient(155deg,var(--panel-soft),var(--panel));
- --key-glass-hover:linear-gradient(155deg,var(--related),var(--panel-soft));
- --key-glass-pressed:linear-gradient(155deg,var(--selected),var(--related));
- --key-glass-disabled:linear-gradient(155deg,var(--panel),var(--panel-soft));
- --key-glass-rim:var(--grid-strong);
- --key-glass-rim-top:var(--grid-strong);
- --key-glass-highlight:rgba(255,255,255,.18);
+ --key-glass-face:var(--panel-soft);
+ --key-glass-hover:var(--related);
+ --key-glass-pressed:var(--panel);
+ --key-glass-disabled:var(--panel);
+ --key-glass-rim:var(--line);
+ --key-glass-rim-top:var(--line);
+ --key-glass-hover-rim:var(--grid-strong);
+ --key-glass-press-rim:var(--accent);
+ --key-glass-shade:rgba(8,12,24,.14);
  --key-glass-blur:none;
- --key-glass-rest-shadow:inset 0 1px 0 var(--key-glass-highlight),0 5px 18px -12px var(--shadow);
- --key-glass-hover-shadow:inset 0 1px 0 var(--key-glass-highlight),0 7px 22px -12px var(--shadow);
- --key-glass-pressed-shadow:inset 0 1px 5px var(--shadow);
+ --key-glass-rest-shadow:0 1px 2px -1px var(--shadow);
+ --key-glass-hover-shadow:var(--key-glass-rest-shadow);
+ --key-glass-pressed-shadow:inset 0 1px 2px var(--key-glass-shade);
 }
 @supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) and (background:color-mix(in srgb,white 50%,transparent)){
  body{
-  --key-glass-face:linear-gradient(150deg,rgba(255,255,255,.09),transparent 48%),linear-gradient(155deg,color-mix(in srgb,var(--panel-soft) 64%,transparent),color-mix(in srgb,var(--panel) 38%,transparent));
-  --key-glass-hover:linear-gradient(150deg,rgba(255,255,255,.13),transparent 52%),linear-gradient(155deg,color-mix(in srgb,var(--related) 72%,transparent),color-mix(in srgb,var(--panel-soft) 46%,transparent));
-  --key-glass-pressed:linear-gradient(155deg,color-mix(in srgb,var(--selected) 78%,transparent),color-mix(in srgb,var(--panel-soft) 60%,transparent));
-  --key-glass-disabled:linear-gradient(155deg,color-mix(in srgb,var(--panel) 54%,transparent),color-mix(in srgb,var(--panel) 34%,transparent));
-  --key-glass-rim:color-mix(in srgb,var(--text) 20%,transparent);
-  --key-glass-rim-top:color-mix(in srgb,var(--text) 30%,transparent);
-  --key-glass-blur:blur(18px) saturate(115%);
+  --key-glass-face:color-mix(in srgb,var(--panel-soft) 76%,transparent);
+  --key-glass-hover:color-mix(in srgb,var(--panel-soft) 88%,transparent);
+  --key-glass-pressed:color-mix(in srgb,var(--panel) 94%,var(--bg));
+  --key-glass-disabled:color-mix(in srgb,var(--panel) 82%,transparent);
+  --key-glass-rim:color-mix(in srgb,var(--text) 12%,transparent);
+  --key-glass-rim-top:var(--key-glass-rim);
+  --key-glass-hover-rim:color-mix(in srgb,var(--accent) 24%,var(--key-glass-rim));
+  --key-glass-press-rim:color-mix(in srgb,var(--accent) 45%,var(--key-glass-rim));
+  --key-glass-shade:color-mix(in srgb,var(--bg) 24%,transparent);
+  --key-glass-blur:blur(18px) saturate(100%);
  }
- /* Light themes keep a pale pane instead of a grey wash over their scenery. */
+ body[data-zen=on]{
+  --key-glass-face:color-mix(in srgb,var(--panel-soft) 86%,transparent);
+  --key-glass-hover:color-mix(in srgb,var(--panel-soft) 94%,transparent);
+  --key-glass-rim:color-mix(in srgb,var(--text) 10%,transparent);
+  --key-glass-rest-shadow:none;
+  --key-glass-press-rim:color-mix(in srgb,var(--accent) 36%,var(--key-glass-rim));
+ }
  body:is([data-color-scheme=light],[data-theme=ivory],[data-theme=sakura],[data-theme=sunset]){
-  --key-glass-face:linear-gradient(150deg,rgba(255,255,255,.42),transparent 52%),linear-gradient(155deg,color-mix(in srgb,var(--panel) 68%,transparent),color-mix(in srgb,var(--panel-soft) 42%,transparent));
-  --key-glass-hover:linear-gradient(150deg,rgba(255,255,255,.54),transparent 56%),linear-gradient(155deg,color-mix(in srgb,var(--panel) 76%,transparent),color-mix(in srgb,var(--related) 50%,transparent));
-  --key-glass-highlight:rgba(255,255,255,.68);
+  --key-glass-face:color-mix(in srgb,var(--panel) 84%,transparent);
+  --key-glass-hover:color-mix(in srgb,var(--panel) 94%,transparent);
+  --key-glass-pressed:color-mix(in srgb,var(--panel-soft) 94%,var(--panel));
+  --key-glass-shade:color-mix(in srgb,var(--text) 9%,transparent);
  }
- body[data-zen=on]{--key-glass-blur:blur(18px) saturate(100%)}
+ body[data-zen=on]:is([data-theme=ivory],[data-theme=sakura],[data-theme=sunset]){--key-glass-face:color-mix(in srgb,var(--panel) 90%,transparent)}
 }
-body #number-pad .number-key{position:relative;box-sizing:border-box;border:1px solid var(--key-glass-rim);border-top-color:var(--key-glass-rim-top);background:var(--key-glass-face);color:var(--text);box-shadow:var(--key-glass-rest-shadow);backdrop-filter:var(--key-glass-blur);-webkit-backdrop-filter:var(--key-glass-blur);transform:none;transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,color .16s ease}
-body #number-pad .key-value{line-height:1;text-shadow:none}
-/* Touch does not acquire a persistent hover treatment. */
+body #number-pad .number-key{position:relative;box-sizing:border-box;border:1px solid var(--key-glass-rim);border-top-color:var(--key-glass-rim-top);background:var(--key-glass-face);color:var(--text);box-shadow:var(--key-glass-rest-shadow);backdrop-filter:var(--key-glass-blur);-webkit-backdrop-filter:var(--key-glass-blur);transform:none;transition:background .12s ease,border-color .12s ease,box-shadow .12s ease,color .12s ease;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body #number-pad .key-value{line-height:1;text-shadow:none;pointer-events:none}
+/* Counts remain in the accessible name, never in the numeral's layout box. */
+body #number-pad .remaining{display:none}
 body #number-pad .number-key:hover:not(:disabled){border-color:var(--key-glass-rim);border-top-color:var(--key-glass-rim-top);background:var(--key-glass-face);box-shadow:var(--key-glass-rest-shadow);transform:none}
-@media(hover:hover) and (pointer:fine){body #number-pad .number-key:hover:not(:disabled){border-color:var(--accent);background:var(--key-glass-hover);box-shadow:var(--key-glass-hover-shadow);transform:none}}
+@media(hover:hover) and (pointer:fine){body #number-pad .number-key:hover:not(:disabled){border-color:var(--key-glass-hover-rim);background:var(--key-glass-hover);box-shadow:var(--key-glass-hover-shadow);transform:none}}
 body #number-pad .number-key:focus-visible:not(:disabled){border-color:var(--accent);outline:2px solid var(--accent);outline-offset:4px}
-body #number-pad .number-key:active:not(:disabled){border-color:var(--accent);background:var(--key-glass-pressed);box-shadow:var(--key-glass-pressed-shadow);transform:none}
-body #number-pad .number-key:disabled{opacity:1;color:var(--muted);border-color:var(--line);background:var(--key-glass-disabled);box-shadow:inset 0 1px 0 var(--key-glass-highlight);transform:none;cursor:default}
+body #number-pad .number-key:is(:active:focus-visible,.is-pressed):not(:disabled){border-color:var(--key-glass-press-rim);background:var(--key-glass-pressed);box-shadow:var(--key-glass-pressed-shadow);transform:none;transition-duration:0s}
+body #number-pad .number-key:disabled{opacity:1;color:var(--muted);border-color:var(--line);background:var(--key-glass-disabled);box-shadow:none;transform:none;cursor:default}
 
 /* A concise answer and an optional real warning share one 44px action slot.
    No clipped text, absolute overlay, hidden spacer or nested scroll area. */
@@ -274,12 +286,12 @@ body:is([data-fx=off],[data-motion=reduced]) #number-pad .number-key{transition:
 @media(prefers-reduced-transparency:reduce){
  body #number-pad .number-key,body #number-pad .number-key:hover:not(:disabled),body #hint-panel{background:var(--panel-soft);backdrop-filter:none;-webkit-backdrop-filter:none}
  body #number-pad .number-key:hover:not(:disabled){border-color:var(--accent)}
- body #number-pad .number-key:active:not(:disabled){background:var(--selected)}
+ body #number-pad .number-key:is(:active:focus-visible,.is-pressed):not(:disabled){background:var(--selected)}
  body #number-pad .number-key:disabled{background:var(--panel)}
 }
 @media(forced-colors:active){
- body #number-pad .number-key,body #number-pad .number-key:is(:hover,:active,:focus-visible){background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none}
- body #number-pad .number-key:active:not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight}
+ body #number-pad .number-key,body #number-pad .number-key:is(:hover,:active,:focus-visible,.is-pressed){background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none}
+ body #number-pad .number-key:is(:active:focus-visible,.is-pressed):not(:disabled){background:Highlight;color:HighlightText;border-color:Highlight;box-shadow:none}
  body #number-pad .number-key:focus-visible:not(:disabled){border-color:ButtonText;outline:2px solid Highlight;outline-offset:4px}
  body #number-pad .number-key:disabled{color:GrayText;border-color:GrayText;background:ButtonFace}
  body #hint-panel{background:Canvas;color:CanvasText;outline:1px solid CanvasText;outline-offset:-1px;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}

@@ -21,7 +21,7 @@ function media(query){
 }
 const shared='body #number-pad',tokens=rule(scope),geometry=rule(scope+' .number-key'),key=rule(shared+' .number-key');
 const hover=rule(shared+' .number-key:hover:not(:disabled)',media('hover:hover) and (pointer:fine'));
-const pressed=rule(shared+' .number-key:active:not(:disabled)'),disabled=rule(shared+' .number-key:disabled');
+const pressed=rule(shared+' .number-key:is(:active:focus-visible,.is-pressed):not(:disabled)'),disabled=rule(shared+' .number-key:disabled');
 assert.match(tokens,/--desktop-tools-width:clamp\(288px,24vw,320px\)/);
 assert(!css.includes('--desktop-key-height'),'square keys have no viewport-height token');
 assert.match(tokens,/--desktop-column:max\(320px,min\(620px,calc\(100vw - 88px - var\(--desktop-tools-width\)\)\)\)/);
@@ -37,13 +37,14 @@ assert.match(key,/background:var\(--key-glass-face\)/);assert.match(key,/border:
 assert.match(key,/box-shadow:var\(--key-glass-rest-shadow\)/);
 assert.match(key,/(?:^|;)backdrop-filter:var\(--key-glass-blur\)/);assert.match(key,/-webkit-backdrop-filter:var\(--key-glass-blur\)/);
 assert.match(rule('body'),/--key-glass-blur:none/,'opaque fallback applies before support query');
-assert.match(rule('body'),/--key-glass-face:linear-gradient\(155deg,var\(--panel-soft\),var\(--panel\)\)/);
+assert.match(rule('body'),/--key-glass-face:var\(--panel-soft\)/);
 assert(css.includes('@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) and (background:color-mix(in srgb,white 50%,transparent))'),'transparency requires both supported color mixing and backdrop filtering');
-assert.match(css,/--key-glass-blur:blur\(18px\) saturate\(115%\)/);
-assert.match(css,/--key-glass-face:[^;}]*color-mix\(in srgb,var\(--panel-soft\) 64%,transparent\)/);
-assert.match(css,/--key-glass-face:[^;}]*color-mix\(in srgb,var\(--panel\) 68%,transparent\)/,'light theme receives its own readable translucent tint');
+assert.match(css,/--key-glass-blur:blur\(18px\) saturate\(100%\)/);
+assert.match(css,/--key-glass-face:color-mix\(in srgb,var\(--panel-soft\) 76%,transparent\)/);
+assert.match(css,/--key-glass-face:color-mix\(in srgb,var\(--panel\) 84%,transparent\)/,'light theme receives its own readable translucent tint');
+assert(!/--key-glass-(?:face|hover|pressed|disabled):[^;}]*gradient/.test(css),'matte keys have no reflective gradients');
 assert(!/--key-base|--key-rest-shadow:0 3px|box-shadow:0 [134]px 0 var\(--key/.test(css),'rejected extruded solid key base is gone');
-assert.match(rule(scope+' .key-value'),/font-size:36px;font-weight:600/);
+assert.match(rule(scope+' .key-value'),/font-size:36px;font-weight:500/);
 assert.match(rule(scope+'[data-text-size=large] .key-value'),/font-size:40px/);
 const touchHover=rule(shared+' .number-key:hover:not(:disabled)');
 assert.match(touchHover,/background:var\(--key-glass-face\)/);assert.match(touchHover,/box-shadow:var\(--key-glass-rest-shadow\)/);
@@ -58,12 +59,12 @@ assert.match(rule('body:is([data-fx=off],[data-motion=reduced]) #number-pad .num
 assert.match(media('prefers-reduced-motion:reduce'),/\.number-key\{transition:none\}/);
 const transparency=media('prefers-reduced-transparency:reduce');
 assert.match(transparency,/background:var\(--panel-soft\);backdrop-filter:none;-webkit-backdrop-filter:none/);
-assert.match(transparency,/\.number-key:active:not\(:disabled\)\{background:var\(--selected\)\}/);
+assert.match(transparency,/\.number-key:is\(:active:focus-visible,\.is-pressed\):not\(:disabled\)\{background:var\(--selected\)\}/);
 const forced=media('forced-colors:active');
 assert.match(forced,/background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;transform:none/);
-assert.match(forced,/\.number-key:active:not\(:disabled\)\{background:Highlight;color:HighlightText(?:;border-color:Highlight)?\}/);
+assert.match(forced,/\.number-key:is\(:active:focus-visible,\.is-pressed\):not\(:disabled\)\{background:Highlight;color:HighlightText(?:;border-color:Highlight)?(?:;box-shadow:none)?\}/);
 assert.match(forced,/\.number-key:disabled\{color:GrayText;border-color:GrayText;background:ButtonFace\}/);
-assert(!css.includes('body #number-pad .remaining{'),'material edit does not change mobile/variant count-space');
+assert.match(rule(shared+' .remaining'),/display:none/,'hidden counts leave no mobile numeral spacer');
 assert(!css.includes('body #number-pad .number-key.exhausted'),'mobile/variant exhausted feedback is preserved');
 assert(!/(?:^|;)(?:display|place-items|gap):/.test(key),'shared material never overwrites mobile/variant layout');
 assert(!/draft[^{}]*\{[^{}]*--key-glass/.test(css),'main keypad material never targets draft controls');

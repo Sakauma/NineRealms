@@ -5,6 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
   var KEY = "nine-realms.sudoku.v1", ARCHIVE = "nine-realms.sudoku-recovery.v1";
+  var PRESERVED_KEYS = [KEY, "nine-realms.history.v1", "nine-realms.daily.v1"];
   function inspect(storage, maxVersion) {
     var raw;
     try { raw = storage.getItem(KEY); }
@@ -28,21 +29,27 @@
     if (!data || data.format !== "nine-realms-unreadable-saves" || data.version !== 1 ||
         !Array.isArray(data.entries) || !data.entries.every(function (e) {
           return e && typeof e.raw === "string" && typeof e.savedAt === "string" &&
-            ["invalid", "unsupported"].indexOf(e.reason) >= 0;
+            ["invalid", "unsupported"].indexOf(e.reason) >= 0 &&
+            (e.key === undefined || PRESERVED_KEYS.indexOf(e.key) >= 0);
         })) throw new Error("原档副本暂不可读取，请先导出副本，不能覆盖它。");
     return data;
   }
-  function preserve(storage, state) {
+  function preserve(storage, state, sourceKey) {
+    sourceKey = sourceKey || KEY;
+    if (PRESERVED_KEYS.indexOf(sourceKey) < 0) throw new Error("不能保留未知来源的原档。");
     if (!state || ["invalid", "unsupported"].indexOf(state.status) < 0 || typeof state.raw !== "string")
       throw new Error("当前没有可保留的原档。");
-    if (storage.getItem(KEY) !== state.raw) throw new Error("其他窗口已改变存档，请先重新读取。");
+    if (storage.getItem(sourceKey) !== state.raw) throw new Error("其他窗口已改变存档，请先重新读取。");
     var data = archive(storage);
-    if (!data.entries.some(function (entry) { return entry.raw === state.raw; }))
-      data.entries.push({ raw: state.raw, savedAt: new Date().toISOString(), reason: state.status });
+    if (!data.entries.some(function (entry) { return (entry.key || KEY) === sourceKey && entry.raw === state.raw; })) {
+      var entry = { raw: state.raw, savedAt: new Date().toISOString(), reason: state.status };
+      if (sourceKey !== KEY) entry.key = sourceKey;
+      data.entries.push(entry);
+    }
     var text = JSON.stringify(data);
     storage.setItem(ARCHIVE, text);
     if (storage.getItem(ARCHIVE) !== text) throw new Error("原档副本未能安全保存，原存档未替换。");
-    if (storage.getItem(KEY) !== state.raw) throw new Error("其他窗口已改变存档，请先重新读取。");
+    if (storage.getItem(sourceKey) !== state.raw) throw new Error("其他窗口已改变存档，请先重新读取。");
     return data;
   }
   // A window holds the writer lock until pagehide. Every engine also checks

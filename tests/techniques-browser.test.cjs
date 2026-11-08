@@ -20,6 +20,8 @@ function snapshot(mode,seed='rating-0',difficulty='easy'){
   await browser.load(s,route);await run(`window.__ratingResult=null;window.__originalRate=SudokuHints.ratePuzzle;SudokuHints.ratePuzzle=function(g,c){window.__ratingResult=__originalRate(g,c);return __ratingResult;};document.getElementById('rules-open').click()`);await waitFor('window.__ratingResult!==null');
  }
  async function fits(width){
+  // CDP may acknowledge a resize before the native viewport has painted it.
+  await run('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))');
   const size=await run(`(()=>{const d=document.getElementById('rules-dialog'),guide=document.getElementById('technique-guide'),summary=guide.querySelector('summary'),r=d.getBoundingClientRect();return {view:innerWidth,scroll:document.documentElement.scrollWidth,left:r.left,right:r.right,dialogScroll:d.scrollWidth,dialogWidth:d.clientWidth,guide:guide.getBoundingClientRect().width,tap:summary.getBoundingClientRect().height};})()`);
   assert(size.scroll<=width+1,'page overflow at '+width);assert(size.dialogScroll<=size.dialogWidth+1,'dialog overflow at '+width);assert(size.left>=0&&size.right<=width+1);assert(size.tap>=44);assert(size.guide>100);
  }

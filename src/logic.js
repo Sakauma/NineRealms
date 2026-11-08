@@ -6,12 +6,14 @@
   "use strict";
   // These rule families are fully checked by the engine's local constraints.
   // Other variants get an explicitly partial classic check, never an answer check.
-  var SUPPORTED = ["classic", "diagonal", "hyper", "knight", "king", "nonconsecutive", "miracle", "disjoint", "jigsaw", "twin", "samurai"];
+  var SUPPORTED = ["classic", "diagonal", "hyper", "knight", "king", "nonconsecutive", "miracle", "disjoint", "jigsaw", "twin", "samurai", "killer", "thermo", "arrow", "thermo-killer"];
   function scope(context) {
     context = typeof context === "string" ? { mode: context } : context || { mode: "classic" };
     var mode = context.mode || "classic", clues = Engine.normalizeClues(mode, context.clues);
+    var fields = mode === "jigsaw" ? ["regions"] : mode === "killer" ? ["cages"] :
+      mode === "thermo" || mode === "arrow" ? ["lines"] : mode === "thermo-killer" ? ["lines", "cages"] : [];
     var complete = SUPPORTED.indexOf(mode) >= 0 && Object.keys(clues).every(function (key) {
-      return key === "version" || key === "regions" && mode === "jigsaw" || !clues[key].length;
+      return key === "version" || fields.indexOf(key) >= 0 || !clues[key].length;
     });
     var info = Engine.getModes().find(function (m) { return m.id === mode; });
     return {

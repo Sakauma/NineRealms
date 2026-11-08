@@ -1,0 +1,17 @@
+Nine Realms — original procedural background music
+
+Micro-light Coordinates (微光定位)
+Twin Star Routes (双路星航)
+Homecoming Harmony (归航合鸣)
+
+The compositions, note sequences and synthesis implementation in src/music.js
+were created for this project. They contain no third-party recordings, samples,
+soundfonts or external music assets. The existing glass event sounds in
+src/sound.js are also original procedural synthesis.
+
+The music code and its rendered audio are distributed under the repository's
+MIT License. Retain the repository LICENSE when distributing them.
+
+Each composition is a 32-second stereo cycle. The loop buffer includes tails
+from the preceding cycle; review recordings contain two cycles with fades only
+at the recording's beginning and end. Live playback uses the same renderer.
