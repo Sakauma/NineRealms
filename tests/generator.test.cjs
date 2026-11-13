@@ -26,7 +26,7 @@ for(const m of E.getModes())for(const d of ['easy','medium','hard'])for(let n=0;
  assert.throws(()=>G.generate({...request,avoidFingerprints:[p.generation.fingerprint]}),/RECENT_DUPLICATE/);
  generated++;
 }
-assert(failed.every(f=>f.mode==='classic'&&f.error==='CLASSIC_DIFFICULTY_NOT_REACHED'),JSON.stringify(failed));
+assert(failed.every(f=>G.supportsDifficulty(f.mode)&&f.error===(f.mode==='classic'?'CLASSIC_DIFFICULTY_NOT_REACHED':'VARIANT_DIFFICULTY_NOT_REACHED')),JSON.stringify(failed));
 for(const [key,values] of masks)assert.equal(values.size,count-failed.filter(f=>key===f.mode+'/'+f.difficulty).length,'same structural mask in '+key);
 for(const p of fixture.legacy)assert.equal(hash(E.getPuzzle(p.difficulty,'daily-regression',p.mode,{legacyPool:true})),p.sha256,'legacy schedule pool changed');
 assert.throws(()=>G.generate({mode:'classic',difficulty:'master',seed:'x'}),/CURATED_DIFFICULTY/);
@@ -68,7 +68,7 @@ global.Worker=class {
  const Challenge=require('../src/challenge.js');
  for(const mode of E.getModes()) {
    let puzzle;
-   for(let attempt=0;attempt<8&&!puzzle;attempt++)try{puzzle=G.generate({mode:mode.id,difficulty:'hard',seed:'challenge-roundtrip'+(attempt?'-'+attempt:'')});}catch(error){assert.equal(mode.id,'classic');assert.equal(error.code,'CLASSIC_DIFFICULTY_NOT_REACHED');}
+   for(let attempt=0;attempt<8&&!puzzle;attempt++)try{puzzle=G.generate({mode:mode.id,difficulty:'hard',seed:'challenge-roundtrip'+(attempt?'-'+attempt:'')});}catch(error){assert(G.supportsDifficulty(mode.id));assert.equal(error.code,mode.id==='classic'?'CLASSIC_DIFFICULTY_NOT_REACHED':'VARIANT_DIFFICULTY_NOT_REACHED');}
    assert(puzzle,'a calibrated sample is available for challenge roundtrip');
    const decoded=Challenge.decode(Challenge.create(puzzle));
    assert.deepEqual(decoded.givens,puzzle.givens);assert.deepEqual(E.normalizeClues(puzzle.mode,decoded.clues),puzzle.clues);assert.deepEqual(decoded.solution,puzzle.solution);

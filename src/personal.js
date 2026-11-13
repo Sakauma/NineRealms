@@ -41,17 +41,19 @@
  $('personal-dialog').addEventListener('close',options.afterClose);
  ['personal-mode','personal-filter'].forEach(function(id){$(id).addEventListener('change',render);});
  $('favorite-current').addEventListener('click',function(){try{var current=options.current();store.add(current,{sessionId:current.sessionId,completed:current.completed,later:false});render();var target=$('personal-list').querySelector('button:not(:disabled)');(target||$('personal-filter')).focus();message('personal-status','已收藏实际题面和完整线索，不依赖随机种子重建。');}catch(e){report(e);}});
- function resetImport(){epoch++;pending=null;$('backup-replace').disabled=true;$('backup-confirm').checked=false;$('backup-preview').textContent='';}
- $('backup-open').addEventListener('click',function(){if(options.blocked())return;options.open($('backup-dialog'));resetImport();message('backup-status','');});
+ var fullConfirm=$('backup-confirm-text').textContent,fullReplace=$('backup-replace').textContent;
+ function resetImport(){epoch++;pending=null;$('backup-replace').disabled=true;$('backup-confirm').checked=false;$('backup-preview').textContent='';$('backup-confirm-text').textContent=fullConfirm;$('backup-replace').textContent=fullReplace;}
+ $('backup-open').addEventListener('click',function(){if(options.blocked())return;options.open($('backup-dialog'));resetImport();message('backup-status','');$('backup-window-original').hidden=!options.hasPreviousWindow();});
  $('backup-close').addEventListener('click',function(){if(!busy&&!options.locked())options.close($('backup-dialog'));});
  $('backup-dialog').addEventListener('cancel',function(event){if(busy||options.locked())event.preventDefault();});
- $('backup-dialog').addEventListener('close',function(){resetImport();options.afterClose();});
+ $('backup-dialog').addEventListener('close',function(){if(this.open)return;resetImport();options.afterClose();});
  $('backup-export').addEventListener('click',async function(){try{var saved=await options.exportBackup();message('backup-status',saved===false?'已取消保存，当前数据保留。':options.nativeSave&&options.nativeSave()?'备份文件已保存。':'备份文件已准备下载，请保存到安全位置。');}catch(e){message('backup-status',e.message||'备份保存未完成。');}});
+ $('backup-window-original').addEventListener('click',async function(){try{var saved=await options.exportPreviousWindow();message('backup-status',saved===false?'已取消导出，原对局仍保留。':'已发起保存恢复前的原对局；校验通过后，可在此入口恢复。');}catch(e){message('backup-status',e.message||'原对局导出未完成。');}});
  $('backup-file').addEventListener('change',async function(){
   resetImport();var request=epoch,file=this.files&&this.files[0];if(!file)return;
   if(file.size>options.maxBackupBytes){message('backup-status','文件过大，请选择九境导出的备份文件。');return;}
   busy=true;$('backup-file').disabled=true;$('backup-confirm').disabled=true;message('backup-status','正在检查备份内容，不会修改当前数据……');
-  try{var result=await options.prepareBackup(await file.text());if(request!==epoch)return;pending=result.validated;message('backup-preview',result.summary);message('backup-status','校验通过。确认下方说明后，才能替换本机进度。');}
+  try{var result=await options.prepareBackup(await file.text());if(request!==epoch)return;pending=result.validated;message('backup-preview',result.summary);if(result.windowGame){$('backup-confirm-text').textContent='我确认替换当前棋盘。原对局与原历史先留存副本，历史沿用现有保留上限；收藏、成绩和当前设置保留。请先关闭其他九境窗口。';$('backup-replace').textContent='确认恢复这一局并重新载入';}message('backup-status',result.windowGame?'对局校验通过。确认后只恢复此棋局，不合并窗口进度。':'校验通过。确认下方说明后，才能替换本机进度。');}
   catch(e){message('backup-status',e.message||'备份校验失败，当前数据未改变。');}
   finally{busy=false;$('backup-file').disabled=false;$('backup-confirm').disabled=false;$('backup-replace').disabled=!pending||!$('backup-confirm').checked;$('backup-file').value='';}
  });
@@ -59,7 +61,7 @@
  $('backup-replace').addEventListener('click',async function(){
   if(!pending||!$('backup-confirm').checked||busy)return;busy=true;$('backup-replace').disabled=true;message('backup-status','正在替换数据，完成后自动重新载入……');
   try{await options.commitBackup(pending);}
-  catch(e){message('backup-status',e.message||'导入未完成。');if(e.recoveryRequired){message('backup-status',e.message+' 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。');['backup-file','backup-export','backup-confirm'].forEach(function(id){$(id).disabled=true;});$('backup-recovery').hidden=false;$('backup-recovery').onclick=async function(){try{await options.downloadRecovery(e.previousBackup);}catch(error){message('backup-status',error.message||'恢复日志保存未完成。');}};}}
+  catch(e){message('backup-status',e.message||'导入未完成。');$('backup-window-original').hidden=!options.hasPreviousWindow();if(e.recoveryRequired){message('backup-status',e.message+(e.windowRecovery?' 这份下载是恢复前的原对局，请保留后重新打开游戏。':' 恢复日志不是普通备份，不能在导入入口使用。请保留日志并重新打开游戏重试。'));['backup-file','backup-export','backup-confirm'].forEach(function(id){$(id).disabled=true;});$('backup-recovery').hidden=false;$('backup-recovery').textContent=e.windowRecovery?'下载恢复前的原对局':'下载故障恢复日志';$('backup-recovery').onclick=async function(){try{await options.downloadRecovery(e.previousBackup,e.windowRecovery);}catch(error){message('backup-status',error.message||'恢复文件保存未完成。');}};}}
   finally{busy=false;if(!options.locked())$('backup-replace').disabled=!pending||!$('backup-confirm').checked;}
  });
  return {refreshCurrent:refreshCurrent,render:render};

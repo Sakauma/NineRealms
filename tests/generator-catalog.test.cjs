@@ -14,6 +14,6 @@ for(const source of E.getPuzzleCatalog()) {
 }
 const report={checked,failures,maxMs,scope:'one new carve per eligible curated source, full-rule uniqueness recheck'};
 fs.mkdirSync('evidence/generator',{recursive:true});fs.writeFileSync('evidence/generator/catalog.json',JSON.stringify(report,null,2));console.log(report);
-assert(failures.every(f=>f.error==='DENSITY_NOT_REACHED'||f.error==='CLASSIC_DIFFICULTY_NOT_REACHED'&&E.getPuzzleCatalog().find(p=>p.id===f.id).mode==='classic'),'Unexpected generator failure; inspect catalog.json');
+assert(failures.every(f=>{const mode=E.getPuzzleCatalog().find(p=>p.id===f.id).mode;return f.error==='DENSITY_NOT_REACHED'||G.supportsDifficulty(mode)&&f.error===(mode==='classic'?'CLASSIC_DIFFICULTY_NOT_REACHED':'VARIANT_DIFFICULTY_NOT_REACHED');}),'Unexpected generator failure; inspect catalog.json');
 assert.equal(checked+failures.length,E.getPuzzleCatalog().filter(p=>p.difficulty!=='master').length);
 console.log('All outputs valid; expected density-budget fallbacks:',failures.length);

@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites,Drafts,Checkpoints,SecretArchives,Branches,Logic){
  'use strict';
  var KEYS=['nine-realms.sudoku.v1','nine-realms.history.v1','nine-realms.secrets.v1','nine-realms.daily.v1','nine-realms.voyage.v1','nine-realms.puzzle-deck.v1','nine-realms.generated-recent.v1','nine-realms.favorites.v1'];
- var JOURNAL='nine-realms.backup-rollback.v1',MAX=4*1024*1024,trusted=new WeakSet();
+ var JOURNAL='nine-realms.backup-rollback.v1',MAX=4*1024*1024,trusted=new WeakSet(),windowTrusted=new WeakSet();
  function fail(message,code){var e=new Error(message);e.code=code||'INVALID_BACKUP';throw e;}
  function assert(value,message){if(!value)fail(message);}
  function object(x){return x&&typeof x==='object'&&!Array.isArray(x);}
@@ -28,7 +28,7 @@
    if(g.clues!==undefined)assert(stable(clues)===stable(g.clues),'规则线索格式无效');
    assert(board(g.givens,n,9)&&board(g.solution,n,9,1),'题目尺寸或数字无效');
    assert(Engine.validateComplete(g.solution,context)&&g.givens.every(function(v,i){return !v||v===g.solution[i];}),'题目答案不符合规则');
-   var ruleOnly=g.logicMode===true&&Logic.scope(context).complete&&!g.custom&&!g.dailyDate&&!g.voyageId;
+   var ruleOnly=g.logicMode===true&&Logic.scope(context).complete&&!g.custom&&!g.dailyDate&&!g.voyageId&&!g.generation;
    var key=stable([mode,g.givens,clues,g.solution,ruleOnly]);if(!ruleOnly&&!cache.has(key)){
     assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');
     var prove=function(){assert(Date.now()<deadline,'验证预算已用完');var proof=Engine.analyzeSolutions(g.givens,context,{limit:2,maxNodes:250000,timeLimitMs:g.custom?750:100});
@@ -56,7 +56,7 @@
    if(g.branch){var branch=Branches.validate(g.branch,g.givens,g.clues);assert(Branches.matches(branch,g),'当前棋盘与活动分支不符');}
    if(g.fogSeen!==undefined)assert(Array.isArray(g.fogSeen)&&g.fogSeen.length===info.n&&g.fogSeen.every(function(v){return typeof v==='boolean';}),'迷雾记录无效');
    if(g.energy!==undefined){var e=g.energy;keys(e,['points','combo','best','claimed','units']);assert(integer(e.points,50000)&&integer(e.combo,info.n)&&integer(e.best,info.n)&&e.best>=e.combo,'星能记录无效');assert(Array.isArray(e.claimed)&&e.claimed.length===info.n&&e.claimed.every(function(v){return typeof v==='boolean';}),'星能格无效');assert(Array.isArray(e.units)&&new Set(e.units).size===e.units.length&&e.units.every(function(u){return integer(u,Engine.getUnits(info.context).length-1);}),'星能区域无效');}
-   if(g.generation){keys(g.generation,['version','seed','kind','difficultyBasis','fingerprint','givenCount','target','unique','checks','nodes','rejectedByBudget']);assert(g.generation.version===1&&g.generation.kind==='carved'&&(g.generation.difficultyBasis==='clue-density'||g.generation.difficultyBasis==='supported-logic'&&info.mode==='classic')&&typeof g.generation.seed==='string'&&g.generation.seed.length<=256&&/^[a-f0-9]{32}$/.test(g.generation.fingerprint)&&g.generation.givenCount===g.givens.filter(Boolean).length,'生成来源无效');}
+   if(g.generation){keys(g.generation,['version','seed','kind','difficultyBasis','fingerprint','givenCount','target','unique','checks','nodes','rejectedByBudget']);assert([1,2].indexOf(g.generation.version)>=0&&g.generation.kind==='carved'&&(g.generation.difficultyBasis==='clue-density'||g.generation.difficultyBasis==='supported-logic'&&['classic','diagonal','hyper','knight','king','disjoint','jigsaw'].indexOf(info.mode)>=0)&&typeof g.generation.seed==='string'&&g.generation.seed.length<=256&&/^[a-f0-9]{32}$/.test(g.generation.fingerprint)&&g.generation.givenCount===g.givens.filter(Boolean).length,'生成来源无效');}
    if(g.dailyDate)assert(Daily.matchesPuzzle(g.dailyDate,g.givens,info.mode,info.difficulty,g.clues),'每日题目不匹配');
    if(g.voyageId)assert(Voyage.matchesPuzzle(g.voyageId,g.givens,info.mode,info.difficulty,g.clues),'旅程题目不匹配');
    return s;
@@ -104,7 +104,7 @@
    else {var F=favorites();assert(F&&typeof F.validateEnvelope==='function','收藏验证器未加载');if(queue)queue.push(function(){assert(typeof F.validateEnvelopeAsync==='function','异步收藏验证器未加载');return F.validateEnvelopeAsync(x,{deadline:deadline});});else F.validateEnvelope(x);}
   });return b;
  }
- function mark(b){function freeze(x){if(x&&typeof x==='object'){Object.keys(x).forEach(function(k){freeze(x[k]);});Object.freeze(x);}}freeze(b);trusted.add(b);return b;}
+ function mark(b,set){function freeze(x){if(x&&typeof x==='object'){Object.keys(x).forEach(function(k){freeze(x[k]);});Object.freeze(x);}}freeze(b);(set||trusted).add(b);return b;}
  function validate(input){if(input&&typeof input==='object'&&trusted.has(input))return input;return mark(validateCore(input));}
  async function validateAsync(input){
   if(input&&typeof input==='object'&&trusted.has(input))return input;
@@ -112,8 +112,33 @@
   for(var i=0;i<queue.length;i++){await new Promise(function(resolve){setTimeout(resolve,0);});assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');await queue[i]();}
   assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');return mark(b);
  }
+ function windowCore(input,queue,deadline){
+  var text=typeof input==='string'?input:JSON.stringify(input);assert(typeof text==='string'&&text.length<=MAX,'对局文件过大');
+  var value;try{value=JSON.parse(text);}catch(e){fail('不是有效的 JSON 对局文件');}
+  safe(value,0);makeValidator(queue,deadline).snapshot(value,false);return value;
+ }
+ function validateWindow(input){if(windowTrusted.has(input))return input;return mark(windowCore(input),windowTrusted);}
+ async function validateWindowAsync(input){
+  if(windowTrusted.has(input))return input;
+  var queue=[],deadline=Date.now()+8000,value=windowCore(input,queue,deadline);
+  for(var i=0;i<queue.length;i++){await new Promise(function(resolve){setTimeout(resolve,0);});assert(Date.now()<deadline,'对局验证预算已用完');await queue[i]();}
+  assert(Date.now()<deadline,'对局验证预算已用完');return mark(value,windowTrusted);
+ }
+ function replaceWindow(storage,input,previous){
+  assert(windowTrusted.has(input),'对局必须先通过完整校验');
+  assert(typeof previous==='string'&&storage.getItem(KEYS[0])===previous,'其他窗口已改变对局，请重新读取后再恢复');
+  var text=JSON.stringify(input);
+  try{storage.setItem(KEYS[0],text);assert(storage.getItem(KEYS[0])===text,'对局写入校验未通过');}
+  catch(error){
+   var unchanged=false;try{unchanged=storage.getItem(KEYS[0])===previous;}catch(e){}
+   if(unchanged)throw new Error('恢复未完成，当前对局未替换。请检查存储空间或权限后重试。');
+   var failure=new Error('恢复结果暂无法确认，已暂停保存。请下载恢复前的原对局，再重新打开游戏。');
+   failure.recoveryRequired=true;failure.windowRecovery=true;failure.previousBackup=previous;failure.cause=error;throw failure;
+  }
+  return {replaced:true};
+ }
  function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
- function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.3',createdAt:new Date().toISOString(),entries:entries};}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.4',createdAt:new Date().toISOString(),entries:entries};}
  function create(storage,options){return validate(draft(storage,options));}
  function createAsync(storage,options){return validateAsync(draft(storage,options));}
  function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Daily.detailDates(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
@@ -129,5 +154,5 @@
    KEYS.forEach(function(k){assert(storage.getItem(k)===(b.entries[k]===null?null:JSON.stringify(b.entries[k])),'写入校验失败');});storage.removeItem(JOURNAL);return {replaced:true};
   }catch(error){try{restoreRaw(storage,previous);}catch(rollbackError){throw recoveryError(rollbackError,journal);}var e=new Error('导入未完成，原有进度已恢复。');e.code='IMPORT_ROLLED_BACK';e.cause=error;throw e;}
  }
- return {keys:KEYS.slice(),journalKey:JOURNAL,limits:{maxBytes:8*1024*1024,maxChars:MAX},create:create,createAsync:createAsync,validate:validate,validateAsync:validateAsync,preview:preview,replace:replace,recover:recover};
+ return {keys:KEYS.slice(),journalKey:JOURNAL,limits:{maxBytes:8*1024*1024,maxChars:MAX},create:create,createAsync:createAsync,validate:validate,validateAsync:validateAsync,validateWindow:validateWindow,validateWindowAsync:validateWindowAsync,isWindow:function(value){return windowTrusted.has(value);},replaceWindow:replaceWindow,preview:preview,replace:replace,recover:recover};
 });

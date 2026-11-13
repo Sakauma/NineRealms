@@ -1,10 +1,10 @@
-/* Offline seeded clue carving. Classic tiers require a complete supported logical path. */
+/* Offline seeded clue carving. Supported tiers require a complete logical path. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"), require("./hints.js"));
   else root.NineRealmsGenerator = factory(root.SudokuEngine, root.SudokuHints);
 })(typeof globalThis !== "undefined" ? globalThis : this, function createGenerator(Engine, Hints) {
   "use strict";
-  var VERSION = 1;
+  var VERSION = 2;
   function hashWords(text) {
     // Four independently updated words; this is a non-cryptographic content key, not a security hash.
     var a = 1779033703, b = 3144134277, c = 1013904242, d = 2773480762;
@@ -45,7 +45,7 @@
     if (!Engine.validateComplete(source.solution, context)) fail("INVALID_TEMPLATE");
     var board = source.solution.slice(), order = board.map(function (_, i) { return i; });
     for (var i = order.length - 1; i > 0; i--) { var j = Math.floor(random() * (i + 1)), old = order[i]; order[i] = order[j]; order[j] = old; }
-    var base = (mode === "classic" ? { easy: 44, medium: 27, hard: 25 } : { easy: 44, medium: 36, hard: 28 })[difficulty];
+    var base = (supportsDifficulty(mode) ? { easy: 44, medium: 27, hard: 25 } : { easy: 44, medium: 36, hard: 28 })[difficulty];
     var target = Math.round(board.length * (base + Math.floor(random() * 5) - 2) / 81);
     var givenCount = board.length, checks = 0, nodes = 0, rejectedByBudget = 0;
     // Uniqueness checks use reproducible node budgets; logic calibration has a separate safety budget.
@@ -57,7 +57,7 @@
       if (result.count === 1 && !result.exhausted) {
         givenCount--;
         // Stop as soon as this logical tier is reached; clue count is only a search bound.
-        if (mode === "classic" && difficulty !== "easy" && givenCount <= 44 && matchesDifficulty(board, difficulty)) {
+        if (supportsDifficulty(mode) && difficulty !== "easy" && givenCount <= 44 && matchesDifficulty(board, difficulty, context)) {
           target = givenCount; break;
         }
       }
@@ -65,7 +65,7 @@
     }
     if (givenCount > target) fail("DENSITY_NOT_REACHED");
     if (board.every(function (v, k) { return Boolean(v) === Boolean(source.givens[k]); })) fail("UNCHANGED_MASK");
-    var puzzle = { id: "G1-" + mode + "-" + request.seed, sourceId: source.sourceId, mode: mode, difficulty: difficulty,
+    var puzzle = { id: "G" + VERSION + "-" + mode + "-" + request.seed, sourceId: source.sourceId, mode: mode, difficulty: difficulty,
       givens: board, solution: source.solution.slice(), clues: source.clues, rating: "generated-density-" + difficulty };
     var key = fingerprint(puzzle);
     if (Array.isArray(request.avoidFingerprints) && request.avoidFingerprints.indexOf(key) >= 0) fail("RECENT_DUPLICATE");
@@ -75,31 +75,45 @@
   }
   function ratingTier(result) {
     if (!result || !result.solved || result.status !== "rated" || !result.steps) return null;
-    if (result.highestTechnique === "naked-single") return "easy";
-    if (result.highestTechnique === "hidden-single") return "medium";
-    if (["locked-candidate", "naked-pair", "hidden-pair"].indexOf(result.highestTechnique) >= 0) return "hard";
-    return null;
+    // Several techniques share a rating level. The first technique at that
+    // level is not evidence that it was the only one used in the full proof.
+    var used = result.techniques, tiers = { "naked-single": 1, "hidden-single": 2,
+      "locked-candidate": 3, "naked-pair": 3, "hidden-pair": 3 };
+    if (!used || typeof used !== "object" || Array.isArray(used)) return null;
+    var names = Object.keys(used), tier = 0, steps = 0;
+    if (!names.length || names.some(function (name) {
+      if (!Object.prototype.hasOwnProperty.call(tiers, name) || !Number.isInteger(used[name]) || used[name] <= 0) return true;
+      tier = Math.max(tier, tiers[name]); steps += used[name]; return false;
+    }) || steps !== result.steps) return null;
+    return [null, "easy", "medium", "hard"][tier];
   }
-  function matchesDifficulty(givens, difficulty) {
-    return Boolean(Hints && ratingTier(Hints.rateClassic(givens, "classic", { maxSteps: 200, timeLimitMs: 200 })) === difficulty);
+  function supportsDifficulty(mode) { return Boolean(Hints && Hints.ratingModes.indexOf(mode) >= 0); }
+  function matchesDifficulty(givens, difficulty, context) {
+    context = context || "classic";
+    var mode = typeof context === "string" ? context : context.mode;
+    if (!supportsDifficulty(mode)) return false;
+    var options = { maxSteps: 200, timeLimitMs: 200 };
+    var result = mode === "classic" ? Hints.rateClassic(givens, context, options) : Hints.ratePuzzle(givens, context, options);
+    return ratingTier(result) === difficulty;
   }
   function generate(request) {
     request = request || {};
-    if ((request.mode || "classic") !== "classic") return carve(request, 0);
-    for (var attempt = 0; attempt < 16; attempt++) {
+    var mode = request.mode || "classic";
+    if (!supportsDifficulty(mode)) return carve(request, 0);
+    for (var attempt = 0; attempt < (mode === "classic" ? 16 : 8); attempt++) {
       var puzzle;
       try { puzzle = carve(request, attempt); }
       catch (error) {
         if (["DENSITY_NOT_REACHED", "UNCHANGED_MASK"].indexOf(error.code) < 0) throw error;
         continue;
       }
-      if (matchesDifficulty(puzzle.givens, request.difficulty || "easy")) {
+      if (matchesDifficulty(puzzle.givens, request.difficulty || "easy", {mode:mode,clues:puzzle.clues})) {
         puzzle.generation.difficultyBasis = "supported-logic";
         puzzle.rating = "generated-logic-" + puzzle.difficulty;
         return puzzle;
       }
     }
-    fail("CLASSIC_DIFFICULTY_NOT_REACHED");
+    fail(mode === "classic" ? "CLASSIC_DIFFICULTY_NOT_REACHED" : "VARIANT_DIFFICULTY_NOT_REACHED");
   }
   function createClient() {
     var active = null;
@@ -131,5 +145,5 @@
     return { run: run, cancel: cancel };
   }
   return { generate: generate, createClient: createClient, fingerprint: fingerprint, seed: seed, version: VERSION,
-    matchesDifficulty: matchesDifficulty, ratingTier: ratingTier };
+    matchesDifficulty: matchesDifficulty, supportsDifficulty: supportsDifficulty, ratingTier: ratingTier };
 });

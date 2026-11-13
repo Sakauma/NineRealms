@@ -1,7 +1,8 @@
 'use strict';
 const crypto=require('node:crypto');
 const assert=require('node:assert/strict'),E=require('../src/engine.js'),T=require('../src/training.js');
-const stations=T.stations(),summaries=T.exercises();assert.equal(stations.length,3);assert.equal(summaries.length,9);assert.equal(new Set(summaries.map(x=>x.id)).size,9);
+assert.equal(T.stations().length,6);assert.equal(T.exercises().length,15);
+const stations=T.stations().slice(0,3),summaries=T.exercises().filter(e=>!e.sourceId.startsWith('local-'));assert.equal(stations.length,3);assert.equal(summaries.length,9);assert.equal(new Set(summaries.map(x=>x.id)).size,9);
 const techniques=['locked-candidate','naked-pair','hidden-pair'];assert.deepEqual(stations.map(x=>x.id),techniques);techniques.forEach(t=>assert.equal(T.exercises(t).length,3));
 const pinned={"locked-candidate-1":"7a8231f25a99e10dc48f10684aeb551341e47397ccc53e01dbc1c62a7e940f55","locked-candidate-2":"e1edec1a5299bf145f6d9b4bc8e90af58562bb06abd3c84e96c0e18f3ad25cb1","naked-pair-1":"b0f79452a2c5f2f816014186008f1bd0039a3f46b8c85db1e4e5a5e54810810b","hidden-pair-1":"97113f6b572fd9e63c31a423cb1d2c3bfec4b75846625affa29029fb30321f9e","locked-candidate-3":"357aeb89be6a4c0c6fe18466f170c7252d2c909ac2af8bde320ea7bff7a9bb8f","hidden-pair-2":"e985857d6acaccaf03126e382284382e06c79bd8797903a42294ec2cb8c18054","naked-pair-2":"476a9d7945b0062e13b9e8f43d3f17d5ca553ce80e2fad2cdec28299a7869910","hidden-pair-3":"727f11a0a127e6abd1fb6a78ab7dd7e48ccfb024bffbf5e69d3f7f1406e94212","naked-pair-3":"92c1b0861ae4b1b5fc3ac2b45b19e3c64705b2bab90d612a5f616aafb2121dd2"};
 const kinds=new Set();let proofCount=0,rejectedAnswerOnly=0,progress=T.validateProgress();

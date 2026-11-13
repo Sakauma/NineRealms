@@ -49,6 +49,7 @@ jobs:
           npm test
           npm run test:dom
           python3 tests/package-download.test.py
+          python3 tests/runtime-cache.test.py
       - name: Find Chromium
         shell: bash
         run: |
@@ -72,6 +73,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y nsis p7zip-full
+      - name: Cache pinned Electron archive
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .build-cache/electron-v*-win32-x64.zip
+          key: electron-archive-${{ runner.os }}-${{ hashFiles('scripts/electron-runtime-lock.json') }}
+        # The packaging script checks the pinned digest on every cache hit;
+        # extracted runtimes and installers are deliberately outside this cache.
       - name: Build and verify Windows installer
         run: |
           npm run package:setup

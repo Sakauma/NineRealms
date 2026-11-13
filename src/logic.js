@@ -4,14 +4,18 @@
   else root.NineRealmsLogic = factory(root.SudokuEngine);
 })(typeof globalThis !== "undefined" ? globalThis : this, function (Engine) {
   "use strict";
-  // These rule families are fully checked by the engine's local constraints.
-  // Other variants get an explicitly partial classic check, never an answer check.
-  var SUPPORTED = ["classic", "diagonal", "hyper", "knight", "king", "nonconsecutive", "miracle", "disjoint", "jigsaw", "twin", "samurai", "killer", "thermo", "arrow", "thermo-killer"];
+  // Each entry is backed by local constraints and a full-board rule predicate.
+  // Unknown future families still fall back to an explicitly partial check.
+  var FIELDS = { jigsaw:["regions"], killer:["cages"], thermo:["lines"], arrow:["lines"], "thermo-killer":["lines","cages"],
+    "odd-even":["parity"], kropki:["edges"], xv:["edges"], greater:["edges"],
+    renban:["lines"], whispers:["lines"], palindrome:["lines"], between:["lines"], lockout:["lines"], entropic:["lines"], modular:["lines"], "region-sum":["lines"],
+    sandwich:["outside"], skyscraper:["outside"], xsum:["outside"], littlekiller:["outside"], clone:["clones"], quadruple:["quadruples"] };
+  var SUPPORTED = ["classic", "diagonal", "hyper", "knight", "king", "nonconsecutive", "miracle", "disjoint", "jigsaw", "twin", "samurai", "killer", "thermo", "arrow", "thermo-killer",
+    "odd-even","palindrome","greater","kropki","xv","renban","whispers","between","lockout","entropic","modular","region-sum","sandwich","skyscraper","xsum","littlekiller","clone","quadruple"];
   function scope(context) {
     context = typeof context === "string" ? { mode: context } : context || { mode: "classic" };
     var mode = context.mode || "classic", clues = Engine.normalizeClues(mode, context.clues);
-    var fields = mode === "jigsaw" ? ["regions"] : mode === "killer" ? ["cages"] :
-      mode === "thermo" || mode === "arrow" ? ["lines"] : mode === "thermo-killer" ? ["lines", "cages"] : [];
+    var fields = FIELDS[mode] || [];
     var complete = SUPPORTED.indexOf(mode) >= 0 && Object.keys(clues).every(function (key) {
       return key === "version" || fields.indexOf(key) >= 0 || !clues[key].length;
     });

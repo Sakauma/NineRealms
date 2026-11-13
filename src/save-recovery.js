@@ -29,7 +29,7 @@
     if (!data || data.format !== "nine-realms-unreadable-saves" || data.version !== 1 ||
         !Array.isArray(data.entries) || !data.entries.every(function (e) {
           return e && typeof e.raw === "string" && typeof e.savedAt === "string" &&
-            ["invalid", "unsupported"].indexOf(e.reason) >= 0 &&
+            ["invalid", "unsupported", "window-restore"].indexOf(e.reason) >= 0 &&
             (e.key === undefined || PRESERVED_KEYS.indexOf(e.key) >= 0);
         })) throw new Error("原档副本暂不可读取，请先导出副本，不能覆盖它。");
     return data;
@@ -37,14 +37,20 @@
   function preserve(storage, state, sourceKey) {
     sourceKey = sourceKey || KEY;
     if (PRESERVED_KEYS.indexOf(sourceKey) < 0) throw new Error("不能保留未知来源的原档。");
-    if (!state || ["invalid", "unsupported"].indexOf(state.status) < 0 || typeof state.raw !== "string")
+    if (!state || ["invalid", "unsupported", "window-restore"].indexOf(state.status) < 0 || typeof state.raw !== "string")
       throw new Error("当前没有可保留的原档。");
     if (storage.getItem(sourceKey) !== state.raw) throw new Error("其他窗口已改变存档，请先重新读取。");
     var data = archive(storage);
-    if (!data.entries.some(function (entry) { return (entry.key || KEY) === sourceKey && entry.raw === state.raw; })) {
+    var existing = data.entries.findIndex(function (entry) { return (entry.key || KEY) === sourceKey && entry.raw === state.raw && entry.reason === state.status; });
+    if (existing < 0) {
       var entry = { raw: state.raw, savedAt: new Date().toISOString(), reason: state.status };
       if (sourceKey !== KEY) entry.key = sourceKey;
       data.entries.push(entry);
+    } else if (state.status === "window-restore" && existing !== data.entries.length - 1) {
+      // Reusing A after A,B makes A the most recent recovery, without copying
+      // its original bytes twice. Selection must follow use, not first insert.
+      var recent = data.entries.splice(existing, 1)[0];
+      recent.savedAt = new Date().toISOString(); data.entries.push(recent);
     }
     var text = JSON.stringify(data);
     storage.setItem(ARCHIVE, text);
@@ -130,5 +136,8 @@
       }
     };
   }
-  return { key: KEY, archiveKey: ARCHIVE, inspect: inspect, preserve: preserve, createSession: createSession };
+  return { key: KEY, archiveKey: ARCHIVE, inspect: inspect, preserve: preserve, createSession: createSession,
+    preserveWindow: function(storage,raw,sourceKey){return preserve(storage,{status:"window-restore",raw:raw},sourceKey);},
+    previousWindow: function(storage){var entries=archive(storage).entries;for(var i=entries.length-1;i>=0;i--)if(entries[i].reason==="window-restore"&&(entries[i].key||KEY)===KEY)return entries[i].raw;return null;}
+  };
 });

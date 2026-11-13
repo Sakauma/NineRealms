@@ -4,6 +4,7 @@
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const Engine = require('../src/engine.js');
+const addedFusionIds = new Set(require('../src/fusion-bank.js').map(item=>item.id));
 const baseline = require('./fixtures/variant-renderer-semantics.json');
 const {SvgNode, createRenderer, descendants, layer, clone, freeze, semanticSeeds} = require('./variant-renderer-fixture.cjs');
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -14,8 +15,11 @@ assert.deepEqual(baseline.modes.map(item=>item.mode), modes);
 let rendered = 0;
 for (const pinned of baseline.modes) {
   const items = seeds.filter(puzzle=>puzzle.mode===pinned.mode);
-  assert.equal(items.length, pinned.count, pinned.mode + ': published catalog count is retained');
-  assert.equal(hash(items.map(({id,clues})=>({id,clues}))), pinned.clueHash,
+  const originalItems = items.filter(item=>!addedFusionIds.has(item.id));
+  assert.equal(originalItems.length, pinned.count, pinned.mode + ': every original catalog item is retained');
+  assert.equal(items.length-originalItems.length, pinned.mode==='thermo-killer'?6:0,
+    'only the six deliberately added fusion sources extend the catalog');
+  assert.equal(hash(originalItems.map(({id,clues})=>({id,clues}))), pinned.clueHash,
     pinned.mode + ': original clue documents and cell order are unchanged');
   const results = items.map(puzzle => {
     const context = freeze({mode:puzzle.mode, clues:clone(puzzle.clues)});
@@ -54,7 +58,7 @@ for (const pinned of baseline.modes) {
     }
     return {id:puzzle.id, result:normalized};
   });
-  assert.equal(hash(results), pinned.semanticHash,
+  assert.equal(hash(results.filter(item=>!addedFusionIds.has(item.id))), pinned.semanticHash,
     pinned.mode + ': legends and non-thermometer descriptions match the baseline; thermometer descriptions additionally contain the original ordered path');
 }
 // Reuse the same SVG across all modes in both directions, including exterior clues

@@ -3,7 +3,9 @@
 const assert=require('node:assert/strict'),crypto=require('node:crypto');
 const baseline=require('./fixtures/pre-crossing-nonarrow-renderer.json');
 const {SvgNode,createRenderer,semanticSeeds,freeze,clone,normalizedTree}=require('./variant-renderer-fixture.cjs');
-const seeds=semanticSeeds().filter(p=>!p.clues.lines.some(l=>l.type==='arrow'));
+const addedFusionIds=new Set(require('../src/fusion-bank.js').map(p=>p.id)),allSeeds=semanticSeeds();
+assert.equal(allSeeds.filter(p=>addedFusionIds.has(p.id)).length,6,'six new fusion sources are covered separately by the renderer semantics suite');
+const seeds=allSeeds.filter(p=>!addedFusionIds.has(p.id)&&!p.clues.lines.some(l=>l.type==='arrow'));
 assert.equal(seeds.length,baseline.rows.length,'non-arrow catalog remains complete');
 const view=createRenderer(),svg=new SvgNode('svg');
 for(let i=0;i<seeds.length;i++){

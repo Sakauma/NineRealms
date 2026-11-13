@@ -1202,3 +1202,21 @@ body[data-text-size=large] .rule-example-pair figcaption{font-size:15px}
 /* Existing storage exception panels keep their actions aligned and reachable. */
 :is(#save-conflict-dialog,#save-recovery-dialog){text-align:left}
 :is(#save-conflict-dialog,#save-recovery-dialog)>button{display:flex;width:100%;margin-top:10px}
+
+/* Real row ownership for assistive technology; rows do not add grid tracks. */
+.semantic-grid-row{display:contents}
+body:not([data-mode=jigsaw]) .board .semantic-grid-row[data-grid-row="3"]>.cell,body:not([data-mode=jigsaw]) .board .semantic-grid-row[data-grid-row="6"]>.cell{border-bottom:2px solid var(--grid-strong)}
+.board .semantic-grid-row[data-grid-row="9"]>.cell{border-bottom:0}
+.training-board .semantic-grid-row[data-grid-row="3"]>.training-cell,.training-board .semantic-grid-row[data-grid-row="6"]>.training-cell,.custom-board .semantic-grid-row[data-grid-row="3"]>input,.custom-board .semantic-grid-row[data-grid-row="6"]>input{border-bottom:2px solid var(--grid-strong)}
+body[data-line-contrast=strong]:not([data-multi=true]):not([data-mode=jigsaw]) .board .semantic-grid-row[data-grid-row="3"]>.cell,body[data-line-contrast=strong]:not([data-multi=true]):not([data-mode=jigsaw]) .board .semantic-grid-row[data-grid-row="6"]>.cell,body[data-line-contrast=strong] .training-board .semantic-grid-row[data-grid-row="3"]>.training-cell,body[data-line-contrast=strong] .training-board .semantic-grid-row[data-grid-row="6"]>.training-cell{border-bottom-width:3px}
+
+/* Short optional rule practice, isolated from the playing board. */
+.training-rule-label{text-align:center;color:var(--text);font-size:13px;line-height:1.7;margin:16px 0 8px}
+#training-board[data-local=true]{width:min(100%,420px);height:auto;aspect-ratio:auto;grid-template-rows:none;grid-template-columns:repeat(var(--local-cells),minmax(0,1fr));gap:10px;border:0;overflow:visible;margin:12px auto 16px}
+#training-board[data-local=true] .training-cell{aspect-ratio:auto;min-height:108px;border:1px solid var(--glass-edge);border-radius:10px;padding:30px 8px 8px;background:var(--cell-bg);font-size:27px;letter-spacing:normal}
+#training-board[data-local=true] .training-cell.selected{background:var(--selected);outline:2px solid var(--accent);outline-offset:2px}
+#training-board[data-local=true] .training-cell:disabled{color:var(--text);background:var(--related);opacity:1}
+#training-board[data-local=true] .local-cell-label{position:absolute;top:8px;left:3px;right:3px;font-family:inherit;font-size:11px;font-weight:500;line-height:1.4;letter-spacing:0;color:var(--muted);white-space:nowrap}
+#training-board[data-local=true] .training-candidates{height:64px;font-size:clamp(10px,2.7vw,14px);letter-spacing:0}
+body[data-text-size=large] #training-board[data-local=true] .training-candidates{font-size:16px}
+body[data-text-size=large] #training-board[data-local=true] .local-cell-label{font-size:12px}

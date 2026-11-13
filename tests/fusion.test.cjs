@@ -3,11 +3,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require(
 const E=require('../src/engine'),H=require('../src/hints'),C=require('../src/challenge'),B=require('../src/variant-bank');
 const hash=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
 const old=B.filter(p=>p.mode!=='thermo-killer');assert.equal(old.length,936);assert.equal(hash(old),'8b5b6b3d66d6fa55844884b3907b8795e7be711dba7581fae90acf77b24b2678','old variant data unchanged');
-assert.equal(E.getModes().length,33);assert.equal(E.getPuzzleCatalog('thermo-killer').length,3);
+assert.equal(E.getModes().length,33);assert.equal(E.getPuzzleCatalog('thermo-killer').length,9);
 const pinned={easy:'ab0cad746518bb02bda66da7e473a83faa8478c727b8491e553467c4fc437405',medium:'40cc78066001043c333a2ab18a56079d0b2623543d681529a4ae07d0f52af9a5',hard:'1100fe62b98adb9da353e53fc792f374555ad0257253805771842dd911a9f536'};
 let steps=0,jointSteps=0;
 for(const difficulty of ['easy','medium','hard']){
- const p=E.getPuzzle(difficulty,'fusion-proof','thermo-killer'),ctx={mode:p.mode,clues:p.clues};
+ const p=E.getPuzzle(difficulty,'fusion-proof','thermo-killer',{sourceId:'F-thermo-killer-'+difficulty+'-v1'}),ctx={mode:p.mode,clues:p.clues};
  assert.equal(p.sourceId,'F-thermo-killer-'+difficulty+'-v1');assert.equal(hash(B.find(source=>source.id===p.sourceId)),pinned[difficulty]);assert(E.validateComplete(p.solution,ctx));
  const snapshot=JSON.stringify(p),proof=E.analyzeSolutions(p.givens,ctx,{limit:2,maxNodes:250000,timeLimitMs:1000});
  assert.equal(proof.count,1);assert.equal(proof.exhausted,false);assert.deepEqual(proof.solution,p.solution);

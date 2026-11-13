@@ -40,7 +40,7 @@ function fixture(mode) {
   $('hint-panel').hidden = true;
   const document = {body:node(), createElement:node};
   const calls = {save:0, reveal:0, selectSync:0, variant:[]};
-  const s = {Engine, game, $, document, boardElement:$('board'), boardLayout:Engine.getLayout(puzzle),
+  const s = {Engine, game, $, document, boardElement:$('board'), boardRows:null, boardLayout:Engine.getLayout(puzzle),
     activeBoardId:'all', cells:game.board.map(node), MODES:Engine.getModes(), PUZZLE_CATALOG:[],
     pendingHint:null, generatingPuzzle:false, storageTransition:false, noteMode:true,
     gameContext:()=>({mode:game.mode, clues:game.clues}), inBranch:()=>!!game.branch,

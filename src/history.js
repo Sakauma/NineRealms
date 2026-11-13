@@ -322,6 +322,7 @@ function init(options){
      if(hooks.Engine.getCellDecorations)hooks.Engine.getCellDecorations(i,previewContext).forEach(function(cls){cell.classList.add(cls);});
      for(var d=1;d<=9;d++)notes.appendChild(el("span"));cell.append(value,notes,el("span","history-draft-mark"),el("span","draft-color-layer"));board.appendChild(cell);frameCells.push(cell);
    });
+   root.NineRealmsGridRows.wrap(board,frameCells,previewLayout.cells.map(function(loc){return loc.row;}));
    // A fresh SVG also resets the renderer's per-element cache when switching
    // from a multi-board view back to the same single-board clues.
    var fresh=doc.createElementNS("http://www.w3.org/2000/svg","svg");

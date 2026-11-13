@@ -1,0 +1,87 @@
+Release reliability and Windows validation
+==========================================
+
+Observed incident (read-only investigation, 2026-11-08)
+
+v1.3.3 points to 04de8ddc0f944ebcf8ac0c4fb9c18b0f5ebcbfc5.
+The tag run 42463501755 failed in job 128677652665 during ensure_runtime():
+the Electron SHASUMS256.txt request returned HTTP 504 after 2/4/8-second retries.
+Tests before packaging passed. Installer artifact upload and draft release were
+skipped. This was not a test failure or evidence of a Windows runtime defect.
+https://github.com/Sakauma/NineRealms/actions/runs/42463501755
+
+Main run 42460997068 had already succeeded for that exact commit. Its artifact
+13610198923 (nine-realms-1.3.3, 117194589 bytes) had the recorded API digest:
+sha256:c517a94e90068908dcfb2b561b930f8e57b48a4eefb9846679d2628dd51363d6
+It was recorded as expiring on 2026-11-22. It was not downloaded or republished
+in this task. Any manual reuse must verify run success, exact head_sha, the
+artifact's unexpired state, downloaded ZIP digest and enclosed SHA256SUMS.txt.
+Do not reuse it for changed source. No workflow or release was triggered here.
+https://github.com/Sakauma/NineRealms/actions/runs/42460997068
+
+Implemented cache trust
+
+scripts/electron-runtime-lock.json pins the official Electron 45.1.0 Windows x64
+archive digest. Its source is the official release asset API, asset 682300565:
+https://api.github.com/repos/electron/electron/releases/assets/682300565
+https://github.com/electron/electron/releases/tag/v45.1.0
+
+Every packaging run checks the local ZIP's SHA-256 against the reviewed source
+lock. A verified hit needs no checksum-manifest network request. On a miss or
+digest mismatch, only the official archive URL is downloaded, into a partial
+file; replacement occurs only after digest verification. Errors fail closed.
+No checksum-ignore flag, alternate mirror or unverified installer extraction is
+used. Existing extracted EXEs/version markers are never a trust shortcut.
+Extraction starts from the verified archive each time and checks paths, links,
+uncompressed size, Windows executable header and version. These checks do not replace running
+Windows or constitute an executable-signature/authenticode check.
+
+Actions caches only the archive, keyed by the runtime lock hash and runner OS.
+The action is pinned to official actions/cache v6.1.0 commit
+55cc8345863c7cc4c66a329aec7e433d2d1c52a9 (node24). Do not cache an extracted runtime
+or treat a cache hit as digest verification.
+https://github.com/actions/cache/tree/55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+
+Updating Electron
+
+Update config.electronVersion and the runtime lock together. Obtain the exact
+win32-x64 archive digest from the official Electron release metadata; cross-check
+SHASUMS256.txt when accessible. Keep the source/release URLs with the new digest.
+Do not derive a trusted digest from an arbitrary local cache. A mismatch between
+the configured version and lock stops packaging before any network request.
+Run python3 tests/package-download.test.py and python3 tests/runtime-cache.test.py.
+Then run the normal installer build and verification in a permitted environment.
+
+What was and was not tested here
+
+This managed executor is Debian Linux, without Windows, Wine, PowerShell, a
+Windows VM, NSIS/7z or a verified Electron ZIP. Outbound networking is disabled.
+The cache/extraction tests use synthetic archives, no Windows executable runs.
+Web tests run real headless Chromium with synthetic player data. No claim is made
+that Windows installation, launch, save, upgrade or uninstallation passed.
+The changed workflow and real official archive were not executed/downloaded here.
+
+Required Windows acceptance pass (still pending)
+
+Use a disposable Windows 10/11 x64 VM and the final locally built Setup.exe.
+Record Windows version, artifact SHA-256, application version and observations.
+
+1. Clean install: run Setup.exe, check install location/shortcuts, launch and
+   ensure no fatal errors or missing assets. Verify app version 1.3.4.
+2. Save/restart: enter digits, notes, undo, branches and a draft; change theme,
+   Zen, effects and BGM independently; close/reopen and compare actual data.
+3. Recovery: export a window game, import it through Data backup, confirm only
+   the board changes and the previous board is exportable. Check two windows
+   cannot silently overwrite each other.
+4. Upgrade: in a separate snapshot, install the previous release, create progress,
+   history/favorites and story/daily results, export a backup, then install the
+   new build. Compare real data and settings after restart, including old saves.
+5. Audio: with a real output device, verify digit/note/erase/undo sounds, BGM and
+   their volumes; mute, Zen, pause and background guards. Headless PCM tests are
+   evidence of generated samples, not a subjective Windows listening test.
+6. Uninstall: verify process/shortcuts/install files are removed according to the
+   existing uninstaller policy. Back up player data first; inspect and record
+   whether the profile is retained. Reinstall and test the documented behavior.
+
+Stop on a data mismatch; preserve the original profile and export before further
+tests. Do not label a static installer inspection as this Windows acceptance pass.

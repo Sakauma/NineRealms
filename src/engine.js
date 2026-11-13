@@ -5,8 +5,10 @@
   // Build a self-contained offline worker from the same engine, never a second solver.
   api.workerSource = function () {
     var variants = common ? require("./variant-bank.js") : root.SudokuVariantBank;
+    var fusion = common ? require("./fusion-bank.js") : root.SudokuFusionBank;
     var multigrid = common ? require("./multigrid-bank.js") : root.SudokuMultigridBank;
     return "var SudokuVariantBank=" + JSON.stringify(variants || []) + ";\n" +
+      "var SudokuFusionBank=" + JSON.stringify(fusion || []) + ";\n" +
       "var SudokuMultigridBank=" + JSON.stringify(multigrid || []) + ";\n" +
       "var SudokuEngine=(" + factory.toString() + ")();\n";
   };
@@ -11130,6 +11132,8 @@
 
   var multigridBank = typeof module === "object" && module.exports ? require("./multigrid-bank.js") :
     (typeof globalThis !== "undefined" ? globalThis.SudokuMultigridBank || [] : []);
+  variantBank = variantBank.concat(typeof module === "object" && module.exports ? require("./fusion-bank.js") :
+    (typeof globalThis !== "undefined" ? globalThis.SudokuFusionBank || [] : []));
 
   function normalizeClues(mode, input) {
     mode = modeId(mode);

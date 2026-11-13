@@ -47,6 +47,7 @@
     }
     $("custom-text").addEventListener("input", function () { invalidate(); textDirty = true; persistDraft(); status("文本已修改，请读取或校验题面。"); });
     $("custom-read").addEventListener("click", function () { try { readText(); status("已读取题面，请校验唯一解。"); } catch (error) { status(error.message); } });
+    root.NineRealmsGridRows.wrap($("custom-board"),inputs);
     $("custom-clear").addEventListener("click", function () { adopt(Array(81).fill(0)); status("已清空编辑器，当前棋局不受影响。"); inputs[0].focus(); });
     $("custom-current").addEventListener("click", function () { var game = options.current(); if (!game || game.mode !== "classic") return; adopt(game.givens); status("只读取原始给定数，未带入进度或答案。"); });
     $("custom-validate").addEventListener("click", async function () {

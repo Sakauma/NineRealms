@@ -1,6 +1,6 @@
 """Reconstructed release utilities. Original desktop entry/assets are kept unchanged."""
 from pathlib import Path
-import argparse, hashlib, http.client, json, os, re, shutil, subprocess, sys, time, urllib.error, urllib.request, zipfile
+import argparse, hashlib, http.client, json, os, re, shutil, subprocess, sys, tempfile, time, urllib.error, urllib.request, zipfile
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".build-cache"
 RUNTIME = CACHE / "recovered-installer"
@@ -50,35 +50,26 @@ def ensure_runtime():
     expected = manifest().get("config", {}).get("electronVersion", "45.1.0")
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.]+)?", expected):
         raise RuntimeError("Invalid Electron version.")
-    def ready():
-        return (RUNTIME / "Nine Realms.exe").is_file() and (RUNTIME / "version").is_file() and (RUNTIME / "version").read_text().strip() == expected
-    def reset_runtime():
-        if RUNTIME.exists():
-            if RUNTIME.is_symlink() or not RUNTIME.resolve().is_relative_to(CACHE.resolve()):
-                raise RuntimeError("Unsafe runtime cache path.")
-            shutil.rmtree(RUNTIME)
-        RUNTIME.mkdir(parents=True, exist_ok=True)
-    if ready():
-        return RUNTIME
-    setup, seven = RELEASE / "Setup.exe", shutil.which("7z")
-    if setup.is_file() and seven:
-        reset_runtime()
-        subprocess.run([seven, "x", "-y", "-o" + str(RUNTIME), str(setup)], check=True, stdout=subprocess.DEVNULL)
-        if ready():
-            return RUNTIME
-    # A source-only clone can prepare the runtime directly from Electron.
     filename = "electron-v" + expected + "-win32-x64.zip"
     base = "https://github.com/electron/electron/releases/download/v" + expected + "/"
-    request = urllib.request.Request(base + "SHASUMS256.txt", headers={"User-Agent": "NineRealms-build"})
-    entries = [line.split() for line in download(request).decode("utf-8").splitlines()]
-    checksum = next((parts[0] for parts in entries if len(parts) == 2 and parts[1].lstrip("*") == filename), None)
-    if not checksum or not re.fullmatch(r"[0-9a-fA-F]{64}", checksum):
-        raise RuntimeError("Electron release checksum is missing.")
-    checksum = checksum.lower()
+    # Reviewed release digest lives with the source. A network outage must not
+    # make a verified cache unusable, and a cache is never a trust source itself.
+    lock = json.loads((ROOT / "scripts/electron-runtime-lock.json").read_text(encoding="utf-8"))
+    if (lock.get("schemaVersion") != 1 or lock.get("version") != expected or
+            lock.get("platform") != "win32" or lock.get("arch") != "x64" or lock.get("filename") != filename or
+            not re.fullmatch(r"[0-9a-f]{64}", lock.get("sha256", ""))):
+        raise RuntimeError("Electron runtime lock must match package.json and contain a verified SHA-256.")
+    checksum = lock["sha256"]
+    if CACHE.is_symlink() or RUNTIME.is_symlink() or not RUNTIME.resolve().is_relative_to(CACHE.resolve()):
+        raise RuntimeError("Unsafe runtime cache path.")
     CACHE.mkdir(exist_ok=True)
     archive_path = CACHE / filename
+    if archive_path.is_symlink():
+        raise RuntimeError("Unsafe runtime archive path.")
     if not archive_path.is_file() or sha256(archive_path) != checksum:
         pending = CACHE / (filename + ".part")
+        if pending.is_symlink():
+            raise RuntimeError("Unsafe partial archive path.")
         try:
             request = urllib.request.Request(base + filename, headers={"User-Agent": "NineRealms-build"})
             download(request, pending)
@@ -88,16 +79,33 @@ def ensure_runtime():
         finally:
             if pending.exists():
                 pending.unlink()
-    reset_runtime()
-    with zipfile.ZipFile(archive_path) as archive:
-        for entry in archive.infolist():
-            if not (RUNTIME / entry.filename).resolve().is_relative_to(RUNTIME.resolve()):
-                raise RuntimeError("Invalid Electron archive path.")
-        archive.extractall(RUNTIME)
-    (RUNTIME / "electron.exe").rename(RUNTIME / "Nine Realms.exe")
-    (RUNTIME / "version").write_text(expected, encoding="utf-8")
-    if not ready():
-        raise RuntimeError("Electron runtime could not be prepared.")
+    # Recreate extracted files from the verified ZIP on every run. A version
+    # marker, an old Setup.exe, or modified extracted files cannot bypass SHA-256.
+    with tempfile.TemporaryDirectory(prefix="electron-verified-", dir=CACHE) as directory:
+        staging = Path(directory)
+        with zipfile.ZipFile(archive_path) as archive:
+            if sum(entry.file_size for entry in archive.infolist()) > 2 * 1024 ** 3:
+                raise RuntimeError("Electron archive exceeds extraction budget.")
+            for entry in archive.infolist():
+                if ("\\" in entry.filename or ":" in entry.filename or "\0" in entry.filename or
+                        (entry.external_attr >> 16) & 0o170000 == 0o120000 or
+                        not (staging / entry.filename).resolve().is_relative_to(staging)):
+                    raise RuntimeError("Invalid Electron archive path.")
+            archive.extractall(staging)
+        executable = staging / "electron.exe"
+        if not executable.is_file():
+            raise RuntimeError("Electron Windows executable is missing or invalid.")
+        with executable.open("rb") as stream:
+            if stream.read(2) != b"MZ":
+                raise RuntimeError("Electron Windows executable is missing or invalid.")
+        version_file = staging / "version"
+        if version_file.is_file() and version_file.read_text().strip().lstrip("v") != expected:
+            raise RuntimeError("Electron runtime version mismatch.")
+        executable.rename(staging / "Nine Realms.exe")
+        version_file.write_text(expected, encoding="utf-8")
+        if RUNTIME.exists():
+            shutil.rmtree(RUNTIME)
+        staging.rename(RUNTIME)
     return RUNTIME
 
 def payload_files(app):

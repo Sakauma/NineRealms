@@ -16,6 +16,7 @@
   var writableAtStart = await storageSession.start();
   var playerStorage = storageSession.storage, storageConflict = !writableAtStart;
   var Engine = window.SudokuEngine;
+  var GridRows = window.NineRealmsGridRows, boardRows = null;
   var Desktop = window.NineRealmsDesktop;
   var Logic = window.NineRealmsLogic;
   var Branches = window.NineRealmsBranches;
@@ -27,7 +28,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.3.3";
+  var APP_VERSION = "1.3.4";
   try { if (Backup && writableAtStart) Backup.recover(playerStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -89,7 +90,7 @@
   var boardElement = $("board");
   var numberPad = $("number-pad");
 
-  if (!Engine || !Logic || !Branches || !Edits || !Custom || !TechniqueGuides || !Daily || !Voyage || !Atmosphere || !window.SudokuHints || !boardElement || !numberPad) {
+  if (!Engine || !GridRows || !Logic || !Branches || !Edits || !Custom || !TechniqueGuides || !Daily || !Voyage || !Atmosphere || !window.SudokuHints || !boardElement || !numberPad) {
     var failure = $("status-message");
     if (failure) failure.textContent = "游戏资源未完整加载，请重新打开完整的游戏文件。";
     return;
@@ -127,12 +128,12 @@
   }
 
   function generationInfo(value, puzzle, difficulty) {
-    if (!Generator || !value || value.version !== 1 || value.kind !== "carved" ||
+    if (!Generator || !value || [1,2].indexOf(value.version)<0 || value.kind !== "carved" ||
         typeof value.seed !== "string" || value.seed.length > 256 ||
         value.fingerprint !== Generator.fingerprint(puzzle)) return null;
-    var basis = value.difficultyBasis === "supported-logic" && puzzle.mode === "classic" &&
-      Generator.matchesDifficulty(puzzle.givens, difficulty) ? "supported-logic" : "clue-density";
-    return { version: 1, seed: value.seed, kind: "carved", difficultyBasis: basis,
+    var basis = value.difficultyBasis === "supported-logic" &&
+      Generator.matchesDifficulty(puzzle.givens, difficulty, {mode:puzzle.mode,clues:puzzle.clues}) ? "supported-logic" : "clue-density";
+    return { version: value.version, seed: value.seed, kind: "carved", difficultyBasis: basis,
       fingerprint: value.fingerprint, givenCount: puzzle.givens.filter(Boolean).length };
   }
 
@@ -546,7 +547,7 @@
       fragment.appendChild(button);
       cells.push(button);
     });
-    boardElement.appendChild(fragment);
+    boardRows = GridRows.wrap(boardElement,cells,boardLayout.cells.map(function(position){return position.row;}));
     var view = $("grid-view");
     if (view) {
       view.replaceChildren();
@@ -599,6 +600,7 @@
         cell.style.borderBottom = (local.row % 3 === 2 ? "var(--reading-strong-width,2px) solid var(--grid-strong)" : "var(--reading-thin-width,1px) solid var(--grid-line)");
       }
     });
+    if (boardRows) boardRows.refresh();
     if ($("multigrid-tools")) $("multigrid-tools").hidden = !multi;
     if ($("grid-view")) $("grid-view").value = activeBoardId;
     if (window.NineRealmsSelect) window.NineRealmsSelect.syncAll();
@@ -734,8 +736,8 @@
       var calibrated = game.generation && game.generation.difficultyBasis === "supported-logic";
       $("puzzle-bank-status").textContent = game.custom ? "自建经典题 · " + game.givens.filter(Boolean).length + " 个给定数 · 已验证唯一解" : game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + (calibrated ? " · 技巧校准" : "密度档") :
         difficulty.label + "原题库 · " + available + " 题" + (game.difficulty === "master" ? "" : " · 新游戏可离线生成");
-      $("puzzle-bank-status").title = calibrated ? "已验证唯一解，并完整通过当前逻辑技巧检查：入门只用单格唯一候选，标准需区域唯一位置，进阶需锁定候选或数对。代表此推理路径，不保证是所有人类解法的最低难度。" : game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
-        "原题库轮换保留。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
+      $("puzzle-bank-status").title = calibrated ? "已验证唯一解，并按本玩法规则完整检查逻辑路径：入门只用单格唯一候选，标准需区域唯一位置，进阶需锁定候选或数对。代表此推理路径，不保证是所有人类解法的最低难度；变体使用其额外区域或相斥格约束。" : game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
+        "原题库原分档保留，未经本次技巧校准。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
     }
     document.body.dataset.outsideClues = String(Boolean(game.clues && game.clues.outside && game.clues.outside.length));
     if (isMulti()) {
@@ -2060,7 +2062,7 @@
       rememberGenerated(puzzle);
       setStatus(puzzle.generation ? modeInfo(mode).label + "新题已准备好 · " + difficultyInfo(mode, difficulty).label +
         (game.generation.difficultyBasis === "supported-logic" ? "（已通过技巧校准）" : "密度档（非技巧评级）") + "，点击开始后计时。" :
-        fallback ? (mode === "classic" ? "本次未能在预算内完成技巧校准，已使用题库原分档；点击开始后计时。" : "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。") :
+        fallback ? (Generator&&Generator.supportsDifficulty(mode) ? "本次未能在预算内完成技巧校准，已使用题库原分档（未经本次技巧校准）；点击开始后计时。" : "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。") :
         preferences.zen ? modeInfo(mode).label + "已准备好，等你开始。" : downgraded ? "已准备" + modeInfo(mode).label + " · 进阶。极境仅用于经典玩法，点击开始后计时。" :
         modeInfo(mode).label + " · " + difficultyInfo(mode, difficulty).label + "已准备好，点击开始游戏后计时。");
       save();
@@ -2496,7 +2498,7 @@
     game.logicMode = !game.logicMode; preferences.logicMode = game.logicMode;
     game.energy.combo = 0; clearTransientMarks();
     setStatus(game.logicMode ? "纯逻辑模式 · " + Logic.scope(gameContext()).message : "已恢复普通模式，填写与检查会核对本题答案。");
-    render(); save("切换检查模式");
+    render(); checkCompletion(); save("切换检查模式");
   });
   bind("branch-new", "click", beginBranch);
   bind("branch-switch", "change", function () { var target = $("branch-switch").value || null; branchAction(function () { return Branches.switchTo(game, target, noteMode); }, target ? "已切换假设，主盘保持独立。" : "已返回主盘，其他假设仍保留。"); });
@@ -2762,7 +2764,7 @@
     var pending = Boolean(state), unavailable = state && state.status === "unavailable", live = !pending && liveSaveExport();
     $("save-recovery-title").textContent = live ? "本窗口尚未保存的对局" : pending ? "棋局暂未能恢复" : "保留的原档副本";
     $("save-recovery-description").textContent = live ?
-      "可以导出当前对局原文留存；此文件不包含其他历史、收藏或成绩，不是完整备份，不能在数据备份入口导入。本机原存档和副本不会改变。" : !pending ?
+      "可以导出当前对局原文；它不是完整备份，不含其他历史、收藏或成绩。关闭其他九境窗口后，在“数据备份”中选择此文件，经校验和确认后仅恢复这一局。本机原档和副本保持不变。" : !pending ?
       "已保留的原始棋局或记录仍在本机。可以导出留存，交由兼容版本检查；这些副本不是完整备份，不能直接在数据备份中导入。" : unavailable ?
       "浏览器暂不允许读取本机存档。可以重试，或仅本次游玩；仅本次游玩不会自动保存当前对局。" : state.status === "unsupported" ?
       "这份存档来自较新的存档版本（" + state.version + "），当前版本无法读取。原始数据未改变，请优先用对应版本打开，也可以导出留存。" :
@@ -2864,7 +2866,7 @@
       catch (error) { value = currentSaveEnvelope(); rawOnly = true; }
       var saved = await downloadPlayerFile(value, rawOnly ? "Nine-Realms-window-save.json" : "Nine-Realms-window-backup.json");
       $("save-conflict-status").textContent = saved ? "已发起保存本窗口备份，请确认文件已保存。重新读取会放弃本窗口尚未保存的修改。" : "已取消导出，本窗口进度仍保留。";
-      if (saved && rawOnly) $("save-conflict-status").textContent = "完整备份暂不可导出，已发起保存本窗口对局原文；它不含其他记录，不能在数据备份入口导入。请确认文件已保存。";
+      if (saved && rawOnly) $("save-conflict-status").textContent = "完整备份暂不可导出，已发起保存本窗口对局。关闭其他窗口后，可在“数据备份”中校验并仅恢复这一局，其他记录保留。请确认文件已保存。";
     } catch (error) { $("save-conflict-status").textContent = error.message || "导出未完成，请保留此窗口。"; }
     finally { actions.forEach(function (button) { button.disabled = false; }); $("save-conflict-export").disabled = !game; }
   });
@@ -2930,6 +2932,43 @@
     }
   }
 
+  async function commitWindowGame(validated) {
+    if (storageTransition || saveRecoveryState || storageSession.isTemporary()) throw new Error("当前窗口尚未启用安全保存。请关闭其他九境窗口，重新打开游戏后恢复。");
+    cancelPuzzleGeneration();suspendClock();
+    if (!save()) throw new Error("当前对局暂时无法安全保存，未替换棋盘。请先导出当前对局并检查存储空间。");
+    // History may be protected because it is unreadable or newer. Keep those
+    // exact bytes; a game-only recovery must not require replacing the history.
+    if (History && ["invalid","unsupported","unavailable"].indexOf(History.originalState().status)<0 && !History.flush())
+      throw new Error("当前历史暂时无法安全保存，未替换棋盘。请先导出当前对局并检查存储空间。");
+    var next=JSON.parse(JSON.stringify(validated));
+    next.preferences=JSON.parse(JSON.stringify(preferences));
+    next.game.sessionId=newSessionId();
+    next=await Backup.validateWindowAsync(next);
+    storageSession.check();
+    var previous=playerStorage.getItem(STORAGE_KEY);
+    try {
+      var previousHistory=History?playerStorage.getItem(History.KEY):null;
+      SaveRecovery.preserveWindow(playerStorage,previous);
+      // A fresh recovery session can reach the ordinary 40-record/byte limit.
+      // Retain the entire original history, including any records it may trim.
+      if (previousHistory!==null) SaveRecovery.preserveWindow(playerStorage,previousHistory,History.KEY);
+    } catch(error) {
+      if (error.name!=="QuotaExceededError"&&error.name!=="SecurityError") throw error;
+      var copyError=new Error("恢复前的副本未能完整保存，棋盘尚未替换。请检查本机存储空间与权限。");
+      copyError.cause=error;throw copyError;
+    }
+    refreshRecoveryLink();
+    storageTransition=true;suspendOtherPersistence(true);
+    try {
+      Backup.replaceWindow(playerStorage,next,previous);
+      document.body.dataset.storageTransition="true";
+      window.location.reload();
+    } catch(error) {
+      if (!error.recoveryRequired) {storageTransition=false;suspendOtherPersistence(false);}
+      throw error;
+    }
+  }
+
   if (window.NineRealmsCustomUI) customUi = window.NineRealmsCustomUI({
     current: function () { return game; }, blocked: function () { return storageTransition || generatingPuzzle || dialogIsOpen(); },
     readDraft: function () { return preferences.customDraft; }, writeDraft: function (text) { preferences.customDraft = text; save(); },
@@ -2984,14 +3023,21 @@
     resumeAvailable:function(record){return Boolean(favoriteSession(record,true));},play:playFavorite,
     history:function(record){var snapshot=favoriteSession(record,false);closeDialog($("personal-dialog"));if(History)History.open(snapshot&&snapshot.game.sessionId);},
     maxBackupBytes:Backup.limits.maxBytes,nativeSave:function(){return Boolean(Desktop&&Desktop.isTauri());},
+    hasPreviousWindow:function(){try{return SaveRecovery.previousWindow(playerStorage)!==null;}catch(e){return false;}},
+    exportPreviousWindow:function(){var raw=SaveRecovery.previousWindow(playerStorage);if(typeof raw!=="string")throw new Error("没有可读取的恢复前原对局；请从页脚导出原档副本留存。");return downloadPlayerFile(raw,"Nine-Realms-before-window-restore.json");},
     exportBackup:async function(){var backup=await preparePlayerBackup();return await downloadPlayerFile(backup,"Nine-Realms-backup-"+new Date().toISOString().slice(0,10)+".json");},
     prepareBackup:async function(text){
+      var parsed;try{parsed=JSON.parse(text);}catch(e){}
+      if(parsed&&parsed.format===undefined&&Object.prototype.hasOwnProperty.call(parsed,"game")){
+        var windowGame=await Backup.validateWindowAsync(text),g=windowGame.game;
+        return {validated:windowGame,windowGame:true,summary:"窗口对局 · 仅恢复当前棋盘\n"+modeInfo(windowGame.version===1?"classic":g.mode).label+" · "+g.board.filter(Boolean).length+" / "+g.board.length+" 格 · 用时 "+formatTime(g.elapsedMs)+"\n包含笔记、撤销与分支；历史、收藏、每日与主线成绩、当前设置保留。"};
+      }
       var validated=await Backup.validateAsync(text),p=Backup.preview(validated);
       return {validated:validated,summary:"备份时间："+new Date(p.createdAt).toLocaleString()+" · 版本 "+p.appVersion+
         "\n"+(p.currentGame?"当前棋局："+modeInfo(p.currentGame.mode).label+" · "+p.currentGame.filled+" / "+p.currentGame.total+" 格":"没有当前棋局")+
         "\n历史 "+p.historyCount+" 局 / "+p.historySteps+" 步 · 收藏 "+p.favoritesCount+" 题"+
         "\n彩蛋 "+p.secretsCount+" 项 · 每日明细 "+p.dailyCount+" 条 · 旅程 "+p.voyageCount+" 条"};
-    },commitBackup:commitPlayerBackup,downloadRecovery:function(value){return downloadPlayerFile(value,"Nine-Realms-recovery-log.json");}
+    },commitBackup:function(value){return Backup.isWindow(value)?commitWindowGame(value):commitPlayerBackup(value);},downloadRecovery:function(value,windowRecovery){return downloadPlayerFile(value,windowRecovery?"Nine-Realms-before-window-restore.json":"Nine-Realms-recovery-log.json");}
   });
 
   buildCatalog();

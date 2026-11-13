@@ -1,4 +1,4 @@
-Nine Realms — parallel Rust / Tauri desktop shell (product version stays 1.3.3)
+Nine Realms — parallel Rust / Tauri desktop shell (product version stays 1.3.4)
 
 This is a separate installation: product "Nine Realms Tauri", identifier
 com.sakauma.ninerealms.tauri, executable nine-realms-tauri. It does not replace

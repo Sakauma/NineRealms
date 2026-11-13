@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "version": "45.1.0",
+  "platform": "win32",
+  "arch": "x64",
+  "filename": "electron-v45.1.0-win32-x64.zip",
+  "sha256": "55eaba17abff7b5bba6c3bbc85068967379024fe742fe9c7fdba9118922ccbe2",
+  "source": "https://api.github.com/repos/electron/electron/releases/assets/682300565",
+  "release": "https://github.com/electron/electron/releases/tag/v45.1.0"
+}
