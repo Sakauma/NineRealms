@@ -1,13 +1,19 @@
 /* Nine Realms — deterministic daily puzzles, Beijing calendar, no storage or network. */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"));
-  else root.SudokuDaily = factory(root.SudokuEngine);
-})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine) {
+  if (typeof module === "object" && module.exports) module.exports = factory(require("./engine.js"), require("./curated.js"), function(){return require("./generator.js");}, function(){return {Hints:require("./hints.js"),Frozen:require("./daily-generator-v1.js")};});
+  else root.SudokuDaily = factory(root.SudokuEngine, root.NineRealmsCurated, function(){return root.NineRealmsGenerator;}, function(){return {Hints:root.SudokuHints,Frozen:root.NineRealmsDailyGeneratorV1};});
+})(typeof globalThis !== "undefined" ? globalThis : this, function (Engine, Curated, generator, workerDependencies) {
   "use strict";
   var DAY = 86400000;
   var OFFSET = 8 * 60 * 60 * 1000;
   var MODES = ["classic", "diagonal", "hyper", "knight"];
   var MAX_RECORDS = 400;
+  var CURATED_START = "2026-11-14";
+  var CONSTRUCTED_START = "2026-11-15", DAILY_MODES = ["classic", "thermo", "diagonal", "killer", "hyper", "arrow", "knight", "thermo-killer"];
+  var CACHE_LIMIT=32, constructedCache=new Map();
+  // Versioned, pinned IDs: adding future catalog entries must not reroll a date.
+  // Four short introductory variants per fortnight; other dates retain v1 exactly.
+  var CURATED_SLOTS = { 1: "thermo", 4: "killer", 8: "arrow", 11: "thermo-killer" };
 
   function isDateKey(key) {
     if (typeof key !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(key)) return false;
@@ -30,13 +36,87 @@
 
   function modulo(value, divisor) { return ((value % divisor) + divisor) % divisor; }
 
-  function getPuzzle(key) {
+  function getLegacyPuzzle(key) {
     var day = requireDate(key);
     var mode = MODES[modulo(day, MODES.length)];
     // Five gentle days and two medium days per seven-day cycle; never hard/master.
     var difficulty = modulo(day, 7) < 5 ? "easy" : "medium";
     var puzzle = Engine.getPuzzle(difficulty, "nine-realms-daily-v1:" + key, mode, { legacyPool: true });
     return Object.assign({}, puzzle, { dailyDate: key });
+  }
+
+  function getCuratedPuzzle(key) {
+    var day = requireDate(key), offset = day - requireDate(CURATED_START);
+    var mode = offset >= 0 && CURATED_SLOTS[modulo(offset, 14)];
+    if (!mode) return getLegacyPuzzle(key);
+    var edition = modulo(Math.floor(offset / 14), 2) + 1;
+    var puzzle = Curated.getPuzzle("curated-" + mode + "-intro-" + edition + "-v1");
+    return Object.assign({}, puzzle, { dailyDate: key });
+  }
+
+  function clone(value){return JSON.parse(JSON.stringify(value));}
+  function constructedMode(key){return DAILY_MODES[modulo(requireDate(key)-requireDate(CONSTRUCTED_START),DAILY_MODES.length)];}
+  var DETERMINISTIC_FAILURES=["DIVERSITY_BUDGET","DIVERSITY_LAYOUT_UNAVAILABLE","DENSITY_NOT_REACHED","UNCHANGED_MASK","FRESH_LOGIC_NOT_REACHED","FRESH_RULE_NOT_USED","FRESH_BUDGET"];
+  function cachePuzzle(key,puzzle){
+    puzzle.dailyDate=key;constructedCache.delete(key);constructedCache.set(key,clone(puzzle));
+    if(constructedCache.size>CACHE_LIMIT)constructedCache.delete(constructedCache.keys().next().value);
+    return clone(puzzle);
+  }
+  function peekPuzzle(key){
+    requireDate(key);if(key<CONSTRUCTED_START)return getCuratedPuzzle(key);
+    if(!constructedCache.has(key))return null;
+    var cached=constructedCache.get(key);constructedCache.delete(key);constructedCache.set(key,cached);return clone(cached);
+  }
+  function describe(key){var cached=peekPuzzle(key);return cached?{mode:cached.mode,difficulty:cached.difficulty}:{mode:constructedMode(key),difficulty:"easy"};}
+  function fallbackPuzzle(key){
+    var day=requireDate(key),mode=constructedMode(key),edition=modulo(day,2)+1;
+    var puzzle=MODES.indexOf(mode)>=0 ? Engine.getPuzzle("easy","nine-realms-daily-v3-fallback:"+key,mode,{legacyPool:true}) : Curated.getPuzzle("curated-"+mode+"-intro-"+edition+"-v1");
+    puzzle.dailyEdition="fallback-v3";puzzle.dailyFallback=true;return puzzle;
+  }
+  function getPuzzle(key) {
+    var cached=peekPuzzle(key);if(cached)return cached;
+    var G=generator(),mode=constructedMode(key),puzzle;
+    if(!G||typeof G.generateDailyV1!=="function")throw new Error("每日新题资源尚未完整加载，请重新打开完整游戏。");
+    try {puzzle=G.generateDailyV1({mode:mode,seed:"nine-realms-daily-v3:"+key});puzzle.dailyEdition="constructed-v3";puzzle.dailyFallback=false;}
+    catch(error){if(DETERMINISTIC_FAILURES.indexOf(error.code)<0)throw error;puzzle=fallbackPuzzle(key);}
+    return cachePuzzle(key,puzzle);
+  }
+  function createClient(){
+    var active=null;
+    function cancel(){if(active)active();}
+    function run(key){
+      cancel();
+      return new Promise(function(resolve,reject){
+        var cached;try{cached=peekPuzzle(key);}catch(error){reject(error);return;}if(cached){resolve(cached);return;}
+        var worker,url,timer,settled=false,mode=constructedMode(key);
+        function finish(error,puzzle){
+          if(settled)return;settled=true;clearTimeout(timer);if(worker)worker.terminate();if(url)URL.revokeObjectURL(url);active=null;
+          if(error){reject(error);return;}resolve(cachePuzzle(key,puzzle));
+        }
+        active=function(){var error=new Error("DAILY_CANCELLED");error.name="AbortError";finish(error);};
+        try{
+          var deps=workerDependencies();
+          if(typeof Worker==="undefined"||typeof Blob==="undefined"||!Engine.workerSource||!deps.Hints||!deps.Frozen)throw new Error("DAILY_WORKER_UNAVAILABLE");
+          var program=Engine.workerSource()+deps.Hints.workerSource()+deps.Frozen.workerSource()+
+            "self.onmessage=function(event){var x=event.data;try{self.postMessage({key:x.key,puzzle:NineRealmsDailyGeneratorV1.generate({mode:x.mode,seed:x.seed})});}catch(error){self.postMessage({key:x.key,error:error.code||error.message});}};";
+          url=URL.createObjectURL(new Blob([program],{type:"text/javascript"}));worker=new Worker(url);
+          worker.onmessage=function(event){
+            if(settled)return;
+            try{
+              var data=event.data;if(!data||data.key!==key)throw new Error("DAILY_WORKER_INVALID_RESULT");
+              if(data.error){if(DETERMINISTIC_FAILURES.indexOf(data.error)>=0){finish(null,fallbackPuzzle(key));return;}throw new Error(data.error);}
+              var p=data.puzzle;
+              if(!p||p.mode!==mode||p.difficulty!=="easy"||!p.generation||p.generation.version!==3||p.generation.kind!=="constructed"||p.generation.seed!=="nine-realms-daily-v3:"+key||p.generation.logicVerified!==true||p.generation.unique!==true||!Array.isArray(p.givens)||p.givens.length!==81||!Engine.validateComplete(p.solution,{mode:mode,clues:p.clues})||!p.givens.every(function(n,i){return Number.isInteger(n)&&n>=0&&n<=9&&(!n||n===p.solution[i]);}))throw new Error("DAILY_WORKER_INVALID_RESULT");
+              p.dailyEdition="constructed-v3";p.dailyFallback=false;finish(null,p);
+            }catch(error){finish(error);}
+          };
+          worker.onerror=function(){finish(new Error("DAILY_WORKER_FAILED"));};
+          timer=setTimeout(function(){finish(new Error("DAILY_GENERATION_TIMEOUT"));},8000);
+          worker.postMessage({key:key,mode:mode,seed:"nine-realms-daily-v3:"+key});
+        }catch(error){finish(error);}
+      });
+    }
+    return {run:run,cancel:cancel};
   }
 
   // Legacy schedules contain no per-puzzle clues; extra constraints cannot claim their records.
@@ -50,11 +130,35 @@
     });
   }
 
-  function matchesPuzzle(key, givens, mode, difficulty, clues) {
-    if (!legacyClues(clues) || !isDateKey(key) || !Array.isArray(givens) || givens.length !== 81) return false;
-    var puzzle = getPuzzle(key);
+  function sameClues(mode, expected, actual) {
+    try {
+      // Normalization rejects unknown fields and preserves every rule marker.
+      // Missing clues must never turn a different variant board into a daily game.
+      return JSON.stringify(Engine.normalizeClues(mode, expected)) ===
+        JSON.stringify(Engine.normalizeClues(mode, actual));
+    } catch (error) { return false; }
+  }
+
+  function sameBoard(puzzle, givens, mode, difficulty) {
     return puzzle.mode === mode && puzzle.difficulty === difficulty &&
       puzzle.givens.every(function (value, index) { return value === givens[index]; });
+  }
+
+  function needsConstruction(key,givens,mode,difficulty,clues){
+    if(!isDateKey(key)||!Array.isArray(givens)||givens.length!==81||key<CONSTRUCTED_START)return false;
+    if(legacyClues(clues)&&sameBoard(getLegacyPuzzle(key),givens,mode,difficulty))return false;
+    var old=getCuratedPuzzle(key);if(sameBoard(old,givens,mode,difficulty)&&sameClues(mode,old.clues,clues))return false;
+    if(mode!==constructedMode(key)||difficulty!=="easy")return false;
+    try{Engine.normalizeClues(mode,clues);}catch(error){return false;}return !constructedCache.has(key);
+  }
+  function matchesPuzzle(key, givens, mode, difficulty, clues) {
+    if (!isDateKey(key) || !Array.isArray(givens) || givens.length !== 81) return false;
+    if(legacyClues(clues)&&sameBoard(getLegacyPuzzle(key),givens,mode,difficulty))return true;
+    if(key>=CURATED_START){var old=getCuratedPuzzle(key);if(sameBoard(old,givens,mode,difficulty)&&sameClues(mode,old.clues,clues))return true;}
+    if(key<CONSTRUCTED_START||mode!==constructedMode(key)||difficulty!=="easy")return false;
+    try{Engine.normalizeClues(mode,clues);}catch(error){return false;}
+    var puzzle=getPuzzle(key);
+    return sameBoard(puzzle,givens,mode,difficulty)&&sameClues(mode,puzzle.clues,clues);
   }
 
   function recentDates(key, count) {
@@ -171,7 +275,7 @@
     return result;
   }
 
-  return { dateKey: dateKey, isDateKey: isDateKey, getPuzzle: getPuzzle,
+  return { createClient:createClient, peekPuzzle:peekPuzzle, describe:describe, needsConstruction:needsConstruction, dateKey: dateKey, isDateKey: isDateKey, getPuzzle: getPuzzle, getLegacyPuzzle: getLegacyPuzzle, getCuratedPuzzle:getCuratedPuzzle, curatedStart: CURATED_START, constructedStart: CONSTRUCTED_START,
     matchesPuzzle: matchesPuzzle, recentDates: recentDates, normalizeRecords: normalizeRecords,
     recordCompletion: recordCompletion, getStats: getStats, hasCompletion: hasCompletion, validateRecords: validateRecords, detailDates: detailDates };
 });

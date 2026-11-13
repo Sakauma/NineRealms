@@ -1,0 +1,2551 @@
+{
+  "version": 2,
+  "generationVersion": 5,
+  "complete": true,
+  "sourceDigests": {
+    "generator.js": "6903fd05fb7ca6ca591ed0ceedb583502d76a6a7bd5f4e0b397c2f18ef44111b",
+    "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+    "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+    "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+    "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+    "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+    "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+    "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+  },
+  "priorLedger": null,
+  "samplesPerMode": 30,
+  "modes": [
+    "classic",
+    "diagonal",
+    "hyper",
+    "knight",
+    "king",
+    "nonconsecutive",
+    "disjoint",
+    "jigsaw",
+    "twin",
+    "samurai",
+    "thermo",
+    "killer",
+    "arrow",
+    "thermo-killer",
+    "renban",
+    "whispers",
+    "odd-even",
+    "greater",
+    "kropki",
+    "xv",
+    "quadruple",
+    "sandwich",
+    "skyscraper",
+    "xsum",
+    "littlekiller",
+    "palindrome",
+    "between",
+    "lockout",
+    "entropic",
+    "modular",
+    "region-sum",
+    "clone"
+  ],
+  "method": "Consecutive fresh requests per mode; alternating tiers; actual app recent keys deduplicated and capped at 256. Full classical fixed-band-group base canonicalization for 81-cell Latin boards, sorted component canonical spectrum for multi boards (conservative, NOT full overlap-graph isomorphism). Pure-geometry D4 clue layouts. Independently replayed uniqueness and declared logical grading.",
+  "timingScope": "Synchronous Node generation wall time, not an actual browser/Windows/worker UI benchmark. Samples beyond 8000ms are not counted as within-watchdog generator completions and are never claimed as UI-delivered. Within-watchdog also does not prove UI delivery.",
+  "startedAt": "2026-11-13T13:27:21.472Z",
+  "elapsedMs": 216078,
+  "requests": 960,
+  "successes": 958,
+  "explicitDeclines": 2,
+  "unexpectedFailures": 0,
+  "independentBaseClasses": 958,
+  "within8SecondGeneratorCompletions": 958,
+  "above8SecondWatchdog": [],
+  "generationMs": {
+    "count": 960,
+    "p50": 76,
+    "p95": 351,
+    "max": 5821
+  },
+  "duplicateFindings": [],
+  "invalidFindings": [],
+  "rows": [
+    {
+      "mode": "classic",
+      "requests": 30,
+      "successes": 29,
+      "explicitDeclines": 1,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 29,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 63,
+        "p95": 297,
+        "max": 767
+      },
+      "successGenerationMs": {
+        "count": 29,
+        "p50": 63,
+        "p95": 273,
+        "max": 297
+      },
+      "declineGenerationMs": {
+        "count": 1,
+        "p50": 767,
+        "p95": 767,
+        "max": 767
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 0,
+        "max": 0
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 38
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 9,
+          "givenCounts": {
+            "min": 24,
+            "max": 32
+          },
+          "logicRounds": null,
+          "declines": [
+            {
+              "index": 14,
+              "code": "DENSITY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "diagonal",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 349,
+        "max": 1287
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 349,
+        "max": 1287
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 11
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 36
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 21,
+            "max": 35
+          },
+          "logicRounds": null,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "hyper",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 64,
+        "p95": 181,
+        "max": 307
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 64,
+        "p95": 181,
+        "max": 307
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 15
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 36
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 20,
+            "max": 26
+          },
+          "logicRounds": null,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "knight",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 79,
+        "p95": 384,
+        "max": 540
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 79,
+        "p95": 384,
+        "max": 540
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 6,
+        "max": 33
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 35
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 18,
+            "max": 27
+          },
+          "logicRounds": null,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "king",
+      "requests": 30,
+      "successes": 29,
+      "explicitDeclines": 1,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 29,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 77,
+        "p95": 1233,
+        "max": 1661
+      },
+      "successGenerationMs": {
+        "count": 29,
+        "p50": 77,
+        "p95": 1140,
+        "max": 1661
+      },
+      "declineGenerationMs": {
+        "count": 1,
+        "p50": 1233,
+        "p95": 1233,
+        "max": 1233
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 2,
+        "max": 15
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 42
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 9,
+          "givenCounts": {
+            "min": 23,
+            "max": 31
+          },
+          "logicRounds": null,
+          "declines": [
+            {
+              "index": 17,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "nonconsecutive",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 237,
+        "p95": 726,
+        "max": 808
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 237,
+        "p95": 726,
+        "max": 808
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 9,
+        "max": 37
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 2
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 31,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 3,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 24,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 6
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "disjoint",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 359,
+        "max": 841
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 359,
+        "max": 841
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 9,
+        "max": 36
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 24,
+            "max": 35
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 19,
+            "max": 33
+          },
+          "logicRounds": null,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "jigsaw",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 128,
+        "p95": 615,
+        "max": 823
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 128,
+        "p95": 615,
+        "max": 823
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": null,
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 39
+          },
+          "logicRounds": null,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 21,
+            "max": 35
+          },
+          "logicRounds": null,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "twin",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "conservative-sorted-subgrid-spectrum-not-full-multigrid-isomorphism",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 134,
+        "p95": 209,
+        "max": 226
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 134,
+        "p95": 209,
+        "max": 226
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": null,
+      "overlapContribution": {
+        "min": 0,
+        "max": 7
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 87,
+            "max": 87
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 72,
+            "max": 76
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 58,
+            "max": 64
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 11
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "samurai",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "conservative-sorted-subgrid-spectrum-not-full-multigrid-isomorphism",
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 30,
+        "p50": 377,
+        "p95": 4690,
+        "max": 5821
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 377,
+        "p95": 4690,
+        "max": 5821
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": null,
+      "overlapContribution": {
+        "min": 7,
+        "max": 24
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 210,
+            "max": 210
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 161,
+            "max": 182
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 150,
+            "max": 155
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "thermo",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 79,
+        "p95": 195,
+        "max": 261
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 79,
+        "p95": 195,
+        "max": 261
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 7
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 43,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 30,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 33
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "killer",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 78,
+        "p95": 173,
+        "max": 176
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 78,
+        "p95": 173,
+        "max": 176
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 6,
+        "max": 29
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 2
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 31,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 3,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "arrow",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 78,
+        "p95": 257,
+        "max": 357
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 78,
+        "p95": 257,
+        "max": 357
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 6
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 40,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 28,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "thermo-killer",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 143,
+        "max": 149
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 143,
+        "max": 149
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 10,
+        "max": 40
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 1,
+            "max": 2
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 28,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 3,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 19,
+            "max": 29
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 4
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "renban",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 85,
+        "p95": 161,
+        "max": 293
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 85,
+        "p95": 161,
+        "max": 293
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 8
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 38
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 11
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "whispers",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 170,
+        "max": 195
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 170,
+        "max": 195
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 5
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 28,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "odd-even",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 123,
+        "max": 126
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 123,
+        "max": 126
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 10
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 43,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 31
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 13
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "greater",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 172,
+        "max": 176
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 172,
+        "max": 176
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 11
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 43,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "kropki",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 71,
+        "p95": 118,
+        "max": 208
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 71,
+        "p95": 118,
+        "max": 208
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 7
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 38
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 11
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "xv",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 171,
+        "max": 251
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 74,
+        "p95": 171,
+        "max": 251
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 2,
+        "max": 11
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "quadruple",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 202,
+        "max": 203
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 202,
+        "max": 203
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 5
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 36,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "sandwich",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 167,
+        "max": 357
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 167,
+        "max": 357
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 18
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 42,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 31,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 24,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "skyscraper",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 297,
+        "max": 401
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 75,
+        "p95": 297,
+        "max": 401
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 7
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 39,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "xsum",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 91,
+        "max": 91
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 91,
+        "max": 91
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 2,
+        "max": 14
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 30,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 22,
+            "max": 30
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 7
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "littlekiller",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 66,
+        "p95": 148,
+        "max": 158
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 66,
+        "p95": 148,
+        "max": 158
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 9
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 37
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 10
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "palindrome",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 242,
+        "max": 288
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 72,
+        "p95": 242,
+        "max": 288
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 4
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 28,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 23,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 13
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "between",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 73,
+        "p95": 172,
+        "max": 191
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 73,
+        "p95": 172,
+        "max": 191
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 8
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "lockout",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 90,
+        "max": 163
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 70,
+        "p95": 90,
+        "max": 163
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 9
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 40,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 30,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 32
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "entropic",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 68,
+        "p95": 136,
+        "max": 155
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 68,
+        "p95": 136,
+        "max": 155
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 6
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 43,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 30,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 26,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 9
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "modular",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 101,
+        "p95": 233,
+        "max": 256
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 101,
+        "p95": 233,
+        "max": 256
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 8
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 27,
+            "max": 33
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 9
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "region-sum",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 146,
+        "p95": 291,
+        "max": 375
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 146,
+        "p95": 291,
+        "max": 375
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 4
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 41,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 30,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 29,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 8
+          },
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "clone",
+      "requests": 30,
+      "successes": 30,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "validationIssues": 0,
+      "independentBaseClasses": 30,
+      "baseScope": "classical-fixed-band-group",
+      "layoutD4Classes": 30,
+      "generationMs": {
+        "count": 30,
+        "p50": 66,
+        "p95": 120,
+        "max": 171
+      },
+      "successGenerationMs": {
+        "count": 30,
+        "p50": 66,
+        "p95": 120,
+        "max": 171
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "above8SecondWatchdog": [],
+      "ruleContribution": {
+        "min": 1,
+        "max": 5
+      },
+      "overlapContribution": null,
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 46,
+            "max": 46
+          },
+          "logicRounds": {
+            "min": 2,
+            "max": 3
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 28,
+            "max": 40
+          },
+          "logicRounds": {
+            "min": 4,
+            "max": 5
+          },
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 10,
+          "successes": 10,
+          "givenCounts": {
+            "min": 25,
+            "max": 34
+          },
+          "logicRounds": {
+            "min": 6,
+            "max": 9
+          },
+          "declines": []
+        }
+      ]
+    }
+  ],
+  "changedSourceFiles": [],
+  "sourceFilesUnchangedAtCompletion": true,
+  "qualityAudit": {
+    "markedStandardAdvanced": 440,
+    "confirmedClassicMultiple": 440,
+    "classicSinglesStalled": 440
+  }
+}

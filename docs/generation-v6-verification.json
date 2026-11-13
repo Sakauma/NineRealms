@@ -1,0 +1,39 @@
+{
+  "npm_test": "passed exit 0",
+  "test_dom": "passed exit 0",
+  "verify": "passed exit 0",
+  "git_diff_check": "passed",
+  "metadata_generation_version": 5,
+  "product_version": "1.3.4",
+  "source_matches_final_benchmark_snapshot": true,
+  "generator_sha256": "8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5",
+  "html_sha256": "2bcdf1441e4269c122fd63c83165c464d3667519e0b16271b8eb4007af910ae9",
+  "independent_v2": {
+    "classic": {
+      "baseline": 191,
+      "candidate": 198,
+      "requests_each": 200
+    },
+    "king": {
+      "baseline": 180,
+      "candidate": 200,
+      "requests_each": 200
+    },
+    "invalid_or_wrong_tier": 0,
+    "above_8s": 0,
+    "equivalent_duplicates": 0
+  },
+  "v1_replay": {
+    "classic_verified": 199,
+    "king_verified": 200,
+    "requests_each": 200,
+    "known_reverse_change": "hard-controlled-v1-classic-171: baseline and candidate1 verified, final candidate declined FRESH_DIFFICULTY_NOT_REACHED"
+  },
+  "original_failure_seeds": "both pass with original ledgers",
+  "limits": [
+    "Finite search can still decline",
+    "Not every seed is more reliable or faster",
+    "No Windows/mobile hardware or rendered pixel acceptance added"
+  ],
+  "committed_or_pushed": false
+}

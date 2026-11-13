@@ -15,3 +15,16 @@ __pycache__/
 /data/sudoku-exchange/validated-bank.json
 /src-tauri/target/
 /src-tauri/gen/
+!/docs/curated-puzzles.md
+!/docs/journey-content-update.md
+
+!/docs/puzzle-diversity.md
+!/docs/diversity-source.md
+!/docs/fresh-generation.md
+
+!/docs/diversity-marked-layouts.md
+!/docs/rule-path-grading.md
+!/docs/daily-construction-v3.md
+
+!/docs/diversity-composition.md
+!/docs/rule-quality.md

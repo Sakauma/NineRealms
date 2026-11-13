@@ -1,0 +1,15 @@
+有界失败恢复 v1
+
+普通 Generator.generate 和冻结每日策略保持原行为。Generator.recover(request,{stage}) 是独立接口，返回 {puzzle,recovery}；recover 本身不触发下一阶段。
+
+fresh-retry：只派生一个固定新种子，调用有限 fresh 搜索。经典/国王采用原 v5 单源单顺序策略，和主流程策略不同；其他模式保留同一严格验收。随后再验证题面、完整规则、唯一解、实际档位和近期规范化底盘。奇迹不支持新构造，明确报 RECOVERY_SEARCH_UNSUPPORTED。
+
+verified-catalog：最多检查24个原库存候选，再最多检查24个预先生成的固定备用候选。原库存仅接受完整Hints技巧评级支持的模式，以及可完整RulePath评级的奇迹。绝不依赖原density档名。固定备用保留原generation/version5元数据，再复核题面与其证据，不伪装为本次新构造。标准/进阶标记题仍需Quality规则作用验收。
+
+每题唯一解检查12000节点上限；耗尽不视为通过。Hints评级仍为原200步/200ms预算。客户端在独立worker中为主流程8s、备用搜索8s、库存阶段4s，三个阶段看门狗预算合计20s（另有源码组装、worker启动及阶段切换开销），取消会终止当前worker；生成器同步接口依靠有限尝试/节点预算，不能自己抢占线程。Worker不可用不转为主线程无界搜索。
+
+所有阶段检查相同的fingerprint、完整群baseFingerprint，以及适用的D4规则布局键。当前对局、旧库存和已恢复备用题都应进入近期记录。库存容量有限，排重耗尽仍返回CATALOG_EXHAUSTED，不清除排除、不降级、不谎称新题。
+
+持久game.recovery：version:1，kind:'fresh-retry'|'verified-catalog'|'verified-reserve'，requestSeed，seed，sourceId。仅verified-reserve另有reserveId。fresh-retry与reserve保留constructed generation且sourceId:null；catalog保留真实sourceId且没有伪造的generation。reserve的seed为原固定题种子，另两类为请求派生种子。恢复存档必须验证来源身份及同等题面/评级/唯一性，不能只信这几个字符串。
+
+有限备用集216题、32模式三档每格至少2题；经典/国王hard各8，其余部分原库不足格子各4。它不是无限题库。奇迹完成盘经典等价类只有1，当前题已记近期后可能没有另一个可接受底盘；中/高库存若实际都只能评级easy，将明确无合格题。

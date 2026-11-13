@@ -33,6 +33,6 @@ const w=dom.window,d=w.document,$=id=>d.getElementById(id),tick=()=>new Promise(
  $('voyage-world-nodes').querySelector('[data-world-id="lines-rise-v1"]').click();$('voyage-start').click();$('confirm-accept').click();await tick();
  assert.equal(saved().voyageId,'lines-rise-v1');const q=V.getPuzzle('lines-rise-v1');assert.deepEqual(saved().givens,q.givens);assert.deepEqual(saved().clues,q.clues);assert.equal(saved().started,false);
  $('rules-open').click();await tick();assert($('logic-rating-panel').hidden);assert.equal($('logic-rating').textContent,'');$('rules-close').click();
- assert.equal(d.querySelector('.app-version').textContent,'1.3.4');assert.deepEqual(errors,[]);dom.window.close();
+ assert.equal(d.querySelector('.app-version').textContent,'1.3.5');assert.deepEqual(errors,[]);dom.window.close();
  console.log('PASS roadmap DOM: single selected-cell result without board/note/history mutation, bounded original-puzzle rating, linked tracks with inherited passage, legacy progress, teaching text, cancel preservation and full-clue new chapter install. No actual rendering.');
 })().catch(e=>{console.error(e);dom.window.close();process.exitCode=1;});

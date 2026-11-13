@@ -1,0 +1,62 @@
+{
+  "version": "generation-v7",
+  "remoteMain": "39725d94f5a55c8daa010e7f5d7407c6cb3c1938",
+  "checks": {
+    "focusedRecovery": "passed",
+    "testDom": "passed",
+    "verify": "passed",
+    "fullNpmTest": "passed",
+    "independentAudit": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "html": {
+    "bytes": 4750870,
+    "sha256": "7a350086478d7cfeac263afafcc79ff6812670233cf4da4679035d47ab273bed",
+    "distIdentical": true
+  },
+  "sourceHashes": {
+    "src/app.js": "25ea8246f8c8999edbbd33d0f26f659ab8989b933b55441196ef06c78442a128",
+    "src/generator.js": "15851ab589dc44ec66a92427a72909cdbdff532b4eb55773150c295523632307",
+    "src/backup.js": "72d6b30afac09e480c381bdbd778e0e0625efd955c6056eb9a8035bc5902d961",
+    "src/recovery-reserve.js": "1898ffc42a58f6e74fa70fce550edaec1e389afec268b89e771acda38069c424",
+    "src/index.html": "611de74348d1e3b512051c3acbfb15752b43857a075ec8ab3e1b8e6e7b7052d9",
+    "scripts/build.py": "cd2854cc0aba8f8faa6abecb3ed118e2a95d73490dd240c4ee45cc299444b1a9",
+    "package.json": "b20177ed0439f9ef0ea9c97ac39a1a38fa955df4b97305a86bcb4e185882f55e"
+  },
+  "limits": [
+    "Linux Node and jsdom; not Windows/mobile/browser pixels",
+    "Stage budgets are watchdog timers, not an absolute wall-clock guarantee",
+    "Finite reserve and canonical recent exclusions may exhaust",
+    "Rule-depth tiers are not claimed to be human-playtest ratings"
+  ],
+  "regression": {
+    "legacyCatalogAcceptedUnique": 10128,
+    "legacyExpectedDeclines": 129,
+    "freshModeMatrix": "32 modes x 3 tiers x 3 seeds passed",
+    "frozenDaily": "40 dates / 11 golden dates passed"
+  },
+  "sourceHashesMatch": true,
+  "artifactDeltaFromV6": {
+    "v6HtmlBytes": 4304133,
+    "v7HtmlBytes": 4750870,
+    "increaseBytes": 446737,
+    "reason": "Finite offline reserve plus bounded recovery client and provenance validation"
+  },
+  "audit": {
+    "elapsedMs": 98614,
+    "independentRequests": 200,
+    "independentPrimaryAccepted": 200,
+    "independentFinalAccepted": 200,
+    "knownV6DeclinesReplayed": 3,
+    "knownDeclinesRecoveredByFreshSearch": 3,
+    "coverageModeTierCells": 99,
+    "freshRetryAcceptedCells": 96,
+    "freshRetryUnsupportedMiracleCells": 3,
+    "fixedStageAcceptedCells": 97,
+    "fixedStageUnavailableMiracleMediumHard": 2,
+    "overStageBudget": 0,
+    "invalidResultsOrUnexpectedErrors": 0,
+    "sourceStable": true,
+    "scope": "One seed per coverage cell, empty ledger; 200 independent requests use rolling recent256 and shared v6-primary results, not independently diverging sessions. This sample estimates no reduction in natural failure rate because all 200 primary requests passed."
+  }
+}

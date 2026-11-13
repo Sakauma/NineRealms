@@ -1,0 +1,84 @@
+Fresh-generation v4 audit
+
+Run:
+  node scripts/audit-fresh-diversity.cjs
+
+Default: 30 consecutive seeded requests per current fresh mode, alternating
+three tiers (10 requests per tier), with the actual app's recent-key policy:
+puzzle fingerprint + base fingerprint + optional layout fingerprint; deduplicate
+keys and retain the latest 256. Output: evidence/diversity/v4-audit-30.json.
+Progress is saved every 10 requests. Source SHA-256 hashes are captured at start.
+
+All returned puzzle data is captured before assertions. Successes are separately
+checked for valid completed solutions, consistent givens, independent full-rule
+unique-solution proof with no exhausted node budget, and the declared grading:
+- supported-logic: Hints replay with maxSteps=200, timeLimitMs=1000, trace=true;
+  every placement reconstructs the stored unique answer and tier must match.
+  A timeout is an explicit unresolved audit-budget issue, not proof of an illegal
+  puzzle and not a hidden pass.
+- rule-depth: independently re-run RulePath from givens with trace; require full
+  completion, exact grade and round-count agreement, and reconstruct the answer.
+  This is dependency depth for supported parallel rule singles, not a general
+  minimum-human-difficulty estimate.
+
+81-cell bases use complete classical fixed-band-group canonical keys (the group
+also acts on jigsaw Latin completions, not arbitrary region graph isomorphism).
+Multi-board bases extract each 81-cell component with Engine.getLayout, canonicalize
+it, sort all component signatures, and prefix the mode. This is conservative
+component-spectrum deduplication, NOT full joint-board/overlap-graph isomorphism.
+Jigsaw and marked modes also receive pure-geometry D4 layout audit. For jigsaw,
+classic-box candidate counts are intentionally not used as a rule-contribution
+baseline. Multi-board overlapping cells instead record candidate reduction from
+combining their participating boards.
+
+All explicit generation refusals, duplicate findings, and validation issues are
+retained. Unexpected failures, duplicates and unresolved verification issues set
+a nonzero exit status; they are never removed to raise the reported success rate.
+
+Timings are synchronous Node wall-clock observations. Above-8000ms calls are listed
+separately and excluded from within-watchdog generator completion counts. Neither
+those within 8 seconds nor this script itself certify delivery in browser UI,
+Windows builds or on a user's device. This is not a real-device performance test.
+
+Options:
+  FRESH_AUDIT_SAMPLES=30
+  FRESH_AUDIT_MODES=classic,jigsaw,twin
+  FRESH_AUDIT_OUTPUT=some-report.json
+  FRESH_AUDIT_PRIOR=previous-report.json
+
+PRIOR restores the initial recent ledger for the first selected mode from the
+preceding successful records. A group re-run should be stored separately and
+identified as a full replacement group, not proof that an uncaptured earlier
+problematic puzzle was correct. Do not mix versions under one unqualified result.
+
+Recorded v4 result (2026-11-13)
+-------------------------------
+32 modes x 30 requests = 960 requests (10 requests per tier per mode).
+957 constructed puzzles passed all independent checks; 3 explicit refusals:
+- classic / hard / index 14: DENSITY_NOT_REACHED
+- king / hard / index 17: FRESH_DIFFICULTY_NOT_REACHED
+- region-sum / easy / index 18: FRESH_RULE_NOT_USED
+No unexpected errors, duplicate base classes, duplicate D4 rule layouts, unresolved
+logical budgets, tier/round mismatches, or invalid puzzles were found.
+957 accepted outputs produced 957 base classes under the stated canonical scopes.
+All 23 modes with variable rule/region layout had a different D4 layout for every
+accepted sample. Twin/samurai use the explicitly conservative component spectrum.
+
+Synchronous generation timing over ALL 960 requests:
+  p50 73 ms / p95 342 ms / maximum 2164 ms
+  No sample exceeded the 8000 ms worker threshold.
+  Total generation plus independent-audit run: 197.218 seconds.
+These observations are NOT browser, Windows, or user-device delivery guarantees.
+A separate tests/fresh-audit-budgets.test.cjs passed deterministic source/strict-
+technique/rule-depth refusal tests and simulated worker timeout cleanup.
+
+All ordinary audited source files retained identical SHA-256 hashes from audit
+start to completion and documentation copy. The frozen daily v1 wrapper was
+subsequently expanded to eight modes. Daily snapshot behavior was outside this
+ordinary fresh:true audit; current daily file hashes are recorded separately as
+NOT audited in documentationCoverageNote. Do not use this report as daily QA.
+
+Full original output/cases, failures, and source hashes:
+  docs/diversity-audit/v4-audit-30.json
+Compact report (same coverage and explicit limitations):
+  docs/diversity-audit/v4-audit-30-summary.json

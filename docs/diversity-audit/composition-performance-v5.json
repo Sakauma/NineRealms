@@ -1,0 +1,60 @@
+{
+  "method": "Same 100 MRV solutions/seeds, sequential Node builds; previous=delivered next-diversity copy with 3–4-cell lines; observed timings, not runtime guarantees",
+  "rows": [
+    {
+      "mode": "thermo",
+      "previous": {
+        "meanMs": 0.81,
+        "maxMs": 6.31
+      },
+      "current": {
+        "meanMs": 1.39,
+        "maxMs": 9.13
+      }
+    },
+    {
+      "mode": "arrow",
+      "previous": {
+        "meanMs": 1.96,
+        "maxMs": 12.33
+      },
+      "current": {
+        "meanMs": 2.07,
+        "maxMs": 9.92
+      }
+    },
+    {
+      "mode": "renban",
+      "previous": {
+        "meanMs": 2.69,
+        "maxMs": 8.44
+      },
+      "current": {
+        "meanMs": 9.21,
+        "maxMs": 16.19
+      }
+    },
+    {
+      "mode": "whispers",
+      "previous": {
+        "meanMs": 0.5,
+        "maxMs": 2.23
+      },
+      "current": {
+        "meanMs": 0.78,
+        "maxMs": 7.16
+      }
+    },
+    {
+      "mode": "thermo-killer",
+      "previous": {
+        "meanMs": 0.99,
+        "maxMs": 7.9
+      },
+      "current": {
+        "meanMs": 1.7,
+        "maxMs": 6.24
+      }
+    }
+  ]
+}

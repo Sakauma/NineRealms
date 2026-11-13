@@ -1,0 +1,66 @@
+[
+  {
+    "id": "curated-thermo-intro-1-v1",
+    "sha256": "6f73c426a08de43cafd5750ac74a4a0d26a9df5951478d6ac20e7160444ea161"
+  },
+  {
+    "id": "curated-thermo-intro-2-v1",
+    "sha256": "41337695cdd094f3e07f6754b3fe0ff59069d4ba9a5af4bbb8204fdc971b91be"
+  },
+  {
+    "id": "curated-thermo-standard-1-v1",
+    "sha256": "6212fb97e98dcb2ecbc89e39bd3bcfd1c0da78e61400fb1fcfd78a3b51db4cf3"
+  },
+  {
+    "id": "curated-thermo-standard-2-v1",
+    "sha256": "b11a23dbf34a5236cfdf0236224cb629eba3df53acc67078994fd59c0eee1a89"
+  },
+  {
+    "id": "curated-killer-intro-1-v1",
+    "sha256": "c604694eee87b09367fbc104e59579de9724edb04ce4c04c30f7382b2fea13a2"
+  },
+  {
+    "id": "curated-killer-intro-2-v1",
+    "sha256": "90e822a33a3ea81dacce073689d179659fc460dc14de1ccd9645a94edd8c72f9"
+  },
+  {
+    "id": "curated-killer-standard-1-v1",
+    "sha256": "a06c6d82469c0bd6ac0c17e97547b59cce12af6e327c2752b5ed591413bbf5d6"
+  },
+  {
+    "id": "curated-killer-standard-2-v1",
+    "sha256": "95c1f0c3755ae77c0836254278fa90763368889e91f16ffd11f0062ae4fd4252"
+  },
+  {
+    "id": "curated-arrow-intro-1-v1",
+    "sha256": "64f606e70c1749a8b07ddb8e6cfe7070abb69a4a02eb99b324e266cdef81628a"
+  },
+  {
+    "id": "curated-arrow-intro-2-v1",
+    "sha256": "e34a2a3c2477a8527c142e1d6f2118757ce4585dd56551a38ddef5b51bfee983"
+  },
+  {
+    "id": "curated-arrow-standard-1-v1",
+    "sha256": "0121bccd96f470f36ec4f0a4030f59e9303e6f63caffcfc1be14999c58282b61"
+  },
+  {
+    "id": "curated-arrow-standard-2-v1",
+    "sha256": "ab563d78a65237f530720054dd43ec691fc58cc219bc7d1313b7d54e1c6b81b8"
+  },
+  {
+    "id": "curated-thermo-killer-intro-1-v1",
+    "sha256": "7ffe06bf02c8c344888cd8e8987e6f94948aa8ccc3c37d8a5b2a5f8e0d225db1"
+  },
+  {
+    "id": "curated-thermo-killer-intro-2-v1",
+    "sha256": "564cc3393b3908bef07c9296e39ebbf70169cb9348159d26a98785d4c0fda207"
+  },
+  {
+    "id": "curated-thermo-killer-standard-1-v1",
+    "sha256": "ad6262c9f5c8253f385694964bc75f9940ec042d454f1e13a883be850bba26f8"
+  },
+  {
+    "id": "curated-thermo-killer-standard-2-v1",
+    "sha256": "de63c5842b6076be254d50332f7fa98d985c4c8ebda8da031465fe5b48cee035"
+  }
+]

@@ -1,0 +1,2008 @@
+{
+  "complete": true,
+  "sources": [
+    "diversity-audit/fresh-100-initial.json",
+    "diversity-audit/fresh-knight-100-recheck.json"
+  ],
+  "scope": "22 per-mode continuous 100-request groups. Knight group fully rerun with exact initial recent-key ledger; other groups retained from first pass. Not a new uninterrupted 2200-request run.",
+  "supersededIssue": {
+    "source": "fresh-100-initial.json",
+    "mode": "knight",
+    "index": 37,
+    "reason": "200ms post-generation rating check returned false during host contention; original puzzle not captured. Entire group re-run, not authentication of original sample.",
+    "originalIssueRetained": true
+  },
+  "requests": 2200,
+  "successes": 2157,
+  "explicitDeclines": 43,
+  "independentSolutionClasses": 2157,
+  "globalDuplicateFindings": [],
+  "invalidFindings": [],
+  "generationMs": {
+    "p50": 76,
+    "p95": 746,
+    "max": 12864
+  },
+  "above8SecondUIWatchdog": [
+    {
+      "mode": "king",
+      "index": 11,
+      "generationMs": 8377
+    },
+    {
+      "mode": "renban",
+      "index": 95,
+      "generationMs": 12864
+    },
+    {
+      "mode": "littlekiller",
+      "index": 71,
+      "generationMs": 11145
+    }
+  ],
+  "rows": [
+    {
+      "mode": "classic",
+      "requests": 100,
+      "successes": 97,
+      "explicitDeclines": 3,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 97,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 86,
+        "p95": 907,
+        "max": 2421
+      },
+      "successGenerationMs": {
+        "count": 97,
+        "p50": 83,
+        "p95": 842,
+        "max": 2421
+      },
+      "declineGenerationMs": {
+        "count": 3,
+        "p50": 1017,
+        "p95": 1096,
+        "max": 1096
+      },
+      "ruleContribution": {
+        "min": 0,
+        "max": 0,
+        "zero": 97
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 30,
+          "declines": [
+            {
+              "index": 20,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 23,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 83,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "diagonal",
+      "requests": 100,
+      "successes": 98,
+      "explicitDeclines": 2,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 98,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 115,
+        "p95": 1028,
+        "max": 1727
+      },
+      "successGenerationMs": {
+        "count": 98,
+        "p50": 113,
+        "p95": 977,
+        "max": 1727
+      },
+      "declineGenerationMs": {
+        "count": 2,
+        "p50": 1067,
+        "p95": 1435,
+        "max": 1435
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 10,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 31,
+          "declines": [
+            {
+              "index": 17,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 83,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "hyper",
+      "requests": 100,
+      "successes": 99,
+      "explicitDeclines": 1,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 99,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 124,
+        "p95": 1045,
+        "max": 1399
+      },
+      "successGenerationMs": {
+        "count": 99,
+        "p50": 124,
+        "p95": 1045,
+        "max": 1399
+      },
+      "declineGenerationMs": {
+        "count": 1,
+        "p50": 1360,
+        "p95": 1360,
+        "max": 1360
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 14,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 32,
+          "declines": [
+            {
+              "index": 83,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "knight",
+      "requests": 100,
+      "successes": 79,
+      "explicitDeclines": 21,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 79,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 118,
+        "p95": 1265,
+        "max": 1626
+      },
+      "successGenerationMs": {
+        "count": 79,
+        "p50": 86,
+        "p95": 727,
+        "max": 1265
+      },
+      "declineGenerationMs": {
+        "count": 21,
+        "p50": 1091,
+        "p95": 1560,
+        "max": 1626
+      },
+      "ruleContribution": {
+        "min": 4,
+        "max": 27,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "givenCounts": [
+            46,
+            44,
+            44,
+            42,
+            43,
+            44,
+            46,
+            43,
+            44,
+            45,
+            43,
+            42,
+            43,
+            45,
+            44,
+            43,
+            44,
+            45,
+            42,
+            44,
+            45,
+            43,
+            46,
+            43,
+            46,
+            44,
+            42,
+            44,
+            45,
+            42,
+            42,
+            43,
+            43,
+            46
+          ],
+          "logicRepairs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "givenCounts": [
+            28,
+            27,
+            27,
+            27,
+            28,
+            36,
+            30,
+            32,
+            29,
+            32,
+            32,
+            28,
+            27,
+            28,
+            29,
+            35,
+            27,
+            28,
+            26,
+            37,
+            29,
+            29,
+            28,
+            29,
+            28,
+            26,
+            30,
+            28,
+            28,
+            27,
+            28,
+            27,
+            29
+          ],
+          "logicRepairs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 12,
+          "givenCounts": [
+            25,
+            24,
+            26,
+            23,
+            26,
+            27,
+            30,
+            24,
+            25,
+            24,
+            27,
+            23
+          ],
+          "logicRepairs": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "declines": [
+            {
+              "index": 8,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 11,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 17,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 20,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 23,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 29,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 32,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 35,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 47,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 50,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 53,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 56,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 59,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 65,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 68,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 71,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 74,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 77,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 80,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 89,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 98,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "king",
+      "requests": 100,
+      "successes": 94,
+      "explicitDeclines": 6,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 94,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 114,
+        "p95": 790,
+        "max": 8377
+      },
+      "successGenerationMs": {
+        "count": 94,
+        "p50": 112,
+        "p95": 695,
+        "max": 1391
+      },
+      "declineGenerationMs": {
+        "count": 6,
+        "p50": 790,
+        "p95": 8377,
+        "max": 8377
+      },
+      "ruleContribution": {
+        "min": 0,
+        "max": 15,
+        "zero": 1
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 27,
+          "declines": [
+            {
+              "index": 2,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 5,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 11,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 53,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 74,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 92,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "nonconsecutive",
+      "requests": 100,
+      "successes": 99,
+      "explicitDeclines": 1,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 99,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 238,
+        "p95": 875,
+        "max": 1725
+      },
+      "successGenerationMs": {
+        "count": 99,
+        "p50": 238,
+        "p95": 906,
+        "max": 1725
+      },
+      "declineGenerationMs": {
+        "count": 1,
+        "p50": 766,
+        "p95": 766,
+        "max": 766
+      },
+      "ruleContribution": {
+        "min": 5,
+        "max": 35,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 32,
+          "declines": [
+            {
+              "index": 55,
+              "code": "RECENT_STRUCTURE_DUPLICATE"
+            }
+          ]
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "disjoint",
+      "requests": 100,
+      "successes": 91,
+      "explicitDeclines": 9,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 91,
+      "layoutD4Classes": null,
+      "generationMs": {
+        "count": 100,
+        "p50": 152,
+        "p95": 1131,
+        "max": 2198
+      },
+      "successGenerationMs": {
+        "count": 91,
+        "p50": 144,
+        "p95": 838,
+        "max": 1206
+      },
+      "declineGenerationMs": {
+        "count": 9,
+        "p50": 1048,
+        "p95": 2198,
+        "max": 2198
+      },
+      "ruleContribution": {
+        "min": 5,
+        "max": 34,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 24,
+          "declines": [
+            {
+              "index": 14,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 17,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 26,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 41,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 50,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 56,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 83,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 86,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            },
+            {
+              "index": 89,
+              "code": "FRESH_DIFFICULTY_NOT_REACHED"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "thermo",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 100,
+        "p95": 205,
+        "max": 317
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 100,
+        "p95": 205,
+        "max": 317
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 10,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "killer",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 92,
+        "p95": 159,
+        "max": 225
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 92,
+        "p95": 159,
+        "max": 225
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 4,
+        "max": 32,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "arrow",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 82,
+        "p95": 124,
+        "max": 148
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 82,
+        "p95": 124,
+        "max": 148
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 9,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "thermo-killer",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 70,
+        "p95": 173,
+        "max": 247
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 70,
+        "p95": 173,
+        "max": 247
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 6,
+        "max": 37,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "renban",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 70,
+        "p95": 231,
+        "max": 12864
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 70,
+        "p95": 231,
+        "max": 12864
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 9,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "whispers",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 69,
+        "p95": 195,
+        "max": 453
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 69,
+        "p95": 195,
+        "max": 453
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 6,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "odd-even",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 66,
+        "p95": 184,
+        "max": 708
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 66,
+        "p95": 184,
+        "max": 708
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 11,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "greater",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 64,
+        "p95": 120,
+        "max": 177
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 64,
+        "p95": 120,
+        "max": 177
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 10,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "kropki",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 65,
+        "p95": 109,
+        "max": 191
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 65,
+        "p95": 109,
+        "max": 191
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 9,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "xv",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 63,
+        "p95": 76,
+        "max": 82
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 63,
+        "p95": 76,
+        "max": 82
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 12,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "quadruple",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 68,
+        "p95": 184,
+        "max": 256
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 68,
+        "p95": 184,
+        "max": 256
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 7,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "sandwich",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 68,
+        "p95": 103,
+        "max": 143
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 68,
+        "p95": 103,
+        "max": 143
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 19,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "skyscraper",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 71,
+        "p95": 156,
+        "max": 258
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 71,
+        "p95": 156,
+        "max": 258
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 9,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "xsum",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 71,
+        "p95": 201,
+        "max": 3859
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 71,
+        "p95": 201,
+        "max": 3859
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 13,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    },
+    {
+      "mode": "littlekiller",
+      "requests": 100,
+      "successes": 100,
+      "explicitDeclines": 0,
+      "unexpectedFailures": 0,
+      "independentSolutionClasses": 100,
+      "layoutD4Classes": 100,
+      "generationMs": {
+        "count": 100,
+        "p50": 125,
+        "p95": 1817,
+        "max": 11145
+      },
+      "successGenerationMs": {
+        "count": 100,
+        "p50": 125,
+        "p95": 1817,
+        "max": 11145
+      },
+      "declineGenerationMs": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "max": null
+      },
+      "ruleContribution": {
+        "min": 1,
+        "max": 12,
+        "zero": 0
+      },
+      "byDifficulty": [
+        {
+          "difficulty": "easy",
+          "requests": 34,
+          "successes": 34,
+          "declines": []
+        },
+        {
+          "difficulty": "medium",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        },
+        {
+          "difficulty": "hard",
+          "requests": 33,
+          "successes": 33,
+          "declines": []
+        }
+      ]
+    }
+  ],
+  "layoutDuplicateFindings": [],
+  "layoutClassesByMode": {
+    "thermo": 100,
+    "killer": 100,
+    "arrow": 100,
+    "thermo-killer": 100,
+    "renban": 100,
+    "whispers": 100,
+    "odd-even": 100,
+    "greater": 100,
+    "kropki": 100,
+    "xv": 100,
+    "quadruple": 100,
+    "sandwich": 100,
+    "skyscraper": 100,
+    "xsum": 100,
+    "littlekiller": 100
+  },
+  "firstPass": {
+    "file": "fresh-100-initial.json",
+    "preserved": true,
+    "elapsedMs": 692952,
+    "originalInvalidFindings": [
+      {
+        "mode": "knight",
+        "difficulty": "medium",
+        "index": 37,
+        "message": "The expression evaluated to a falsy value:\n\n  assert(G.matchesDifficulty(p.givens,difficulty,context))\n",
+        "stack": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(G.matchesDifficulty(p.givens,difficulty,context))\n\n    at Object.<anonymous> (/workspace/scratch/1a6867f4fcc2/ninerealms_diversity_1113/scripts/audit-fresh-diversity.cjs:23:35)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+      }
+    ],
+    "above8SecondUIWatchdog": [
+      {
+        "mode": "knight",
+        "index": 37,
+        "generationMs": 8762
+      },
+      {
+        "mode": "knight",
+        "index": 39,
+        "generationMs": 10278
+      },
+      {
+        "mode": "king",
+        "index": 11,
+        "generationMs": 8377
+      },
+      {
+        "mode": "renban",
+        "index": 95,
+        "generationMs": 12864
+      },
+      {
+        "mode": "littlekiller",
+        "index": 71,
+        "generationMs": 11145
+      }
+    ]
+  },
+  "recheck": {
+    "file": "fresh-knight-100-recheck.json",
+    "mode": "knight",
+    "requests": 100,
+    "entireGroupReplacement": true,
+    "elapsedMs": 43872,
+    "initialLedger": {
+      "report": "fresh-100-initial.json",
+      "precedingRecords": 300,
+      "keys": 256
+    },
+    "generationMs": {
+      "count": 100,
+      "p50": 118,
+      "p95": 1265,
+      "max": 1626
+    },
+    "successGenerationMs": {
+      "count": 79,
+      "p50": 86,
+      "p95": 727,
+      "max": 1265
+    }
+  },
+  "densitySupplement": {
+    "file": "fresh-density-20-supplement.json",
+    "scope": "Separate 20 requests per marked mode, alternating tiers; not original 100-per-mode density evidence. All returned samples independently checked for legality, uniqueness and answer-free completion. No canonical audit in this supplemental run.",
+    "requests": 300,
+    "successes": 300,
+    "explicitDeclines": 0,
+    "invalidFindings": [],
+    "elapsedMs": 56983,
+    "rows": [
+      {
+        "mode": "thermo",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 35,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 28,
+            "givenMax": 31,
+            "repairMax": 3,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "killer",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 28,
+            "givenMax": 30,
+            "repairMax": 0,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "arrow",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 35,
+            "givenMax": 38,
+            "repairMax": 1,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 27,
+            "givenMax": 32,
+            "repairMax": 4,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "thermo-killer",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 29,
+            "repairMax": 0,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "renban",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 31,
+            "repairMax": 1,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "whispers",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 30,
+            "repairMax": 2,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "odd-even",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 30,
+            "repairMax": 0,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "greater",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 35,
+            "givenMax": 38,
+            "repairMax": 1,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 32,
+            "repairMax": 6,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "kropki",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 37,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 27,
+            "givenMax": 30,
+            "repairMax": 2,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "xv",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 2,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 27,
+            "givenMax": 30,
+            "repairMax": 0,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "quadruple",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 35,
+            "givenMax": 38,
+            "repairMax": 1,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 32,
+            "repairMax": 3,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "sandwich",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 43,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 26,
+            "givenMax": 29,
+            "repairMax": 0,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "skyscraper",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 45,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 35,
+            "givenMax": 40,
+            "repairMax": 2,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 29,
+            "givenMax": 35,
+            "repairMax": 5,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "xsum",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 42,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 37,
+            "repairMax": 1,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 28,
+            "givenMax": 31,
+            "repairMax": 2,
+            "successes": 6
+          }
+        }
+      },
+      {
+        "mode": "littlekiller",
+        "successes": 20,
+        "requests": 20,
+        "tiers": {
+          "easy": {
+            "givenMin": 43,
+            "givenMax": 46,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "medium": {
+            "givenMin": 34,
+            "givenMax": 38,
+            "repairMax": 0,
+            "successes": 7
+          },
+          "hard": {
+            "givenMin": 28,
+            "givenMax": 30,
+            "repairMax": 2,
+            "successes": 6
+          }
+        }
+      }
+    ]
+  },
+  "densitySupplementSource": "diversity-audit/fresh-density-20-supplement.json"
+}

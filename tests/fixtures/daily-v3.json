@@ -1,0 +1,46 @@
+[
+  {
+    "date": "2026-11-15",
+    "sha256": "2f861519bdcd61db3ff111241be2ed16e889b18782ceaba5a420c439f8acc29e"
+  },
+  {
+    "date": "2026-11-16",
+    "sha256": "87e0599ea6e6a8f0326860d539c8f7b74d4c2bee00cfe73ce18bfeca7404818c"
+  },
+  {
+    "date": "2026-11-17",
+    "sha256": "d1afebb6d9f5031fc8db1500e03d8efbf716881585e20925ead0a34cbbfb822a"
+  },
+  {
+    "date": "2026-11-18",
+    "sha256": "1a49b71148c23afa284e1d3e7317fbdab04f02e7fa7e2f9860b76d37bba12994"
+  },
+  {
+    "date": "2026-11-19",
+    "sha256": "77155aa413a37ecfa7c5d58ae14fb319f4d79648540362a94bcc7fda3a33ddd8"
+  },
+  {
+    "date": "2026-11-20",
+    "sha256": "baad16c42e9e5367472e3ae553cc4701b598cc1845c2fb4db89ba43452719ea5"
+  },
+  {
+    "date": "2026-11-21",
+    "sha256": "5e3d574e19f80d4f220021eac648fd81285b978349302dc25fdbd750f8182ee0"
+  },
+  {
+    "date": "2026-11-22",
+    "sha256": "19ed3184d75560e73b3bf035d45d21ce8d8cf5f1ce5ad289585789a7edfebadf"
+  },
+  {
+    "date": "2026-12-31",
+    "sha256": "2f63abcd0a70a3ebc1d4a4b9cf028472ec6fb41b53df325e19b27eefaa833f72"
+  },
+  {
+    "date": "2027-01-01",
+    "sha256": "2e9583baa114c784bbe582ada0f0d97c82e3fe88a2dd5b89a9dfba58894b473c"
+  },
+  {
+    "date": "2028-02-29",
+    "sha256": "b00271688570af4e705e7819fcf6fbea9e5cc59fa9720876c9f2331c1fdc69fb"
+  }
+]

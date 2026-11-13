@@ -1,0 +1,31 @@
+{
+  "status": "blocked",
+  "actualRenderedScreenshots": 0,
+  "platform": "Debian Linux cloud command sandbox",
+  "installedBrowser": "Chromium 156.0.8078.79",
+  "attempts": [
+    {
+      "path": "existing browser-helper headless Chromium/CDP",
+      "error": "process_singleton_posix.cc socket() failed: Operation not permitted (1)"
+    },
+    {
+      "path": "reviewed elevated execution of same local test",
+      "error": "same IPC socket denial"
+    },
+    {
+      "path": "managed cloud browser local file",
+      "error": "file protocol disallowed; no override attempted"
+    },
+    {
+      "path": "managed cloud browser local HTTP workspace service",
+      "error": "ERR_CONNECTION_REFUSED; service remained running, no shared loopback route"
+    }
+  ],
+  "limits": [
+    "No actual project rendering was observed.",
+    "No screenshots or visual pass can be claimed.",
+    "No user Windows, phone, GPU or native packaged-app test.",
+    "No site published and no accounts accessed."
+  ],
+  "preparedRunner": "tests/v5-visual-browser.test.cjs"
+}

@@ -19,7 +19,7 @@ for(const p of data){
 }
 for(const p of fixture.sources)assert.equal(hash(E.getPuzzle(p.difficulty,'old-id-check',p.mode,{sourceId:p.id})),p.sha256);
 const daily=require('../src/daily.js'),voyage=require('../src/voyage.js');
-for(const p of fixture.daily)assert.equal(hash(daily.getPuzzle(p.date)),p.sha256);
+for(const p of fixture.daily)assert.equal(hash(daily.getLegacyPuzzle(p.date)),p.sha256);
 for(const p of fixture.voyage)assert.equal(hash(voyage.getPuzzle(p.id)),p.sha256);
 for(const tier of ['easy','medium','hard'])for(const p of data.filter(p=>p.difficulty===tier).slice(0,10)){
  const q=E.getPuzzle(tier,'challenge',p.mode,{sourceId:p.id}),r=C.decode(C.create(q));assert.deepEqual(q.givens,r.givens);assert.deepEqual(q.solution,r.solution);
@@ -28,5 +28,5 @@ for(const tier of ['easy','medium','hard'])for(const p of data.filter(p=>p.diffi
 }
 const context=vm.createContext({});vm.runInContext(E.workerSource(),context);assert.equal(vm.runInContext('SudokuEngine.getPuzzleCatalog().length',context),totalCatalog);
 assert.equal(generatedFromImported+calibrationFallbacks,30);assert(generatedFromImported>=20);
-const report={status:'passed',imported:9000,totalCatalog,allImportedUniqueAndAnswersRechecked:true,allImportedGetPuzzleValidated:true,oldSourcesUnchanged:1258,dailyDatesUnchanged:366,voyageChaptersUnchanged:9,challengeRoundtrips:30,generatedFromImported,calibrationFallbacks,workerCatalog:totalCatalog,maxGetPuzzleMs:maxMs,browserTest:false};
+const report={status:'passed',imported:9000,totalCatalog,allImportedUniqueAndAnswersRechecked:true,allImportedGetPuzzleValidated:true,oldSourcesUnchanged:1258,legacyDailyDatesUnchanged:366,voyageChaptersUnchanged:9,challengeRoundtrips:30,generatedFromImported,calibrationFallbacks,workerCatalog:totalCatalog,maxGetPuzzleMs:maxMs,browserTest:false};
 fs.mkdirSync('evidence/exchange',{recursive:true});fs.writeFileSync('evidence/exchange/regression.json',JSON.stringify(report,null,2));console.log(report);

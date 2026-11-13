@@ -1,8 +1,8 @@
 /* Versioned offline player-data backups. Product versions never gate save-schema migration. */
 (function(root,factory){
- if(typeof module==='object'&&module.exports) module.exports=factory(require('./engine.js'),require('./daily.js'),require('./voyage.js'),function(){return require('./favorites.js');},require('./drafts.js'),require('./checkpoints.js'),require('./secret-archives.js'),require('./branches.js'),require('./logic.js'));
- else root.NineRealmsBackup=factory(root.SudokuEngine,root.SudokuDaily,root.SudokuVoyage,function(){return root.NineRealmsFavorites;},root.NineRealmsDrafts,root.NineRealmsCheckpoints,root.NineRealmsSecretArchives,root.NineRealmsBranches,root.NineRealmsLogic);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites,Drafts,Checkpoints,SecretArchives,Branches,Logic){
+ if(typeof module==='object'&&module.exports) module.exports=factory(require('./engine.js'),require('./daily.js'),require('./voyage.js'),function(){return require('./favorites.js');},require('./drafts.js'),require('./checkpoints.js'),require('./secret-archives.js'),require('./branches.js'),require('./logic.js'),require('./rule-path-grading.js'),require('./rule-quality.js'),require('./generator.js'),require('./recovery-reserve.js'));
+ else root.NineRealmsBackup=factory(root.SudokuEngine,root.SudokuDaily,root.SudokuVoyage,function(){return root.NineRealmsFavorites;},root.NineRealmsDrafts,root.NineRealmsCheckpoints,root.NineRealmsSecretArchives,root.NineRealmsBranches,root.NineRealmsLogic,root.NineRealmsRulePathGrading,root.NineRealmsRuleQuality,root.NineRealmsGenerator,root.NineRealmsRecoveryReserve);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Engine,Daily,Voyage,favorites,Drafts,Checkpoints,SecretArchives,Branches,Logic,RulePath,Quality,Generator,Reserve){
  'use strict';
  var KEYS=['nine-realms.sudoku.v1','nine-realms.history.v1','nine-realms.secrets.v1','nine-realms.daily.v1','nine-realms.voyage.v1','nine-realms.puzzle-deck.v1','nine-realms.generated-recent.v1','nine-realms.favorites.v1'];
  var JOURNAL='nine-realms.backup-rollback.v1',MAX=4*1024*1024,trusted=new WeakSet(),windowTrusted=new WeakSet();
@@ -19,8 +19,44 @@
  function board(a,n,max,min){return Array.isArray(a)&&a.length===n&&a.every(function(v){return integer(v,max)&&v>=(min||0);});}
  function frame(x,givens,clues){if(x&&x.branchId!==undefined){assert(x.branchId===null||typeof x.branchId==='string'&&/^b[1-9][0-9]{0,8}$/.test(x.branchId),'回放分支无效');assert(typeof x.branchLabel==='string'&&x.branchLabel.length<=32,'回放分支名无效');}if(x&&x.logicMode!==undefined)assert(typeof x.logicMode==='boolean','检查模式无效');if(x&&x.draft!==undefined)Drafts.validate(x.draft,givens.length,clues||{});assert(object(x)&&board(x.board,givens.length,9)&&board(x.notes,givens.length,511),'棋盘或笔记无效');assert(givens.every(function(v,i){return (!v||x.board[i]===v)&&(!x.board[i]||!x.notes[i]);}),'给定数或笔记不一致');if(x.selected!==undefined)assert(integer(x.selected,givens.length-1),'选中格无效');if(x.noteMode!==undefined)assert(typeof x.noteMode==='boolean','笔记状态无效');}
  function stats(x){assert(object(x)&&number(x.elapsedMs,1e12)&&integer(x.mistakes,1e9)&&integer(x.hints,1e9),'计时或成绩无效');}
+ // Recovery provenance is descriptive, never a substitute for puzzle proof.
+ // Public restore helper: absent => null; malformed/unproven => INVALID_BACKUP.
+ function recoveryInfo(record,puzzle){
+  if(record===undefined||record===null)return null;
+  var isReserve=record&&record.kind==='verified-reserve';
+  keys(record,isReserve?['version','kind','requestSeed','seed','sourceId','reserveId']:['version','kind','requestSeed','seed','sourceId']);
+  assert(Object.keys(record).length===(isReserve?6:5)&&record.version===1&&['fresh-retry','verified-catalog','verified-reserve'].indexOf(record.kind)>=0&&typeof record.requestSeed==='string'&&record.requestSeed.length>0&&record.requestSeed.length<=256&&typeof record.seed==='string'&&(isReserve?record.seed.length>0&&record.seed.length<=256:/^[a-f0-9]{32}$/.test(record.seed)),'后备来源格式无效');
+  assert(object(puzzle)&&!puzzle.dailyDate&&!puzzle.voyageId&&!puzzle.custom&&['easy','medium','hard'].indexOf(puzzle.difficulty)>=0&&Engine.getModes().some(function(m){return m.id===puzzle.mode;}),'后备来源不适用于此棋局');
+  var mode=puzzle.mode,difficulty=puzzle.difficulty,clues=Engine.normalizeClues(mode,puzzle.clues),context={mode:mode,clues:clues},n=Engine.getLayout(context).cellCount;
+  if(!isReserve)assert(record.seed===Generator.recoverySeed({mode:mode,difficulty:difficulty,seed:record.requestSeed},record.kind),'后备来源请求与种子不符');
+  assert(board(puzzle.givens,n,9)&&board(puzzle.solution,n,9,1)&&Engine.validateComplete(puzzle.solution,context)&&puzzle.givens.every(function(v,i){return !v||v===puzzle.solution[i];}),'后备题目不符合规则');
+  if(record.kind==='fresh-retry'||isReserve){
+   assert(Generator.supportsFresh(mode)&&puzzle.generation&&puzzle.generation.version===5&&puzzle.generation.kind==='constructed'&&puzzle.generation.seed===record.seed&&record.sourceId===null&&(puzzle.sourceId===null||puzzle.sourceId===undefined),'新底盘后备来源与棋局不符');
+   assert(puzzle.generation.fingerprint===Generator.fingerprint({mode:mode,clues:clues,givens:puzzle.givens}),'新底盘后备题面指纹不符');
+   if(isReserve){
+    assert(typeof record.reserveId==='string'&&/^[a-zA-Z0-9_-]{1,96}$/.test(record.reserveId),'固定备用标识无效');
+    var fixed=Reserve.candidates(mode,difficulty).find(function(p){return p.reserveId===record.reserveId;});
+    assert(fixed,'固定备用题源未知');
+    assert(stable(fixed.puzzle.givens)===stable(puzzle.givens)&&stable(fixed.puzzle.solution)===stable(puzzle.solution)&&stable(Engine.normalizeClues(mode,fixed.puzzle.clues))===stable(clues),'固定备用题面与题源不符');
+    ['version','seed','kind','difficultyBasis','fingerprint','givenCount','baseFingerprint','layoutFingerprint','logicVerified','logicRepairs','ruleReductions','logicRounds','logicGrade','ruleQuality'].forEach(function(k){assert(stable(puzzle.generation[k])===stable(fixed.puzzle.generation[k]),'固定备用来源记录与题源不符');});
+   }
+  }else{
+   assert(!puzzle.generation&&typeof record.sourceId==='string'&&record.sourceId.length>0&&record.sourceId.length<=512&&puzzle.sourceId===record.sourceId,'库存后备来源与棋局不符');
+   assert(Engine.getPuzzleCatalog(mode,difficulty).some(function(p){return p.id===record.sourceId&&p.mode===mode&&p.difficulty===difficulty;}),'库存后备题源未知');
+   var expected=Engine.getPuzzle(difficulty,record.seed,mode,{sourceId:record.sourceId});
+   assert(stable(expected.givens)===stable(puzzle.givens)&&stable(expected.solution)===stable(puzzle.solution)&&stable(Engine.normalizeClues(mode,expected.clues))===stable(clues),'库存后备题面与题源不符');
+  }
+  var unique=Engine.analyzeSolutions(puzzle.givens,context,{limit:2,maxNodes:12000,timeLimitMs:200});
+  assert(unique.count===1&&!unique.exhausted&&stable(unique.solution)===stable(puzzle.solution),'后备题未能证明唯一解');
+  if(Generator.supportsDifficulty(mode))assert(Generator.matchesDifficulty(puzzle.givens,difficulty,context),'后备题未达到相同技巧档位');
+  else{
+   assert(RulePath.tier(RulePath.analyze(puzzle.givens,context),mode)===difficulty,'后备题未达到相同规则推演档位');
+   if(Quality.supported(mode))assert(Quality.accepts(Quality.analyze(puzzle.givens,context),difficulty),'后备题未达到规则作用门槛');
+  }
+  var clean={version:1,kind:record.kind,requestSeed:record.requestSeed,seed:record.seed,sourceId:record.sourceId};if(isReserve)clean.reserveId=record.reserveId;return clean;
+ }
  function makeValidator(queue,deadline){
-  var cache=new Set();deadline=deadline||Date.now()+8000;
+  var cache=new Set(),recoveryCache=new Set();deadline=deadline||Date.now()+8000;
   function puzzle(g,version){
    var mode=version===1?'classic':g.mode,difficulty=g.difficulty==='expert'?'master':g.difficulty;
    assert(Engine.getModes().some(function(m){return m.id===mode;}),'未知玩法');assert(Engine.getDifficulties(mode).some(function(d){return d.id===difficulty;}),'未知难度');
@@ -28,7 +64,7 @@
    if(g.clues!==undefined)assert(stable(clues)===stable(g.clues),'规则线索格式无效');
    assert(board(g.givens,n,9)&&board(g.solution,n,9,1),'题目尺寸或数字无效');
    assert(Engine.validateComplete(g.solution,context)&&g.givens.every(function(v,i){return !v||v===g.solution[i];}),'题目答案不符合规则');
-   var ruleOnly=g.logicMode===true&&Logic.scope(context).complete&&!g.custom&&!g.dailyDate&&!g.voyageId&&!g.generation;
+   var ruleOnly=g.logicMode===true&&Logic.scope(context).complete&&!g.custom&&!g.dailyDate&&!g.voyageId&&!g.generation&&!g.recovery;
    var key=stable([mode,g.givens,clues,g.solution,ruleOnly]);if(!ruleOnly&&!cache.has(key)){
     assert(Date.now()<deadline,'验证预算已用完，请减少备份内容后再试');
     var prove=function(){assert(Date.now()<deadline,'验证预算已用完');var proof=Engine.analyzeSolutions(g.givens,context,{limit:2,maxNodes:250000,timeLimitMs:g.custom?750:100});
@@ -43,7 +79,7 @@
     var p=s.preferences;keys(p,['theme','fx','errorCheck','logicMode','customDraft','fog','sound','soundVolume','effectsEnabled','effectsVolume','musicEnabled','musicVolume','focus','zen','zenMotion','intensity','textSize','lineContrast','colorAssist','handedness']);
     Object.keys(p).forEach(function(k){if(k==='soundVolume'||k==='effectsVolume'||k==='musicVolume')assert(typeof p[k]==='number'&&Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1,'音量无效');else if(k==='theme')assert(['nebula','aurora','ember','ivory','ocean','sakura','firefly','sunset'].indexOf(p[k])>=0,'主题无效');else if(k==='intensity')assert(['cinematic','balanced','soft'].indexOf(p[k])>=0,'画质无效');else if(k==='textSize')assert(['normal','large'].indexOf(p[k])>=0,'字号无效');else if(k==='lineContrast')assert(['standard','strong'].indexOf(p[k])>=0,'线条设置无效');else if(k==='customDraft')assert(typeof p[k]==='string'&&p[k].length<=2048,'自建题草稿无效');else if(k==='handedness')assert(['right','left'].indexOf(p[k])>=0,'左右手布局无效');else assert(typeof p[k]==='boolean','设置无效');});
    }
-   var g=s.game;keys(g,['logicMode','custom','practice','generation','sessionId','createdAt','puzzleId','sourceId','difficulty','mode','clues','givens','solution','board','notes','history','redo','selected','mistakes','errorCheckIncomplete','hints','elapsedMs','started','paused','completed','branch','voyageId','dailyDate','fog','fogSeen','energy','noteMode','draft']);
+   var g=s.game;keys(g,['logicMode','custom','practice','generation','recovery','sessionId','createdAt','puzzleId','sourceId','difficulty','mode','clues','givens','solution','board','notes','history','redo','selected','mistakes','errorCheckIncomplete','hints','elapsedMs','started','paused','completed','branch','voyageId','dailyDate','fog','fogSeen','energy','noteMode','draft']);
    if(g.custom!==undefined)assert(typeof g.custom==='boolean'&&(!g.custom||(g.mode==='classic'&&Object.keys(Engine.normalizeClues(g.mode,g.clues)).every(function(k){return k==='version'||!Engine.normalizeClues(g.mode,g.clues)[k].length;}))),'自建题规则无效');
    if(g.practice){keys(g.practice,['version','sourceSessionId','absoluteStep','wasAssumption']);assert(g.practice.version===1&&id(g.practice.sourceSessionId)&&integer(g.practice.absoluteStep,1000003000)&&typeof g.practice.wasAssumption==='boolean'&&!g.dailyDate&&!g.voyageId,'复练来源无效');}
    var info=puzzle(g,s.version);frame(g,g.givens,g.clues);stats(g);
@@ -56,7 +92,14 @@
    if(g.branch){var branch=Branches.validate(g.branch,g.givens,g.clues);assert(Branches.matches(branch,g),'当前棋盘与活动分支不符');}
    if(g.fogSeen!==undefined)assert(Array.isArray(g.fogSeen)&&g.fogSeen.length===info.n&&g.fogSeen.every(function(v){return typeof v==='boolean';}),'迷雾记录无效');
    if(g.energy!==undefined){var e=g.energy;keys(e,['points','combo','best','claimed','units']);assert(integer(e.points,50000)&&integer(e.combo,info.n)&&integer(e.best,info.n)&&e.best>=e.combo,'星能记录无效');assert(Array.isArray(e.claimed)&&e.claimed.length===info.n&&e.claimed.every(function(v){return typeof v==='boolean';}),'星能格无效');assert(Array.isArray(e.units)&&new Set(e.units).size===e.units.length&&e.units.every(function(u){return integer(u,Engine.getUnits(info.context).length-1);}),'星能区域无效');}
-   if(g.generation){keys(g.generation,['version','seed','kind','difficultyBasis','fingerprint','givenCount','target','unique','checks','nodes','rejectedByBudget']);assert([1,2].indexOf(g.generation.version)>=0&&g.generation.kind==='carved'&&(g.generation.difficultyBasis==='clue-density'||g.generation.difficultyBasis==='supported-logic'&&['classic','diagonal','hyper','knight','king','disjoint','jigsaw'].indexOf(info.mode)>=0)&&typeof g.generation.seed==='string'&&g.generation.seed.length<=256&&/^[a-f0-9]{32}$/.test(g.generation.fingerprint)&&g.generation.givenCount===g.givens.filter(Boolean).length,'生成来源无效');}
+   if(g.generation){keys(g.generation,['version','seed','kind','difficultyBasis','fingerprint','givenCount','target','unique','checks','nodes','rejectedByBudget','baseFingerprint','layoutFingerprint','logicVerified','logicRepairs','ruleReductions','logicRounds','logicGrade','ruleQuality']);assert(([1,2].indexOf(g.generation.version)>=0&&g.generation.kind==='carved'||[3,4,5].indexOf(g.generation.version)>=0&&g.generation.kind==='constructed')&&(g.generation.difficultyBasis==='clue-density'&&g.generation.version<4||g.generation.version>=4&&g.generation.difficultyBasis==='rule-depth'||g.generation.difficultyBasis==='supported-logic'&&['classic','diagonal','hyper','knight','king','disjoint','jigsaw'].indexOf(info.mode)>=0)&&typeof g.generation.seed==='string'&&g.generation.seed.length<=256&&/^[a-f0-9]{32}$/.test(g.generation.fingerprint)&&g.generation.givenCount===g.givens.filter(Boolean).length,'生成来源无效');if([3,4,5].indexOf(g.generation.version)>=0){var q=g.generation;assert(/^[a-f0-9]{32}$/.test(q.baseFingerprint)&&(q.layoutFingerprint===undefined||/^[a-f0-9]{32}$/.test(q.layoutFingerprint))&&q.logicVerified===true&&Number.isInteger(q.logicRepairs)&&q.logicRepairs>=0&&q.logicRepairs<=12&&Number.isInteger(q.ruleReductions)&&q.ruleReductions>=0&&q.ruleReductions<=81,'新底盘来源无效');if(q.version===5&&Quality.supported(info.mode)){var quality=Quality.analyze(g.givens,info.context);assert(Quality.accepts(quality,g.difficulty)&&Quality.sameSummary(q.ruleQuality,Quality.summary(quality)),'规则关键性记录与题面不符');}else{assert(q.ruleQuality===undefined,'来源含不适用的规则关键性字段');}if(q.difficultyBasis==='rule-depth'){assert(Number.isInteger(q.logicRounds)&&q.logicRounds>0&&q.logicRounds<=info.n&&q.logicGrade===g.difficulty,'规则推演记录无效');var path=RulePath.analyze(g.givens,info.context);assert(RulePath.tier(path,info.mode)===q.logicGrade&&path.rounds===q.logicRounds,'规则推演记录与题面不符');}else{assert(q.logicRounds===undefined&&q.logicGrade===undefined,'来源含不适用的推演字段');}}else{assert(['baseFingerprint','layoutFingerprint','logicVerified','logicRepairs','ruleReductions','logicRounds','logicGrade','ruleQuality'].every(function(k){return g.generation[k]===undefined;}),'旧版生成来源含新字段');}}
+   if(g.recovery!==undefined&&g.recovery!==null){
+    var recoveryKey=stable([g.mode,g.difficulty,g.givens,g.solution,g.clues,g.generation,g.recovery,g.sourceId,g.dailyDate,g.voyageId,g.custom,g.practice]);
+    if(!recoveryCache.has(recoveryKey)){
+     var proveRecovery=function(){assert(Date.now()<deadline,'后备来源验证预算已用完');recoveryInfo(g.recovery,g);assert(Date.now()<deadline,'后备来源验证预算已用完');};
+     if(queue)queue.push(proveRecovery);else proveRecovery();recoveryCache.add(recoveryKey);
+    }
+   }
    if(g.dailyDate)assert(Daily.matchesPuzzle(g.dailyDate,g.givens,info.mode,info.difficulty,g.clues),'每日题目不匹配');
    if(g.voyageId)assert(Voyage.matchesPuzzle(g.voyageId,g.givens,info.mode,info.difficulty,g.clues),'旅程题目不匹配');
    return s;
@@ -138,7 +181,7 @@
   return {replaced:true};
  }
  function read(storage){var out={};KEYS.forEach(function(k){out[k]=storage.getItem(k);});return out;}
- function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.4',createdAt:new Date().toISOString(),entries:entries};}
+ function draft(storage,options){var raw=read(storage),entries={};KEYS.forEach(function(k){entries[k]=raw[k]===null?null:JSON.parse(raw[k]);});return {format:'nine-realms-backup',schemaVersion:1,appVersion:options&&options.appVersion||'1.3.5',createdAt:new Date().toISOString(),entries:entries};}
  function create(storage,options){return validate(draft(storage,options));}
  function createAsync(storage,options){return validateAsync(draft(storage,options));}
  function preview(b){b=validate(b);var e=b.entries,g=e[KEYS[0]]&&e[KEYS[0]].game,h=e[KEYS[1]],f=e[KEYS[7]];return {createdAt:b.createdAt,appVersion:b.appVersion,currentGame:g?{mode:g.mode||'classic',difficulty:g.difficulty,filled:g.board.filter(Boolean).length,total:g.board.length,elapsedMs:g.elapsedMs}:null,historyCount:h?h.records.length:0,historySteps:h?h.records.reduce(function(n,r){return n+r.steps.length;},0):0,favoritesCount:f?f.records.length:0,secretsCount:e[KEYS[2]]?e[KEYS[2]].found.length:0,dailyCount:Daily.detailDates(e[KEYS[3]]||{}).length,voyageCount:Voyage.chapters().filter(function(c){return Boolean((e[KEYS[4]]||{})[c.id]);}).length};}
@@ -154,5 +197,5 @@
    KEYS.forEach(function(k){assert(storage.getItem(k)===(b.entries[k]===null?null:JSON.stringify(b.entries[k])),'写入校验失败');});storage.removeItem(JOURNAL);return {replaced:true};
   }catch(error){try{restoreRaw(storage,previous);}catch(rollbackError){throw recoveryError(rollbackError,journal);}var e=new Error('导入未完成，原有进度已恢复。');e.code='IMPORT_ROLLED_BACK';e.cause=error;throw e;}
  }
- return {keys:KEYS.slice(),journalKey:JOURNAL,limits:{maxBytes:8*1024*1024,maxChars:MAX},create:create,createAsync:createAsync,validate:validate,validateAsync:validateAsync,validateWindow:validateWindow,validateWindowAsync:validateWindowAsync,isWindow:function(value){return windowTrusted.has(value);},replaceWindow:replaceWindow,preview:preview,replace:replace,recover:recover};
+ return {recoveryInfo:recoveryInfo,keys:KEYS.slice(),journalKey:JOURNAL,limits:{maxBytes:8*1024*1024,maxChars:MAX},create:create,createAsync:createAsync,validate:validate,validateAsync:validateAsync,validateWindow:validateWindow,validateWindowAsync:validateWindowAsync,isWindow:function(value){return windowTrusted.has(value);},replaceWindow:replaceWindow,preview:preview,replace:replace,recover:recover};
 });

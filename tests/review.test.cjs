@@ -15,7 +15,7 @@ if(process.env.REVIEW_DOM||process.argv.includes('--dom')){
  const fs=require('node:fs'),{JSDOM}=require('jsdom');
  const dom=new JSDOM('<button id="history-open">历史</button>',{url:'https://ninerealms.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
- for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(require('node:path').join(__dirname,'../src',file),'utf8'));
+ for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','grid-rows.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(require('node:path').join(__dirname,'../src',file),'utf8'));
  w.NineRealmsHistory.init({Engine:w.SudokuEngine,openDialog:d=>d.showModal()});
  const x=w.JSON.parse(JSON.stringify({...s,game:{...s.game,sessionId:'review-dom',draft:D.empty(81)}}));w.NineRealmsHistory.capture(x,{origin:'new'});
  x.game.draft=w.NineRealmsDrafts.setCell(x.game.draft,81,index,3,1,x.game.clues);w.NineRealmsHistory.capture(x,{action:'草稿关注'});

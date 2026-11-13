@@ -23,6 +23,7 @@ function event(type, extra = {}) {
 
 function fixture(options = {}) {
   const mutationObservers = [], resizeObservers = [], pendingMutations = new Set();
+  let idIndex = null; // Invalidated by structural/ID changes, like a document ID index.
   const toggleTasks = new Map(), scrolls = [], focusAttempts = [];
   const state = {width:1440, height:900, selectCloses:0, draftOpen:false, draftPositions:0, alertHeight:0, ...options};
   class Target {
@@ -73,23 +74,27 @@ function fixture(options = {}) {
     set disabled(value) { if (value) this.setAttribute('disabled', ''); else this.removeAttribute('disabled'); }
     setAttribute(name, value) {
       const had = this.attributes.has(name); this.attributes.set(name, String(value)); changed(this, name);
+      if (name === "id") idIndex = null;
       if (name === 'open' && this.tagName === 'DETAILS' && !had && !toggleTasks.has(this)) toggleTasks.set(this, false);
     }
     getAttribute(name) { return this.attributes.get(name) ?? null; }
     removeAttribute(name) {
       const had = this.attributes.delete(name); if (!had) return; changed(this, name);
+      if (name === "id") idIndex = null;
       if (name === 'open' && this.tagName === 'DETAILS' && !toggleTasks.has(this)) toggleTasks.set(this, true);
     }
     contains(node) { return node === this || this.childNodes.some(child => child.contains(node)); }
     detach() {
       if (!this.parentNode) return;
+      idIndex = null;
       if (this.contains(doc.activeElement)) doc.activeElement = doc.body;
       this.parentNode.childNodes.splice(this.parentNode.childNodes.indexOf(this), 1); this.parentNode = null;
     }
-    appendChild(node) { node.detach(); this.childNodes.push(node); node.parentNode = this; return node; }
+    appendChild(node) { idIndex = null; node.detach(); this.childNodes.push(node); node.parentNode = this; return node; }
     before(node) { this.insertSibling(node, 0); }
     after(node) { this.insertSibling(node, 1); }
     insertSibling(node, offset) {
+      idIndex = null;
       assert(this.parentNode, 'sibling insertion needs a parent'); const parent = this.parentNode;
       node.detach(); const index = parent.childNodes.indexOf(this) + offset; parent.childNodes.splice(index, 0, node); node.parentNode = parent;
     }
@@ -104,7 +109,16 @@ function fixture(options = {}) {
       for (const child of this.children) { if (child.matches(selector)) result.push(child); result.push(...child.querySelectorAll(selector)); }
       return result;
     }
-    querySelector(selector) { return this.querySelectorAll(selector)[0] || null; }
+    querySelector(selector) {
+      // Match browser first-hit semantics without traversing/materializing the
+      // entire subtree for each ID lookup in the 33-mode controller matrix.
+      assert(/^(?:#[\w-]+|\.[\w-]+|[\w-]+)$/.test(selector), 'unsupported synthetic selector ' + selector);
+      for (const child of this.children) {
+        if (child.matches(selector)) return child;
+        const nested = child.querySelector(selector); if (nested) return nested;
+      }
+      return null;
+    }
     focus(focusOptions) {
       const accepted = this.isConnected && !this.disabled && visible(this);
       focusAttempts.push({node:this, accepted, options:focusOptions});
@@ -131,7 +145,17 @@ function fixture(options = {}) {
   doc.body = new Node(1, 'body'); doc.documentElement.appendChild(doc.body); doc.activeElement = doc.body;
   doc.createElement = tag => new Node(1, tag);
   doc.createComment = text => { const node = new Node(8); node.textContent = text; return node; };
-  doc.querySelector = selector => doc.documentElement.querySelector(selector);
+  doc.querySelector = selector => {
+    if (/^#[\w-]+$/.test(selector)) {
+      if (!idIndex) {
+        idIndex = new Map();
+        const visit = node => { if (node.id && !idIndex.has(node.id)) idIndex.set(node.id, node); node.children.forEach(visit); };
+        doc.documentElement.children.forEach(visit);
+      }
+      return idIndex.get(selector.slice(1)) || null;
+    }
+    return doc.documentElement.querySelector(selector);
+  };
   doc.querySelectorAll = selector => doc.documentElement.querySelectorAll(selector);
   doc.getElementById = id => doc.querySelector('#' + id);
   // Parse only element hierarchy and attributes. Text, CSS and scripts are not interpreted.
@@ -312,6 +336,18 @@ const releasedModes = Engine.getModes().map(({id}) => {
   return {mode:id, multi:Engine.getLayout(puzzle).cellCount > 81, outsideClues:!!puzzle.clues?.outside?.length};
 });
 assert.equal(releasedModes.length, 33, 'controller covers the complete released catalog');
+
+test('synthetic ID index preserves first-hit semantics across moves, renames and removals', () => {
+  const f = fixture(), first = f.doc.createElement('i'), second = f.doc.createElement('i');
+  first.id = 'index-probe'; second.id = 'index-probe';
+  f.body.appendChild(first); f.body.appendChild(second);
+  assert(f.doc.querySelector('#index-probe') === first);
+  first.before(second); assert(f.doc.querySelector('#index-probe') === second);
+  second.id = 'renamed-probe'; assert(f.doc.querySelector('#index-probe') === first);
+  assert(f.doc.querySelector('#renamed-probe') === second);
+  second.removeAttribute('id'); assert(f.doc.querySelector('#renamed-probe') === null);
+  first.detach(); assert(f.doc.querySelector('#index-probe') === null);
+});
 
 test('every released mode initially composes the same desktop controls and accessible hint lifecycle', () => {
   for (const options of releasedModes) {

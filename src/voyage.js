@@ -346,6 +346,19 @@
     return next ? next.id : state.nextId;
   }
 
+  // Optional early encounters do not renumber chapters or change legacy unlocks.
+  // Stable curated IDs keep these short detours independent of future catalog growth.
+  function discovery(progress) {
+    var clean = normalizeProgress(progress);
+    if (CHAPTERS.filter(function (chapter) { return chapter.trackId === "legacy"; }).every(function (chapter) { return Boolean(clean[chapter.id]); })) return [];
+    var encounters = [];
+    if (clean.dawn) encounters.push({ id: "discovery-thermo-v1", title: "初见 · 温度计",
+      subtitle: "沿着一条递增线，试试九宫之外的规则。", puzzleId: "curated-thermo-intro-1-v1", practiceId: "thermo-bounds" });
+    if (clean.orbit) encounters.push({ id: "discovery-killer-v1", title: "初见 · 杀手笼",
+      subtitle: "从一个小笼的总和，找到下一格。", puzzleId: "curated-killer-intro-1-v1", practiceId: "killer-sum" });
+    return encounters;
+  }
+
   function practiceProgress(progress) {
     return Training.validateProgress(normalizeProgress(progress).__practice);
   }
@@ -408,5 +421,5 @@
   return { tracks: tracks, chapters: chapters, getPuzzle: getPuzzle, getLegacyPuzzle: getLegacyPuzzle, puzzleInfo: puzzleInfo, presentation: presentation, matchesPuzzle: matchesPuzzle, starsFor: starsFor,
     normalizeProgress: normalizeProgress, award: award, getStatus: getStatus,
     journey: journey, canEnter: canEnter, nextAfter: nextAfter, migrateProgress: migrateProgress, retainCurrent: retainCurrent,
-    practiceProgress: practiceProgress, recordPractice: recordPractice, worldState: worldState };
+    discovery: discovery, practiceProgress: practiceProgress, recordPractice: recordPractice, worldState: worldState };
 });

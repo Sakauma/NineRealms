@@ -11,14 +11,14 @@ assert.match(css,/\.difficulty-wrap>\.glass-select\{width:100%;flex:1\}/);assert
 assert.match(css,/\.training-board\{aspect-ratio:1;grid-template-rows:repeat\(9,minmax\(0,1fr\)\)\}/);
 assert.match(css,/\.glass-select \.glass-select-trigger\{white-space:normal;overflow-wrap:anywhere\}/);
 assert.match(css,/\.draft-mark,\.history-draft-mark\{top:3px;bottom:3px;right:1px;width:3px;overflow:hidden;font-size:0/);
-w.NineRealmsTraining=require('../src/training.js');w.eval(fs.readFileSync('src/training-ui.js','utf8'));
+w.eval(fs.readFileSync('src/grid-rows.js','utf8'));w.NineRealmsTraining=require('../src/training.js');w.eval(fs.readFileSync('src/training-ui.js','utf8'));
 const ui=w.NineRealmsTrainingUI({progress:()=>({version:1,completed:[]}),blocked:()=>false,success(){},open(el){el.open=true},close(el){el.open=false},afterClose(){}});
 for(const station of w.NineRealmsTraining.stations()){
  ui.open(station.id);
  for(const exerciseButton of Array.from($('training-exercises').children)){
-  exerciseButton.click();const id=exerciseButton.dataset.exercise,e=w.NineRealmsTraining.exercise(id),cells=$('training-board').children;assert.equal(cells.length,81);
-  for(let i=0;i<81;i++){
-   const cell=cells[i];if(e.board[i]){assert.equal(cell.textContent,String(e.board[i]));continue;}
+  exerciseButton.click();const id=exerciseButton.dataset.exercise,e=w.NineRealmsTraining.exercise(id),cells=$('training-board').querySelectorAll('[data-practice-cell]'),indices=e.viewCells||Array.from({length:81},(_,i)=>i);assert.equal(cells.length,indices.length);
+  for(let pos=0;pos<indices.length;pos++){
+   const i=indices[pos],cell=cells[pos];if(e.board[i]){assert(cell.textContent.startsWith(String(e.board[i])));continue;}
    const slots=cell.querySelectorAll('.training-candidates>span');assert.equal(slots.length,9);
    for(let n=1;n<=9;n++)assert.equal(slots[n-1].textContent,(e.candidateMasks[i]&(1<<(n-1)))?String(n):'');
    assert.equal(cell.querySelector('.training-candidates').getAttribute('aria-hidden'),'true');assert.match(cell.getAttribute('aria-label'),/候选/);

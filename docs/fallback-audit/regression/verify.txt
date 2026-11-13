@@ -1,0 +1,12 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 verify
+> python3 scripts/verify-web-recovery.py
+
+{"status": "passed", "html_bytes": 4750870, "sha256": "7a350086478d7cfeac263afafcc79ff6812670233cf4da4679035d47ab273bed", "roundtrip_byte_identical": true, "javascript_modules_checked": 49, "stylesheets_recovered": 8}
+{"modes": 33, "puzzles": 10267}
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

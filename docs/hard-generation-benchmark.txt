@@ -1,0 +1,185 @@
+Controlled classic/king hard benchmark
+=====================================
+
+This is a reproducible Node generation comparison, not Windows/browser UI testing.
+It never changes product source, settings, saved games or the older checkout.
+
+Provide the complete previously delivered v5 source directory, including its
+recorded docs/diversity-audit/v5-audit-30.json report. The report is needed to
+reconstruct real historical recent-key ledgers; an empty approximation is not used.
+
+Plan only (does not run generation):
+  HARD_BENCH_BASELINE=/path/to/NineRealms-v5 node scripts/benchmark-hard-generation.cjs
+
+Full comparison after both algorithms are frozen:
+  HARD_BENCH_BASELINE=/path/to/NineRealms-v5 node scripts/benchmark-hard-generation.cjs --run
+  node scripts/summarize-hard-benchmark.cjs
+
+Optional environment values:
+  HARD_BENCH_SAMPLES=200         independent new seeds per mode (default 200)
+  HARD_BENCH_ARM=paired          paired / baseline / candidate
+  HARD_BENCH_OUTPUT=hard-ab-200.json
+The current checkout is the candidate. An explicit baseline directory avoids any
+need for the developer's original workspace paths or directory layout.
+
+Protocol
+--------
+- 200 independent prespecified new seed strings for each of classic/king hard.
+- Two old failures are SEPARATE regression cases, not mixed into those 200:
+  fresh-quality-v4-classic-14 and fresh-quality-v4-king-17.
+- Their original recent ledgers are rebuilt from all earlier successful records,
+  preserving actual deduplication/order and the 256-key cap (28 and 256 keys).
+- The new-seed cohort uses the original pre-mode ledger as a fixed experimental
+  condition. Both arms receive byte-identical requests; per-arm evolving ledgers
+  are deliberately avoided because divergent outputs would confound comparison.
+  This is an independent-seed study, not a continuous-session history simulation.
+- Each module receives the same recorded easy/hard warmup requests. Validation
+  runs in a third isolated VM using frozen v5 Engine/Hints/canonicalizer source,
+  so neither arm gets extra generation-engine warming from validation work.
+- Generation is serial. Within EACH mode, arm order alternates AB / BA by seed
+  index. No concurrent browser/load or full regression test should be scheduled.
+- Every call records wall time, process CPU time, load average, result or refusal,
+  source hashes, request hash, and the complete original returned puzzle before
+  validation. SHA-256 source snapshots are compared at end; drift invalidates a
+  final comparison rather than being silently ignored.
+
+Verification and reporting
+--------------------------
+Completed boards/givens must be legal under the frozen engine. A separate bounded
+uniqueness search must prove exactly one answer without budget exhaustion. The
+independent Hints proof gets maxSteps=200 and timeLimitMs=1000, must actually solve
+and use a hard-tier supported technique, and its trace must reconstruct the unique
+answer. Density, a hard label, or a partial proof alone cannot pass this check.
+Complete classical-group signatures detect repeated bases within each arm.
+Matching signatures BETWEEN baseline and candidate are expected and not duplicates.
+
+Generation refusal, explicit generation budget, validation budget, stalled proof,
+wrong tier, invalid output, unexpected error and valid strict-hard are distinct.
+A single unresolved verification issue is retained, not counted as valid hard.
+All timing percentiles include ALL requests; verified-only and refused-only timing
+are also reported separately. The summary adds mean/P50/P95/P99/min/max, paired
+improvements and regressions with all affected seed IDs, and shared-request checks.
+Above-8000ms calls are not counted as within-watchdog completions. Even faster
+synchronous calls do not prove UI delivery or performance on the user's device.
+One timing observation per seed/arm is not a hardware certification or a formal
+statistical significance claim.
+
+Outputs
+-------
+  evidence/hard-generation/hard-ab-200.json          complete original evidence
+  evidence/hard-generation/hard-ab-200-summary.json  derived summary + raw SHA
+The benchmark checkpoints every ten cases. Incomplete reports must not be called
+final. No seed is discarded or replaced because its result is inconvenient.
+
+Candidate 1 recorded result (2026-11-13)
+----------------------------------------
+804 timed calls completed in 272.708 seconds. Production source hashes were
+unchanged during the run. Request hashes match in all 400 independent pairs.
+No duplicate base within an arm, illegal output, independent verification budget,
+wrong tier, stalled verification, unexpected error or >8000ms call was observed.
+Warmups and the two historic failures are excluded from the 200-seed tables below.
+
+Independent cohort, ALL requests (milliseconds):
+mode     arm        verified/request  mean    P50     P95     P99      max
+classic  baseline   199/200           220.59  181.01  540.20  702.00   850.13
+classic  candidate  199/200           185.88  158.50  460.53  659.24   743.80
+king     baseline   179/200           364.02  290.23  928.00  1005.40  1116.00
+king     candidate  200/200           123.72   78.26  284.89  466.22   575.31
+
+VERIFIED hard outputs only (milliseconds):
+mode     arm        count  mean    P50     P95     P99     max
+classic  baseline   199    218.08  181.01  540.20  702.00  850.13
+classic  candidate  199    183.46  158.50  460.53  659.24  743.80
+king     baseline   179    300.77  268.24  831.87  955.26  1005.40
+king     candidate  200    123.72   78.26  284.89  466.22  575.31
+
+IMPORTANT paired outcome, not hidden by total counts:
+- Classic fixes hard-controlled-v1-classic-105, but introduces a refusal for
+  hard-controlled-v1-classic-168. The latter was valid strict hard on baseline,
+  but candidate reports DENSITY_NOT_REACHED with the identical empty recent ledger.
+  Thus classic success rate is unchanged, with ONE improvement and ONE regression.
+- King has 21 old refusals becoming verified hard and zero reverse regressions.
+- The two original failure seeds, with their original 28/256-key ledgers, are both
+  repaired by candidate. These are separate evidence, not substitutes for new seeds.
+- Aggregate timing improved, but not every seed was faster. Candidate-minus-baseline
+  median/mean: classic -3.73/-34.71ms; king -151.27/-240.30ms. The worst per-seed
+  slowdown was +638.31ms classic and +357.94ms king. Full pairs are retained.
+
+Generation refusal labels are retained exactly. FRESH_DIFFICULTY_NOT_REACHED does
+not expose whether an intermediate 200ms rating attempt timed out; this benchmark
+cannot infer that internal cause. Explicit generator budget codes and independent
+1000ms proof-budget outcomes are separately classified, not guessed.
+
+Immutable first-round evidence (do not overwrite for a second candidate):
+  docs/hard-generation-audit/candidate1-hard-ab-200.json
+  docs/hard-generation-audit/candidate1-hard-ab-200-summary.json
+  docs/hard-generation-audit/candidate1-generator.js.snapshot
+The last file is the exact hash-matched algorithm snapshot, not a live module.
+A subsequent algorithm requires a separate report filename and hash inventory.
+
+Candidate 2 protocol (prepared; do not run until the algorithm is frozen)
+-----------------------------------------------------------------------
+Use fresh, predeclared v2 seeds for the main comparison. This avoids presenting
+training-on-v1 repairs as evidence of general improvement. Four regression cases
+are reported separately: the two original failures with exact original ledgers,
+and v1 classic 105 / 168 with empty ledgers. No existing report is overwritten.
+
+  HARD_BENCH_BASELINE=/path/to/NineRealms-v5 HARD_BENCH_SEED_NAMESPACE=v2 HARD_BENCH_OUTPUT=candidate2-hard-ab-v2-200.json node scripts/benchmark-hard-generation.cjs --run
+  node scripts/summarize-hard-benchmark.cjs evidence/hard-generation/candidate2-hard-ab-v2-200.json
+
+This is 808 timed calls: 400 independent seed pairs plus four regression pairs.
+Omit --run to inspect the plan only, without loading or running generation.
+
+Additionally replay the original 400 independent v1 requests candidate-only:
+
+  HARD_BENCH_BASELINE=/path/to/NineRealms-v5 HARD_BENCH_ARM=candidate HARD_BENCH_REPLAY_REPORT=docs/hard-generation-audit/candidate1-hard-ab-200.json HARD_BENCH_OUTPUT=candidate2-v1-replay.json node scripts/benchmark-hard-generation.cjs --run
+  node scripts/summarize-hard-benchmark.cjs evidence/hard-generation/candidate2-v1-replay.json
+
+Replay copies exact archived requests/ledgers rather than reconstructing them
+from current defaults. Its source report SHA is recorded. replayComparison lists
+all outcomes, matching request hashes, newly fixed seeds and reverse regressions
+against candidate 1. Replay timings are not simultaneous paired A/B timings and
+must not be presented as such. The independent v2 cohort remains the principal
+comparison. Archived candidate 1 evidence and generator snapshot remain intact.
+
+Candidate 2 completed results
+-----------------------------
+Archived immutable reports, summaries and generator snapshot are in
+  docs/hard-generation-audit/candidate2-*
+Generator SHA256:
+  8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5
+Main v2 run: 808 calls / 290272 ms. Exact v1 replay: 400 calls / 110611 ms.
+Both commands exited 0, hashes unchanged before/after, no invalid puzzle,
+independent proof-budget issue, canonical duplicate, mismatched request hash or
+call above 8000 ms. Explicit generation refusal is not an invalid puzzle and
+still counts as unsuccessful delivery. No real-browser performance claim.
+
+v2 independent cohort, ALL request latency ms (mean / P50 / P95 / P99 / max):
+classic baseline: 191/200 verified; 239.73 / 183.23 / 710.93 / 801.00 / 892.62
+classic candidate:198/200 verified; 203.25 / 164.29 / 470.63 / 725.01 / 952.03
+king baseline:    180/200 verified; 391.45 / 326.97 / 922.03 / 957.26 / 1086.25
+king candidate:   200/200 verified; 115.02 / 72.01 / 269.08 / 419.38 / 547.28
+
+VERIFIED-only latency in same order:
+classic baseline: 214.99 / 176.36 / 489.30 / 746.14 / 755.56
+classic candidate:198.19 / 162.98 / 455.39 / 815.61 / 952.03
+king baseline:    334.17 / 291.45 / 738.01 / 944.88 / 957.26
+king candidate:   115.02 / 72.01 / 269.08 / 419.38 / 547.28
+
+Paired new-seed outcomes: classic 7 fixes / 0 regressions; king 20 fixes /
+0 regressions. All-request mean latency deltas -36.48 / -276.42 ms respectively.
+Classic both-verified pairs have median delta +1.11 ms, and its maximum observed
+latency increased: do not claim every seed or every tail percentile improved.
+Remaining candidate v2 refusals: classic-51 and classic-57,
+DENSITY_NOT_REACHED. Four separately reported regression cases all verified.
+
+Exact old-v1 replay: classic 199/200, king 200/200. Critically, v1 classic-171
+regresses from candidate 1 verified-hard to FRESH_DIFFICULTY_NOT_REACHED, while
+classic-168 is fixed. Both requests have empty recent ledgers. This newly exposed
+regression is preserved, not omitted from totals. The opaque generator refusal
+cannot distinguish internal grading timeout from exhausted successful-search
+attempts. Candidate 2 therefore improves aggregate yield, not universal success.
+Replay latencies (not paired current baseline measurements):
+classic all: 194.40 / 158.38 / 493.86 / 661.86 / 748.89 ms
+classic verified: 191.62 / 158.38 / 493.86 / 661.86 / 701.11 ms
+king all/verified: 125.86 / 75.07 / 344.44 / 438.71 / 649.47 ms

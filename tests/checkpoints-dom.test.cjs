@@ -4,7 +4,7 @@ const {enableDormantDOM}=require('./dormant-tools-fixture.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),{JSDOM,VirtualConsole}=require('jsdom');
 const dom=new JSDOM('<button id="history-open">历史</button><dialog id="other"><button id="other-focus">别的对话框</button></dialog>',{url:'https://ninerealms.test/',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window,d=w.document,$=id=>d.getElementById(id),resumed=[];
 w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
-for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(path.join(__dirname,'../src',file),'utf8'));
+for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','grid-rows.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(path.join(__dirname,'../src',file),'utf8'));
 const E=w.SudokuEngine,H=w.NineRealmsHistory,p=E.getPuzzle('easy','checkpoint-dom','classic'),index=p.givens.findIndex(v=>!v);
 H.init({Engine:E,openDialog:x=>x.showModal(),onResume:x=>{resumed.push(x);return true;},onReplayNew:x=>{resumed.push(x);return true;}});
 const s={version:8,game:{sessionId:'checkpoint-dom',createdAt:1,puzzleId:p.id,sourceId:p.sourceId,mode:'classic',difficulty:'easy',clues:p.clues,givens:p.givens,solution:p.solution,board:p.givens.slice(),notes:Array(81).fill(0),selected:index,mistakes:0,hints:0,elapsedMs:0,started:true,paused:false,completed:false,history:[],branch:null}};
@@ -60,7 +60,7 @@ async function capacityUI(){
   const dom=new JSDOM('<button id="history-open">历史</button>',{url:'https://capacity.test/',runScripts:'outside-only'}),w=dom.window,d=w.document,$=id=>d.getElementById(id);
   try{
    w.localStorage.setItem(H.KEY,JSON.stringify(fixture));w.HTMLElement.prototype.scrollIntoView=function(){};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
-   for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(path.join(__dirname,'../src',file),'utf8'));
+   for(const file of ['variant-bank.js','multigrid-bank.js','engine.js','grid-rows.js','drafts.js','checkpoints.js','history.js'])w.eval(fs.readFileSync(path.join(__dirname,'../src',file),'utf8'));
    const h=w.NineRealmsHistory;h.init({Engine:w.SudokuEngine,openDialog:x=>x.showModal()});h.open(game.sessionId,initialIndex);
    $('checkpoint-label').value='记'.repeat(80);$('checkpoint-mark-frame').click();
    assert.equal(h.exportData().records[0].droppedSteps,250,'manual note must actually trigger retention trim');

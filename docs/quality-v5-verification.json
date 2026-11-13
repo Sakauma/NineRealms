@@ -1,0 +1,33 @@
+{
+  "npm_test": "passed exit 0",
+  "test_dom": "passed exit 0",
+  "daily_final_focused": "passed exit 0",
+  "verify": "passed exit 0",
+  "git_diff_check": "passed",
+  "html_sha256": "cb72f3333170c1a8a42256f91aae26d193626309a4d7328eaf2ef1ffb35e62c1",
+  "audit": {
+    "requests": 960,
+    "successes": 958,
+    "declines": 2,
+    "illegal": 0,
+    "duplicates": 0,
+    "marked_standard_advanced_classic_multiple": 440,
+    "p50_ms": 76,
+    "p95_ms": 351,
+    "max_ms": 5821
+  },
+  "matrix": {
+    "requests": 288,
+    "successes": 288,
+    "max_ms": 3065
+  },
+  "old_catalog": {
+    "verified_outputs": 10128,
+    "explicit_legacy_declines": 129
+  },
+  "actual_visual_acceptance": "blocked: Chromium IPC denied; managed browser cannot reach command workspace",
+  "screenshots": 0,
+  "native_windows_mobile_acceptance": "not run",
+  "repository_head_verified": "39725d94f5a55c8daa010e7f5d7407c6cb3c1938",
+  "committed_or_pushed": false
+}

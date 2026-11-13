@@ -1,0 +1,1041 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test
+> node tests/product-version.test.cjs && node tests/secret-archives.test.cjs && node tests/menu-chrome.test.cjs && node tests/rating-label.test.cjs && node tests/checkpoints.test.cjs && node tests/fusion.test.cjs && node tests/fusion-variety.test.cjs && node tests/training.test.cjs && node tests/variant-training.test.cjs && node tests/drafts.test.cjs && node tests/floating-draft-dom.test.cjs && node tests/reference-workspace.test.cjs && node tests/unified-mode-view-state.test.cjs && node tests/unified-mode-layout.test.cjs && node tests/review.test.cjs && node tests/voyage-expansion.test.cjs && node tests/voyage-story.test.cjs && node tests/theme-backup.test.cjs && node tests/theme-voyage.test.cjs && node tests/voyage-prototype.test.cjs && node tests/voyage-lessons.test.cjs && node tests/music.test.cjs && node tests/music-unlock.test.cjs && node tests/input-sfx.test.cjs && node tests/logical-hints.test.cjs && node tests/direct-hint.test.cjs && node tests/desktop-navigation.test.cjs && node tests/backup.test.cjs && node tests/backup-capacity.test.cjs && node tests/favorites.test.cjs && node tests/quiet-ui.test.cjs && node tests/exchange.test.cjs && npm run test:reasoning && npm run test:generator && npm run test:desktop && node tests/desktop-scroll-layout.test.cjs && node tests/lens-containment.test.cjs && node tests/candidate-filter-state.test.cjs && npm run test:overlays && node tests/bounded-hint-layout.test.cjs && node tests/arrow-crossings.test.cjs && node tests/unchanged-nonarrow-renderer.test.cjs && node tests/numeral-glyph-metrics.test.cjs && node tests/arrow-typography.test.cjs && python3 tests/numeral-surface.test.py && node tests/arrow-glyph-clearance.test.cjs && node tests/candidate-glyph-spacing.test.cjs && npm run test:zen && npm run test:improvements && node tests/curated.test.cjs && node tests/voyage-discovery.test.cjs && node tests/daily-curated.test.cjs && npm run test:diversity && npm run test:recovery
+
+PASS product version 1.3.4: package/UI/backup default consistent, desktop derives manifest version, save schema8 and backup schema1 unchanged; old product versions accepted.
+PASS archive math/persistence: independent 4x4 oracle (unique1/multiple4), all6561 observations (126/486→1), all5040 routes (10 legal), old7/new11 and replay proofs, strict8-key backup roundtrips.
+PASS menu chrome: all four archive scroll containers match catalog thumb geometry/tokens and retain horizontal/high-contrast fallback; rules visible resting border/background with hover/focus distinction. Static declarations, not rendered pixels.
+PASS draft scroll chrome: content and nested links (cage notes scroll with content) share catalog geometry, theme colors and forced-colors fallback without changing scrolling or resizing. Static assertions only.
+PASS rating labels: five computed techniques; only complete successful ratings shown; failures hidden/retryable; original-givens cache, 64-entry limit, stale results, errors and accessible guide distinction.
+PASS checkpoints: only observed hints/mistakes/undo/3 rewrites, manual current/frame anchors, trim-unavailable semantics, duplicate update, filters, quota honesty, eight-key backup roundtrip and legacy/malicious-data checks.
+PASS fusion: 3 pinned joint-rule unique puzzles; removing either family gives multiple solutions; 182 honest hint steps, 2 genuine intersection steps; NR1 preserved/NR2 roundtrip, malformed clues rejected, both SVG families and accessibility descriptions. Not visual rendering.
+PASS six new fusion structures: distinct symmetry-normalized solutions, connected cages, rule sums/order, unique complete proof, both families essential, 7 actual intersection-only singles, challenge roundtrips; no human difficulty claim.
+PASS training stations: 9 fixed exercises, 3 techniques including pointing/claiming, independently rechecked proof witnesses; unique sources and 36 forced-candidate contradictions without exhausted budgets; rejects answer-only guessing, progress bounds and malicious inputs.
+PASS six short variant exercises: 77 proven deletions, completion witnesses, peer-aware arrow repetitions, no answer/search API, old nine progress markers retained.
+PASS drafts: 81/153/369, pure color/mark/link/cage operations, malformed/prototype/size/cage rejection, sparse replay changes, trim/reload, undo/branch backup and tampered replay rejection.
+PASS floating draft synthetic DOM: 8 groups. lifecycle, focus, modal/inert guard, rail, observer coalescing, keyboard adjustment and session geometry; pointer exclusion during movement/resize, clamping, cancellation/lost capture/blur, reset and left-handed rail; no-room flow docking, reveal only on open, dock resizing, capture renewal on detachment, mobile fallback and restoration; visual-viewport offsets, selected-target reveal, focus-neutral close and impossible-placement fallback; responsive rail uses actual 288/307.2/320px tools and 24/32/40px gutters in both handedness modes; closed draft trigger yields Escape to More Tools; open draft consumes only its own dismissal across repeated cycles; desktop More Tools draft open reveals board before measuring; legacy/narrow/variant paths, repeated opens and blocked opens do not add board scrolling; static CSS contracts: no draft hiding rules, large adaptive border-box keys, hidden counts, flow docking and theme-linked input colors. No browser rendering, real pointer capture, contrast or game-data behavior is certified.
+PASS square/rail assertion self-tests: 5 synthetic fit/overflow/Zen/left-hand/multi cases and 17 rejected regressions. Not a browser geometry pass.
+PASS glass keypad static contracts and 16434 arithmetic viewport cases: square width-derived size, full-width action row, height-independent board, shared frosted material/states, opaque fallback and compact hint and accessibility media rules. No browser geometry, pixels, contrast, hit testing or native focus certified.
+PASS reference workspace synthetic controller: 32 groups. Simulated DOM only; no browser layout, pixels, native Tab/accessibility tree, pointer targets, 3D or app integration verification.
+PASS unified mode game/view state: all 33 modes, 115 overview/detail/invalid-view transitions, 82 selected hints, immutable outside clues, original multi-grid cells and unchanged game data. Extracted production functions with a DOM facade, not a browser pass.
+PASS unified mode layout contracts: all 33 modes, 11760 desktop and 384 compact arithmetic cases, outside gutters/notes, native multi geometry/typography, full-width navigation and nonclassic privacy scaffold. Static/model coverage only; not browser rendering.
+PASS review: observed hint/note/draft/undo/mistake/branch events, exact replay jumps, no elapsed-only or inferred-technique events, retained-window statistics and legacy draft omission.
+PASS voyage expansion: original15 puzzle editions/stats retained, fusion16 full-rule unique and gated, no migration grandfathering, complete clue matching, actual-only world repair, verified optional practice and strict backup/migration.
+PASS voyage story: fresh DAG gates; parallel routes and real final join; exact one-time inherited access; current resume; old15 opens new fusion and only16 finishes; old stats/puzzles and backup marker retained; malformed grants rejected.
+PASS theme persistence: 7 complete-clue current/history/favorites/backup roundtrips including fusion16, tamper rejection, 9 legacy hashes and v1.0.0 backup compatibility.
+PASS themed voyages: 9 legacy puzzles and records unchanged; 6 original editions pinned and current full-rule puzzles unique, 272 verified hint steps without answer fallback; independent unlock/progress/revisit, full clue matching and source stability; old15 completion opens fusion16 without inventing a win.
+PASS voyage prototype: legacy bests retained; unchecked and verified new awards, optional-field backup validation, fixed16 content, one picker, original bounded deterministic sound scores.
+PASS voyage lessons: all 16 full-rule unique, local observation evidence and finite reasoning paths; 13 variants require extra rules; two new intro identities, original boards and chapter bests retained, cache isolation and old/new backup roundtrip. Programmatic evidence, not human playtesting.
+PASS BGM: original distinct scores, conservative mixed headroom, optional preference backup validation, bounded sources/cache, resumable position, stale render cancellation, crossfade retirement and complete release.
+PASS audio unlock: suspended/denied retry, explicit failed-renderer retry, unavailable/device errors, fresh context clock, stale async rejection, mute/Zen/background guards and complete release. Unit state checks; actual PCM verified separately in Chromium.
+PASS edit sound scores: five short neutral action signatures, conservative levels, undo/redo symmetry, optional preference compatibility and strict backup validation; reward logic does not control ordinary edit audio. Actual UI/PCM verified in Chromium.
+PASS classic logic hints: 64 source paths, locked candidates + naked/hidden pairs, sound eliminations, notes-proof progression, honest bounded ratings, correction and 32-mode regressions. { solved: 29, unrated: 35, eliminations: 198 }
+PASS direct selected-cell hint: all 33 variants including multi-grids, read-only one-result display, unchanged notes/fog/history, repeat handling, invalid/missing/filled/given selections, corrupt solutions, wrong entries, lifecycle invalidation, and no answer reads in logic mode or branches.
+PASS desktop navigation: bundled document reload allowed, remote/other local/active-content URLs blocked; sandbox settings retained. Not a native Electron run.
+PASS backup: 33-mode roundtrip, strict schemas/uniqueness/history replay, product-version independence, frozen validation token, quota protection, rollback/recovery, unrelated keys preserved.
+PASS backup capacity: legal >90%-full history exports compactly, imports and restores all 3000 replay steps unchanged.
+PASS favorites: all 33 modes incl 81/153/369 cells, exact frozen identity, session separation, strict sync/async imports, quota preservation and stale-tab protection.
+PASS: 99 mode-ready messages quiet; 7 actionable statuses visible; live-region semantics retained.
+{
+  status: 'passed',
+  imported: 9000,
+  totalCatalog: 10267,
+  allImportedUniqueAndAnswersRechecked: true,
+  allImportedGetPuzzleValidated: true,
+  oldSourcesUnchanged: 1258,
+  legacyDailyDatesUnchanged: 366,
+  voyageChaptersUnchanged: 9,
+  challengeRoundtrips: 30,
+  generatedFromImported: 30,
+  calibrationFallbacks: 0,
+  workerCatalog: 10267,
+  maxGetPuzzleMs: 27.81815800000004,
+  browserTest: false
+}
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:reasoning
+> node tests/logic-mode.test.cjs && node tests/variant-rule-extension.test.cjs && node tests/practice.test.cjs && node tests/branches.test.cjs && node tests/edits.test.cjs && node tests/custom-puzzle.test.cjs && node tests/technique-guides.test.cjs && node tests/variant-ratings.test.cjs
+
+PASS logic mode: explicit full/partial rule scopes, conflict-only observations, bounded classic proof hints without any solution or search oracle, input immutability.
+PASS 18 rule extensions: independent mathematical full-board oracle, different legal completions, rule-only conflicts/candidates, backup compatibility, no answer/search API; future families stay explicit.
+PASS independent practice: exact historical board/notes/draft, separate IDs/logs/timer, source immutability, stale/evicted rejection, assumption provenance, persistence and strict eight-key backup roundtrip.
+PASS branches: independent main/sibling/nested workspaces, switch/discard/adopt, atomic parent undo, stale-parent protection, legacy migration, depth/count limits, strict validation and replay/backup/reload.
+PASS edits: atomic candidate add/remove/toggle/clear/rule-sync at 81/153/369 cells, no-op/invalid/given protection, full digit/peer-note/draft undo+redo, invalidation, branch-local stacks and no counter/reward rewind.
+PASS custom classic: text roundtrip, direct conflicts vs conflict-free unsolvable vs multiple vs unique, budget honesty, full-grid guard, givens-only sharing, NR compatibility, custom favorites/save/backup and cancellable bounded fallback.
+PASS all 33 general guides; catalogue validity plus 445 independent rule witnesses, irregular/overlap/extra units, cage/line bounds, negative-dot/XV semantics, repeated values and region re-entry.
+PASS 7-mode logical ratings: 84 paths, 4136 independently witnessed steps, 257 safe candidate removals; no answer/search API; 26 unsupported modes, invalid/stalled/budget bounds. {"classic":{"rated":8,"unrated":4,"usesVariant":0},"diagonal":{"rated":12,"unrated":0,"usesVariant":10},"hyper":{"rated":12,"unrated":0,"usesVariant":9},"knight":{"rated":12,"unrated":0,"usesVariant":10},"king":{"rated":12,"unrated":0,"usesVariant":8},"disjoint":{"rated":12,"unrated":0,"usesVariant":5},"jigsaw":{"rated":11,"unrated":1,"usesVariant":7}}
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:generator
+> node tests/generator.test.cjs && node tests/generator-catalog.test.cjs
+
+{
+  challengeRoundtripModes: 33,
+  workerErrorAndTimeoutMock: true,
+  status: 'passed',
+  samples: 970,
+  calibrationFallbacks: 20,
+  modes: 33,
+  difficultyTiers: 3,
+  seedsPerTier: 10,
+  exactSampleDuplicates: 0,
+  seedReproducibility: true,
+  uniqueSolutionRecheck: true,
+  curatedApiUnchanged: true,
+  workerSourceVm: true,
+  workerCancellationMock: true,
+  maxGenerationMs: 140,
+  meanGenerationMs: 5.635051546391753,
+  visualBrowserTest: false
+}
+{
+  checked: 10128,
+  failures: [
+    { id: 'D-H1', error: 'VARIANT_DIFFICULTY_NOT_REACHED' },
+    { id: 'K-H1', error: 'VARIANT_DIFFICULTY_NOT_REACHED' },
+    { id: 'K-H3', error: 'VARIANT_DIFFICULTY_NOT_REACHED' },
+    {
+      id: 'B31-classic-hard-12',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-diagonal-hard-07',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-diagonal-hard-19',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-hyper-hard-14',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-hyper-hard-16',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-hyper-hard-19',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-04',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-06',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-07',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-10',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-11',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-12',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-13',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-14',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-15',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-16',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'B31-knight-hard-17',
+      error: 'VARIANT_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-000CC65CF372',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-000D2F07197B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-000DBD2C44CD',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00145FFD714B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0015D55A6EC4',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00189FFD5495',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-001C145E1CCC',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-001D2B46C953',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0026F514885D',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0029D4724D88',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0042E2186BB9',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-004952E2151C',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-006CC11D5BC1',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-007C6FDE903A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00828C4BBD26',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-008C29332074',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-009346C52C9B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-009739317264',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00980A2208EA',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00A25D9AA0AF',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00AA244F2A75',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00AB04728CB6',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00AD4C4F4BBF',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00AF34FC2A01',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00BA7ECAC491',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00BABCCBF89A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00C1EC93F1E8',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00CB3F0EC921',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00CBF0B7D0F0',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00CCF4BC4EEE',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00D10F5E3749',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00D8C44B1C1E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00DC8A2A4B5A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00DF7B3E9F58',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00EA306F4A7E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00F97071541B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-00FDD717C807',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0104B3FAD51A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-011FE8452ED2',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01245BC7D98E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01290936905A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01293F832F26',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-012C9F3DB9BE',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01350B30814A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0138E97EEE54',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-013E76CDC100',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-014107C9C866',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01414B94CA52',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0149C48EDE53',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-014B270770AF',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0155A135A612',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-015A1612793F',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-015A489DA606',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-015D941C1A6E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01680F041C50',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01704895EE1C',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01782DCF09CE',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0178CDAC340B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-017DD9818E47',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-017FDF2DA3BA',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01806359C858',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-018064C8379E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-018374538C77',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0183A0F259DF',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-018A105ABD81',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0195823CEFD2',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-0197C912E9FA',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01ABD4F4F55A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01AD9E2C9656',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01B0917A2A9A',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01B88AEEAF46',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01BA21C769AE',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01BE0E595665',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01BE8C7D2060',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01C2CDAFBB91',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01CEBA0E3777',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01D2539BA03B',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01D644541E2D',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01D98ECF23DA',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    {
+      id: 'SE-H-01DC37F27E8E',
+      error: 'CLASSIC_DIFFICULTY_NOT_REACHED'
+    },
+    ... 29 more items
+  ],
+  maxMs: 312,
+  scope: 'one new carve per eligible curated source, full-rule uniqueness recheck'
+}
+All outputs valid; expected density-budget fallbacks: 129
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:desktop
+> node tests/desktop-bridge.test.cjs && node tests/tauri-config.test.cjs && python3 tests/tauri-tooling.test.py
+
+PASS desktop bridge transport: browser compatibility, explicit Tauri detection, narrow IPC payloads, native clipboard, save/cancel/failure handling. IPC is mocked; no native execution claimed.
+PASS Tauri static contracts: separate product/profile/install identity, version, embedded assets, only two local IPC permissions, exact window lifecycle hooks, restrictive CSP/navigation declarations, Windows online/offline configurations. Rust compilation not performed by this test.
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+OK
+PASS desktop scroll static guard: board wrapper remains in normal flow; status row preserved. Not a browser geometry or visual pass.
+PASS optional-tools structure: removed hidden/disabled entry and inert region, later source region, fixed filter/batch homes, independent target, stable primary keypad and no nested scrolling. Static only; no rendered geometry claim.
+PASS candidate filter state (including optional-tools refresh ordering and empty-selection cancellation): actual shipped off-mode guard plus explicitly enabled dormant app.js source/digit toggle handlers, nonmutating filter, paused/completed suppression, rule disclaimer, independent batch digit, atomic undo/redo and explicit keyboard masks. DOM mock only, not a browser pass.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:overlays
+> node tests/variant-renderer-semantics.test.cjs && node tests/refined-overlays.test.cjs && node tests/quiet-glass-materials.test.cjs && node tests/glyph-separation.test.cjs
+
+PASS variant renderer semantics: 1198 immutable catalog clue documents across 33 modes, pinned legends/non-thermometer labels, explicit ordered thermometer labels, 67 mode transitions, outside flags, layering, cache and mutation invalidation. SVG facade only, not visual/browser validation.
+PASS refined overlay marks/styles: 12190 adjacency, exterior, cage, parity, quadruple and jigsaw marks; original outside coordinates and inequality directions; live/replay layering, pause privacy, theme/strong/system-color contracts. Static/numerical checks only; no measured pixels or contrast.
+PASS refined overlay geometry: 6519 primary lines, 26995 ordered cell anchors, 6181 rounded paths; all 10 line families, endpoint shapes, direction/dash semantics and all 36 unchanged semantic arrow lane/ring layouts plus bounded final-cell tip retreat. Numerical SVG facade only, not browser rendering or measured contrast.
+PASS quiet glass materials: 10 families, unique live/replay local paints, stable IDs/cache, solid/theme fallbacks, shared 18/29 thermo silhouette and clipped static material. SVG facade only, no browser rendering.
+PASS glyph separation: 7680 actual live/replay paint cases, separate candidate spans, quiet clues, limited line-board clearance/no plates/glow, empty/fogged privacy and semantic state ink. Static CSS/DOM-facade checks only; no browser pixels or measured contrast.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+PASS bounded hint layout: 13440 mode/view/viewport/hand/large-text/warning arithmetic envelopes and 3033 actual identified coordinate labels; same44px final action row, no detached hint or redundant success prose. CSS/math only, not native geometry or typography.
+PASS local arrow crossings: 93 catalog/rotated/reflected/synthetic contexts, 1034 direction/bulb/cell-preserved arrows, 1034 bounded tips, 241 true local underpass gaps, 125 separated shared-cell head pairs, unchanged lanes/rings/earlier paths and bounded final-corner rounding, unique live/replay masks and cache. SVG facade/math only.
+PASS unchanged non-arrow renderer: 1156 exact pre-crossing-repair normalized SVG trees, including all non-arrow line/materials and outside clues. SVG facade only.
+PASS numeral outline metrics: independently extracted 18 embedded WOFF digit outlines, verified font SHA-256, nonzero-fill counters, crossings and stroke-width clearance. No browser placement claim.
+PASS arrow typography: arrow-only live/replay20% uniform notes including draft marks; preferred-size-preserving70/20SVG caps;20px/6px fallback; wrapper-only containers; no bulb contour including forced colors; original digit/note order unchanged. Static contracts only.
+PASS production numeral-base cascade: 2052 static cases; source parser only, not browser pixels
+PASS actual Source arrow/glyph clearance:120 catalog/rotated/reflected contexts,2160 heads,1936 coupled400/600 main/all-nine-note profiles, both modeled baselines, normal/large/strong borders, neighboring cells, .08em/.12em contours, live/desktop/replay and supported fallback; minimum0.740193 SVG units. Finite font/math model, not native pixels.
+PASS candidate spacing:968 coupled profiles,34848 all-nine-note pairs,400/600 ink boxes with .12em contour; minimum ink-to-other-contour clearance0.260000 units (1.348031 on modeled current layouts). Contours may meet only other backdrop contours; no native pixel claim.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:zen
+> node tests/pure-zen.test.cjs && node tests/pure-zen-layout.test.cjs
+
+PASS pure Zen: 165 mode/state transitions across all 33 variants, immutable board/notes/drafts/fog/branches/history, transient cleanup, restored preferences, usable focus and Escape, keyboard input, and quiet persisted completion. DOM facade only; browser geometry is not certified.
+PASS pure Zen CSS contracts and 3521 viewport arithmetic cases: isolated styles, inherited frosted key states, unchanged native clue gutters, responsive 44px targets and necessary navigation. Not browser rendering.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:improvements
+> node tests/save-recovery.test.cjs && node tests/save-session.test.cjs && node tests/classic-difficulty.test.cjs && node tests/variant-difficulty.test.cjs && node tests/window-recovery.test.cjs && node tests/rule-examples.test.cjs && node tests/reliability-followup.test.cjs
+
+PASS save recovery: missing/corrupt/future/unavailable states, exact original bytes, cumulative copies, quota/readback failures and concurrent-current changes preserve originals.
+PASS save sessions: exclusive ownership, blocked writes for all keys, temporary sessions, safe handoff, stale-write detection with and without events, lock-API fallback and quota errors.
+PASS classic technique calibration: {"generated":91,"fallbacks":5,"counts":{"easy":32,"medium":32,"hard":27},"maxMs":241,"unique":true,"seedReproducible":true,"backupRoundtrip":true,"variantDensityUnchanged":true}
+PASS variant difficulty: {"samples":197,"fallbacks":19,"maxMs":125,"modes":{"diagonal":{"easy":12,"medium":12,"hard":12,"fallbacks":0},"hyper":{"easy":12,"medium":12,"hard":10,"fallbacks":2},"knight":{"easy":12,"medium":12,"hard":2,"fallbacks":10},"king":{"easy":12,"medium":12,"hard":10,"fallbacks":2},"disjoint":{"easy":12,"medium":12,"hard":7,"fallbacks":5},"jigsaw":{"easy":12,"medium":12,"hard":12,"fallbacks":0}}}
+PASS window recovery: {"modes":33,"strictValidation":true,"ruleOnlyAlternateSolutions":4,"sourceBytesPreserved":true,"historyAndOtherKeysUntouched":true,"concurrentQuotaArchiveAndReadbackFailures":true}
+PASS rule examples: correct/wrong thermometer, arrow, renban and whispers checked by the real constraint engine, fusion scope and immutable data.
+PASS three followups: history original protection/export gating/archive reset/quota/concurrent writes/partial recovery; four rule-only variants with valid alternative solutions and backup/replay; 800-day totals/streaks, bounded details, replay deduplication, gap bridging, honest legacy lower bounds and backup migration.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+curated: 16 fixed unique boards; local rule proofs, within-mode gradient, copies and backup identity passed
+voyage discovery: early variants preserve all sixteen chapter identities and unlocks
+daily curated: pinned schedule, uniqueness, complete clue identity, Beijing cutoff and legacy preservation passed
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:diversity
+> node tests/puzzle-diversity.test.cjs && node tests/diversity-source.test.cjs && node tests/diversity-clues.test.cjs && node tests/diversity-composition.test.cjs && node tests/diversity-extended-source.test.cjs && node tests/diversity-marked-clues.test.cjs && node tests/miracle-space.test.cjs && node tests/rule-path-grading.test.cjs && node tests/rule-quality.test.cjs && node tests/fresh-audit-budgets.test.cjs && node tests/frozen-v3-generation.test.cjs && node tests/fresh-generation.test.cjs && node tests/daily-constructed.test.cjs && node tests/daily-async.test.cjs && node tests/technique-carving.test.cjs
+
+PASS diversity: 144 randomized full-group transforms + 10 symmetric transforms, 12 independent canonical classes, 66 negative pairs, D4 rules/value separation and worker parity; 64 recent rejections 6.4ms; 12 exact matches 5.9ms.
+{
+  "version": 1,
+  "method": "empty-board seeded MRV search; exact classical solution-equivalence audit",
+  "miracle": "excluded; sampled completions collapse to one classical equivalence class",
+  "rows": [
+    {
+      "mode": "classic",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 89,
+      "maxConstructionMs": 3,
+      "auditMs": 427
+    },
+    {
+      "mode": "diagonal",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 162,
+      "maxConstructionMs": 1,
+      "auditMs": 423
+    },
+    {
+      "mode": "hyper",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 31173,
+      "maxConstructionMs": 14,
+      "auditMs": 619
+    },
+    {
+      "mode": "knight",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 11140,
+      "maxConstructionMs": 8,
+      "auditMs": 564
+    },
+    {
+      "mode": "king",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 8977,
+      "maxConstructionMs": 5,
+      "auditMs": 452
+    },
+    {
+      "mode": "nonconsecutive",
+      "requests": 100,
+      "successes": 77,
+      "budgetFallbacks": 23,
+      "repeatedEquivalenceClasses": 2,
+      "inequivalentSolutions": 75,
+      "distinctQuickInvariants": 73,
+      "maxConstructionNodes": 230540,
+      "maxConstructionMs": 327,
+      "auditMs": 13375
+    },
+    {
+      "mode": "disjoint",
+      "requests": 100,
+      "successes": 100,
+      "budgetFallbacks": 0,
+      "repeatedEquivalenceClasses": 0,
+      "inequivalentSolutions": 100,
+      "distinctQuickInvariants": 100,
+      "maxConstructionNodes": 263,
+      "maxConstructionMs": 1,
+      "auditMs": 411
+    }
+  ]
+}
+PASS fresh clue geometry: 1500 legal deterministic layouts; 0 explicit quality declines; 15 modes, seed diversity, bounded disjoint lines, connected partitioned cages and worker parity
+{
+  "version": 1,
+  "method": "100 truly new solved boards per mode; achieved geometry not intended profile; D4 geometry canonicalization; generation time excludes solution construction",
+  "rows": [
+    {
+      "mode": "thermo",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 20,
+      "lineCountHistogram": {
+        "2": 27,
+        "3": 35,
+        "4": 38
+      },
+      "lineLengthHistogram": {
+        "3": 213,
+        "4": 35,
+        "5": 45,
+        "6": 18
+      },
+      "coveredBoxHistogram": {
+        "4": 3,
+        "5": 12,
+        "6": 15,
+        "7": 19,
+        "8": 40,
+        "9": 11
+      },
+      "mixedLengthPuzzles": 58,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 54,
+      "meanBuildMs": 0.91,
+      "maxBuildMs": 6
+    },
+    {
+      "mode": "arrow",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 13,
+      "lineCountHistogram": {
+        "2": 37,
+        "3": 32,
+        "4": 31
+      },
+      "lineLengthHistogram": {
+        "3": 194,
+        "4": 74,
+        "5": 26
+      },
+      "coveredBoxHistogram": {
+        "4": 6,
+        "5": 28,
+        "6": 15,
+        "7": 26,
+        "8": 23,
+        "9": 2
+      },
+      "mixedLengthPuzzles": 70,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 26,
+      "meanBuildMs": 0.7,
+      "maxBuildMs": 3
+    },
+    {
+      "mode": "renban",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 16,
+      "lineCountHistogram": {
+        "2": 36,
+        "3": 32,
+        "4": 32
+      },
+      "lineLengthHistogram": {
+        "3": 166,
+        "4": 14,
+        "5": 17,
+        "6": 99
+      },
+      "coveredBoxHistogram": {
+        "5": 5,
+        "6": 32,
+        "7": 34,
+        "8": 25,
+        "9": 4
+      },
+      "mixedLengthPuzzles": 59,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 71,
+      "meanBuildMs": 6.64,
+      "maxBuildMs": 24
+    },
+    {
+      "mode": "whispers",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 20,
+      "lineCountHistogram": {
+        "2": 40,
+        "3": 36,
+        "4": 24
+      },
+      "lineLengthHistogram": {
+        "3": 170,
+        "4": 21,
+        "5": 21,
+        "6": 72
+      },
+      "coveredBoxHistogram": {
+        "4": 8,
+        "5": 23,
+        "6": 30,
+        "7": 26,
+        "8": 12,
+        "9": 1
+      },
+      "mixedLengthPuzzles": 75,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 71,
+      "meanBuildMs": 0.54,
+      "maxBuildMs": 3
+    },
+    {
+      "mode": "thermo-killer",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 21,
+      "lineCountHistogram": {
+        "2": 39,
+        "3": 33,
+        "4": 28
+      },
+      "lineLengthHistogram": {
+        "3": 185,
+        "4": 32,
+        "5": 46,
+        "6": 26
+      },
+      "coveredBoxHistogram": {
+        "4": 7,
+        "5": 12,
+        "6": 22,
+        "7": 25,
+        "8": 24,
+        "9": 10
+      },
+      "mixedLengthPuzzles": 66,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 60,
+      "meanBuildMs": 1.13,
+      "maxBuildMs": 8
+    }
+  ]
+}
+PASS readable composition: exact rules, measured length/space diversity, separated orthogonal routes, bounded coverage, deterministic seeds and worker parity. Not a screenshot audit.
+jigsaw {"mode":"jigsaw","attempts":29,"declines":5,"successes":24,"independentComponentSetKeys":24,"componentClassCounts":[24],"regionD4Classes":24,"carveTargetReached":24,"basicLogicalCarves":24,"rows":[{"seed":"extended-source-v1-0","constructMs":25,"nodes":249,"regionSwaps":24,"changedRegionCells":20,"givens":44,"target":44,"carveMs":6,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-2","constructMs":7,"nodes":91,"regionSwaps":24,"changedRegionCells":16,"givens":44,"target":44,"carveMs":2,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-3","constructMs":5,"nodes":1035,"regionSwaps":24,"changedRegionCells":16,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-4","constructMs":68,"nodes":67904,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":2,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-5","constructMs":50,"nodes":60082,"regionSwaps":24,"changedRegionCells":16,"givens":44,"target":44,"carveMs":3,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-6","constructMs":88,"nodes":60283,"regionSwaps":24,"changedRegionCells":15,"givens":44,"target":44,"carveMs":2,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-7","constructMs":2,"nodes":84,"regionSwaps":24,"changedRegionCells":16,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-8","constructMs":2,"nodes":82,"regionSwaps":24,"changedRegionCells":28,"givens":44,"target":44,"carveMs":2,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-9","constructMs":4,"nodes":82,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-10","constructMs":111,"nodes":120219,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-12","constructMs":73,"nodes":60094,"regionSwaps":24,"changedRegionCells":20,"givens":44,"target":44,"carveMs":1,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-13","constructMs":60,"nodes":60093,"regionSwaps":24,"changedRegionCells":16,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-14","constructMs":7,"nodes":91,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-16","constructMs":2,"nodes":82,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-18","constructMs":181,"nodes":120933,"regionSwaps":24,"changedRegionCells":19,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-19","constructMs":82,"nodes":60085,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-20","constructMs":2,"nodes":86,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-21","constructMs":3,"nodes":82,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":2,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-23","constructMs":3,"nodes":82,"regionSwaps":24,"changedRegionCells":20,"givens":44,"target":44,"carveMs":1,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-24","constructMs":8,"nodes":86,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-25","constructMs":3,"nodes":82,"regionSwaps":24,"changedRegionCells":20,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-26","constructMs":6,"nodes":5007,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-27","constructMs":2,"nodes":109,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":38,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-28","constructMs":2,"nodes":107,"regionSwaps":24,"changedRegionCells":12,"givens":44,"target":44,"carveMs":1,"checks":37,"budgetRejects":0,"logicalBasic":true}]}
+twin {"mode":"twin","attempts":24,"declines":0,"successes":24,"independentComponentSetKeys":24,"componentClassCounts":[24,24],"regionD4Classes":null,"carveTargetReached":24,"basicLogicalCarves":24,"rows":[{"seed":"extended-source-v1-0","constructMs":2,"nodes":160,"givens":84,"target":84,"carveMs":7,"checks":71,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-1","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":4,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-2","constructMs":1,"nodes":156,"givens":84,"target":84,"carveMs":5,"checks":71,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-3","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":71,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-4","constructMs":2,"nodes":165,"givens":84,"target":84,"carveMs":3,"checks":71,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-5","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":4,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-6","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":4,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-7","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-8","constructMs":1,"nodes":158,"givens":84,"target":84,"carveMs":4,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-9","constructMs":1,"nodes":164,"givens":84,"target":84,"carveMs":3,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-10","constructMs":1,"nodes":156,"givens":84,"target":84,"carveMs":6,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-11","constructMs":2,"nodes":155,"givens":84,"target":84,"carveMs":4,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-12","constructMs":1,"nodes":160,"givens":84,"target":84,"carveMs":3,"checks":72,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-13","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-14","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-15","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":3,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-16","constructMs":1,"nodes":158,"givens":84,"target":84,"carveMs":3,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-17","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-18","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":71,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-19","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":3,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-20","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":4,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-21","constructMs":1,"nodes":154,"givens":84,"target":84,"carveMs":3,"checks":69,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-22","constructMs":1,"nodes":159,"givens":84,"target":84,"carveMs":4,"checks":70,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-23","constructMs":1,"nodes":157,"givens":84,"target":84,"carveMs":38,"checks":69,"budgetRejects":0,"logicalBasic":true}]}
+samurai {"mode":"samurai","attempts":24,"declines":0,"successes":24,"independentComponentSetKeys":24,"componentClassCounts":[24,24,24,24,24],"regionD4Classes":null,"carveTargetReached":24,"basicLogicalCarves":24,"rows":[{"seed":"extended-source-v1-0","constructMs":7,"nodes":380,"givens":201,"target":201,"carveMs":36,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-1","constructMs":3,"nodes":381,"givens":201,"target":201,"carveMs":24,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-2","constructMs":2,"nodes":371,"givens":201,"target":201,"carveMs":25,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-3","constructMs":2,"nodes":374,"givens":201,"target":201,"carveMs":25,"checks":171,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-4","constructMs":3,"nodes":371,"givens":201,"target":201,"carveMs":36,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-5","constructMs":3,"nodes":371,"givens":201,"target":201,"carveMs":24,"checks":171,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-6","constructMs":3,"nodes":382,"givens":201,"target":201,"carveMs":30,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-7","constructMs":13,"nodes":407,"givens":201,"target":201,"carveMs":24,"checks":172,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-8","constructMs":3,"nodes":399,"givens":201,"target":201,"carveMs":24,"checks":171,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-9","constructMs":3,"nodes":374,"givens":201,"target":201,"carveMs":23,"checks":172,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-10","constructMs":3,"nodes":379,"givens":201,"target":201,"carveMs":25,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-11","constructMs":2,"nodes":374,"givens":201,"target":201,"carveMs":26,"checks":168,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-12","constructMs":2,"nodes":371,"givens":201,"target":201,"carveMs":26,"checks":168,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-13","constructMs":4,"nodes":370,"givens":201,"target":201,"carveMs":24,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-14","constructMs":5,"nodes":375,"givens":201,"target":201,"carveMs":25,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-15","constructMs":4,"nodes":376,"givens":201,"target":201,"carveMs":25,"checks":172,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-16","constructMs":10,"nodes":387,"givens":201,"target":201,"carveMs":25,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-17","constructMs":2,"nodes":379,"givens":201,"target":201,"carveMs":22,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-18","constructMs":2,"nodes":370,"givens":201,"target":201,"carveMs":25,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-19","constructMs":3,"nodes":376,"givens":201,"target":201,"carveMs":20,"checks":171,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-20","constructMs":2,"nodes":370,"givens":201,"target":201,"carveMs":23,"checks":170,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-21","constructMs":2,"nodes":376,"givens":201,"target":201,"carveMs":25,"checks":171,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-22","constructMs":2,"nodes":376,"givens":201,"target":201,"carveMs":23,"checks":169,"budgetRejects":0,"logicalBasic":true},{"seed":"extended-source-v1-23","constructMs":2,"nodes":379,"givens":201,"target":201,"carveMs":21,"checks":170,"budgetRejects":0,"logicalBasic":true}]}
+{
+  "method": "100 new classic MRV solutions per mode; full normalized rule validation; D4 canonical geometry excludes clue values; second audit holds solution fixed",
+  "rows": [
+    {
+      "mode": "palindrome",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 81,
+      "maxConstructionMs": 4
+    },
+    {
+      "mode": "between",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 19
+    },
+    {
+      "mode": "lockout",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 7
+    },
+    {
+      "mode": "entropic",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 7
+    },
+    {
+      "mode": "modular",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 6
+    },
+    {
+      "mode": "region-sum",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 9
+    },
+    {
+      "mode": "clone",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": [],
+      "distinctD4GeometryClasses": 100,
+      "fixedSolution100SeedsD4Classes": 100,
+      "maxConstructionMs": 4
+    }
+  ]
+}
+PASS 7 marked clue modes; geometry/semantics/seed/worker/no-bank checks. Not uniqueness, difficulty or screenshot certification.
+PASS Miracle full-space audit: 72 labeled grids; 1 classical / 9 D4 / 5 D4+inversion classes; explicit budget refusal and each-family necessity witnesses.
+PASS rule-path grading: 23 replayed proofs; exact parallel waves, no answer/search, complete-only tiers, density-independent cutoffs, multi-board and worker parity. Not human difficulty calibration.
+PASS rule quality: {"verified":63,"unproven":3,"classicComplete":23,"ruleNeeded":40} independent ablation proof, thresholds, tampering, bounded ablation search, no answer/bank, worker parity; not human difficulty.
+PASS deterministic source/technique/depth budget refusals and simulated 8000ms worker watchdog cleanup; no real-device performance claim.
+PASS frozen v3 contract: {"modes":22,"verified":22,"failures":[]}
+classic/easy 3/3
+classic/medium 3/3
+classic/hard 3/3
+diagonal/easy 3/3
+diagonal/medium 3/3
+diagonal/hard 3/3
+hyper/easy 3/3
+hyper/medium 3/3
+hyper/hard 3/3
+knight/easy 3/3
+knight/medium 3/3
+knight/hard 3/3
+king/easy 3/3
+king/medium 3/3
+king/hard 3/3
+nonconsecutive/easy 3/3
+nonconsecutive/medium 3/3
+nonconsecutive/hard 3/3
+disjoint/easy 3/3
+disjoint/medium 3/3
+disjoint/hard 3/3
+jigsaw/easy 3/3
+jigsaw/medium 3/3
+jigsaw/hard 3/3
+twin/easy 3/3
+twin/medium 3/3
+twin/hard 3/3
+samurai/easy 3/3
+samurai/medium 3/3
+samurai/hard 3/3
+thermo/easy 3/3
+thermo/medium 3/3
+thermo/hard 3/3
+killer/easy 3/3
+killer/medium 3/3
+killer/hard 3/3
+arrow/easy 3/3
+arrow/medium 3/3
+arrow/hard 3/3
+thermo-killer/easy 3/3
+thermo-killer/medium 3/3
+thermo-killer/hard 3/3
+renban/easy 3/3
+renban/medium 3/3
+renban/hard 3/3
+whispers/easy 3/3
+whispers/medium 3/3
+whispers/hard 3/3
+odd-even/easy 3/3
+odd-even/medium 3/3
+odd-even/hard 3/3
+greater/easy 3/3
+greater/medium 3/3
+greater/hard 3/3
+kropki/easy 3/3
+kropki/medium 3/3
+kropki/hard 3/3
+xv/easy 3/3
+xv/medium 3/3
+xv/hard 3/3
+quadruple/easy 3/3
+quadruple/medium 3/3
+quadruple/hard 3/3
+sandwich/easy 3/3
+sandwich/medium 3/3
+sandwich/hard 3/3
+skyscraper/easy 3/3
+skyscraper/medium 3/3
+skyscraper/hard 3/3
+xsum/easy 3/3
+xsum/medium 3/3
+xsum/hard 3/3
+littlekiller/easy 3/3
+littlekiller/medium 3/3
+littlekiller/hard 3/3
+palindrome/easy 3/3
+palindrome/medium 3/3
+palindrome/hard 3/3
+between/easy 3/3
+between/medium 3/3
+between/hard 3/3
+lockout/easy 3/3
+lockout/medium 3/3
+lockout/hard 3/3
+entropic/easy 3/3
+entropic/medium 3/3
+entropic/hard 3/3
+modular/easy 3/3
+modular/medium 3/3
+modular/hard 3/3
+region-sum/easy 3/3
+region-sum/medium 3/3
+region-sum/hard 3/3
+clone/easy 3/3
+clone/medium 3/3
+clone/hard 3/3
+{
+  "medianGenerationMs": 58,
+  "p95GenerationMs": 268,
+  "successes": 288,
+  "requests": 288,
+  "zeroSuccessBuckets": [],
+  "failures": [],
+  "maxGenerationMs": 2121,
+  "totalMs": 87891
+}
+PASS fresh v5 / 32-mode generation: legal unique completions, independently replayed logic, effective clues, full-group diversity, seeded determinism, explicit failure budgets, legacy fixtures, worker parity and generation-v5 backup/history.
+PASS daily v3: 40 unique dates with new base/layout, unique solution/rule logic, fixed 8-mode schedule, 11 golden dates, adversarial clock, bounded LRU, explicit deterministic fallback, v1/v2/v3 future-save + backup/history compatibility and unchanged first results.
+PASS daily async client: 11 delivered golden dates, real worker/main-loop responsiveness, cache copies, old dates, replacement/cancel/late/wrong-date results, pinned deterministic fallback, no fallback on unknown errors or timeout, resource cleanup.
+PASS technique-aware carving: old failures now strict hard + unique, unsupported deletion rollback, bounded paired branches, deterministic seed, recent-base exclusion, v5 other-path golden and frozen daily isolation.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:recovery
+> node tests/recovery-reserve.test.cjs && node tests/generation-recovery.test.cjs && node tests/generation-recovery-client.test.cjs && node tests/recovery-backup.test.cjs
+
+recovery reserve: 216 verified, deep-clone and worker parity passed
+PASS recovery: original three v6 declines preserved but bounded recovery yields same-tier unique puzzles; reserve provenance, full-base exclusions/exhaustion, illegal/wrong-tier/budget candidates rejected, deterministic seed and legacy/frozen isolation.
+PASS generation recovery client: actual worker primary/search/inventory, same-tier result, bounded 8+8+4 watchdogs, opt-in legacy contract, stage cancellation, supersession, late callbacks and cleanup.
+PASS recovery backup: 3 provenance kinds, strict catalog grading and fixed reserve identity, unique/rule-quality reproof, current/history roundtrip, malformed metadata rejection, compact generation restore and old-save compatibility.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

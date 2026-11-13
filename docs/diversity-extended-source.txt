@@ -1,0 +1,49 @@
+New source construction: jigsaw, twin, samurai
+
+API is unchanged: NineRealmsDiversitySource.generate({mode,seed,maxNodes?,maxAttempts?})
+returns full givens/solution arrays, normalized clues, and construction evidence.
+The full source is not yet a playable puzzle: carving, uniqueness and logical
+path checks must still be performed downstream. No fixed-bank lookup is used.
+
+Jigsaw:
+- Construct a fresh classic completion, then exchange equal-digit cells across
+  region boundaries only when both resulting nine-cell regions stay connected.
+- Reject revisited region maps; perform at most 24 boundary swaps per layout,
+  at most 8 layout trials. Require at least 12 changed cells and at least 6
+  genuinely non-box regions, not merely a permutation of region labels.
+- Solve again FROM AN EMPTY BOARD under the newly constructed row/column/region
+  constraints. The final completion need not obey old 3x3 boxes.
+- Region retries and final search are seed-based and bounded. A layout failure
+  is DIVERSITY_REGIONS_UNAVAILABLE; search exhaustion is DIVERSITY_BUDGET.
+- construction records regionSwaps, changedRegionCells, changedRegions,
+  irregularRegions, regionConstructionNodes and regionAttempts. `nodes` measures
+  the final search; construction of the seed layout is reported separately.
+
+Twin / Samurai:
+- Search the global empty board using Engine.getLayout and getPeers. There are
+  153 cells / 2 boards / 9 overlap cells, or 369 cells / 5 boards / 36 overlaps.
+- Every overlap is one shared variable, not two separately solved cells pasted
+  together. All component rows, columns and boxes are enforced simultaneously.
+- Construction records cellCount, boardCount and overlapCells. Overlap geometry
+  remains fixed by the game rule; newly constructed JOINT SOLUTIONS vary.
+- For conservative recent-base deduplication, extract each component using
+  layout.boards[].cells, canonicalize its 81 digits under the full classical
+  group, sort component signatures, and combine them with the mode. This may
+  reject more than necessary. It is NOT full overlap-graph isomorphism, and does
+  not claim a new board geometry.
+
+Defaults remain four final-search attempts, each capped at 60,000 visited nodes.
+No wall-clock cutoff chooses a different puzzle. Failure is explicit. Existing
+seven source modes retain their previous seeded behavior (35 exact cross-version
+comparisons checked). Miracle remains excluded; see miracle-space.txt.
+
+Tests:
+  node tests/diversity-extended-source.test.cjs
+
+The audit obtains 24 successful sources per new mode, records all declines, checks
+seed and Node/Worker parity, every rule and jigsaw connectivity, component solution
+classes and jigsaw D4 layouts, then performs independently unique easy-density
+carves and answer-free naked/hidden-single completion. Reports are written to
+  evidence/diversity/extended-source-audit.json
+These are construction/carving feasibility tests, not a general human difficulty
+rating. The test's 44/81 density target is not a promise about medium/hard tiers.

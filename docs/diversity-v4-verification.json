@@ -1,0 +1,23 @@
+{
+  "npm_test": "passed exit 0",
+  "npm_run_test_dom": "passed exit 0",
+  "npm_run_verify": "passed exit 0",
+  "diff_check": "passed",
+  "fresh_matrix": {
+    "requests": 288,
+    "successes": 288,
+    "p95_ms": 340,
+    "max_ms": 2774
+  },
+  "old_catalog": {
+    "verified_outputs": 10128,
+    "explicit_legacy_declines": 129
+  },
+  "html_sha256": "2457f0caaab3e6a674a9fd66491d4a31d7d3844f07ca92b74500613c4dfc65d9",
+  "limits": [
+    "No Windows or mobile hardware validation",
+    "No pixel/browser rendering certification",
+    "No native installer build",
+    "Performance measured on current host only"
+  ]
+}

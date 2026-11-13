@@ -67,7 +67,7 @@ Use a disposable Windows 10/11 x64 VM and the final locally built Setup.exe.
 Record Windows version, artifact SHA-256, application version and observations.
 
 1. Clean install: run Setup.exe, check install location/shortcuts, launch and
-   ensure no fatal errors or missing assets. Verify app version 1.3.4.
+   ensure no fatal errors or missing assets. Verify app version 1.3.5.
 2. Save/restart: enter digits, notes, undo, branches and a draft; change theme,
    Zen, effects and BGM independently; close/reopen and compare actual data.
 3. Recovery: export a window game, import it through Data backup, confirm only

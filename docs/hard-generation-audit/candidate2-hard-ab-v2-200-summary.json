@@ -1,0 +1,1210 @@
+{
+  "version": 1,
+  "complete": true,
+  "plan": {
+    "seedNamespace": "v2",
+    "replay": null,
+    "baselineDirectory": "../ninerealms_quality_v5_1113",
+    "candidateDirectory": ".",
+    "arms": [
+      "baseline",
+      "candidate"
+    ],
+    "independentSeedsPerMode": 200,
+    "legacyRegressions": [
+      {
+        "mode": "classic",
+        "seed": "fresh-quality-v4-classic-14",
+        "originalCode": "DENSITY_NOT_REACHED",
+        "ledgerKeys": 28
+      },
+      {
+        "mode": "king",
+        "seed": "fresh-quality-v4-king-17",
+        "originalCode": "FRESH_DIFFICULTY_NOT_REACHED",
+        "ledgerKeys": 256
+      },
+      {
+        "mode": "classic",
+        "seed": "hard-controlled-v1-classic-105",
+        "originalCode": "BASELINE_DENSITY_NOT_REACHED",
+        "ledgerKeys": 0
+      },
+      {
+        "mode": "classic",
+        "seed": "hard-controlled-v1-classic-168",
+        "originalCode": "CANDIDATE1_DENSITY_NOT_REACHED",
+        "ledgerKeys": 0
+      }
+    ],
+    "calls": 808,
+    "output": "candidate2-hard-ab-v2-200.json"
+  },
+  "sourceHashes": {
+    "baseline": {
+      "generator.js": "6903fd05fb7ca6ca591ed0ceedb583502d76a6a7bd5f4e0b397c2f18ef44111b",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    },
+    "candidate": {
+      "generator.js": "8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    }
+  },
+  "endingHashes": {
+    "baseline": {
+      "generator.js": "6903fd05fb7ca6ca591ed0ceedb583502d76a6a7bd5f4e0b397c2f18ef44111b",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    },
+    "candidate": {
+      "generator.js": "8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    }
+  },
+  "changedSourceArms": [],
+  "originalReport": {
+    "path": "../ninerealms_quality_v5_1113/docs/diversity-audit/v5-audit-30.json",
+    "sha256": "29a09709309c07d2d9e8187b3fe56e5aa2f9328ba8b9dd71d7f9783256aa6b69"
+  },
+  "environment": {
+    "platform": "linux",
+    "arch": "x64",
+    "node": "v24.22.1",
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "cpuCount": 9
+  },
+  "method": "Warm both modules; fixed identical request inputs; alternate AB/BA serially with no parallel generation; independent new seed cohort plus separately reported regression cases with exact original ledgers; replay mode uses the archived independent requests verbatim. Each independent seed uses a fixed original pre-mode ledger, NOT divergent per-arm rolling history. Fixed baseline validator runs in a separate VM.",
+  "timingScope": "Synchronous Node generation wall time and process CPU, excluding independent validation. Not a real browser or Windows test. >8000ms never counted as UI delivery; <=8000ms still is not proof of UI delivery. Single timing sample per seed/arm, not statistical performance certification.",
+  "startedAt": "2026-11-13T15:54:01.379Z",
+  "elapsedMs": 290272,
+  "warmups": [
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "difficulty": "hard",
+      "status": "returned"
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "difficulty": "hard",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "difficulty": "hard",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "king",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "king",
+      "difficulty": "hard",
+      "status": "returned"
+    }
+  ],
+  "requests": 808,
+  "rows": [
+    {
+      "cohort": "independent",
+      "mode": "classic",
+      "arm": "baseline",
+      "requests": 200,
+      "verifiedHard": 191,
+      "outcomes": {
+        "verified-hard": 191,
+        "generation-declined": 9
+      },
+      "failureCodes": {
+        "DENSITY_NOT_REACHED": 8,
+        "FRESH_DIFFICULTY_NOT_REACHED": 1
+      },
+      "independentBaseClasses": 191,
+      "within8SecondVerifiedGeneratorCompletions": 191,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 239.73,
+        "p50": 183.23,
+        "p95": 710.93,
+        "p99": 801,
+        "min": 49.07,
+        "max": 892.62
+      },
+      "verifiedGenerationMs": {
+        "count": 191,
+        "mean": 214.99,
+        "p50": 176.36,
+        "p95": 489.3,
+        "p99": 746.14,
+        "min": 49.07,
+        "max": 755.56
+      },
+      "refusedGenerationMs": {
+        "count": 9,
+        "mean": 764.57,
+        "p50": 764.92,
+        "p95": 892.62,
+        "p99": 892.62,
+        "min": 681.09,
+        "max": 892.62
+      },
+      "cpuMs": {
+        "count": 200,
+        "mean": 246.85,
+        "p50": 186.17,
+        "p95": 721.58,
+        "p99": 816.27,
+        "min": 49.66,
+        "max": 907.23
+      },
+      "generatedOutputs": 191,
+      "generationDeclines": 9,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "independent",
+      "mode": "classic",
+      "arm": "candidate",
+      "requests": 200,
+      "verifiedHard": 198,
+      "outcomes": {
+        "verified-hard": 198,
+        "generation-declined": 2
+      },
+      "failureCodes": {
+        "DENSITY_NOT_REACHED": 2
+      },
+      "independentBaseClasses": 198,
+      "within8SecondVerifiedGeneratorCompletions": 198,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 203.25,
+        "p50": 164.29,
+        "p95": 470.63,
+        "p99": 725.01,
+        "min": 47.98,
+        "max": 952.03
+      },
+      "verifiedGenerationMs": {
+        "count": 198,
+        "mean": 198.19,
+        "p50": 162.98,
+        "p95": 455.39,
+        "p99": 815.61,
+        "min": 47.98,
+        "max": 952.03
+      },
+      "refusedGenerationMs": {
+        "count": 2,
+        "mean": 704.1,
+        "p50": 684.5,
+        "p95": 723.7,
+        "p99": 723.7,
+        "min": 684.5,
+        "max": 723.7
+      },
+      "cpuMs": {
+        "count": 200,
+        "mean": 210.53,
+        "p50": 174.42,
+        "p95": 484.51,
+        "p99": 739.34,
+        "min": 48.98,
+        "max": 972.77
+      },
+      "generatedOutputs": 198,
+      "generationDeclines": 2,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "independent",
+      "mode": "king",
+      "arm": "baseline",
+      "requests": 200,
+      "verifiedHard": 180,
+      "outcomes": {
+        "generation-declined": 20,
+        "verified-hard": 180
+      },
+      "failureCodes": {
+        "FRESH_DIFFICULTY_NOT_REACHED": 16,
+        "DENSITY_NOT_REACHED": 4
+      },
+      "independentBaseClasses": 180,
+      "within8SecondVerifiedGeneratorCompletions": 180,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 391.45,
+        "p50": 326.97,
+        "p95": 922.03,
+        "p99": 957.26,
+        "min": 48.52,
+        "max": 1086.25
+      },
+      "verifiedGenerationMs": {
+        "count": 180,
+        "mean": 334.17,
+        "p50": 291.45,
+        "p95": 738.01,
+        "p99": 944.88,
+        "min": 48.52,
+        "max": 957.26
+      },
+      "refusedGenerationMs": {
+        "count": 20,
+        "mean": 906.97,
+        "p50": 914.96,
+        "p95": 976.5,
+        "p99": 1086.25,
+        "min": 802.01,
+        "max": 1086.25
+      },
+      "cpuMs": {
+        "count": 200,
+        "mean": 403.36,
+        "p50": 348.07,
+        "p95": 946.31,
+        "p99": 1028.91,
+        "min": 48.84,
+        "max": 1137.95
+      },
+      "generatedOutputs": 180,
+      "generationDeclines": 20,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "independent",
+      "mode": "king",
+      "arm": "candidate",
+      "requests": 200,
+      "verifiedHard": 200,
+      "outcomes": {
+        "verified-hard": 200
+      },
+      "failureCodes": {},
+      "independentBaseClasses": 200,
+      "within8SecondVerifiedGeneratorCompletions": 200,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 115.02,
+        "p50": 72.01,
+        "p95": 269.08,
+        "p99": 419.38,
+        "min": 48.92,
+        "max": 547.28
+      },
+      "verifiedGenerationMs": {
+        "count": 200,
+        "mean": 115.02,
+        "p50": 72.01,
+        "p95": 269.08,
+        "p99": 419.38,
+        "min": 48.92,
+        "max": 547.28
+      },
+      "refusedGenerationMs": null,
+      "cpuMs": {
+        "count": 200,
+        "mean": 119.37,
+        "p50": 74.19,
+        "p95": 289.52,
+        "p99": 426.8,
+        "min": 49.44,
+        "max": 573.8
+      },
+      "generatedOutputs": 200,
+      "generationDeclines": 0,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "legacy-regression",
+      "mode": "classic",
+      "arm": "baseline",
+      "requests": 1,
+      "verifiedHard": 0,
+      "outcomes": {
+        "generation-declined": 1
+      },
+      "failureCodes": {
+        "DENSITY_NOT_REACHED": 1
+      },
+      "independentBaseClasses": 0,
+      "within8SecondVerifiedGeneratorCompletions": 0,
+      "above8Second": [],
+      "generationMs": {
+        "count": 1,
+        "mean": 960.96,
+        "p50": 960.96,
+        "p95": 960.96,
+        "p99": 960.96,
+        "min": 960.96,
+        "max": 960.96
+      },
+      "verifiedGenerationMs": null,
+      "refusedGenerationMs": {
+        "count": 1,
+        "mean": 960.96,
+        "p50": 960.96,
+        "p95": 960.96,
+        "p99": 960.96,
+        "min": 960.96,
+        "max": 960.96
+      },
+      "cpuMs": {
+        "count": 1,
+        "mean": 991.51,
+        "p50": 991.51,
+        "p95": 991.51,
+        "p99": 991.51,
+        "min": 991.51,
+        "max": 991.51
+      },
+      "generatedOutputs": 0,
+      "generationDeclines": 1,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "legacy-regression",
+      "mode": "classic",
+      "arm": "candidate",
+      "requests": 1,
+      "verifiedHard": 1,
+      "outcomes": {
+        "verified-hard": 1
+      },
+      "failureCodes": {},
+      "independentBaseClasses": 1,
+      "within8SecondVerifiedGeneratorCompletions": 1,
+      "above8Second": [],
+      "generationMs": {
+        "count": 1,
+        "mean": 176.8,
+        "p50": 176.8,
+        "p95": 176.8,
+        "p99": 176.8,
+        "min": 176.8,
+        "max": 176.8
+      },
+      "verifiedGenerationMs": {
+        "count": 1,
+        "mean": 176.8,
+        "p50": 176.8,
+        "p95": 176.8,
+        "p99": 176.8,
+        "min": 176.8,
+        "max": 176.8
+      },
+      "refusedGenerationMs": null,
+      "cpuMs": {
+        "count": 1,
+        "mean": 210.07,
+        "p50": 210.07,
+        "p95": 210.07,
+        "p99": 210.07,
+        "min": 210.07,
+        "max": 210.07
+      },
+      "generatedOutputs": 1,
+      "generationDeclines": 0,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "legacy-regression",
+      "mode": "king",
+      "arm": "baseline",
+      "requests": 1,
+      "verifiedHard": 0,
+      "outcomes": {
+        "generation-declined": 1
+      },
+      "failureCodes": {
+        "FRESH_DIFFICULTY_NOT_REACHED": 1
+      },
+      "independentBaseClasses": 0,
+      "within8SecondVerifiedGeneratorCompletions": 0,
+      "above8Second": [],
+      "generationMs": {
+        "count": 1,
+        "mean": 940.39,
+        "p50": 940.39,
+        "p95": 940.39,
+        "p99": 940.39,
+        "min": 940.39,
+        "max": 940.39
+      },
+      "verifiedGenerationMs": null,
+      "refusedGenerationMs": {
+        "count": 1,
+        "mean": 940.39,
+        "p50": 940.39,
+        "p95": 940.39,
+        "p99": 940.39,
+        "min": 940.39,
+        "max": 940.39
+      },
+      "cpuMs": {
+        "count": 1,
+        "mean": 995.94,
+        "p50": 995.94,
+        "p95": 995.94,
+        "p99": 995.94,
+        "min": 995.94,
+        "max": 995.94
+      },
+      "generatedOutputs": 0,
+      "generationDeclines": 1,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "legacy-regression",
+      "mode": "king",
+      "arm": "candidate",
+      "requests": 1,
+      "verifiedHard": 1,
+      "outcomes": {
+        "verified-hard": 1
+      },
+      "failureCodes": {},
+      "independentBaseClasses": 1,
+      "within8SecondVerifiedGeneratorCompletions": 1,
+      "above8Second": [],
+      "generationMs": {
+        "count": 1,
+        "mean": 146.74,
+        "p50": 146.74,
+        "p95": 146.74,
+        "p99": 146.74,
+        "min": 146.74,
+        "max": 146.74
+      },
+      "verifiedGenerationMs": {
+        "count": 1,
+        "mean": 146.74,
+        "p50": 146.74,
+        "p95": 146.74,
+        "p99": 146.74,
+        "min": 146.74,
+        "max": 146.74
+      },
+      "refusedGenerationMs": null,
+      "cpuMs": {
+        "count": 1,
+        "mean": 178.91,
+        "p50": 178.91,
+        "p95": 178.91,
+        "p99": 178.91,
+        "min": 178.91,
+        "max": 178.91
+      },
+      "generatedOutputs": 1,
+      "generationDeclines": 0,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "candidate1-regression",
+      "mode": "classic",
+      "arm": "baseline",
+      "requests": 2,
+      "verifiedHard": 1,
+      "outcomes": {
+        "generation-declined": 1,
+        "verified-hard": 1
+      },
+      "failureCodes": {
+        "DENSITY_NOT_REACHED": 1
+      },
+      "independentBaseClasses": 1,
+      "within8SecondVerifiedGeneratorCompletions": 1,
+      "above8Second": [],
+      "generationMs": {
+        "count": 2,
+        "mean": 458.84,
+        "p50": 121.51,
+        "p95": 796.17,
+        "p99": 796.17,
+        "min": 121.51,
+        "max": 796.17
+      },
+      "verifiedGenerationMs": {
+        "count": 1,
+        "mean": 121.51,
+        "p50": 121.51,
+        "p95": 121.51,
+        "p99": 121.51,
+        "min": 121.51,
+        "max": 121.51
+      },
+      "refusedGenerationMs": {
+        "count": 1,
+        "mean": 796.17,
+        "p50": 796.17,
+        "p95": 796.17,
+        "p99": 796.17,
+        "min": 796.17,
+        "max": 796.17
+      },
+      "cpuMs": {
+        "count": 2,
+        "mean": 567.62,
+        "p50": 157.79,
+        "p95": 977.46,
+        "p99": 977.46,
+        "min": 157.79,
+        "max": 977.46
+      },
+      "generatedOutputs": 1,
+      "generationDeclines": 1,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "candidate1-regression",
+      "mode": "classic",
+      "arm": "candidate",
+      "requests": 2,
+      "verifiedHard": 2,
+      "outcomes": {
+        "verified-hard": 2
+      },
+      "failureCodes": {},
+      "independentBaseClasses": 2,
+      "within8SecondVerifiedGeneratorCompletions": 2,
+      "above8Second": [],
+      "generationMs": {
+        "count": 2,
+        "mean": 162.02,
+        "p50": 135.83,
+        "p95": 188.21,
+        "p99": 188.21,
+        "min": 135.83,
+        "max": 188.21
+      },
+      "verifiedGenerationMs": {
+        "count": 2,
+        "mean": 162.02,
+        "p50": 135.83,
+        "p95": 188.21,
+        "p99": 188.21,
+        "min": 135.83,
+        "max": 188.21
+      },
+      "refusedGenerationMs": null,
+      "cpuMs": {
+        "count": 2,
+        "mean": 216.65,
+        "p50": 152.65,
+        "p95": 280.65,
+        "p99": 280.65,
+        "min": 152.65,
+        "max": 280.65
+      },
+      "generatedOutputs": 2,
+      "generationDeclines": 0,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    }
+  ],
+  "paired": [
+    {
+      "mode": "classic",
+      "pairs": 200,
+      "improvedToVerified": [
+        "hard-controlled-v2-classic-36",
+        "hard-controlled-v2-classic-41",
+        "hard-controlled-v2-classic-61",
+        "hard-controlled-v2-classic-70",
+        "hard-controlled-v2-classic-91",
+        "hard-controlled-v2-classic-147",
+        "hard-controlled-v2-classic-153"
+      ],
+      "regressedFromVerified": [],
+      "candidateMinusBaselineMs": {
+        "count": 200,
+        "mean": -36.48,
+        "p50": -1.01,
+        "p95": 185.21,
+        "p99": 350.04,
+        "min": -770.55,
+        "max": 462.73
+      },
+      "improvedToVerifiedCount": 7,
+      "regressedFromVerifiedCount": 0,
+      "requestParameterMismatches": [],
+      "bothVerifiedCandidateMinusBaselineMs": {
+        "count": 191,
+        "mean": -15.92,
+        "p50": 1.11,
+        "p95": 207.19,
+        "p99": 389.11,
+        "min": -630.89,
+        "max": 462.73
+      }
+    },
+    {
+      "mode": "king",
+      "pairs": 200,
+      "improvedToVerified": [
+        "hard-controlled-v2-king-0",
+        "hard-controlled-v2-king-10",
+        "hard-controlled-v2-king-11",
+        "hard-controlled-v2-king-12",
+        "hard-controlled-v2-king-22",
+        "hard-controlled-v2-king-37",
+        "hard-controlled-v2-king-39",
+        "hard-controlled-v2-king-43",
+        "hard-controlled-v2-king-45",
+        "hard-controlled-v2-king-67",
+        "hard-controlled-v2-king-80",
+        "hard-controlled-v2-king-82",
+        "hard-controlled-v2-king-94",
+        "hard-controlled-v2-king-107",
+        "hard-controlled-v2-king-131",
+        "hard-controlled-v2-king-137",
+        "hard-controlled-v2-king-147",
+        "hard-controlled-v2-king-170",
+        "hard-controlled-v2-king-172",
+        "hard-controlled-v2-king-173"
+      ],
+      "regressedFromVerified": [],
+      "candidateMinusBaselineMs": {
+        "count": 200,
+        "mean": -276.42,
+        "p50": -231.41,
+        "p95": 50.26,
+        "p99": 170.49,
+        "min": -1016.09,
+        "max": 227.64
+      },
+      "improvedToVerifiedCount": 20,
+      "regressedFromVerifiedCount": 0,
+      "requestParameterMismatches": [],
+      "bothVerifiedCandidateMinusBaselineMs": {
+        "count": 180,
+        "mean": -218.88,
+        "p50": -169.12,
+        "p95": 51.76,
+        "p99": 205.46,
+        "min": -878.14,
+        "max": 227.64
+      }
+    }
+  ],
+  "replayComparison": null,
+  "duplicateFindings": [],
+  "rawReport": "candidate2-hard-ab-v2-200.json",
+  "rawSha256": "9cfc7bb1664e21e5760e3e9b3846ca9c6b3f62bb58e2f545abc76669b3e5945a",
+  "allFailures": [
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "legacy-regression",
+      "seed": "fresh-quality-v4-classic-14",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 960.9643919999999
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "legacy-regression",
+      "seed": "fresh-quality-v4-king-17",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 940.3949590000002
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "candidate1-regression",
+      "seed": "hard-controlled-v1-classic-105",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 796.1733669999994
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-0",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 920.3397500000001
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-10",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 930.3459789999979
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-11",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 919.1935919999996
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-12",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 976.5030619999998
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-22",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 883.0575459999964
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-36",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 710.9325959999987
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-37",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 898.3869520000007
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-39",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 802.0067070000005
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-41",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 681.0945189999984
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-43",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 905.523126
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-45",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 811.1679830000066
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-51",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 684.5009419999988
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-51",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 768.7785319999966
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-57",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 723.6986210000032
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-57",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 730.1902619999892
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-61",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 800.9996760000067
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-67",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 955.8784159999923
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-70",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 839.4874199999904
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-80",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 838.7727439999871
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-82",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 1086.2513380000019
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-91",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 692.1340499999933
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-94",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 839.9847789999912
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-107",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 934.8853709999821
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-131",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 942.9587410000095
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-137",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 935.5140969999775
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-147",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 764.9197570000251
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-147",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 939.2283520000055
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-classic-153",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 892.619165000011
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-170",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 895.3142489999882
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-172",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 914.9554380000045
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "cohort": "independent",
+      "seed": "hard-controlled-v2-king-173",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 809.1614849999896
+    }
+  ],
+  "legacyRegressionResults": [
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "seed": "fresh-quality-v4-classic-14",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 960.9643919999999
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "seed": "fresh-quality-v4-classic-14",
+      "outcome": "verified-hard",
+      "generationMs": 176.80025100000012,
+      "strictProof": {
+        "status": "rated",
+        "reason": "已用支持的逻辑技巧完成全盘",
+        "solved": true,
+        "tier": "hard",
+        "steps": 59,
+        "techniques": {
+          "naked-single": 49,
+          "hidden-single": 7,
+          "locked-candidate": 3
+        },
+        "budgetMs": 1000
+      }
+    },
+    {
+      "arm": "candidate",
+      "mode": "king",
+      "seed": "fresh-quality-v4-king-17",
+      "outcome": "verified-hard",
+      "generationMs": 146.7367019999997,
+      "strictProof": {
+        "status": "rated",
+        "reason": "已用支持的逻辑技巧完成全盘",
+        "solved": true,
+        "tier": "hard",
+        "steps": 61,
+        "techniques": {
+          "naked-single": 54,
+          "hidden-single": 5,
+          "locked-candidate": 2
+        },
+        "budgetMs": 1000
+      }
+    },
+    {
+      "arm": "baseline",
+      "mode": "king",
+      "seed": "fresh-quality-v4-king-17",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 940.3949590000002
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-105",
+      "outcome": "generation-declined",
+      "code": "DENSITY_NOT_REACHED",
+      "generationMs": 796.1733669999994
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-105",
+      "outcome": "verified-hard",
+      "generationMs": 135.8336959999997,
+      "strictProof": {
+        "status": "rated",
+        "reason": "已用支持的逻辑技巧完成全盘",
+        "solved": true,
+        "tier": "hard",
+        "steps": 64,
+        "techniques": {
+          "naked-single": 46,
+          "locked-candidate": 5,
+          "hidden-pair": 2,
+          "hidden-single": 11
+        },
+        "budgetMs": 1000
+      }
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-168",
+      "outcome": "verified-hard",
+      "generationMs": 188.20877399999972,
+      "strictProof": {
+        "status": "rated",
+        "reason": "已用支持的逻辑技巧完成全盘",
+        "solved": true,
+        "tier": "hard",
+        "steps": 59,
+        "techniques": {
+          "hidden-single": 11,
+          "naked-single": 44,
+          "locked-candidate": 4
+        },
+        "budgetMs": 1000
+      }
+    },
+    {
+      "arm": "baseline",
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-168",
+      "outcome": "verified-hard",
+      "generationMs": 121.51104099999975,
+      "strictProof": {
+        "status": "rated",
+        "reason": "已用支持的逻辑技巧完成全盘",
+        "solved": true,
+        "tier": "hard",
+        "steps": 59,
+        "techniques": {
+          "hidden-single": 11,
+          "naked-single": 44,
+          "locked-candidate": 4
+        },
+        "budgetMs": 1000
+      }
+    }
+  ]
+}

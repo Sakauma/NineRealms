@@ -1,0 +1,83 @@
+V5 real-browser acceptance: prepared, NOT visually accepted
+
+Current environment outcome
+---------------------------
+Installed Chromium: 156.0.8078.79 on Debian Linux.
+Actual project rendering / screenshots: ZERO. Do not claim a visual pass.
+
+The existing real-Chromium browser-helper was attempted in the command workspace.
+Chromium cannot start because its process-singleton Unix socket returns Operation
+not permitted. Reviewed elevated execution has the same restriction. Separately,
+the official managed cloud browser is running but cannot open local file URLs;
+its HTTP loopback cannot reach the command workspace's local-only service
+(ERR_CONNECTION_REFUSED). No security policy was overridden. No site was published,
+no account accessed, and the user's Windows/phone was not used.
+See docs/v5-browser-environment-probe.json for the explicit blocked result.
+
+Reusable prepared acceptance
+----------------------------
+  python3 scripts/build.py --output dist/index.html
+  node tests/v5-visual-browser.test.cjs
+
+Run only after the v5 app/daily integration and build are ready, on a runner that
+actually permits Chromium IPC and local HTTP. CHROMIUM_PATH may identify an
+already installed compatible Chromium. No package download is required by this
+runner. This task does not ask the user to repair their environment now.
+
+The test's source syntax and all 8 fixed generated fixtures' rule validity and
+unique solutions have been checked here. The browser suite itself has NOT run.
+No jsdom, static SVG calculations, image generation, or synthetic mock screenshot
+is substituted for a rendering engine.
+
+Inputs:
+  tests/fixtures/v5-visual-puzzles.json
+  tests/v5-visual-browser.test.cjs
+Eight fixed legitimate v5 medium puzzles avoid random changing visual test content.
+Fixtures are test-only and never alter the game's live bank or saved progress.
+
+Matrix (8 modes x 3 profiles = 24 states)
+----------------------------------------
+Modes: thermo, arrow, renban, whispers, thermo-killer, jigsaw, twin, samurai.
+Five line modes cover new shorter-separated paths, with candidates on rule cells,
+then real pointer input of one valid digit on a rule cell when available.
+Jigsaw covers the new irregular regions. Twin/samurai cover focused sub-board and
+full overview, shared-cell board geometry, notes and the main number controls.
+
+Profiles:
+- 1440x1000 CSS pixels, DPR 1, light theme: desktop 100%.
+- 1093x614 CSS pixels, DPR 1.25, dark theme: effective 1366x768 at 125% viewport/DPR
+  equivalence. This is NOT native Chrome menu zoom or Windows DPI verification.
+- 390x844 CSS pixels, DPR 2, light theme, touch emulation: narrow portrait viewport,
+  NOT a physical phone, mobile OS, touch hardware or mobile GPU test.
+
+Automatic real-renderer checks:
+- Current app accepts the stored v5 puzzle instead of silently replacing it.
+- Correct total cell count (81 / 153 / 369), nine number controls, no page-wide
+  horizontal overflow, expected desktop rail alignment and square number keys.
+- Visible digit and candidate text bounds remain within their cell rectangles.
+- SVG rule paths reference the exact fixture cell sequence.
+- Pointer click actually fills the selected blank; stored game state confirms it.
+- Multi-board overview selection exists; uncaught JS exceptions are recorded.
+- Full-page PNGs for candidate and filled states, plus multi-board overview.
+  Full-page capture is capped at 2500 CSS pixels and any truncation is labelled.
+
+Outputs:
+  evidence/v5-browser/visual-report.json
+  evidence/v5-browser/*.png
+
+Exit status: 2 = build/environment blocked (not a pass); 1 = runtime/assertion
+failure; 0 = automated geometry/input checks passed, STILL requiring human image
+review. The report explicitly says manual-image-review-required, not full visual
+acceptance. Failures are retained, not silently skipped.
+
+Human screenshot review checklist
+---------------------------------
+[ ] Digits, candidates, lines, arrow heads and thermometer bulbs are distinct.
+[ ] Line endings/turns are coherent; separate lines do not visually merge.
+[ ] Markers do not obscure filled numbers or candidate numerals.
+[ ] Muted glass keys keep clear numbers, usable size and consistent alignment.
+[ ] Light/dark contrast is readable without excessive halos/glare.
+[ ] Narrow view remains usable; changing sub-board does not lose context.
+[ ] Long/tall content uses intended document scrolling, not clipped nested panels.
+[ ] Actual Windows/Electron/Tauri and physical phone testing remains separately
+    outstanding; these Linux/emulated-profile screenshots cannot certify them.

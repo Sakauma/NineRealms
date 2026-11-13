@@ -1,0 +1,7 @@
+{
+  "count": 216,
+  "globalBaseClasses": 216,
+  "layoutGroups": 148,
+  "duplicateLayouts": [],
+  "limitations": "Finite reserve; keys already in recent history exclude entries across tiers. Outside-only fixed perimeter geometry may legitimately collide and exhaust a mode after one use when layout key is enforced. No infinite guarantee. Multi base classes are conservative component spectra."
+}

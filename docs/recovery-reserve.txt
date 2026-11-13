@@ -1,0 +1,58 @@
+Finite recovery reserve v1
+==========================
+
+src/recovery-reserve.js is a fixed, finite inventory, not new puzzle generation.
+It exposes NineRealmsRecoveryReserve.candidates(mode,difficulty), get(reserveId),
+and workerSource(); returned objects are deep copies. Entries preserve the full
+original puzzle, sourceId and generation metadata without inventing Engine IDs.
+Provenance identifies the archived source report, SHA256, record index and seed.
+
+216 entries were selected from docs/diversity-audit/v5-audit-30.json and independently
+reverified by scripts/build-recovery-reserve.cjs. The original report remains the
+source of truth for construction; rebuilding the reserve does not rerun a newer
+algorithm and pretend the old seed produced the same puzzle.
+
+Coverage: all 32 fresh-supported modes, easy/medium/hard each at least two.
+Classic and king hard have eight each. Disjoint, thermo, XV, greater, lockout and
+Xsum hard have four each. Miracle is deliberately excluded: its known one-base
+solution space and missing medium/hard proof do not justify invented variety.
+
+Each selected board has a unique solution, correct supported-technique tier for
+the seven Hints modes or independently completed RulePath depth tier otherwise.
+All applicable RuleQuality thresholds are independently met. Rule depth is not
+claimed to be a universal human difficulty rating. No answer-dependent solving
+is used for the logical proof. Full original proof and quality evidence is in
+  docs/fallback-audit/reserve-construction.json
+
+All 216 bases are pairwise distinct under full classical canonicalization, with
+multi boards using conservative sorted component spectra, NOT full multi-grid
+graph isomorphism. Across marked modes and jigsaw, 148 geometry layout classes
+are distinct even across different difficulty tiers. Capacity evidence is in
+  docs/fallback-audit/reserve-capacity.json
+Existing recent keys from ordinary play may nevertheless exclude entries. This
+reserve is finite and may exhaust. Do not silently relax recent filtering, change
+the requested tier, or present a verified reserve board as newly constructed.
+
+Inventory feasibility audit
+---------------------------
+scripts/audit-fallback-catalog.cjs checked all 1197 nonclassic original bank
+entries and the first/last 20 classic entries per labelled tier (120, not all9060).
+All1317 checked boards were unique/legal, but bank density labels frequently did
+not match real proof tiers. King and disjoint had zero supported-technique hard
+boards; thermo/XV/greater/lockout/Xsum zero rule-depth hard; Miracle only easy.
+Many old variant pools have just one or three independent classical base classes,
+so changing digits alone cannot extend the structural inventory.
+
+scripts/audit-fallback-capacity.cjs checks equivalence capacity using exact pair
+comparison after invariant rejection. Evidence: catalog-feasibility.json and
+catalog-capacity.json in docs/fallback-audit. Counts from classic are sampled only.
+
+Reproducible checks:
+  node tests/recovery-reserve.test.cjs
+This independently rechecks all216 entries, compares Node/worker exports, checks
+defensive copying and unknown-ID handling. It passed on desktop Linux Node;
+this is not a rendering, Windows, mobile or UI-latency certification.
+
+Build script writes reserve data and a non-overwritable evidence file; preserve
+existing evidence before intentionally regenerating. Production app integration,
+recovery budgets and real recent-history behavior are audited separately.

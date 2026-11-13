@@ -16,6 +16,7 @@
   var writableAtStart = await storageSession.start();
   var playerStorage = storageSession.storage, storageConflict = !writableAtStart;
   var Engine = window.SudokuEngine;
+  var Curated = window.NineRealmsCurated, curatedLaunching = false;
   var GridRows = window.NineRealmsGridRows, boardRows = null;
   var Desktop = window.NineRealmsDesktop;
   var Logic = window.NineRealmsLogic;
@@ -28,7 +29,7 @@
   var Favorites = window.NineRealmsFavorites, favoriteStore = null, personalUi = null;
   var storageTransition = false;
   // Product release numbering is independent of SAVE_VERSION and storage schema keys.
-  var APP_VERSION = "1.3.4";
+  var APP_VERSION = "1.3.5";
   try { if (Backup && writableAtStart) Backup.recover(playerStorage); }
   catch (recoveryError) {
     if (recoveryError.recoveryRequired) {
@@ -45,7 +46,7 @@
   try { if (Favorites) favoriteStore = Favorites.createStore(playerStorage); } catch (favoriteReadError) { /* Preserve corrupt or inaccessible data until explicit recovery. */ }
   var Generator = window.NineRealmsGenerator;
   var generatorClient = Generator ? Generator.createClient() : null;
-  var generationEpoch = 0, generatingPuzzle = false;
+  var generationEpoch = 0, generatingPuzzle = false, generationRetry = null;
   var RECENT_GENERATED_KEY = "nine-realms.generated-recent.v1", recentGenerated = [];
   try {
     var storedGenerated = JSON.parse(playerStorage.getItem(RECENT_GENERATED_KEY) || "[]");
@@ -76,7 +77,8 @@
   var dailyRecords = {};
   var dailyUnreadable = null;
   var dailyToday = Daily ? Daily.dateKey() : "";
-  var loadingDaily = false;
+  var loadingDaily = false, dailyEpoch = 0, dailyError = null;
+  var dailyClient = Daily && Daily.createClient ? Daily.createClient() : null;
   var THEMES = ["nebula", "aurora", "ember", "ivory", "ocean", "sakura", "firefly", "sunset"];
   var THEME_NAMES = { nebula: "星云", aurora: "极光", ember: "熔金", ivory: "月白",
     ocean: "深海", sakura: "樱落", firefly: "萤森", sunset: "流霞" };
@@ -128,13 +130,49 @@
   }
 
   function generationInfo(value, puzzle, difficulty) {
-    if (!Generator || !value || [1,2].indexOf(value.version)<0 || value.kind !== "carved" ||
+    if (!Generator || !value || !([1,2].indexOf(value.version)>=0 && value.kind === "carved" || [3,4,5].indexOf(value.version)>=0 && value.kind === "constructed") ||
         typeof value.seed !== "string" || value.seed.length > 256 ||
         value.fingerprint !== Generator.fingerprint(puzzle)) return null;
     var basis = value.difficultyBasis === "supported-logic" &&
       Generator.matchesDifficulty(puzzle.givens, difficulty, {mode:puzzle.mode,clues:puzzle.clues}) ? "supported-logic" : "clue-density";
-    return { version: value.version, seed: value.seed, kind: "carved", difficultyBasis: basis,
+    var info = { version: value.version, seed: value.seed, kind: value.kind, difficultyBasis: basis,
       fingerprint: value.fingerprint, givenCount: puzzle.givens.filter(Boolean).length };
+    if(value.version===3||value.version===4||value.version===5){
+      if(!/^[a-f0-9]{32}$/.test(value.baseFingerprint)||value.logicVerified!==true||!Number.isInteger(value.logicRepairs)||value.logicRepairs<0||value.logicRepairs>12||!Number.isInteger(value.ruleReductions)||value.ruleReductions<0||value.ruleReductions>81)return null;
+      info.baseFingerprint=value.baseFingerprint;info.logicVerified=true;info.logicRepairs=value.logicRepairs;info.ruleReductions=value.ruleReductions;
+      if(value.layoutFingerprint!==undefined){if(!/^[a-f0-9]{32}$/.test(value.layoutFingerprint))return null;info.layoutFingerprint=value.layoutFingerprint;}
+    }
+    if((value.version===4||value.version===5) && value.difficultyBasis==="rule-depth") {
+      var grading=window.NineRealmsRulePathGrading;
+      if(!grading||!Number.isInteger(value.logicRounds)||value.logicRounds<1||value.logicGrade!==difficulty)return null;
+      var proof=grading.analyze(puzzle.givens,{mode:puzzle.mode,clues:puzzle.clues});
+      if(!proof.solved||proof.rounds!==value.logicRounds||grading.tier(proof,puzzle.mode)!==difficulty)return null;
+      info.difficultyBasis="rule-depth";info.logicRounds=value.logicRounds;info.logicGrade=value.logicGrade;
+    } else if((value.version===4||value.version===5) && value.difficultyBasis!=="supported-logic") return null;
+    if(value.version===5){
+      var quality=window.NineRealmsRuleQuality;if(!quality)return null;
+      if(quality.supported(puzzle.mode)){
+        var evidence=quality.analyze(puzzle.givens,{mode:puzzle.mode,clues:puzzle.clues});
+        if(!quality.accepts(evidence,difficulty)||!quality.sameSummary(value.ruleQuality,quality.summary(evidence)))return null;
+        info.ruleQuality=quality.summary(evidence);
+      }else if(value.ruleQuality!==undefined)return null;
+    }else if(value.ruleQuality!==undefined)return null;
+    return info;
+  }
+
+  function generationDifficultyCopy(metadata) {
+    if(metadata.difficultyBasis==="supported-logic")return "已验证唯一解与本模式技巧分档。";
+    if(metadata.difficultyBasis==="rule-depth")return (metadata.logicGrade!=="easy"&&metadata.ruleQuality&&metadata.ruleQuality.classicSolved===false?"已通过去除特殊规则的对照验证。":"")+"已验证唯一解；规则推演层级 · "+({easy:"入门",medium:"标准",hard:"进阶"}[metadata.logicGrade]||"")+"（"+metadata.logicRounds+" 轮同步推演），不等同完整人类技巧难度。";
+    return "已验证唯一解及基础规则推理路径；档位是挖空目标，可能补回给定，不是技巧评级。";
+  }
+
+  function clearGenerationRetry() {
+    var hadRetry = Boolean(generationRetry);
+    generationRetry = null;
+    var button = $("new-game"), label = button && button.querySelector("span");
+    if (label && !generatingPuzzle) label.textContent = "新游戏";
+    if (button) button.removeAttribute("title");
+    if (hadRetry) setStatus("原棋局已保留。可重新选择玩法与难度，或点击“新游戏”准备下一题。");
   }
 
   function setGenerationBusy(busy) {
@@ -143,22 +181,38 @@
     var button = $("new-game");
     if (button) {
       button.setAttribute("aria-busy", String(busy));
-      var label = button.querySelector("span"); if (label) label.textContent = busy ? "取消生成" : "新游戏";
+      var label = button.querySelector("span"); if (label) label.textContent = busy ? "取消生成" : generationRetry ? "重试生成" : "新游戏";
     }
     if (game) render();
   }
 
   function cancelPuzzleGeneration() {
+    clearGenerationRetry();
+    if(loadingDaily)cancelDailyGeneration();
     generationEpoch++;
     if (generatorClient) generatorClient.cancel();
     setGenerationBusy(false);
   }
 
+  function generationAvoid() {
+    var keys=recentGenerated.slice();
+    if(game && Generator && Generator.recentKeys)keys=keys.concat(Generator.recentKeys(game));
+    return Array.from(new Set(keys)).slice(-260);
+  }
   function rememberGenerated(puzzle) {
-    if (!Generator || !puzzle.generation) return;
-    var key = Generator.fingerprint(puzzle);
-    recentGenerated = recentGenerated.filter(function (v) { return v !== key; }).concat(key).slice(-256);
+    if (!Generator || !puzzle || (!puzzle.generation&&!puzzle.recovery&&!puzzle.deliveryRecovery)) return;
+    var keys=Generator.recentKeys?Generator.recentKeys(puzzle):[Generator.fingerprint(puzzle)];
+    keys.forEach(function(key){if(typeof key==="string"&&/^[a-f0-9]{32}$/.test(key))recentGenerated=recentGenerated.filter(function(v){return v!==key;}).concat(key).slice(-256);});
     try { playerStorage.setItem(RECENT_GENERATED_KEY, JSON.stringify(recentGenerated)); } catch (error) { /* Keep a bounded in-memory ledger. */ }
+  }
+  function recoveryInfo(record,puzzle) {
+    if(!record || !Backup || !Backup.recoveryInfo)return null;
+    try{return Backup.recoveryInfo(record,puzzle);}catch(error){return null;}
+  }
+  function generationStage(stage,mode,difficulty,epoch) {
+    if(epoch!==generationEpoch || !generatingPuzzle)return;
+    var target=modeInfo(mode).label+" · "+difficultyInfo(mode,difficulty).label;
+    setStatus(stage.stage==="primary"?"正在构造并验证"+target+"。首轮预算 8 秒，必要时尝试备用方案，合计预算 "+(stage.total===2?"16":"20")+" 秒；可取消。":stage.stage==="fresh-retry"?"首轮未完成，正在尝试备用构造 · "+target+"（本轮预算 8 秒，可取消）。":"新构造未完成，正在检查同玩法同档题库备选 · "+target+"（本轮预算 4 秒，可取消）。");
   }
 
   function sourceIdFor(puzzle, mode, difficulty) {
@@ -308,6 +362,8 @@
         fogSeen: Array.isArray(source.fogSeen) && source.fogSeen.length === restoredSize &&
           source.fogSeen.every(function (value) { return typeof value === "boolean"; }) ? source.fogSeen.slice() : initialFog(restoredContext)
       };
+      game.recovery=recoveryInfo(source.recovery,game);
+      rememberGenerated(game);
       batchSelection.clear(); batchSelecting = false;
       preferences = nextPreferences;
       currentContext = restoredContext;
@@ -736,8 +792,40 @@
       var calibrated = game.generation && game.generation.difficultyBasis === "supported-logic";
       $("puzzle-bank-status").textContent = game.custom ? "自建经典题 · " + game.givens.filter(Boolean).length + " 个给定数 · 已验证唯一解" : game.generation ? "离线新题 · " + game.generation.givenCount + " 个给定数 · " + difficulty.label + (calibrated ? " · 技巧校准" : "密度档") :
         difficulty.label + "原题库 · " + available + " 题" + (game.difficulty === "master" ? "" : " · 新游戏可离线生成");
-      $("puzzle-bank-status").title = calibrated ? "已验证唯一解，并按本玩法规则完整检查逻辑路径：入门只用单格唯一候选，标准需区域唯一位置，进阶需锁定候选或数对。代表此推理路径，不保证是所有人类解法的最低难度；变体使用其额外区域或相斥格约束。" : game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；只避开最近256道题面指纹，不保证永不重复。" :
+      $("puzzle-bank-status").title = calibrated ? "已验证唯一解，并按本玩法规则完整检查逻辑路径：入门只用单格唯一候选，标准需区域唯一位置，进阶需锁定候选或数对。代表此推理路径，不保证是所有人类解法的最低难度；变体使用其额外区域或相斥格约束。" : game.generation ? "基于合法解与本玩法约束重新挖空，逐步验证唯一解；档位按给定数密度，不是人类技巧评级。变体标记结构来自原题；使用有限近期签名避免重复，不保证永不重复。" :
         "原题库原分档保留，未经本次技巧校准。普通新游戏可在后台重新挖空生成；极境、每日和旅程保留原题规则。";
+    }
+    if(game.generation&&game.generation.kind==="constructed"){
+      $("puzzle-bank-status").textContent="新底盘生成 · "+(game.generation.layoutFingerprint?"新规则布局":"独立约束搜索");
+      $("puzzle-bank-status").title="从空盘构造完整解，再验证唯一解；近期按完整经典对称群排除等价底盘。"+generationDifficultyCopy(game.generation);
+    }
+    if(game.recovery&&$("puzzle-bank-status")){
+      $("puzzle-bank-status").textContent=game.recovery.kind==="verified-reserve"?"固定备用题 · "+difficulty.label:game.recovery.kind==="verified-catalog"?"已验证题库备选 · "+difficulty.label:"备用构造 · "+difficulty.label;
+      $("puzzle-bank-status").title=game.recovery.kind==="verified-reserve"?"新构造未完成后使用的固定备用题；重新验证同玩法、同档位、唯一解与近期去重，不是本次新构造。":game.recovery.kind==="verified-catalog"?"新构造未完成后选取的题库题；本次验证了同玩法、"+(Generator&&Generator.supportsDifficulty(game.mode)?"同技巧档位":"同规则推演档位")+"、唯一解及近期去重，不是新构造。":"首次构造未完成后的有限备用构造，保持原玩法与难度要求。";
+    }
+    if (Curated && $("puzzle-bank-status")) {
+      var edition = Curated.identify(game);
+      if (edition) { $("puzzle-bank-status").textContent = edition.title; $("puzzle-bank-status").title = edition.note; }
+      var choices = $("curated-choices");
+      if (!choices) { choices = document.createElement("div"); choices.id = "curated-choices"; choices.className = "voyage-training-links"; $("rules-description").after(choices); }
+      choices.replaceChildren();
+      var rating = $("curated-rating"); if (!rating) { rating = document.createElement("p"); rating.id = "curated-rating"; rating.className = "training-note"; choices.before(rating); }
+      var constructed=game.generation&&game.generation.kind==="constructed";
+      rating.hidden = !edition && !constructed && !game.recovery;
+      rating.textContent = game.recovery ? (game.recovery.kind==="verified-reserve"?"固定备用题，不是本次新构造。":game.recovery.kind==="verified-catalog"?"已验证题库备选，不是本次新构造。":"本局来自首次尝试之后的备用构造。")+"已验证同玩法、同档位与唯一解。" : edition ? edition.title + " · " + edition.note : constructed ? "本局由空盘构造新解"+(game.generation.layoutFingerprint?"，并生成新的规则布局":"")+"。"+generationDifficultyCopy(game.generation) : "";
+      choices.hidden = Boolean(preferences.zen);
+      ["intro", "standard"].forEach(function (level) {
+        var pool = Curated.list({mode: game.mode, level: level}), at = edition ? pool.findIndex(function(p){return p.id === edition.id;}) : -1;
+        var entry = pool.length ? pool[(at + 1) % pool.length] : null; if (!entry) return;
+        var b = document.createElement("button"); b.type = "button"; b.className = "secondary-btn"; b.textContent = level === "intro" ? "精选 · 入门" : "精选 · 进阶"; b.title = entry.title + " · " + entry.note;
+        b.addEventListener("click", function () { launchCurated(entry.id, $("rules-dialog")); }); choices.appendChild(b);
+      });
+      if (edition && Generator && Generator.supportsFresh(game.mode)) {
+        var freshButton=document.createElement("button");freshButton.type="button";freshButton.id="curated-fresh";freshButton.className="secondary-btn";freshButton.textContent="生成同规则新题";
+        freshButton.title="独立练习，不替换精选原题，也不改变主线星数。";
+        freshButton.addEventListener("click",function(){launchSameRule(game.mode,game.difficulty,$("rules-dialog"));});choices.appendChild(freshButton);
+      }
+      choices.hidden = Boolean(preferences.zen) || !choices.childElementCount;
     }
     document.body.dataset.outsideClues = String(Boolean(game.clues && game.clues.outside && game.clues.outside.length));
     if (isMulti()) {
@@ -1416,6 +1504,7 @@
     $("voyage-connection").textContent = journey.finished && selected.id === "fusion-homecoming-v1" ? "航线在此合拢。你已经找回归途。" : selected.scene || selected.bridge;
     $("voyage-observation").textContent = selected.observation || selected.goal || selected.subtitle;
     $("voyage-lesson").textContent = (selected.lesson || selected.mission) + (selected.ratingNote ? "\n" + selected.ratingNote : "");
+    renderVoyageDiscoveries(selected);
     var missing = journey.stages.find(function (stage) { return stage.id === selected.id; }).requires.filter(function (id) { return !voyageProgress[id]; });
     $("voyage-gate").textContent = voyageStorageBlocked ? "远征存档格式较新或不可读取，原数据已保留。请使用对应版本或有效备份恢复。" : allowed ? voyageProgress[selected.id] ? "章节历史最佳 " + voyageProgress[selected.id].stars + " 星" + (selected.legacySourceId ? "（含旧版题面）" : "") + "已保留，重玩不会降低成绩。" : journey.granted.indexOf(selected.id) >= 0 && missing.length ? "旧版通行已保留，仍可继续这一站。" : current ? "保留当前棋局，回到棋盘后由你继续计时。" : "已开放 · 准备后，由你点击开始计时。" : selected.id === "fusion-homecoming-v1" ? "还需修复前十五处星点中的 " + missing.length + " 处，才会开放归航核心。" : selected.id === "sums-constellation-v1" ? "循线三关与汇能两关都完成后汇合，还差 " + missing.length + " 关。" : selected.trackId !== "legacy" && Voyage.getStatus(voyageProgress, "legacy").completed < 9 ? "完成定位星九关后开放；可先预览规则。" : "先完成「" + chapterInfo(missing[missing.length - 1]).title + "」，再继续这一站。";
     $("voyage-start").textContent = current ? "继续 · " + selected.title : voyageProgress[selected.id] ? "重访 · " + selected.title : allowed ? "准备 · " + selected.title : "尚未解锁";
@@ -1427,6 +1516,70 @@
       $("voyage-repaired").textContent = "—"; $("voyage-total-stars").textContent = "—"; $("voyage-star-max").textContent = "";
       $("voyage-card-title").textContent = "远征记录暂不可读取"; $("voyage-card-progress").textContent = "原始记录已保留，未清空";
     }
+  }
+
+  function practiceForMode(mode) { return {thermo:"thermo-bounds",killer:"killer-sum",arrow:"arrow-sum","thermo-killer":"thermo-bounds"}[mode]; }
+  function openVoyagePractice(station) {
+    if (!trainingUi || storageTransition || voyageStorageBlocked) return;
+    voyagePracticeReturn = {id:selectedVoyage,station:station}; closeDialog($("voyage-dialog")); trainingUi.open(station);
+  }
+  function renderVoyageDiscoveries(selected) {
+    var box = $("voyage-discovery");
+    if (!box) { box = document.createElement("div"); box.id="voyage-discovery"; box.className="voyage-training-links"; $("voyage-lesson").after(box); }
+    box.replaceChildren();
+    function add(label, action, note) { var b=document.createElement("button");b.type="button";b.className="secondary-btn";b.textContent=label;b.disabled=voyageStorageBlocked||curatedLaunching;if(note)b.title=note;b.addEventListener("click",action);box.appendChild(b); }
+    var station=practiceForMode(selected.mode);
+    if(station) add(selected.mode === "thermo-killer" ? "先练温度计规则" : "先练规则 · "+modeInfo(selected.mode).label,function(){openVoyagePractice(station);});
+    if(Curated && Voyage.discovery) Voyage.discovery(voyageProgress).forEach(function(item){add(item.title,function(){launchCurated(item.puzzleId,$("voyage-dialog"));},item.subtitle);});
+    if(voyageProgress[selected.id] && Generator && Generator.supportsFresh(selected.mode)) {
+      add("同规则新题 · 独立练习",function(){launchSameRule(selected.mode,selected.difficulty,$("voyage-dialog"));},"生成新的练习题，不冒充章节原题，不改变这一章的星数。");
+      box.lastElementChild.id="voyage-fresh";
+    }
+    box.hidden=!box.childElementCount;
+  }
+  async function launchPractice(id) {
+    var exercise=window.NineRealmsTraining.exercise(id), entry, puzzle;
+    if(exercise.local) { entry=Curated && Curated.list({mode:exercise.mode,level:"intro"})[0]; if(!entry)throw new Error("这项练习的精选题暂不可用。"); puzzle=Curated.getPuzzle(entry.id); }
+    else { entry=PUZZLE_CATALOG.find(function(p){return p.id===exercise.sourceId;});if(!entry)throw new Error("练习源题暂不可用。");puzzle=Engine.getPuzzle(entry.difficulty,"practice-followup-"+id,entry.mode,{sourceId:entry.id}); }
+    return launchPreparedPuzzle(puzzle,$("training-dialog"),exercise.local ? "同规则精选题" : "同技巧源题");
+  }
+  function launchCurated(id, origin) { if(!Curated)return; return launchPreparedPuzzle(Curated.getPuzzle(id),origin,"精选题"); }
+  function launchSameRule(mode,difficulty,origin) {
+    if(!Generator || !Generator.supportsFresh(mode) || !generatorClient)return;
+    return launchPreparedPuzzle(function(){return generatorClient.run({mode:mode,difficulty:difficulty,fresh:true,seed:Generator.seed(),avoidFingerprints:generationAvoid()},{recovery:true,allowCatalog:false,onStage:function(stage){generationStage(stage,mode,difficulty,generationEpoch);}});},origin,"同规则新题（独立练习，不计章节星数）");
+  }
+  async function launchPreparedPuzzle(puzzle, origin, label) {
+    if(curatedLaunching||storageTransition||voyageStorageBlocked)return false;
+    if(liveSaveExport() || saveRecoveryState) { toast("当前棋局尚未安全保存，请先从页脚导出当前对局并恢复保存后，再进入精选题。"); return false; }
+    if(!origin && dialogIsOpen())return false;
+    curatedLaunching=true; var epoch=null,back=voyagePracticeReturn;voyagePracticeReturn=null;
+    if(origin)closeDialog(origin);
+    try {
+      if(game && hasProgress() && !await confirmAction("开始"+label+"？","确认后会先检查当前棋局能否保存，再切换题目；主线进度和练习成绩不会改变。","开始精选题")) {
+        voyagePracticeReturn=back;if(origin)showDialog(origin);return false;
+      }
+      if(storageTransition){if(origin)showDialog(origin);return false;}
+      if(liveSaveExport() || !save() || !History || !History.flush()) throw new Error("当前棋局或历史暂时无法安全保存，未替换棋盘。请先导出当前对局并检查存储空间。");
+      var archived=History.getSnapshot(game.sessionId);
+      if(!archived || JSON.stringify(archived.game.board)!==JSON.stringify(game.board) || JSON.stringify(archived.game.notes)!==JSON.stringify(game.notes)) throw new Error("当前棋局尚未完整记入历史，未替换棋盘。请先导出当前对局。");
+      if(typeof puzzle === "function") {
+        epoch=++generationEpoch;suspendClock();setGenerationBusy(true);setStatus("正在生成同规则新题；可点击“取消生成”保留原局。");
+        puzzle=await puzzle();
+        if(epoch!==generationEpoch||storageTransition)return false;
+        setGenerationBusy(false);
+        if(liveSaveExport()||!save()||!History.flush())throw new Error("当前棋局未能安全保存，未替换棋盘。");
+        if(!puzzle.generation||puzzle.generation.kind!=="constructed")throw new Error("本次未能完成新题构造，原棋局已保留。");
+        puzzle.voyageId=null;puzzle.dailyDate=null;rememberGenerated(puzzle);
+      }
+      installPuzzle(puzzle,puzzle.difficulty,puzzle.mode);setStatus((puzzle.title||label)+"已准备好，由你开始计时。");save();if(History)History.flush();return true;
+    } catch(error) {
+      if(epoch!==null&&(epoch!==generationEpoch||error.name==="AbortError"))return false;
+      if(epoch!==null)setGenerationBusy(false);
+      voyagePracticeReturn=back;if(origin&&!dialogIsOpen())showDialog(origin);
+      var message=epoch!==null?"本次新题构造未通过全部检查，原棋局已保留。可稍后重试。":error.message||"精选题暂不可用。";
+      setStatus(message);toast(message);return false;
+    }
+    finally {if(epoch!==null&&epoch===generationEpoch)setGenerationBusy(false);curatedLaunching=false;}
   }
 
   function renderEffectsStatus(){
@@ -1551,23 +1704,37 @@
     catch (error) { toast("每日记录暂时无法保存到本机，本次仍可继续游玩。"); }
   }
 
+  async function warmDailyIdentity(snapshot){
+    var source=snapshot&&snapshot.game;
+    if(!source||!dailyClient||typeof window.Worker!=="function"||!Daily.needsConstruction(source.dailyDate,source.givens,source.mode,source.difficulty,source.clues))return;
+    var inert=document.body.inert;document.body.inert=true;document.body.setAttribute("aria-busy","true");
+    try{await dailyClient.run(source.dailyDate);}catch(error){/* Strict synchronous recovery remains available if worker resources fail. */}
+    finally{document.body.inert=inert;document.body.removeAttribute("aria-busy");}
+  }
+  function cancelDailyGeneration(){
+    if(!loadingDaily)return;
+    dailyEpoch++;loadingDaily=false;if(dailyClient)dailyClient.cancel();
+  }
   function renderDaily() {
-    dailyToday = Daily.dateKey();
-    var puzzle = Daily.getPuzzle(dailyToday);
-    var stats = Daily.getStats(dailyRecords, dailyToday);
+    var today=Daily.dateKey();if(dailyToday&&dailyToday!==today){cancelDailyGeneration();dailyError=null;}dailyToday=today;
     var currentDaily = game && game.dailyDate === dailyToday && !game.completed;
-    var label = modeInfo(puzzle.mode).label + " · " + difficultyInfo(puzzle.mode, puzzle.difficulty).label;
+    var puzzle=null,preview=null,dailyLoadError=dailyError;
+    try{puzzle=currentDaily?game:Daily.peekPuzzle(dailyToday);preview=puzzle||Daily.describe(dailyToday);}catch(error){dailyLoadError=error;}
+    var stats = Daily.getStats(dailyRecords, dailyToday);
+    var label = preview ? modeInfo(preview.mode).label + " · " + difficultyInfo(preview.mode, preview.difficulty).label : "每日新题暂不可用";
     $("daily-card-date").textContent = dailyToday.slice(5).replace("-", " / ") + " · " + label;
     $("daily-card-status").textContent = dailyUnreadable ? "记录待恢复" : stats.todayCompleted ? "今日已点亮" : currentDaily ? "今日进行中" : "今日待探索";
     $("daily-date").textContent = dailyToday.replace(/-/g, " / ");
-    $("daily-description").textContent = label + "。每天一道题，把专注留给此刻。";
+    $("daily-description").textContent = loadingDaily ? label+"。正在后台准备，可取消；当前棋局不会被提前替换。" : dailyLoadError ? "本次每日题未能准备好，原棋局和成绩已保留。可点击重试；不会自动更换日期题面。" :
+      label + (currentDaily ? "。继续已保存的今日棋局，保留原题身份。" : puzzle && puzzle.dailyFallback ? "。本日构造未通过固定检查，使用明确标注的固定后备题，并非新生成题。" : !puzzle || puzzle.dailyEdition === "constructed-v3" ? "。按日期构造新题，每天一题。" : "。每天一道题，把专注留给此刻。");
     $("daily-total").textContent = dailyUnreadable ? "—" : (stats.totalIncomplete ? "≥" : "") + String(stats.total);
     $("daily-streak").textContent = dailyUnreadable ? "—" : (stats.streakIncomplete ? "≥" : "") + String(stats.streak);
     $("daily-export-original").hidden = !dailyUnreadable;
     $("daily-export-original").disabled = !dailyUnreadable || typeof dailyUnreadable.raw!=="string";
     $("daily-stat-note").textContent = dailyUnreadable ? "每日记录暂不可读取，已保留原文并暂停覆盖。可在数据备份中恢复有效备份。" : stats.totalIncomplete ? "旧版仅保留最近400条明细，较早记录可能缺失；≥ 表示目前能确认的下限，不补造历史。" : "累计与连续按已完成日期计算，明细仅保留最近400条。";
-    $("daily-start").textContent = currentDaily ? "返回今日棋局" : stats.todayCompleted ? "重玩今日一境" : "准备今日一境";
-    $("daily-start").disabled = loadingDaily || Boolean(dailyUnreadable);
+    $("daily-start").textContent = loadingDaily ? "取消准备" : currentDaily ? "返回今日棋局" : dailyLoadError ? "重试准备" : stats.todayCompleted ? "重玩今日一境" : "准备今日一境";
+    $("daily-start").setAttribute("aria-busy",String(loadingDaily));
+    $("daily-start").disabled = Boolean(dailyUnreadable) || !game;
     var calendar = $("daily-calendar");
     calendar.replaceChildren();
     Daily.recentDates(dailyToday, 7).forEach(function (key) {
@@ -1596,49 +1763,38 @@
   });
 
   function openDaily() {
-    if (dialogIsOpen()) return;
+    if (!game || dialogIsOpen()) return;
     renderDaily();
     showDialog($("daily-dialog"));
     save();
   }
 
   async function startDaily() {
-    if (loadingDaily || dailyUnreadable || !$("daily-dialog").open) return;
-    if (dailyToday !== Daily.dateKey()) {
-      renderDaily();
-      toast("北京时间已进入新的一天，今日题目已更新。");
-      return;
-    }
-    var date = dailyToday;
-    loadingDaily = true;
-    $("daily-start").disabled = true;
-    try {
-      if (game.dailyDate === date && !game.completed) {
-        closeDialog($("daily-dialog"));
-        setStatus(game.paused ? "已返回今日棋局，点击继续后再恢复计时。" :
-          game.started ? "继续探索今日一境。" : "每日一境已准备好，点击开始游戏后计时。");
-        $("board-stage").scrollIntoView({ block: "nearest", behavior: "instant" });
-        return;
-      }
-      var puzzle = Daily.getPuzzle(date);
-      closeDialog($("daily-dialog"));
-      if (hasProgress()) {
-        var accepted = await confirmNewGame(puzzle.difficulty, puzzle.mode, false);
-        if (!accepted) {
-          setStatus("已保留当前棋局，随时可以再来挑战每日一境。");
-          return;
-        }
-      }
-      installPuzzle(puzzle, puzzle.difficulty, puzzle.mode);
-      setStatus(date + " 每日一境已准备好。点击开始后计时，完成即可点亮今日。");
-      save();
-    } catch (error) {
-      toast("每日题暂时无法载入，当前棋局已保留。");
-      resumeClock();
-    } finally {
-      loadingDaily = false;
-      renderDaily();
-    }
+    if(loadingDaily){cancelDailyGeneration();dailyError=null;renderDaily();setStatus("已取消每日题准备，原棋局已保留。");return;}
+    if(!game||storageTransition||dailyUnreadable||!$("daily-dialog").open)return;
+    if(dailyToday!==Daily.dateKey()){renderDaily();toast("北京时间已进入新的一天，今日题目已更新。");return;}
+    var date=dailyToday,epoch=null,originalSession=game.sessionId;
+    try{
+      if(game.dailyDate===date&&!game.completed){closeDialog($("daily-dialog"));setStatus("已返回今日棋局，原题与进度保持不变。");return;}
+      var preview=Daily.describe(date);closeDialog($("daily-dialog"));
+      if(hasProgress()&&!await confirmNewGame(preview.difficulty,preview.mode,false)){setStatus("已保留当前棋局，随时可以再来挑战每日一境。");return;}
+      if(storageTransition||game.sessionId!==originalSession)return;
+      if(!archiveBeforeReplacement())throw new Error("DAILY_SAVE_FAILED");
+      dailyError=null;showDialog($("daily-dialog"));epoch=++dailyEpoch;loadingDaily=true;renderDaily();
+      if(!dailyClient)throw new Error("DAILY_WORKER_UNAVAILABLE");
+      var puzzle=await dailyClient.run(date);
+      if(epoch!==dailyEpoch||storageTransition||!$("daily-dialog").open||game.sessionId!==originalSession)return;
+      if(date!==Daily.dateKey()){cancelDailyGeneration();renderDaily();setStatus("北京时间已进入新的一天，未替换当前棋局。请准备新一天的题目。");return;}
+      if(!archiveBeforeReplacement())throw new Error("DAILY_SAVE_FAILED");
+      loadingDaily=false;closeDialog($("daily-dialog"));
+      installPuzzle(puzzle,puzzle.difficulty,puzzle.mode);
+      setStatus(date+(puzzle.dailyFallback?" 每日固定后备题已准备好（本日不是新生成题）。":" 每日一境已准备好。")+"点击开始后计时，完成即可点亮今日。");save();
+    }catch(error){
+      if(epoch!==null&&epoch!==dailyEpoch||error.name==="AbortError")return;
+      dailyError=error;
+      var message=error.message==="DAILY_SAVE_FAILED"?"当前棋局或历史未能安全保存，原棋局已保留。请先导出当前对局并检查存储空间。":"每日题暂时无法准备，当前棋局已保留。可稍后重试。";
+      setStatus(message);toast(message);resumeClock();
+    }finally{if(epoch===null||epoch===dailyEpoch){loadingDaily=false;renderDaily();}}
   }
 
   function renderTechniqueGuide() {
@@ -1856,6 +2012,8 @@
   }
 
   function showDialog(element) {
+    clearGenerationRetry();
+    if(loadingDaily&&element&&element.id!=="daily-dialog"){cancelDailyGeneration();renderDaily();}
     clearNumberPresses();
     if (window.NineRealmsFloatingDraft) window.NineRealmsFloatingDraft.close(false);
     if(storageTransition)return;
@@ -1873,6 +2031,7 @@
   }
 
   function closeDialog(element) {
+    clearGenerationRetry();
     if (!element) return;
     if (typeof element.close === "function") element.close();
     else element.removeAttribute("open");
@@ -1914,11 +2073,13 @@
     suspendClock();
     save();
     try {
-      var source = snapshot.game;
+      var source = snapshot.game,previousSession=game.sessionId;
+      await warmDailyIdentity(snapshot);
+      if(storageTransition||liveSaveExport()||game.sessionId!==previousSession)return false;
       if (!modeInfo(source.mode) || !difficultyInfo(source.mode, source.difficulty)) throw new Error("Unavailable historical mode");
       if (restart) {
         installPuzzle({ id: source.puzzleId, givens: source.givens, solution: source.solution, clues: source.clues,
-          dailyDate: source.dailyDate, voyageId: source.voyageId, sourceId: source.sourceId, generation: source.generation, custom: source.custom }, source.difficulty, source.mode);
+          dailyDate: source.dailyDate, voyageId: source.voyageId, sourceId: source.sourceId, generation: source.generation, recovery:source.recovery, custom: source.custom }, source.difficulty, source.mode);
       } else {
         if (!restore(snapshot, true)) throw new Error("Invalid historical game");
         if (source.practice) historyOrigin = "new";
@@ -1958,13 +2119,24 @@
       game.notes.some(function (mask) { return mask !== 0; }));
   }
 
+  function archiveBeforeReplacement() {
+    try {
+      if(liveSaveExport()||saveRecoveryState||!save()||!History||!History.flush())return false;
+      var old=History.getSnapshot(game.sessionId);
+      return Boolean(old && old.game.mode===game.mode && ["givens","board","notes","clues","branch","draft"].every(function(key){return JSON.stringify(old.game[key])===JSON.stringify(game[key]);}));
+    } catch(error){return false;}
+  }
+
   function installPuzzle(puzzle, difficulty, mode) {
+    if(loadingDaily)cancelDailyGeneration();
     var clues = Engine.normalizeClues(mode, puzzle && puzzle.clues);
     var nextContext = { mode: mode, clues: clues };
     if (!puzzle || !isBoard(puzzle.givens, false, Engine.getLayout(nextContext).cellCount) || !isBoard(puzzle.solution, true, Engine.getLayout(nextContext).cellCount) ||
         !Engine.validateComplete(puzzle.solution, nextContext) || !respectsGivens(puzzle.solution, puzzle.givens)) {
       throw new Error("Invalid puzzle");
     }
+    var deliveredRecovery=puzzle.deliveryRecovery||puzzle.recovery, verifiedRecovery=recoveryInfo(deliveredRecovery,Object.assign({},puzzle,{mode:mode,difficulty:difficulty}));
+    if(deliveredRecovery&&!verifiedRecovery)throw new Error("Invalid recovery proof");
     cancelPuzzleGeneration();
     suspendClock();
     if (game) save();
@@ -2001,6 +2173,7 @@
       fog: preferences.fog,
       fogSeen: initialFog(nextContext)
     };
+    game.recovery=verifiedRecovery;
     batchSelection.clear(); batchSelecting = false;
     currentContext = nextContext;
     game.energy = restoreEnergy(null);
@@ -2021,6 +2194,7 @@
       cancelPuzzleGeneration(); renderModeControls(); resumeClock();
       setStatus("已取消生成，原有棋局和进度已保留。"); return;
     }
+    clearGenerationRetry();
     var mode = requestedMode || (game ? game.mode : "classic");
     if (MODES.indexOf(mode) < 0) mode = "classic";
     if (difficulty === "expert") difficulty = "master";
@@ -2040,31 +2214,44 @@
     }
     if(storageTransition)return;
     try {
+      if(!initial && game && !archiveBeforeReplacement()) {
+        resumeClock();renderModeControls();setStatus("当前棋局或历史尚未安全保存，原棋局已保留。请先导出当前对局并检查存储空间，再开启新游戏。");return;
+      }
       var sourceId = Deck.choose(mode, difficulty, game && game.sourceId);
-      var puzzle, fallback = false;
+      var puzzle, freshRequested = Boolean(Generator && Generator.supportsFresh(mode));
       if (!initial && difficulty !== "master" && generatorClient) {
         var epoch = ++generationEpoch;
         suspendClock(); save(); setGenerationBusy(true);
-        setStatus("正在离线生成并验证新题，可点击“取消生成”保留原局……");
+
         try {
           puzzle = await generatorClient.run({ mode: mode, difficulty: difficulty, sourceId: sourceId,
-            seed: Generator.seed(), avoidFingerprints: recentGenerated.slice() });
+            seed: Generator.seed(), fresh: freshRequested, avoidFingerprints: generationAvoid() }, {recovery:true,onStage:function(stage){generationStage(stage,mode,difficulty,epoch);}});
         } catch (error) {
           if (epoch !== generationEpoch || error.name === "AbortError") return;
-          fallback = true;
+          {
+            generationRetry = {mode:mode,difficulty:difficulty};
+            setGenerationBusy(false);resumeClock();renderModeControls();
+            var retryTarget=modeInfo(mode).label + " · " + difficultyInfo(mode,difficulty).label;
+            $("new-game").title="重新生成" + retryTarget;
+            setStatus((error.message === "WORKER_UNAVAILABLE" ? "当前环境不支持后台生成" : "本次有限构造与备选验证均未找到合格题目") + "，原棋局已保留，未替换为未经验证的旧题或降低难度。点击“重试生成”再试" + retryTarget + "。");
+            return;
+          }
         }
         if (epoch !== generationEpoch) return;
         setGenerationBusy(false);
       }
       if (!puzzle) puzzle = Engine.getPuzzle(difficulty, undefined, mode, { sourceId: sourceId });
+      if(!initial && game && !archiveBeforeReplacement()) {
+        resumeClock();renderModeControls();setStatus("当前棋局或历史未能安全保存，未替换棋盘。请先导出当前对局并检查存储空间。");return;
+      }
       installPuzzle(puzzle, difficulty, mode);
       Deck.remember(mode, difficulty, puzzle.sourceId, true);
       rememberGenerated(puzzle);
-      setStatus(puzzle.generation ? modeInfo(mode).label + "新题已准备好 · " + difficultyInfo(mode, difficulty).label +
+      setStatus(puzzle.generation && puzzle.generation.kind === "constructed" ? modeInfo(mode).label + "新底盘" + (puzzle.generation.layoutFingerprint ? "与新规则布局" : "") + "已准备好 · " + difficultyInfo(mode,difficulty).label + (puzzle.generation.difficultyBasis === "supported-logic" ? "（已通过技巧校准）" : puzzle.generation.difficultyBasis === "rule-depth" ? "（规则推演层级，不等同人类技巧评级）" : "（给定数分档，已验证基础规则推理可完成）") + "，点击开始后计时。" : puzzle.generation ? modeInfo(mode).label + "题库底盘重挖已准备好 · " + difficultyInfo(mode, difficulty).label +
         (game.generation.difficultyBasis === "supported-logic" ? "（已通过技巧校准）" : "密度档（非技巧评级）") + "，点击开始后计时。" :
-        fallback ? (Generator&&Generator.supportsDifficulty(mode) ? "本次未能在预算内完成技巧校准，已使用题库原分档（未经本次技巧校准）；点击开始后计时。" : "本次生成未在预算内完成，已切换为原题库题目；点击开始后计时。") :
         preferences.zen ? modeInfo(mode).label + "已准备好，等你开始。" : downgraded ? "已准备" + modeInfo(mode).label + " · 进阶。极境仅用于经典玩法，点击开始后计时。" :
         modeInfo(mode).label + " · " + difficultyInfo(mode, difficulty).label + "已准备好，点击开始游戏后计时。");
+      if(game.recovery)setStatus(game.recovery.kind==="verified-reserve"?"新构造未完成，已准备经过重新验证的固定备用题 · "+modeInfo(mode).label+" · "+difficultyInfo(mode,difficulty).label+"。这不是本次新构造；点击开始后计时。":game.recovery.kind==="verified-catalog"?"新构造未完成，已准备同玩法同档的已验证题库备选 · "+modeInfo(mode).label+" · "+difficultyInfo(mode,difficulty).label+"。这是题库题，不是新构造；点击开始后计时。":"备用构造已通过验证 · "+modeInfo(mode).label+" · "+difficultyInfo(mode,difficulty).label+"，点击开始后计时。");
       save();
     } catch (error) {
       cancelPuzzleGeneration();
@@ -2472,7 +2659,7 @@
   bind("daily-btn", "click", openDaily);
   bind("daily-start", "click", startDaily);
   bind("daily-close", "click", function () { closeDialog($("daily-dialog")); });
-  bind("daily-dialog", "close", function () { resumeClock(); save(); });
+  bind("daily-dialog", "close", function () { if(loadingDaily){cancelDailyGeneration();renderDaily();} resumeClock(); save(); });
   function toggleLensDigit(value) {
     if (!Number.isInteger(value) || value < 1 || value > 9) return;
     lensDigit = lensDigit === value ? 0 : value;
@@ -2515,7 +2702,7 @@
   bind("challenge-plain", "click", function () { if (game.mode !== "classic") return; sharingPlain = !sharingPlain; $("challenge-output").value = sharingPlain ? Custom.toText(game.givens) : window.SudokuChallenge.create(game); $("challenge-plain").textContent = sharingPlain ? "切换挑战码" : "切换 81 格文本"; });
   bind("custom-open", "click", function () { if (customUi) customUi.open(); });
   bind("custom-personal-open", "click", function () { closeDialog($("personal-dialog")); if (customUi) customUi.open(); });
-  bind("new-game", "click", function () { newGame(game.difficulty, false); });
+  bind("new-game", "click", function () { if(game){var retry=generationRetry;newGame(retry?retry.difficulty:game.difficulty, false, retry?retry.mode:undefined);} });
   bind("difficulty", "change", function (event) { newGame(event.target.value, false); });
   bind("mode-picker-open", "click", function () {
     if (!game || dialogIsOpen()) return;
@@ -2985,9 +3172,10 @@
   if (window.NineRealmsTrainingUI) trainingUi = window.NineRealmsTrainingUI({
     progress: function () { return Voyage.practiceProgress(voyageProgress); },
     blocked: function () { return storageTransition || voyageStorageBlocked; },
+    play: launchPractice,
     open: showDialog, close: closeDialog, afterClose: function () {
       resumeClock(); save();
-      if (voyagePracticeReturn && !storageTransition) { var back = voyagePracticeReturn; voyagePracticeReturn = null; openVoyage(back.id); $("voyage-training-links").closest("details").open = true; var button = $("voyage-training-links").querySelector('[data-station="' + back.station + '"]'); if (button) button.focus(); }
+      if (voyagePracticeReturn && !storageTransition && !curatedLaunching) { var back = voyagePracticeReturn; voyagePracticeReturn = null; openVoyage(back.id); $("voyage-training-links").closest("details").open = true; var button = $("voyage-training-links").querySelector('[data-station="' + back.station + '"]'); if (button) button.focus(); }
     },
     success: function (id, cell, digit) { if (storageTransition || voyageStorageBlocked) throw new Error("练习成绩暂不可保存，原记录未改变。"); voyageProgress = Voyage.recordPractice(voyageProgress, id, cell, digit); saveVoyage(); renderVoyage(); }
   });
@@ -3042,6 +3230,7 @@
 
   buildCatalog();
   buildBoard();
+  try{await warmDailyIdentity(JSON.parse(playerStorage.getItem(STORAGE_KEY)||"null"));}catch(error){}
   var startupSave = readCurrentSave();
   var restored = startupSave.status === "restored";
   if (!restored && startupSave.status !== "missing") { saveRecoveryState = startupSave; storageTransition = true; }

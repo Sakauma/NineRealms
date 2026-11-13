@@ -1,0 +1,523 @@
+{
+  "checked": 10128,
+  "failures": [
+    {
+      "id": "D-H1",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "K-H1",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "K-H3",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-classic-hard-12",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-diagonal-hard-07",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-diagonal-hard-19",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-hyper-hard-14",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-hyper-hard-16",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-hyper-hard-19",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-04",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-06",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-07",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-10",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-11",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-12",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-13",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-14",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-15",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-16",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "B31-knight-hard-17",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-000CC65CF372",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-000D2F07197B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-000DBD2C44CD",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00145FFD714B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0015D55A6EC4",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00189FFD5495",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-001C145E1CCC",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-001D2B46C953",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0026F514885D",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0029D4724D88",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0042E2186BB9",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-004952E2151C",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-006CC11D5BC1",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-007C6FDE903A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00828C4BBD26",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-008C29332074",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-009346C52C9B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-009739317264",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00980A2208EA",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00A25D9AA0AF",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00AA244F2A75",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00AB04728CB6",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00AD4C4F4BBF",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00AF34FC2A01",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00BA7ECAC491",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00BABCCBF89A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00C1EC93F1E8",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00CB3F0EC921",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00CBF0B7D0F0",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00CCF4BC4EEE",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00D10F5E3749",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00D8C44B1C1E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00DC8A2A4B5A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00DF7B3E9F58",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00EA306F4A7E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00F97071541B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-00FDD717C807",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0104B3FAD51A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-011FE8452ED2",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01245BC7D98E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01290936905A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01293F832F26",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-012C9F3DB9BE",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01350B30814A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0138E97EEE54",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-013E76CDC100",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-014107C9C866",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01414B94CA52",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0149C48EDE53",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-014B270770AF",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0155A135A612",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-015A1612793F",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-015A489DA606",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-015D941C1A6E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01680F041C50",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01704895EE1C",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01782DCF09CE",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0178CDAC340B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-017DD9818E47",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-017FDF2DA3BA",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01806359C858",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-018064C8379E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-018374538C77",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0183A0F259DF",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-018A105ABD81",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0195823CEFD2",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0197C912E9FA",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01ABD4F4F55A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01AD9E2C9656",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01B0917A2A9A",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01B88AEEAF46",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01BA21C769AE",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01BE0E595665",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01BE8C7D2060",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01C2CDAFBB91",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01CEBA0E3777",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01D2539BA03B",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01D644541E2D",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01D98ECF23DA",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01DC37F27E8E",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01DDD75429C1",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01E54850DAC7",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01EF76ADD0C6",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01F434C4C3D4",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01F68D818AA9",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01F849D30892",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-01FF9E655C95",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-020182DE57D9",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0205123B1D54",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-020D42DCC2AB",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0213EC0D42B4",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0229F56B4595",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-022FD70D4609",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-02328895E9A1",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0238DAEDDF1D",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-023C6D6DCDB5",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-0245B41FB317",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-02485AA1CF71",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "SE-H-025013B5BF41",
+      "error": "CLASSIC_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-1",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-2",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-king-hard-3",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-king-hard-4",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-3",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-7",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-8",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-9",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-disjoint-hard-12",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    },
+    {
+      "id": "V-jigsaw-hard-8",
+      "error": "VARIANT_DIFFICULTY_NOT_REACHED"
+    }
+  ],
+  "maxMs": 312,
+  "scope": "one new carve per eligible curated source, full-rule uniqueness recheck"
+}

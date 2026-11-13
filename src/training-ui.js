@@ -1,8 +1,11 @@
 /* Optional practice uses its own board; no live-game mutations or implied mastery. */
 (function(root){'use strict';root.NineRealmsTrainingUI=function(options){
- var T=root.NineRealmsTraining,doc=root.document,$=function(id){return doc.getElementById(id);},current=null,selected=-1,stage=0,finished=false;
+ var T=root.NineRealmsTraining,doc=root.document,$=function(id){return doc.getElementById(id);},current=null,selected=-1,stage=0,finished=false,launching=false;
  function button(text,fn){var b=doc.createElement('button');b.type='button';b.textContent=text;b.addEventListener('click',fn);return b;}
+ var play=button('进入同技巧精选题',async function(){if(launching||!current||options.blocked())return;launching=true;play.disabled=true;try{await options.play(current);}catch(e){$('training-feedback').textContent=e.message||'精选题暂不可用，当前棋局未改变。';}finally{launching=false;render();}});play.id='training-play';play.className='secondary-btn';play.hidden=true;$('training-next').parentElement.appendChild(play);
  function render(){if(!current)return;var exercise=T.exercise(current),progress=options.progress(),focused=doc.activeElement,restore=focused&&focused.dataset.practiceCell;
+ play.textContent=exercise.local?'进入同规则精选题':'进入同技巧源题';
+ play.hidden=!(options.play&&(finished||progress.completed.indexOf(current)>=0));play.disabled=launching;
  $('training-task').textContent=exercise.task;$('training-scope').textContent=exercise.candidateNote||exercise.scope;
  $('training-title').textContent=exercise.title;var guidance=T.explain(current,stage);$('training-explanation').textContent=guidance.text+(stage===1&&guidance.prior&&guidance.prior.length?'\n前置证明：\n'+guidance.prior.map(function(p){return p.explanation||p.title||JSON.stringify(p);}).join('\n'):'')+(stage===2&&guidance.eliminations?'\n'+guidance.eliminations.map(function(c){return (exercise.local?exercise.cellLabels[exercise.viewCells.indexOf(c.index)]:'第 '+(Math.floor(c.index/9)+1)+' 行第 '+(c.index%9+1)+' 列')+'可排除 '+c.values.join('、');}).join('；'):'');
  $('training-next').textContent=stage===0?'查看证明前提':stage===1?'查看完整讲解（含排除答案）':'已展示完整讲解';$('training-next').disabled=stage===2;

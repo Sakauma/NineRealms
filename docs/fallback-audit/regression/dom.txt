@@ -1,0 +1,35 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:dom
+> python3 scripts/build.py --output dist/index.html && node tests/secret-archives-dom.test.cjs && node tests/floating-draft-dom.test.cjs && node tests/checkpoints-dom.test.cjs && node tests/alignment.test.cjs && node tests/readability-dom.test.cjs && node tests/reasoning-world-dom.test.cjs && node tests/voyage-story-dom.test.cjs && node tests/roadmap-dom.test.cjs && node tests/glass-select.test.cjs && node tests/personal-dom.test.cjs && npm run test:review:dom && node tests/journey-practice-dom.test.cjs && node tests/fresh-generation-dom.test.cjs && node tests/fixed-content-practice-dom.test.cjs && node tests/daily-constructed-dom.test.cjs && node tests/generation-recovery-dom.test.cjs
+
+{"html": "/workspace/scratch/1a6867f4fcc2/ninerealms_fallback_v7_1113/dist/index.html", "html_bytes": 4750870, "sha256": "7a350086478d7cfeac263afafcc79ff6812670233cf4da4679035d47ab273bed"}
+PASS archives DOM: four real tasks, invalid/correct/replay/restore, actionable clues, keyboard isolation, old7→11, unchanged main board/notes/hints/energy/history/voyage, quota honesty and future/corrupt read-only storage. Escape default preserved; no actual browser rendering tested.
+PASS floating draft synthetic DOM: 8 groups. lifecycle, focus, modal/inert guard, rail, observer coalescing, keyboard adjustment and session geometry; pointer exclusion during movement/resize, clamping, cancellation/lost capture/blur, reset and left-handed rail; no-room flow docking, reveal only on open, dock resizing, capture renewal on detachment, mobile fallback and restoration; visual-viewport offsets, selected-target reveal, focus-neutral close and impossible-placement fallback; responsive rail uses actual 288/307.2/320px tools and 24/32/40px gutters in both handedness modes; closed draft trigger yields Escape to More Tools; open draft consumes only its own dismissal across repeated cycles; desktop More Tools draft open reveals board before measuring; legacy/narrow/variant paths, repeated opens and blocked opens do not add board scrolling; static CSS contracts: no draft hiding rules, large adaptive border-box keys, hidden counts, flow docking and theme-linked input colors. No browser rendering, real pointer capture, contrast or game-data behavior is certified.
+PASS full-app checkpoints: shared reasoning entry, current mark, exact target frame, latest-progress resume cancel/accept, notes preservation and eight-key exported backup.
+PASS near-capacity DOM: marking triggers real 250-step trim, retained frame keeps absolute anchor; removed frame warns and cannot be silently remarked.
+PASS checkpoints DOM: manual current/frame marking, safe label text, type filter, precise frame replay vs latest-progress continue, remove/focus, persistence and modal focus isolation. jsdom only.
+PASS alignment structure: shared reasoning row, mobile visible-select sizing, bounded labels, nine equal training rows and nine exact candidate slots for all nine exercises, non-overlapping edge-mark CSS contract. Static/DOM assertions, not pixel measurement.
+PASS readability DOM: old/default/invalid preferences, four settings persist without game mutation, shortcut isolation/Escape, strict backup and actual replace, reload, twin/samurai view compatibility; CSS scope/shape/forced-colors checks. No actual rendering or contrast measurement.
+PASS reasoning/world DOM: draft-only edits/undo/branch/links/cages, actual backup restore and history review, new-session draft isolation, practice keyboard/no live-game leakage, actual world repair/fusion completion/review, future practice read-only; twin/samurai focused-view coordinates, Ctrl+Z, frame and actual backup roundtrips; guided explanation focus. jsdom, not rendering.
+PASS story voyage DOM: fresh gate/preview/focus/cancel, legacy current passage without fake scores, actual ninth-stage dual unlock, branch convergence and final completion CTA, 16-stage counts, future-schema preservation/backup refusal/ordinary play, historical high-stage restore and independent completion without fabricated predecessors. jsdom only, no rendering.
+PASS roadmap DOM: single selected-cell result without board/note/history mutation, bounded original-puzzle rating, linked tracks with inherited passage, legacy progress, teaching text, cancel preservation and full-clue new chapter install. No actual rendering.
+PASS glass selects: every current control including draft relations + dynamic history, state/events/options/disabled, keyboard isolation, dismissals, owner ancestry, labels/focus, fallback + mocked popover, and full-app twin/settings/favorites/history integration. DOM simulation, not visual verification.
+PASS DOM simulation (classic): startup, notes, favorite/later/filter, export, invalid import, preview/cancel, confirmed replacement and delayed/unload-write protection. No actual browser rendering or navigation tested.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> nine-realms-sudoku@1.3.4 test:review:dom
+> node tests/review.test.cjs --dom
+
+PASS review: observed hint/note/draft/undo/mistake/branch events, exact replay jumps, no elapsed-only or inferred-technique events, retained-window statistics and legacy draft omission.
+PASS review DOM: exact event-button/explicit-step jumps and visible draft datasets/labels. jsdom only, not rendered pixels.
+journey-practice-dom: discovery, cancel, confirmation, all practice handoffs, rating labels and progress preservation passed
+PASS fresh-generation DOM: actual worker program; normal/Zen fresh requests, constructed save/history/backup/restore, legacy carved compatibility, explicit budget failure, target-preserving retry, timeout, overrides, dialog reset, late-result and cancel preservation. No browser layout or screenshot validation.
+PASS fixed-content practice: completed voyage independent new puzzle, untouched stars/IDs, curated fresh action, actual worker success, confirmation cancel, generation failure and in-flight cancellation preserve original. jsdom, not pixel rendering.
+PASS daily async DOM: no generation on startup/preview, worker-first prepare, cancel/close/late/midnight isolation, both save-failure checkpoints, cached retry, exact old dates and v3 worker recovery, pinned fallback and retryable unknown failure.
+PASS recovery DOM: actual fresh/catalog recovery, honest persistent provenance, backup/history/restore/tamper, current+recent exclusion, stage cancellation/late result, save rejection, miracle and Worker-unavailable retain old game.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

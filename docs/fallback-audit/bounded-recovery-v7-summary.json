@@ -1,0 +1,1984 @@
+{
+  "rawReport": "bounded-recovery-v7.json",
+  "rawSha256": "db3c14e6cc0faf224321f8038864acec931f8e58a2b611106dbccb7824221834",
+  "elapsedMs": 98614,
+  "sourceHashes": {
+    "generator.js": "15851ab589dc44ec66a92427a72909cdbdff532b4eb55773150c295523632307",
+    "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+    "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+    "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+    "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc",
+    "recovery-reserve.js": "1898ffc42a58f6e74fa70fce550edaec1e389afec268b89e771acda38069c424"
+  },
+  "sourceDrift": false,
+  "method": "Synchronous Node. One v6 primary request is the shared counterfactual primary; v7 stages run only after failure/over-budget. Same actual-delivery rolling recent256 ledger; not an independently diverging v6 session. Coverage separately probes both stages with empty ledger, one seed per mode/tier; not success rates. Stage wall thresholds8s/8s/4s model watchdog rejection but are not real worker or device timing.",
+  "summary": [
+    {
+      "mode": "classic",
+      "requests": 100,
+      "primarySuccess": 100,
+      "eventualSuccess": 100,
+      "verifiedReserve": 0,
+      "freshRetry": 0,
+      "fixed": 0,
+      "primaryMs": {
+        "n": 100,
+        "mean": 174.52059610000012,
+        "p50": 150.6984599999996,
+        "p95": 365.9133320000001,
+        "p99": 541.377355999999,
+        "max": 628.2639089999993
+      },
+      "totalGenerationMs": {
+        "n": 100,
+        "mean": 174.52059610000012,
+        "p50": 150.6984599999996,
+        "p95": 365.9133320000001,
+        "p99": 541.377355999999,
+        "max": 628.2639089999993
+      },
+      "failed": []
+    },
+    {
+      "mode": "king",
+      "requests": 100,
+      "primarySuccess": 100,
+      "eventualSuccess": 100,
+      "verifiedReserve": 0,
+      "freshRetry": 0,
+      "fixed": 0,
+      "primaryMs": {
+        "n": 100,
+        "mean": 101.62589028000023,
+        "p50": 64.9507569999987,
+        "p95": 248.5526170000012,
+        "p99": 454.0085309999995,
+        "max": 473.7852039999998
+      },
+      "totalGenerationMs": {
+        "n": 100,
+        "mean": 101.62589028000023,
+        "p50": 64.9507569999987,
+        "p95": 248.5526170000012,
+        "p99": 454.0085309999995,
+        "max": 473.7852039999998
+      },
+      "failed": []
+    }
+  ],
+  "independentBaseClasses": 200,
+  "independentRequests": 200,
+  "regressions": [
+    {
+      "seed": "hard-controlled-v2-classic-51",
+      "delivered": "fresh-retry",
+      "totalMs": 898.31,
+      "stages": [
+        {
+          "stage": "primary",
+          "status": "declined",
+          "code": "DENSITY_NOT_REACHED",
+          "ms": 722.4020740000001
+        },
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "ms": 175.90921600000001
+        }
+      ]
+    },
+    {
+      "seed": "hard-controlled-v2-classic-57",
+      "delivered": "fresh-retry",
+      "totalMs": 1194.59,
+      "stages": [
+        {
+          "stage": "primary",
+          "status": "declined",
+          "code": "DENSITY_NOT_REACHED",
+          "ms": 947.9917409999998
+        },
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "ms": 246.603024
+        }
+      ]
+    },
+    {
+      "seed": "hard-controlled-v1-classic-171",
+      "delivered": "fresh-retry",
+      "totalMs": 1433.17,
+      "stages": [
+        {
+          "stage": "primary",
+          "status": "declined",
+          "code": "FRESH_DIFFICULTY_NOT_REACHED",
+          "ms": 766.7476059999999
+        },
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "ms": 666.4194969999999
+        }
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "stage": "fresh-retry",
+      "requests": 99,
+      "status": {
+        "verified": 96,
+        "unsupported": 3
+      },
+      "kinds": {
+        "fresh-retry": 96
+      },
+      "codes": {
+        "RECOVERY_SEARCH_UNSUPPORTED": 3
+      },
+      "ms": {
+        "count": 99,
+        "mean": 152.26,
+        "p50": 107.75,
+        "p95": 396.13,
+        "p99": 1094.54,
+        "max": 1094.54
+      },
+      "verifiedMs": {
+        "count": 96,
+        "mean": 157.01,
+        "p50": 108.02,
+        "p95": 396.13,
+        "p99": 1094.54,
+        "max": 1094.54
+      }
+    },
+    {
+      "stage": "verified-catalog",
+      "requests": 99,
+      "status": {
+        "verified": 97,
+        "declined": 2
+      },
+      "kinds": {
+        "verified-catalog": 19,
+        "verified-reserve": 78
+      },
+      "codes": {
+        "CATALOG_EXHAUSTED": 2
+      },
+      "ms": {
+        "count": 99,
+        "mean": 90.61,
+        "p50": 50.34,
+        "p95": 568.63,
+        "p99": 642.36,
+        "max": 642.36
+      },
+      "verifiedMs": {
+        "count": 97,
+        "mean": 80.5,
+        "p50": 50.3,
+        "p95": 232.09,
+        "p99": 642.36,
+        "max": 642.36
+      }
+    }
+  ],
+  "errors": [],
+  "aboveStageBudget": [],
+  "allTimedStages": {
+    "count": 404,
+    "mean": 136.6,
+    "p50": 101.2,
+    "p95": 377.39,
+    "p99": 722.4,
+    "max": 1094.54
+  },
+  "coverageTable": [
+    {
+      "mode": "classic",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 88.52349800000229
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 139.44713000000047
+        }
+      ]
+    },
+    {
+      "mode": "classic",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 95.86149200000364
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 48.40402599999652
+        }
+      ]
+    },
+    {
+      "mode": "classic",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 209.26942899999995
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 95.20061399999395
+        }
+      ]
+    },
+    {
+      "mode": "diagonal",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 89.92180000000371
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 43.74524900000688
+        }
+      ]
+    },
+    {
+      "mode": "diagonal",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 87.68694400000095
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 44.59202799999912
+        }
+      ]
+    },
+    {
+      "mode": "diagonal",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 226.5053609999959
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 47.225727000004554
+        }
+      ]
+    },
+    {
+      "mode": "hyper",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 95.70383500000025
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 47.237575999999535
+        }
+      ]
+    },
+    {
+      "mode": "hyper",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 182.26900000000023
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 45.67640699999902
+        }
+      ]
+    },
+    {
+      "mode": "hyper",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.90906900000118
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 47.30649000000267
+        }
+      ]
+    },
+    {
+      "mode": "knight",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 103.52691500000219
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 47.04360199999792
+        }
+      ]
+    },
+    {
+      "mode": "knight",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 104.79511099999945
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 54.06406799999968
+        }
+      ]
+    },
+    {
+      "mode": "knight",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 121.46521199999552
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 52.65157299999555
+        }
+      ]
+    },
+    {
+      "mode": "king",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.64584399999876
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 54.11942100000306
+        }
+      ]
+    },
+    {
+      "mode": "king",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 159.5467420000059
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 282.4082669999989
+        }
+      ]
+    },
+    {
+      "mode": "king",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 521.122037000001
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 642.3636100000003
+        }
+      ]
+    },
+    {
+      "mode": "nonconsecutive",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 204.63776200000575
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 57.49429699999746
+        }
+      ]
+    },
+    {
+      "mode": "nonconsecutive",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 321.73722600000474
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.20052800000121
+        }
+      ]
+    },
+    {
+      "mode": "nonconsecutive",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 120.16529900000023
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 44.95565599999827
+        }
+      ]
+    },
+    {
+      "mode": "disjoint",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.3968920000043
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 45.351314999999886
+        }
+      ]
+    },
+    {
+      "mode": "disjoint",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 105.60070399999677
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 588.6039149999997
+        }
+      ]
+    },
+    {
+      "mode": "disjoint",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 232.59516399999848
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 604.0448899999974
+        }
+      ]
+    },
+    {
+      "mode": "jigsaw",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 113.32665300000372
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 46.75138100000186
+        }
+      ]
+    },
+    {
+      "mode": "jigsaw",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 110.93933200000174
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 96.6216940000013
+        }
+      ]
+    },
+    {
+      "mode": "jigsaw",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 115.07416699999885
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 222.13366800000222
+        }
+      ]
+    },
+    {
+      "mode": "twin",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 309.8270049999992
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 86.57191199999943
+        }
+      ]
+    },
+    {
+      "mode": "twin",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 188.75522300000011
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 88.98454600000696
+        }
+      ]
+    },
+    {
+      "mode": "twin",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 193.69583300000522
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 93.36070499999914
+        }
+      ]
+    },
+    {
+      "mode": "samurai",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 1053.9568080000026
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 216.56913299999724
+        }
+      ]
+    },
+    {
+      "mode": "samurai",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 1094.5441160000046
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 227.26591099999496
+        }
+      ]
+    },
+    {
+      "mode": "samurai",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 520.2246389999927
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 232.08568899999955
+        }
+      ]
+    },
+    {
+      "mode": "thermo",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 114.821093999999
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.96692900000198
+        }
+      ]
+    },
+    {
+      "mode": "thermo",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 103.52682300000743
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 46.07829399999173
+        }
+      ]
+    },
+    {
+      "mode": "thermo",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 108.845736999996
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 51.30442499999481
+        }
+      ]
+    },
+    {
+      "mode": "killer",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 98.82190500000434
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 45.11161799999536
+        }
+      ]
+    },
+    {
+      "mode": "killer",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.34576599999855
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.58287100000598
+        }
+      ]
+    },
+    {
+      "mode": "killer",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 105.1612790000072
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.6514360000001
+        }
+      ]
+    },
+    {
+      "mode": "arrow",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 110.7317030000122
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 55.73578499999712
+        }
+      ]
+    },
+    {
+      "mode": "arrow",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 119.25658499999554
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.24889699999767
+        }
+      ]
+    },
+    {
+      "mode": "arrow",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 115.3493129999988
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.098557999997865
+        }
+      ]
+    },
+    {
+      "mode": "thermo-killer",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 111.78153200000816
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.30655100000149
+        }
+      ]
+    },
+    {
+      "mode": "thermo-killer",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 117.26781400000618
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.877974999995786
+        }
+      ]
+    },
+    {
+      "mode": "thermo-killer",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 105.32906500001263
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.056131000004825
+        }
+      ]
+    },
+    {
+      "mode": "renban",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 106.91165100000217
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.69816100000753
+        }
+      ]
+    },
+    {
+      "mode": "renban",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 149.44067700000596
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 46.64904600000591
+        }
+      ]
+    },
+    {
+      "mode": "renban",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 106.29496400000062
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.99247599999944
+        }
+      ]
+    },
+    {
+      "mode": "whispers",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 94.33945400000084
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 45.74609300000884
+        }
+      ]
+    },
+    {
+      "mode": "whispers",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.37712600000668
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.93118200000026
+        }
+      ]
+    },
+    {
+      "mode": "whispers",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.71329200000037
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.994458999994094
+        }
+      ]
+    },
+    {
+      "mode": "odd-even",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.50090099999215
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.89417600000161
+        }
+      ]
+    },
+    {
+      "mode": "odd-even",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 121.65059900000051
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.245506999999634
+        }
+      ]
+    },
+    {
+      "mode": "odd-even",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.00188800001342
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 55.77145099999325
+        }
+      ]
+    },
+    {
+      "mode": "greater",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 96.99915200000396
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 53.78292199999851
+        }
+      ]
+    },
+    {
+      "mode": "greater",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 139.7282269999996
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 62.18844899999385
+        }
+      ]
+    },
+    {
+      "mode": "greater",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 103.93059299999732
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 61.21344599999429
+        }
+      ]
+    },
+    {
+      "mode": "kropki",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.19658300001174
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 51.64552299999923
+        }
+      ]
+    },
+    {
+      "mode": "kropki",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 128.82510699999693
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 45.97232200000144
+        }
+      ]
+    },
+    {
+      "mode": "kropki",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 237.52260499999102
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 53.8308229999966
+        }
+      ]
+    },
+    {
+      "mode": "xv",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 107.74844799999846
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.42693000000145
+        }
+      ]
+    },
+    {
+      "mode": "xv",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 105.55713699999615
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.50539099999878
+        }
+      ]
+    },
+    {
+      "mode": "xv",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.15804100000241
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.42774199999985
+        }
+      ]
+    },
+    {
+      "mode": "quadruple",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 96.48710699999356
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.97315499999968
+        }
+      ]
+    },
+    {
+      "mode": "quadruple",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 93.35005799999635
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 56.801415000009
+        }
+      ]
+    },
+    {
+      "mode": "quadruple",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 108.67199300001084
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.339970999993966
+        }
+      ]
+    },
+    {
+      "mode": "sandwich",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 101.92144499999995
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 56.130847000007634
+        }
+      ]
+    },
+    {
+      "mode": "sandwich",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 118.54471500001091
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.48942500000703
+        }
+      ]
+    },
+    {
+      "mode": "sandwich",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 107.5493509999942
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 63.427528000000166
+        }
+      ]
+    },
+    {
+      "mode": "skyscraper",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.95105200000398
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.763489999997546
+        }
+      ]
+    },
+    {
+      "mode": "skyscraper",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 396.1340779999882
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.09248700000171
+        }
+      ]
+    },
+    {
+      "mode": "skyscraper",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 109.40359799998987
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.34239400000661
+        }
+      ]
+    },
+    {
+      "mode": "xsum",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.51512099998945
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.33880699999281
+        }
+      ]
+    },
+    {
+      "mode": "xsum",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 101.2001859999873
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.64328000000387
+        }
+      ]
+    },
+    {
+      "mode": "xsum",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 121.46263300000282
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.238117000000784
+        }
+      ]
+    },
+    {
+      "mode": "littlekiller",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 99.4520579999953
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.61302099999739
+        }
+      ]
+    },
+    {
+      "mode": "littlekiller",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.30622899999435
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.25748699999531
+        }
+      ]
+    },
+    {
+      "mode": "littlekiller",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 101.76549099999829
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 51.170977000001585
+        }
+      ]
+    },
+    {
+      "mode": "palindrome",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 95.63439100001415
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 47.629446999999345
+        }
+      ]
+    },
+    {
+      "mode": "palindrome",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 110.13782799999171
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 56.17439499999455
+        }
+      ]
+    },
+    {
+      "mode": "palindrome",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 108.01854299999832
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.269020000007
+        }
+      ]
+    },
+    {
+      "mode": "between",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 181.5223960000003
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.637126000001444
+        }
+      ]
+    },
+    {
+      "mode": "between",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 138.3680849999946
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 48.448620999988634
+        }
+      ]
+    },
+    {
+      "mode": "between",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 122.93385000000126
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.84170499999891
+        }
+      ]
+    },
+    {
+      "mode": "lockout",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 102.92431499999657
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.0927939999965
+        }
+      ]
+    },
+    {
+      "mode": "lockout",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 122.54625900000974
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.34465899999486
+        }
+      ]
+    },
+    {
+      "mode": "lockout",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 262.23563099998864
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.09214399999473
+        }
+      ]
+    },
+    {
+      "mode": "entropic",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 106.9693649999972
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 53.531323000002885
+        }
+      ]
+    },
+    {
+      "mode": "entropic",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 104.517485999997
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.287458000006154
+        }
+      ]
+    },
+    {
+      "mode": "entropic",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 103.52900900000532
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.5086020000017
+        }
+      ]
+    },
+    {
+      "mode": "modular",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 96.11097500000324
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 44.73419099999592
+        }
+      ]
+    },
+    {
+      "mode": "modular",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 157.3229730000021
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 53.210212999998475
+        }
+      ]
+    },
+    {
+      "mode": "modular",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 112.74451600000612
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.303361999991466
+        }
+      ]
+    },
+    {
+      "mode": "region-sum",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 111.43697100000281
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.297987999991165
+        }
+      ]
+    },
+    {
+      "mode": "region-sum",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 172.54266399999324
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.0975449999969
+        }
+      ]
+    },
+    {
+      "mode": "region-sum",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 107.04491699999198
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 53.122758999990765
+        }
+      ]
+    },
+    {
+      "mode": "clone",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 108.15168300000369
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 50.389895999993314
+        }
+      ]
+    },
+    {
+      "mode": "clone",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 199.04093100001046
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 49.25642400000652
+        }
+      ]
+    },
+    {
+      "mode": "clone",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "verified",
+          "kind": "fresh-retry",
+          "ms": 104.51986800000304
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-reserve",
+          "ms": 52.088673000005656
+        }
+      ]
+    },
+    {
+      "mode": "miracle",
+      "difficulty": "easy",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "unsupported",
+          "code": "RECOVERY_SEARCH_UNSUPPORTED",
+          "ms": 0.38143599999602884
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "verified",
+          "kind": "verified-catalog",
+          "ms": 69.37555000001157
+        }
+      ]
+    },
+    {
+      "mode": "miracle",
+      "difficulty": "medium",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "unsupported",
+          "code": "RECOVERY_SEARCH_UNSUPPORTED",
+          "ms": 0.08768300000519957
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "declined",
+          "code": "CATALOG_EXHAUSTED",
+          "ms": 592.889182999992
+        }
+      ]
+    },
+    {
+      "mode": "miracle",
+      "difficulty": "hard",
+      "stages": [
+        {
+          "stage": "fresh-retry",
+          "status": "unsupported",
+          "code": "RECOVERY_SEARCH_UNSUPPORTED",
+          "ms": 0.036554999998770654
+        },
+        {
+          "stage": "verified-catalog",
+          "status": "declined",
+          "code": "CATALOG_EXHAUSTED",
+          "ms": 568.6272879999888
+        }
+      ]
+    }
+  ]
+}

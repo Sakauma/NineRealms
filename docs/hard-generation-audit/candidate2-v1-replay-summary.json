@@ -1,0 +1,3815 @@
+{
+  "version": 1,
+  "complete": true,
+  "plan": {
+    "seedNamespace": "exact-report-replay",
+    "replay": {
+      "report": "candidate1-hard-ab-200.json",
+      "sha256": "34a3553b2a3c1598b0e9d82b8a7191e38746b5d36a6cb155076545c857a1b833"
+    },
+    "baselineDirectory": "../ninerealms_quality_v5_1113",
+    "candidateDirectory": ".",
+    "arms": [
+      "candidate"
+    ],
+    "independentSeedsPerMode": null,
+    "legacyRegressions": [],
+    "calls": 400,
+    "output": "candidate2-v1-replay.json"
+  },
+  "sourceHashes": {
+    "candidate": {
+      "generator.js": "8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    }
+  },
+  "endingHashes": {
+    "candidate": {
+      "generator.js": "8acfb27748cb35c3b63019a8ae7372ccea226578994bf7718e9aacb4ca780ad5",
+      "engine.js": "339fef96f116a58d78e4b030719c56418da9925e3134d8a4f307e4ab1275cbdd",
+      "hints.js": "b437130571f7ca750522b58be6eb6c7b6db2cc1570e43f6e5107b963571efdb1",
+      "diversity-source.js": "a6d8bb031ea2d273e635878d2e7dc3ea715c7cc49d1ff7e8b6d19d2f7d3bc806",
+      "diversity-clues.js": "8e6149ca4affe1325545197fedc15fff1c10368a83ad6ddcb757305f316a7938",
+      "puzzle-diversity.js": "5590e0b9d269ee4c0db1505422df39e8abd471c2fe11e890407efd3249e7d3e1",
+      "rule-path-grading.js": "b3b95353404f04d78a31ee771f501d299ac37a8222bbb426c53126889c1184d0",
+      "rule-quality.js": "c18d4359b92f4474d44534ec56c2b51a43d2c7d9eaaed476adf25e986902fccc"
+    }
+  },
+  "changedSourceArms": [],
+  "originalReport": {
+    "path": "../ninerealms_quality_v5_1113/docs/diversity-audit/v5-audit-30.json",
+    "sha256": "29a09709309c07d2d9e8187b3fe56e5aa2f9328ba8b9dd71d7f9783256aa6b69"
+  },
+  "environment": {
+    "platform": "linux",
+    "arch": "x64",
+    "node": "v24.22.1",
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "cpuCount": 9
+  },
+  "method": "Warm both modules; fixed identical request inputs; alternate AB/BA serially with no parallel generation; independent new seed cohort plus separately reported regression cases with exact original ledgers; replay mode uses the archived independent requests verbatim. Each independent seed uses a fixed original pre-mode ledger, NOT divergent per-arm rolling history. Fixed baseline validator runs in a separate VM.",
+  "timingScope": "Synchronous Node generation wall time and process CPU, excluding independent validation. Not a real browser or Windows test. >8000ms never counted as UI delivery; <=8000ms still is not proof of UI delivery. Single timing sample per seed/arm, not statistical performance certification.",
+  "startedAt": "2026-11-13T15:58:58.370Z",
+  "elapsedMs": 110611,
+  "warmups": [
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "difficulty": "hard",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "king",
+      "difficulty": "easy",
+      "status": "returned"
+    },
+    {
+      "arm": "candidate",
+      "mode": "king",
+      "difficulty": "hard",
+      "status": "returned"
+    }
+  ],
+  "requests": 400,
+  "rows": [
+    {
+      "cohort": "independent",
+      "mode": "classic",
+      "arm": "candidate",
+      "requests": 200,
+      "verifiedHard": 199,
+      "outcomes": {
+        "verified-hard": 199,
+        "generation-declined": 1
+      },
+      "failureCodes": {
+        "FRESH_DIFFICULTY_NOT_REACHED": 1
+      },
+      "independentBaseClasses": 199,
+      "within8SecondVerifiedGeneratorCompletions": 199,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 194.4,
+        "p50": 158.38,
+        "p95": 493.86,
+        "p99": 661.86,
+        "min": 47.18,
+        "max": 748.89
+      },
+      "verifiedGenerationMs": {
+        "count": 199,
+        "mean": 191.62,
+        "p50": 158.38,
+        "p95": 493.86,
+        "p99": 661.86,
+        "min": 47.18,
+        "max": 701.11
+      },
+      "refusedGenerationMs": {
+        "count": 1,
+        "mean": 748.89,
+        "p50": 748.89,
+        "p95": 748.89,
+        "p99": 748.89,
+        "min": 748.89,
+        "max": 748.89
+      },
+      "cpuMs": {
+        "count": 200,
+        "mean": 201.62,
+        "p50": 163.09,
+        "p95": 534.2,
+        "p99": 672.17,
+        "min": 47.67,
+        "max": 762.01
+      },
+      "generatedOutputs": 199,
+      "generationDeclines": 1,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    },
+    {
+      "cohort": "independent",
+      "mode": "king",
+      "arm": "candidate",
+      "requests": 200,
+      "verifiedHard": 200,
+      "outcomes": {
+        "verified-hard": 200
+      },
+      "failureCodes": {},
+      "independentBaseClasses": 200,
+      "within8SecondVerifiedGeneratorCompletions": 200,
+      "above8Second": [],
+      "generationMs": {
+        "count": 200,
+        "mean": 125.86,
+        "p50": 75.07,
+        "p95": 344.44,
+        "p99": 438.71,
+        "min": 48.35,
+        "max": 649.47
+      },
+      "verifiedGenerationMs": {
+        "count": 200,
+        "mean": 125.86,
+        "p50": 75.07,
+        "p95": 344.44,
+        "p99": 438.71,
+        "min": 48.35,
+        "max": 649.47
+      },
+      "refusedGenerationMs": null,
+      "cpuMs": {
+        "count": 200,
+        "mean": 130.52,
+        "p50": 81.03,
+        "p95": 351.33,
+        "p99": 449.67,
+        "min": 49.18,
+        "max": 660.76
+      },
+      "generatedOutputs": 200,
+      "generationDeclines": 0,
+      "generationBudgets": 0,
+      "validationUnresolvedOrFailed": 0,
+      "invalidOutputs": 0,
+      "above8SecondCount": 0
+    }
+  ],
+  "paired": [],
+  "replayComparison": [
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-0",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-0",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-1",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-1",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-2",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-2",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-3",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-3",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-4",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-4",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-5",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-5",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-6",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-6",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-7",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-7",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-8",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-8",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-9",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-9",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-10",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-10",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-11",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-11",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-12",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-12",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-13",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-13",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-14",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-14",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-15",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-15",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-16",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-16",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-17",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-17",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-18",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-18",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-19",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-19",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-20",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-20",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-21",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-21",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-22",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-22",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-23",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-23",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-24",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-24",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-25",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-25",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-26",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-26",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-27",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-27",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-28",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-28",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-29",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-29",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-30",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-30",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-31",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-31",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-32",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-32",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-33",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-33",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-34",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-34",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-35",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-35",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-36",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-36",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-37",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-37",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-38",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-38",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-39",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-39",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-40",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-40",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-41",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-41",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-42",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-42",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-43",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-43",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-44",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-44",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-45",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-45",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-46",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-46",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-47",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-47",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-48",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-48",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-49",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-49",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-50",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-50",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-51",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-51",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-52",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-52",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-53",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-53",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-54",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-54",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-55",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-55",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-56",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-56",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-57",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-57",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-58",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-58",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-59",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-59",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-60",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-60",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-61",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-61",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-62",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-62",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-63",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-63",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-64",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-64",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-65",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-65",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-66",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-66",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-67",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-67",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-68",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-68",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-69",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-69",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-70",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-70",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-71",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-71",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-72",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-72",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-73",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-73",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-74",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-74",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-75",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-75",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-76",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-76",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-77",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-77",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-78",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-78",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-79",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-79",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-80",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-80",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-81",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-81",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-82",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-82",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-83",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-83",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-84",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-84",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-85",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-85",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-86",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-86",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-87",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-87",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-88",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-88",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-89",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-89",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-90",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-90",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-91",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-91",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-92",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-92",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-93",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-93",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-94",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-94",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-95",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-95",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-96",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-96",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-97",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-97",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-98",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-98",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-99",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-99",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-100",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-100",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-101",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-101",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-102",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-102",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-103",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-103",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-104",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-104",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-105",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-105",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-106",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-106",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-107",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-107",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-108",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-108",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-109",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-109",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-110",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-110",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-111",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-111",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-112",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-112",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-113",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-113",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-114",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-114",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-115",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-115",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-116",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-116",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-117",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-117",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-118",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-118",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-119",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-119",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-120",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-120",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-121",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-121",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-122",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-122",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-123",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-123",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-124",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-124",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-125",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-125",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-126",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-126",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-127",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-127",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-128",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-128",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-129",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-129",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-130",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-130",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-131",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-131",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-132",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-132",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-133",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-133",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-134",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-134",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-135",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-135",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-136",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-136",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-137",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-137",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-138",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-138",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-139",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-139",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-140",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-140",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-141",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-141",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-142",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-142",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-143",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-143",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-144",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-144",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-145",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-145",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-146",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-146",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-147",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-147",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-148",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-148",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-149",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-149",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-150",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-150",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-151",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-151",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-152",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-152",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-153",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-153",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-154",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-154",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-155",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-155",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-156",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-156",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-157",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-157",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-158",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-158",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-159",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-159",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-160",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-160",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-161",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-161",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-162",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-162",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-163",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-163",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-164",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-164",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-165",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-165",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-166",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-166",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-167",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-167",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-168",
+      "priorOutcome": "generation-declined",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": true
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-168",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-169",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-169",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-170",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-170",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-171",
+      "priorOutcome": "verified-hard",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "requestMatches": true,
+      "regressed": true,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-171",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-172",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-172",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-173",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-173",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-174",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-174",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-175",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-175",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-176",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-176",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-177",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-177",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-178",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-178",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-179",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-179",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-180",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-180",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-181",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-181",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-182",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-182",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-183",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-183",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-184",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-184",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-185",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-185",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-186",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-186",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-187",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-187",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-188",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-188",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-189",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-189",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-190",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-190",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-191",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-191",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-192",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-192",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-193",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-193",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-194",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-194",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-195",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-195",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-196",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-196",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-197",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-197",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-198",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-198",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "classic",
+      "seed": "hard-controlled-v1-classic-199",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    },
+    {
+      "mode": "king",
+      "seed": "hard-controlled-v1-king-199",
+      "priorOutcome": "verified-hard",
+      "outcome": "verified-hard",
+      "requestMatches": true,
+      "regressed": false,
+      "fixed": false
+    }
+  ],
+  "duplicateFindings": [],
+  "rawReport": "candidate2-v1-replay.json",
+  "rawSha256": "b41de1beda4054150b740a01f98fd173f2db6a9cebed7a00bb0b35f4b5b690a1",
+  "allFailures": [
+    {
+      "arm": "candidate",
+      "mode": "classic",
+      "cohort": "independent",
+      "seed": "hard-controlled-v1-classic-171",
+      "outcome": "generation-declined",
+      "code": "FRESH_DIFFICULTY_NOT_REACHED",
+      "generationMs": 748.8939850000024
+    }
+  ],
+  "legacyRegressionResults": []
+}

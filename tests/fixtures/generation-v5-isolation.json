@@ -1,0 +1,101 @@
+[
+  {
+    "request": {
+      "mode": "classic",
+      "difficulty": "easy",
+      "fresh": true,
+      "seed": "v6-isolation-classic-easy"
+    },
+    "sha256": "5559fc07fc9b50eb0f1fd919d4fee2f1f221ca766e4c50dba2d08fae70dabbe0"
+  },
+  {
+    "request": {
+      "mode": "classic",
+      "difficulty": "medium",
+      "fresh": true,
+      "seed": "v6-isolation-classic-medium"
+    },
+    "sha256": "0f46831624064231a834b2d6ebd031a260d62d02e107dedac1cc463d51a05fae"
+  },
+  {
+    "request": {
+      "mode": "king",
+      "difficulty": "easy",
+      "fresh": true,
+      "seed": "v6-isolation-king-easy"
+    },
+    "sha256": "d4f8c9ad4b7df5a78a760dc26c646baa7298ba56358aa65dd41f52d0d87c565a"
+  },
+  {
+    "request": {
+      "mode": "king",
+      "difficulty": "medium",
+      "fresh": true,
+      "seed": "v6-isolation-king-medium"
+    },
+    "sha256": "47951d0dfd1ef2596f665ce952b3b736fedc5f8875555458b946a2f27e0c55e0"
+  },
+  {
+    "request": {
+      "mode": "diagonal",
+      "difficulty": "hard",
+      "fresh": true,
+      "seed": "v6-isolation-diagonal-hard"
+    },
+    "sha256": "8f517848fe1eedf25e88e429e4a5bd80fa243b4b0bef342582e0961481a27227"
+  },
+  {
+    "request": {
+      "mode": "jigsaw",
+      "difficulty": "hard",
+      "fresh": true,
+      "seed": "v6-isolation-jigsaw-hard"
+    },
+    "sha256": "fef839db323eb7d135a5c742e9f6f40935ae40d9d13780fa2426dd06b51745fd"
+  },
+  {
+    "request": {
+      "mode": "thermo",
+      "difficulty": "hard",
+      "fresh": true,
+      "seed": "v6-isolation-thermo-hard"
+    },
+    "sha256": "8c026dd7d2125f373735442a35b7270ec5d07db40a3855ba07042958fc84db88"
+  },
+  {
+    "request": {
+      "mode": "palindrome",
+      "difficulty": "medium",
+      "fresh": true,
+      "seed": "v6-isolation-palindrome-medium"
+    },
+    "sha256": "e1951712e5033493159dda054855d80c5bc780293d07faf02ae3241be0686368"
+  },
+  {
+    "request": {
+      "mode": "classic",
+      "difficulty": "hard",
+      "fresh": false,
+      "seed": "v6-isolation-classic-hard"
+    },
+    "sha256": "4b1037272accd8fbfaa86fb01eee1813e3efb8b579fa7c562a4df36692e56e2e"
+  },
+  {
+    "request": {
+      "mode": "king",
+      "difficulty": "hard",
+      "fresh": false,
+      "seed": "v6-isolation-king-hard"
+    },
+    "sha256": "db68b485d179ebd4ead8e9b3426b7c0b3bd87f9fa0d03be39b578ca62008ec21"
+  },
+  {
+    "request": {
+      "mode": "thermo",
+      "difficulty": "easy",
+      "fresh": false,
+      "seed": "v6-isolation-thermo-easy"
+    },
+    "sha256": "06f1dafb8c4a7eef559b95fb5635e01b8ecc8ccd9cc05ac2ddfc84e4c2429f9b"
+  }
+]

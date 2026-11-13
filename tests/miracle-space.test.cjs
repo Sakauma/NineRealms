@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),Engine=require('../src/engine');
+const root=path.join(__dirname,'..'),report=path.join(root,'evidence/diversity/miracle-space.json');
+function run(budget){const result=cp.spawnSync(process.execPath,['scripts/audit-miracle-space.cjs'],{cwd:root,env:{...process.env,MIRACLE_AUDIT_MAX_NODES:String(budget)},encoding:'utf8'});if(result.error)throw result.error;return {status:result.status,data:JSON.parse(fs.readFileSync(report,'utf8')),stderr:result.stderr};}
+const partial=run(1);assert.equal(partial.status,1,partial.stderr);assert.equal(partial.data.full.exhausted,true);assert.equal(partial.data.full.complete,false);assert.equal(partial.data.full.nodes,1);assert.equal(partial.data.full.solutionCount,0);
+const complete=run(10000000);assert.equal(complete.status,0,complete.stderr);const r=complete.data;assert.equal(r.full.complete,true);assert.equal(r.full.exhausted,false);assert(r.full.nodes<=r.full.maxNodes);assert.equal(r.full.solutionCount,72);assert.equal(new Set(r.full.solutions).size,72);
+assert.deepEqual(r.classes,{classicGroup:1,dihedral:9,dihedralAndDigitInversion:5});for(const s of r.full.solutions)assert(Engine.validateComplete(s.split('').map(Number),'miracle'));
+assert.equal(r.ruleNecessity[0].complete,true);assert.equal(r.ruleNecessity[0].solutionCount,1);for(const omitted of r.ruleNecessity.slice(1)){assert.equal(omitted.exhausted,false);assert.equal(omitted.complete,false,'stopped at two witnesses, not a full count');assert.equal(omitted.solutionCount,2);assert(omitted.solutions.some(s=>!Engine.validateComplete(s.split('').map(Number),'miracle')),'omitted rule admits an otherwise excluded solution');}
+assert.equal(r.basicLogicOnNecessityExample.solved,false);assert.equal(r.basicLogicOnNecessityExample.steps,0);
+console.log('PASS Miracle full-space audit: 72 labeled grids; 1 classical / 9 D4 / 5 D4+inversion classes; explicit budget refusal and each-family necessity witnesses.');

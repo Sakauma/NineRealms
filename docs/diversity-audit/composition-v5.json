@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "method": "100 truly new solved boards per mode; achieved geometry not intended profile; D4 geometry canonicalization; generation time excludes solution construction",
+  "rows": [
+    {
+      "mode": "thermo",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 20,
+      "lineCountHistogram": {
+        "2": 27,
+        "3": 35,
+        "4": 38
+      },
+      "lineLengthHistogram": {
+        "3": 213,
+        "4": 35,
+        "5": 45,
+        "6": 18
+      },
+      "coveredBoxHistogram": {
+        "4": 3,
+        "5": 12,
+        "6": 15,
+        "7": 19,
+        "8": 40,
+        "9": 11
+      },
+      "mixedLengthPuzzles": 58,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 54,
+      "meanBuildMs": 1.44,
+      "maxBuildMs": 10
+    },
+    {
+      "mode": "arrow",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 13,
+      "lineCountHistogram": {
+        "2": 37,
+        "3": 32,
+        "4": 31
+      },
+      "lineLengthHistogram": {
+        "3": 194,
+        "4": 74,
+        "5": 26
+      },
+      "coveredBoxHistogram": {
+        "4": 6,
+        "5": 28,
+        "6": 15,
+        "7": 26,
+        "8": 23,
+        "9": 2
+      },
+      "mixedLengthPuzzles": 70,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 26,
+      "meanBuildMs": 1.1,
+      "maxBuildMs": 30
+    },
+    {
+      "mode": "renban",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 16,
+      "lineCountHistogram": {
+        "2": 36,
+        "3": 32,
+        "4": 32
+      },
+      "lineLengthHistogram": {
+        "3": 166,
+        "4": 14,
+        "5": 17,
+        "6": 99
+      },
+      "coveredBoxHistogram": {
+        "5": 5,
+        "6": 32,
+        "7": 34,
+        "8": 25,
+        "9": 4
+      },
+      "mixedLengthPuzzles": 59,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 71,
+      "meanBuildMs": 8.83,
+      "maxBuildMs": 28
+    },
+    {
+      "mode": "whispers",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 20,
+      "lineCountHistogram": {
+        "2": 40,
+        "3": 36,
+        "4": 24
+      },
+      "lineLengthHistogram": {
+        "3": 170,
+        "4": 21,
+        "5": 21,
+        "6": 72
+      },
+      "coveredBoxHistogram": {
+        "4": 8,
+        "5": 23,
+        "6": 30,
+        "7": 26,
+        "8": 12,
+        "9": 1
+      },
+      "mixedLengthPuzzles": 75,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 71,
+      "meanBuildMs": 0.69,
+      "maxBuildMs": 2
+    },
+    {
+      "mode": "thermo-killer",
+      "requests": 100,
+      "successes": 100,
+      "qualityDeclines": 0,
+      "distinctD4Geometry": 100,
+      "distinctLengthCompositions": 21,
+      "lineCountHistogram": {
+        "2": 39,
+        "3": 33,
+        "4": 28
+      },
+      "lineLengthHistogram": {
+        "3": 185,
+        "4": 32,
+        "5": 46,
+        "6": 26
+      },
+      "coveredBoxHistogram": {
+        "4": 7,
+        "5": 12,
+        "6": 22,
+        "7": 25,
+        "8": 24,
+        "9": 10
+      },
+      "mixedLengthPuzzles": 66,
+      "puzzlesWithCrossBoxLines": 100,
+      "puzzlesWithLengthAtLeast5": 60,
+      "meanBuildMs": 2.84,
+      "maxBuildMs": 14
+    }
+  ]
+}
